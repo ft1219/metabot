@@ -4,51 +4,51 @@
  "strategies": {
   "coin_flip": {
    "active": true,
-   "break_even_rate": 0.5181,
+   "break_even_rate": 0.5179,
    "days": 9,
    "days_running": 9.7,
-   "open": 57,
-   "open_cost": 285.0,
-   "p_luck": 0.9759135536562495,
-   "pnl": -459.24,
-   "roi": -0.051762700803612643,
-   "settled": 1780,
-   "staked": 8871.95,
+   "open": 55,
+   "open_cost": 275.0,
+   "p_luck": 0.9721172482067547,
+   "pnl": -438.34,
+   "roi": -0.04935196731131607,
+   "settled": 1782,
+   "staked": 8881.95,
    "trades": 1837,
    "verdict": "yardstick",
-   "wins": 881
+   "wins": 883
   },
   "fade_move": {
    "active": true,
-   "break_even_rate": 0.366,
+   "break_even_rate": 0.3654,
    "days": 9,
    "days_running": 9.7,
-   "open": 91,
-   "open_cost": 455.0,
-   "p_luck": 0.9990990268954055,
-   "pnl": -344.44,
-   "roi": -0.2020988316047759,
-   "settled": 341,
-   "staked": 1704.33,
+   "open": 83,
+   "open_cost": 415.0,
+   "p_luck": 0.998342596540444,
+   "pnl": -314.24,
+   "roi": -0.1801509733918052,
+   "settled": 349,
+   "staked": 1744.33,
    "trades": 432,
    "verdict": "too early",
-   "wins": 98
+   "wins": 102
   },
   "follow_move": {
    "active": true,
-   "break_even_rate": 0.6139,
+   "break_even_rate": 0.6165,
    "days": 9,
    "days_running": 9.7,
-   "open": 85,
-   "open_cost": 424.29,
-   "p_luck": 0.13471740230595952,
-   "pnl": 103.81,
-   "roi": 0.06749177054790963,
-   "settled": 308,
-   "staked": 1538.18,
+   "open": 77,
+   "open_cost": 384.29,
+   "p_luck": 0.1871170145811355,
+   "pnl": 91.93,
+   "roi": 0.05824834509105782,
+   "settled": 316,
+   "staked": 1578.18,
    "trades": 393,
    "verdict": "too early",
-   "wins": 199
+   "wins": 203
   },
   "price_gap": {
    "active": true,
@@ -68,19 +68,19 @@
   },
   "safe_no_week": {
    "active": true,
-   "break_even_rate": 0.9573,
+   "break_even_rate": 0.9574,
    "days": 9,
    "days_running": 9.7,
-   "open": 154,
-   "open_cost": 770.0,
-   "p_luck": 0.9977976206568792,
-   "pnl": -77.27,
-   "roi": -0.025934693948064323,
-   "settled": 596,
-   "staked": 2979.55,
+   "open": 146,
+   "open_cost": 730.0,
+   "p_luck": 0.9998629600451158,
+   "pnl": -101.68,
+   "roi": -0.03367549429130818,
+   "settled": 604,
+   "staked": 3019.55,
    "trades": 750,
    "verdict": "too early",
-   "wins": 556
+   "wins": 559
   },
   "sports_underdog": {
    "active": true,
@@ -131,5 +131,5 @@
    "wins": 249
   }
  },
- "updated": 1794674840
+ "updated": 1794677240
 }
