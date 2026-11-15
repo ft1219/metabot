@@ -71,16 +71,16 @@
    "break_even_rate": 0.9577,
    "days": 10,
    "days_running": 10.2,
-   "open": 122,
-   "open_cost": 610.0,
-   "p_luck": 0.9998482119946209,
-   "pnl": -102.56,
-   "roi": -0.03266750601585042,
-   "settled": 628,
-   "staked": 3139.55,
+   "open": 120,
+   "open_cost": 600.0,
+   "p_luck": 0.9999165418417597,
+   "pnl": -107.42,
+   "roi": -0.03410740882880826,
+   "settled": 630,
+   "staked": 3149.55,
    "trades": 750,
    "verdict": "too early",
-   "wins": 582
+   "wins": 583
   },
   "sports_underdog": {
    "active": true,
@@ -131,5 +131,5 @@
    "wins": 256
   }
  },
- "updated": 1794715641
+ "updated": 1794718041
 }
