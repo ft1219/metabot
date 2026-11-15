@@ -20,35 +20,35 @@
   },
   "fade_move": {
    "active": true,
-   "break_even_rate": 0.3661,
+   "break_even_rate": 0.3658,
    "days": 10,
    "days_running": 10.7,
-   "open": 78,
-   "open_cost": 390.0,
-   "p_luck": 0.9982694718513485,
-   "pnl": -312.45,
-   "roi": -0.1765902587198221,
-   "settled": 354,
-   "staked": 1769.33,
+   "open": 70,
+   "open_cost": 350.0,
+   "p_luck": 0.9970616393233254,
+   "pnl": -277.08,
+   "roi": -0.15314004246007756,
+   "settled": 362,
+   "staked": 1809.33,
    "trades": 432,
    "verdict": "too early",
-   "wins": 104
+   "wins": 108
   },
   "follow_move": {
    "active": true,
-   "break_even_rate": 0.6167,
+   "break_even_rate": 0.617,
    "days": 10,
    "days_running": 10.7,
-   "open": 72,
-   "open_cost": 359.29,
-   "p_luck": 0.19336176622910184,
-   "pnl": 100.62,
-   "roi": 0.06276515785807203,
-   "settled": 321,
-   "staked": 1603.18,
+   "open": 64,
+   "open_cost": 319.29,
+   "p_luck": 0.16773687207128882,
+   "pnl": 117.1,
+   "roi": 0.07126256985369896,
+   "settled": 329,
+   "staked": 1643.18,
    "trades": 393,
    "verdict": "too early",
-   "wins": 206
+   "wins": 212
   },
   "price_gap": {
    "active": true,
@@ -68,19 +68,19 @@
   },
   "safe_no_week": {
    "active": true,
-   "break_even_rate": 0.9576,
+   "break_even_rate": 0.9578,
    "days": 10,
    "days_running": 10.7,
-   "open": 112,
-   "open_cost": 560.0,
-   "p_luck": 0.9999677734913496,
-   "pnl": -115.69,
-   "roi": -0.03627043843851163,
-   "settled": 638,
-   "staked": 3189.55,
+   "open": 104,
+   "open_cost": 520.0,
+   "p_luck": 0.9999951663935496,
+   "pnl": -130.25,
+   "roi": -0.04033082256108083,
+   "settled": 646,
+   "staked": 3229.55,
    "trades": 750,
    "verdict": "too early",
-   "wins": 589
+   "wins": 594
   },
   "sports_underdog": {
    "active": true,
@@ -131,5 +131,5 @@
    "wins": 260
   }
  },
- "updated": 1794761241
+ "updated": 1794763642
 }
