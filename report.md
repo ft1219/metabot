@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-15 04:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-15 05:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,7 +8,7 @@ Updated 2026-11-15 04:47 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | follow_move | 321 | 206/321 | +6.3% | +$100.62 | 10 | 72 | too early |
 | 2 | sure_thing | 1643 | 1527/1643 | -0.5% | -$40.87 | 9 | 3 | too early |
-| 3 | safe_no_week | 630 | 583/630 | -3.4% | -$107.42 | 10 | 120 | too early |
+| 3 | safe_no_week | 631 | 583/631 | -3.6% | -$112.42 | 10 | 119 | too early |
 | 4 | sports_underdog | 1164 | 266/1164 | -14.9% | -$861.96 | 8 | 4 | too early |
 | 5 | fade_move | 354 | 104/354 | -17.7% | -$312.45 | 10 | 78 | too early |
 | 6 | weather_forecast | 500 | 256/500 | -19.9% | -$490.23 | 9 | 6 | too early |
@@ -32,7 +32,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move | sure_thing | safe_no_week | sports_underdog | fade_move | weather_forecast | coin_flip |
 |---|---|---|---|---|---|---|---|
-| 2026-11-15 | +$1.50 | +$0.34 | -$3.82 |  | -$5.00 | -$1.70 | -$43.87 |
+| 2026-11-15 | +$1.50 | +$0.34 | -$8.82 |  | -$5.00 | -$1.70 | -$43.87 |
 | 2026-11-14 | -$7.86 |  | -$37.34 |  | +$18.94 | -$4.48 | -$13.50 |
 | 2026-11-13 | +$81.98 | -$14.31 | -$18.10 | +$3.98 | -$172.42 | -$35.87 | -$19.82 |
 | 2026-11-12 | +$5.13 | -$7.41 | -$2.81 | -$67.52 | +$145.43 | -$51.23 | -$60.24 |
@@ -63,4 +63,4 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 No near-gaps today.
 
 Runs in the last 24 hours: 37 (37 with a problem).
-Latest problem: events: 7 slice reads failed, Gamma seems down: https://gamma-api.polymarket.com/events?active=true&closed=false&limit=100&offset=0&end_date_min=2026-11-16T16%3A47%3A21Z&end_date_max=2026-11-16T22%3A4
+Latest problem: events: 7 slice reads failed, Gamma seems down: https://gamma-api.polymarket.com/events?active=true&closed=false&limit=100&offset=0&end_date_min=2026-11-16T17%3A27%3A20Z&end_date_max=2026-11-16T23%3A2
