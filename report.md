@@ -1,19 +1,19 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-16 19:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-16 20:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move | 353 | 229/353 | +7.8% | +$136.87 | 11 | 127 | too early |
-| 2 | sure_thing | 1665 | 1546/1665 | -0.6% | -$48.76 | 10 | 108 | too early |
-| 3 | safe_no_week | 685 | 629/685 | -4.2% | -$142.64 | 11 | 192 | too early |
-| 4 | sports_underdog | 1193 | 273/1193 | -15.1% | -$892.99 | 9 | 54 | too early |
+| 1 | follow_move | 353 | 229/353 | +7.8% | +$136.87 | 11 | 128 | too early |
+| 2 | sure_thing | 1665 | 1546/1665 | -0.6% | -$48.76 | 10 | 116 | too early |
+| 3 | safe_no_week | 685 | 629/685 | -4.2% | -$142.64 | 11 | 200 | too early |
+| 4 | sports_underdog | 1195 | 273/1195 | -15.2% | -$902.99 | 9 | 56 | too early |
 | 5 | fade_move | 390 | 114/390 | -16.0% | -$312.66 | 11 | 138 | too early |
 | 6 | weather_forecast | 506 | 260/506 | -19.6% | -$489.48 | 9 | 93 | too early |
 | 7 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 8 | coin_flip | 1850 | 908/1850 | -5.6% | -$516.93 | 11 | 114 | yardstick |
+| 8 | coin_flip | 1853 | 908/1853 | -5.8% | -$531.93 | 11 | 119 | yardstick |
 
 What each one does:
 
@@ -32,7 +32,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move | sure_thing | safe_no_week | sports_underdog | fade_move | weather_forecast | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|
-| 2026-11-16 | +$19.78 | -$7.89 | -$12.39 | -$31.03 | -$35.58 |  | +$0.08 | -$8.78 |
+| 2026-11-16 | +$19.78 | -$7.89 | -$12.39 | -$41.03 | -$35.58 |  | +$0.08 | -$23.78 |
 | 2026-11-15 | +$17.97 | +$0.34 | -$26.64 |  | +$30.37 | -$0.94 |  | -$47.97 |
 | 2026-11-14 | -$7.86 |  | -$37.34 |  | +$18.94 | -$4.48 |  | -$13.50 |
 | 2026-11-13 | +$81.98 | -$14.31 | -$18.10 | +$3.98 | -$172.42 | -$35.87 |  | -$19.82 |
@@ -45,18 +45,18 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-16 follow_move: Will the price of Bitcoin be between $64,000 and $66,000 on November 22? -> No at 0.802 ($5.00)
-- 2026-11-16 sure_thing: Spread: Angola (-3.5) -> South Sudan at 0.905 ($5.00)
-- 2026-11-16 safe_no_week: Will the price of Ethereum be above $1,500 on November 20? -> Yes at 0.986 ($5.00)
-- 2026-11-16 sports_underdog: Will Germany vs. Netherlands end in a draw? -> Yes at 0.229 ($5.00)
+- 2026-11-16 follow_move: Will "Stop The Wedding! - Ashe" be the #2 US song this week? -> Yes at 0.789 ($5.00)
+- 2026-11-16 sure_thing: Exact Score: Hungary 0 - 0 Northern Ireland? -> No at 0.904 ($5.00)
+- 2026-11-16 safe_no_week: Will S&P 500 (SPY) hit (HIGH) $785 Week of November 16 2026? -> No at 0.985 ($5.00)
+- 2026-11-16 sports_underdog: Spread: Montevideo Wanderers (-1.5) -> Montevideo Wanderers at 0.239 ($5.00)
 - 2026-11-16 fade_move: Will Donald Trump post 60-79 Truth Social posts from November 13 to November 20, 2026? -> No at 0.718 ($5.00)
 - 2026-11-16 weather_forecast: Will the highest temperature in Moscow be 1°C on November 17? -> Yes at 0.156 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-16 coin_flip: BNB Up or Down - November 17, 11:40AM-11:45AM ET -> Up at 0.527 ($5.00)
-- 2026-11-16 follow_move: Will Zelenskyy post 40-59 posts from November 13 to November 20, 2026? -> Yes at 0.382 ($5.00)
-- 2026-11-16 sure_thing: Spread: Rangers (-3.5) -> Canadiens at 0.952 ($5.00)
-- 2026-11-16 safe_no_week: Will the highest temperature in Chongqing be 12°C on November 18? -> No at 0.952 ($5.00)
-- 2026-11-16 sports_underdog: Spread: Guyana (-1.5) -> Guyana at 0.351 ($5.00)
+- 2026-11-16 coin_flip: Will Paul Cézanne's “Arlequin” sell for between $130m and $140m at auction? -> Yes at 0.341 ($5.00)
+- 2026-11-16 follow_move: Will the price of Bitcoin be between $64,000 and $66,000 on November 22? -> No at 0.802 ($5.00)
+- 2026-11-16 sure_thing: Ethereum above 1,840 on November 16, 4PM ET? -> No at 0.963 ($5.00)
+- 2026-11-16 safe_no_week: Will the highest temperature in Miami be between 74-75°F on November 18? -> No at 0.933 ($5.00)
+- 2026-11-16 sports_underdog: Will Montevideo Wanderers vs. CA Juventud de Las Piedras end in a draw? -> Yes at 0.280 ($5.00)
 
 ## Price gaps seen today
 
