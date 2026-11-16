@@ -20,6 +20,7 @@ tests/fixtures/), including:
 from __future__ import annotations
 
 import concurrent.futures as cf
+import gzip
 import json
 import time
 import urllib.error
@@ -47,7 +48,9 @@ Fetch = Callable[[str, Any], Any]
 def http_json(url: str, body: Any = None, timeout: float = 20, tries: int = 3) -> Any:
     """GET (or POST when body is given) and decode JSON, retrying briefly."""
     data = None
-    headers = {"Accept": "application/json", "User-Agent": USER_AGENT}
+    # Since 2026-11-12 Gamma answers /events pages of more than 50 rows only
+    # when the caller accepts gzip (HTTP 406 "gzip_required" otherwise).
+    headers = {"Accept": "application/json", "Accept-Encoding": "gzip", "User-Agent": USER_AGENT}
     if body is not None:
         data = json.dumps(body).encode()
         headers["Content-Type"] = "application/json"
@@ -56,12 +59,15 @@ def http_json(url: str, body: Any = None, timeout: float = 20, tries: int = 3) -
         request = urllib.request.Request(url, data=data, headers=headers)
         try:
             with urllib.request.urlopen(request, timeout=timeout) as response:
-                return json.loads(response.read())
+                raw = response.read()
+                if (response.headers.get("Content-Encoding") or "").lower() == "gzip":
+                    raw = gzip.decompress(raw)
+                return json.loads(raw)
         except urllib.error.HTTPError as e:
             last = e
             if e.code not in (429, 500, 502, 503, 504):
                 break
-        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, gzip.BadGzipFile, EOFError) as e:
             last = e
         time.sleep(1.5 * (attempt + 1))
     raise ApiError(f"{url}: {last!r}")
