@@ -104,9 +104,11 @@ def check_openrouter(key: str | None, get=None) -> tuple[str, str]:
             data = body.get("data") or {}
             limit, usage = data.get("limit"), data.get("usage") or 0
             if limit is None:
-                return BAD, (
-                    "OPENROUTER_API_KEY works but has no spending limit. "
-                    "Set a $40-60 limit on the key in OpenRouter."
+                # Prepaid credit caps spending too, as long as nothing tops it
+                # up automatically, and the forecast run checks it (PR #10).
+                return OK, (
+                    f"OPENROUTER_API_KEY works and has no spending limit (${usage:.2f} used), so your "
+                    "OpenRouter credit is the bot's cap. Keep Auto Top-Up off in OpenRouter."
                 )
             if data.get("limit_reset"):
                 return BAD, (
