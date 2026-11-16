@@ -11,18 +11,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: polymarket-gzip
           persist-credentials: false
-      - name: List markets with the fixed helper (read-only, nothing saved)
-        working-directory: polymarket-lab
-        run: |
-          python3 - <<'PY'
-          import sys, time
-          sys.argv = ["x"]
-          import lab
-          now = time.time()
-          t = time.time()
-          events, problems = lab.list_events(now)
-          views = [v for v in (lab.market_view(m, now) for m in lab.markets_of(events)) if v and v["hours_left"] > 0]
-          print(f"== events={len(events)} market views={len(views)} problems={problems} seconds={time.time()-t:.1f}")
-          PY
+      - name: Reference bots per resolved question (FutureEval + MiniBench 33135)
+        run: python3 -u probe/probe_ref_bots.py
+        env:
+          METACULUS_TOKEN: ${{ secrets.METACULUS_TOKEN }}
+      - name: Same for MiniBench 33132
+        run: python3 -u probe/probe_ref_bots.py
+        env:
+          METACULUS_TOKEN: ${{ secrets.METACULUS_TOKEN }}
+          MB_PROJECT: "33132"
