@@ -1,19 +1,19 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-16 09:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-16 09:28 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move | 333 | 214/333 | +6.6% | +$109.58 | 11 | 60 | too early |
-| 2 | sure_thing | 1643 | 1527/1643 | -0.5% | -$40.87 | 9 | 3 | too early |
-| 3 | safe_no_week | 660 | 608/660 | -3.9% | -$127.22 | 11 | 90 | too early |
-| 4 | fade_move | 366 | 110/366 | -14.6% | -$266.78 | 11 | 66 | too early |
-| 5 | sports_underdog | 1164 | 266/1164 | -14.9% | -$861.96 | 8 | 4 | too early |
-| 6 | weather_forecast | 506 | 260/506 | -19.6% | -$489.48 | 9 | 0 | too early |
+| 1 | follow_move | 333 | 214/333 | +6.6% | +$109.58 | 11 | 68 | too early |
+| 2 | sure_thing | 1643 | 1527/1643 | -0.5% | -$40.87 | 9 | 11 | too early |
+| 3 | safe_no_week | 660 | 608/660 | -3.9% | -$127.22 | 11 | 98 | too early |
+| 4 | fade_move | 366 | 110/366 | -14.6% | -$266.78 | 11 | 74 | too early |
+| 5 | sports_underdog | 1164 | 266/1164 | -14.9% | -$861.96 | 8 | 8 | too early |
+| 6 | weather_forecast | 506 | 260/506 | -19.6% | -$489.48 | 9 | 8 | too early |
 | 7 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 8 | coin_flip | 1835 | 901/1835 | -5.6% | -$508.58 | 11 | 2 | yardstick |
+| 8 | coin_flip | 1835 | 901/1835 | -5.6% | -$508.58 | 11 | 10 | yardstick |
 
 What each one does:
 
@@ -45,22 +45,22 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-12 follow_move: Will "The Gospel of Christmas" be the top global Netflix movie this week? -> Yes at 0.522 ($5.00)
-- 2026-11-12 sure_thing: Canisius Golden Griffins vs. Brown Bears -> Brown Bears at 0.904 ($5.00)
-- 2026-11-12 safe_no_week: Will the highest temperature in Hong Kong be 24°C on November 14? -> No at 0.924 ($5.00)
-- 2026-11-12 fade_move: Will "The Gospel of Christmas" be the top global Netflix movie this week? -> No at 0.512 ($5.00)
-- 2026-11-12 sports_underdog: BNP Paribas Nordic Open: Alex Michelsen vs Alejandro Tabilo -> Alejandro Tabilo at 0.239 ($5.00)
-- 2026-11-12 weather_forecast: Will the highest temperature in New York City be between 44-45°F on November 14? -> Yes at 0.125 ($5.00)
+- 2026-11-16 follow_move: Will Elon Musk post 280-299 tweets from November 10 to November 17, 2026? -> Yes at 0.402 ($5.00)
+- 2026-11-16 sure_thing: Exact Score: Namibia 0 - 0 Cameroon? -> No at 0.914 ($5.00)
+- 2026-11-16 safe_no_week: Will the price of Bitcoin be between $68,000 and $70,000 on November 19? -> No at 0.944 ($5.00)
+- 2026-11-16 fade_move: Will S&P 500 (SPY) hit (HIGH) $765 Week of November 16 2026? -> No at 0.610 ($5.00)
+- 2026-11-16 sports_underdog: Counter-Strike: EYEBALLERS vs Teletubisie (BO3) - United21 Playoffs -> Teletubisie at 0.321 ($5.00)
+- 2026-11-16 weather_forecast: Will the highest temperature in Wuhan be 14°C on November 17? -> No at 0.582 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-12 coin_flip: Solana Up or Down - November 13, 8AM ET -> Up at 0.527 ($5.00)
-- 2026-11-12 follow_move: Will NYC Mayor post 20-39 posts from November 6 to November 13, 2026? -> Yes at 0.701 ($5.00)
-- 2026-11-12 sure_thing: Ethereum above 2,040 on November 12, 8AM ET? -> No at 0.972 ($5.00)
-- 2026-11-12 safe_no_week: Will the highest temperature in New York City be between 42-43°F on November 14? -> No at 0.960 ($5.00)
-- 2026-11-12 fade_move: Will NYC Mayor post 20-39 posts from November 6 to November 13, 2026? -> No at 0.373 ($5.00)
+- 2026-11-16 coin_flip: BNB Up or Down - November 17, 3:40AM-3:45AM ET -> Down at 0.527 ($5.00)
+- 2026-11-16 follow_move: S&P 500 (SPX) Up or Down on November 16? -> Up at 0.410 ($5.00)
+- 2026-11-16 sure_thing: Will Tahiti vs. Cook Islands end in a draw? -> No at 0.943 ($5.00)
+- 2026-11-16 safe_no_week: Will Walmart say "Tariff" during earnings call? -> Yes at 0.971 ($5.00)
+- 2026-11-16 fade_move: Will OpenRouter process less than 210T tokens the week of November 16? -> No at 0.689 ($5.00)
 
 ## Price gaps seen today
 
 No near-gaps today.
 
-Runs in the last 24 hours: 37 (37 with a problem).
-Latest problem: events: 7 slice reads failed, Gamma seems down: https://gamma-api.polymarket.com/events?active=true&closed=false&limit=100&offset=0&end_date_min=2026-11-17T21%3A27%3A22Z&end_date_max=2026-11-18T03%3A2
+Runs in the last 24 hours: 38 (38 with a problem).
+Latest problem: 42 position(s) still open more than 3 days after their market ended
