@@ -129,9 +129,16 @@ def check_environment(strict: bool = True, researcher: str | None = None) -> Non
 
 
 class OpenRouterMoney(NamedTuple):
-    left: float  # dollars the bot can still spend on OpenRouter
-    limited_by: str  # "credit" (account balance) or "key limit"
+    left: float  # dollars the bot can still spend on OpenRouter: the lower of the two below
+    credit_left: float | None  # the account's credit, when it could be read
+    key_left: float | None  # left under the key's own limit; None if no limit or unreadable
     bought: float | None  # credit bought in total, when known
+
+    @property
+    def limited_by(self) -> str:
+        if self.key_left is not None and (self.credit_left is None or self.key_left < self.credit_left):
+            return "key limit"
+        return "credit"
 
 
 def openrouter_money_left(get=None) -> OpenRouterMoney | None:
@@ -156,45 +163,48 @@ def openrouter_money_left(get=None) -> OpenRouterMoney | None:
 
     credit = safely(check_keys.read_openrouter_credit)
     key_left = safely(check_keys.read_openrouter_key_left)
-    options = []
-    if credit is not None:
-        options.append((credit[0], "credit"))
-    if key_left is not None:
-        options.append((key_left, "key limit"))
-    if not options:
+    credit_left = credit[0] if credit is not None else None
+    known = [x for x in (credit_left, key_left) if x is not None]
+    if not known:
         logger.warning("Could not read the OpenRouter balance; forecasting as usual.")
         return None
-    left, limited_by = min(options)
-    return OpenRouterMoney(left, limited_by, credit[1] if credit is not None else None)
+    return OpenRouterMoney(min(known), credit_left, key_left, credit[1] if credit is not None else None)
 
 
 def announce_openrouter_money(money: OpenRouterMoney | None, questions_held_back: int) -> None:
     """
-    Explain a credit problem as a GitHub annotation, which the run's page
+    Explain a money problem as a GitHub annotation, which the run's page
     shows at the top: an error when questions were held back, a warning when
-    money is running low. Each annotation must stay on one line.
+    money is running low. It names every fix needed, so fixing one does not
+    leave the next run failing on the other. Each annotation is one line.
     """
     import check_keys
 
     if money is None:
         return
-    left = max(money.left, 0.0)
+    low = check_keys.LOW_CREDIT_USD
+    if not questions_held_back and money.left >= low:
+        return
     if money.limited_by == "key limit":
-        where = "raise the bot key's limit at openrouter.ai under Keys"
-        what = f"Only ${left:.2f} is left under the OpenRouter key's spending limit"
+        what = f"Only ${max(money.key_left, 0.0):.2f} is left under the OpenRouter key's spending limit"
         title = "OpenRouter key limit reached" if questions_held_back else "OpenRouter key limit nearly reached"
     else:
-        where = "add credit at openrouter.ai under Settings > Credits"
         bought = f" (${money.bought:.2f} bought)" if money.bought is not None else ""
-        what = f"Only ${left:.2f} of OpenRouter credit is left{bought}"
+        what = f"Only ${max(money.credit_left, 0.0):.2f} of OpenRouter credit is left{bought}"
         title = "OpenRouter credit used up" if questions_held_back else "OpenRouter credit running low"
+    fixes = []
+    if money.credit_left is not None and money.credit_left < low:
+        fixes.append("add credit at openrouter.ai under Settings > Credits")
+    if money.key_left is not None and money.key_left < low:
+        fixes.append("raise the bot key's limit at openrouter.ai under Keys")
+    fix = " and ".join(fixes)
     if questions_held_back:
         print(
             f"::error title={title}::{what}, too little to forecast, so {questions_held_back} "
-            f"question(s) were not forecast. To fix it, {where}; the next run forecasts the waiting questions."
+            f"question(s) were not forecast. To fix it, {fix}; the next run forecasts the waiting questions."
         )
-    elif money.left < check_keys.LOW_CREDIT_USD:
-        print(f"::warning title={title}::{what}. Soon, {where}.")
+    else:
+        print(f"::warning title={title}::{what}. Soon, {fix}.")
 
 
 def print_startup_banner(run_mode: str, will_publish: bool) -> None:

@@ -79,7 +79,7 @@ def test_key_without_limit_or_unreadable_answers_fall_back(key):
     money = openrouter_money_left(
         _openrouter(credits={"total_credits": 40, "total_usage": 10}, key={"limit": None, "usage": 10})
     )
-    assert money == OpenRouterMoney(30.0, "credit", 40.0)
+    assert money == OpenRouterMoney(30.0, 30.0, None, 40.0) and money.limited_by == "credit"
     # Missing fields are unreadable, not $0.
     assert openrouter_money_left(_openrouter(credits={}, key={})) is None
     assert openrouter_money_left(_openrouter(status=500)) is None
@@ -104,25 +104,32 @@ def _one_line(out):
 
 
 def test_held_back_questions_are_explained_as_a_github_error(capsys):
-    announce_openrouter_money(OpenRouterMoney(0.01, "credit", 10.0), 1)
+    announce_openrouter_money(OpenRouterMoney(0.01, 0.01, 20.01, 10.0), 1)
     line = _one_line(capsys.readouterr().out)
     assert line.startswith("::error title=OpenRouter credit used up::")
     assert "$0.01 of OpenRouter credit" in line and "$10.00 bought" in line
     assert "1 question(s) were not forecast" in line and "Settings > Credits" in line
+    assert "under Keys" not in line  # the key limit is fine
 
 
 def test_key_limit_and_overdrawn_balance_read_plainly(capsys):
-    announce_openrouter_money(OpenRouterMoney(-0.04, "key limit", 40.0), 2)
+    announce_openrouter_money(OpenRouterMoney(-0.04, 9.5, -0.04, 40.0), 2)
     line = _one_line(capsys.readouterr().out)
     assert line.startswith("::error title=OpenRouter key limit reached::")
     assert "$0.00" in line and "$-" not in line
-    assert "under Keys" in line
+    assert "under Keys" in line and "Settings > Credits" not in line
+
+
+def test_both_fixes_are_named_when_both_are_short(capsys):
+    announce_openrouter_money(OpenRouterMoney(0.30, 0.40, 0.30, 10.0), 1)
+    line = _one_line(capsys.readouterr().out)
+    assert "Settings > Credits and raise the bot key's limit" in line
 
 
 def test_low_money_warns_and_enough_is_silent(capsys):
-    announce_openrouter_money(OpenRouterMoney(2.22, "credit", 10.0), 0)
+    announce_openrouter_money(OpenRouterMoney(2.22, 2.22, 20.0, 10.0), 0)
     line = _one_line(capsys.readouterr().out)
     assert line.startswith("::warning title=OpenRouter credit running low::") and "$2.22" in line
-    announce_openrouter_money(OpenRouterMoney(25.0, "credit", 40.0), 0)
+    announce_openrouter_money(OpenRouterMoney(25.0, 25.0, 30.0, 40.0), 0)
     announce_openrouter_money(None, 0)
     assert capsys.readouterr().out == ""

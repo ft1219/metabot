@@ -308,22 +308,88 @@ def test_models_to_call_follow_the_questions_picked():
     ]
 
 
-def test_credit_holds_back_only_what_it_cannot_cover():
-    settings = load_settings({"OPENAI_API_KEY": "sk-test"})  # MiniBench on OpenAI
+
+def _money(*balances):
+    """A stand-in for openrouter_money_left: one balance per read, then the last again."""
+    from bot_helpers import OpenRouterMoney
+
+    reads = []
+
+    def read():
+        left = balances[min(len(reads), len(balances) - 1)]
+        reads.append(left)
+        return None if left is None else OpenRouterMoney(left, left, None, 10.0)
+
+    read.reads = reads
+    return read
+
+
+def _forecast(settings, strong, cheap, read_money):
+    budget = RunBudget(settings.max_cost_per_run_usd, settings.max_llm_calls_per_run)
+    return asyncio.run(
+        main.forecast_chosen(
+            settings,
+            _bot(settings, budget, settings.tournament_forecast_model),
+            _bot(settings, budget),
+            strong,
+            cheap,
+            budget,
+            read_money,
+        )
+    )
+
+
+def test_no_money_means_no_calls_and_a_clear_error(fake_model, capsys):
+    # 15 November 2026: $0.01 left.
+    settings = load_settings({})
+    strong, cheap = _questions(2), _questions(1)
+    reports, not_attempted, held = _forecast(settings, strong, cheap, _money(0.01))
+    assert fake_model["calls"] == 0 and reports == [] and not_attempted == []
+    assert held == strong + cheap
+    out = capsys.readouterr().out
+    assert "::error title=OpenRouter credit used up::" in out
+    assert "3 question(s) were not forecast" in out
+
+
+def test_money_is_read_again_before_each_batch(fake_model):
+    # $2.22 fits two Claude questions at once; after them only $0.50 is left.
+    settings = load_settings({})
+    strong = _questions(5)
+    read = _money(2.22, 0.50)
+    reports, not_attempted, held = _forecast(settings, strong, [], read)
+    assert len(reports) == 2 and held == strong[2:] and not not_attempted
+    assert read.reads == [2.22, 0.50]
+    claude_calls = [k for k in fake_model["kwargs"] if k["model"] == settings.tournament_forecast_model]
+    assert len(claude_calls) == 10
+
+
+def test_minibench_on_openai_runs_while_claude_cannot(fake_model):
+    settings = load_settings({"OPENAI_API_KEY": "sk-test"})
     strong, cheap = _questions(3), _questions(2)
-    # 15 November 2026: $0.01 left. Nothing can even be parsed.
-    groups, held = main.fit_to_openrouter_money(settings, 0.01, strong, cheap)
-    assert [g[0] for g in groups] == [[], []] and held == strong + cheap
-    # $0.60: no Claude question fits, but MiniBench on OpenAI still runs.
-    groups, held = main.fit_to_openrouter_money(settings, 0.60, strong, cheap)
-    assert groups[0][0] == [] and held == strong
-    assert groups[1] == (cheap, 5)
-    # $2.22: the Claude questions run two at a time instead of all at once.
-    groups, held = main.fit_to_openrouter_money(settings, 2.22, strong, cheap)
-    assert held == [] and groups[0] == (strong, 2)
-    # Balance unknown: the usual run.
-    groups, held = main.fit_to_openrouter_money(settings, None, strong, cheap)
-    assert held == [] and groups == [(strong, 5), (cheap, 5)]
+    reports, not_attempted, held = _forecast(settings, strong, cheap, _money(0.60))
+    assert held == strong and len(reports) == 2
+    models = {k["model"] for k in fake_model["kwargs"] if "extra_body" in k}
+    assert models == {OPENAI_FORECAST_MODEL}
+
+
+def test_unreadable_balance_runs_as_usual(fake_model, capsys):
+    settings = load_settings({})
+    reports, not_attempted, held = _forecast(settings, _questions(2), [], _money(None))
+    assert len(reports) == 2 and held == []
+    assert "::" not in capsys.readouterr().out
+
+
+def test_no_balance_read_without_openrouter_models(fake_model):
+    settings = load_settings(
+        {
+            "OPENAI_API_KEY": "sk-test",
+            "TOURNAMENT_FORECAST_MODEL": OPENAI_FORECAST_MODEL,
+            "PARSER_MODEL": "openai/gpt-6-luna",
+        }
+    )
+    read = _money(0.0)
+    reports, not_attempted, held = _forecast(settings, _questions(1), _questions(1), read)
+    assert read.reads == [] and held == [] and len(reports) == 2
 
 
 def test_each_group_runs_at_its_own_batch_size(fake_model, monkeypatch):
@@ -332,16 +398,16 @@ def test_each_group_runs_at_its_own_batch_size(fake_model, monkeypatch):
     sizes = []
     real = main.forecast_in_batches
 
-    async def spy(bot, questions, batch_size, budget):
-        sizes.append(batch_size)
-        return await real(bot, questions, batch_size, budget)
+    async def spy(bot, questions, batch_size, budget, next_batch_size=None):
+        sizes.append(next_batch_size(questions) if next_batch_size else batch_size)
+        return await real(bot, questions, batch_size, budget, lambda rest: sizes[-1])
 
     monkeypatch.setattr(main, "forecast_in_batches", spy)
     questions = _questions(3)
     reports, not_attempted = asyncio.run(
         main.forecast_groups(
             [
-                (_bot(settings, budget, settings.tournament_forecast_model), questions[:2], 1),
+                (_bot(settings, budget, settings.tournament_forecast_model), questions[:2], lambda rest: 1),
                 (_bot(settings, budget), questions[2:]),
             ],
             5,

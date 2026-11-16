@@ -25,10 +25,11 @@ OK, BAD, UNSURE, LOW = "OK", "PROBLEM", "COULD NOT CONFIRM", "RUNNING LOW"
 # Below this much OpenRouter credit the check warns: about a day of main
 # tournament questions on Claude Sonnet 5.5.
 LOW_CREDIT_USD = 5.0
-# Below this not even one main-tournament question can be forecast: see
-# bot_config.question_hold_usd. On 15 November 2026, with less than this left,
-# OpenRouter refused most of each question's forecasts.
-EMPTY_CREDIT_USD = 1.0
+# Below this not even one main-tournament question can be forecast (about
+# $1.05 with Claude Sonnet 5.5): see bot_config.money_needed_for_one_question.
+# On 15 November 2026, with less than this left, OpenRouter refused most of
+# each question's forecasts.
+EMPTY_CREDIT_USD = bot_config.money_needed_for_one_question(bot_config.load_settings({}))
 
 
 def http(url: str, headers: dict, data: bytes | None = None, timeout: float = 20):
@@ -117,6 +118,12 @@ def check_openrouter(key: str | None, get=None) -> tuple[str, str]:
                 return BAD, (
                     f"OPENROUTER_API_KEY has used its whole ${limit:.2f} limit, so the bot cannot run. "
                     "Raise the limit or add credit in OpenRouter."
+                )
+            left = remaining if remaining is not None else limit - usage
+            if left < EMPTY_CREDIT_USD:
+                return BAD, (
+                    f"Only ${left:.2f} is left under OPENROUTER_API_KEY's ${limit:.2f} limit, too little to "
+                    "forecast. Raise the key's limit at openrouter.ai under Keys."
                 )
             return OK, f"OPENROUTER_API_KEY works: ${usage:.2f} used of its ${limit:.2f} limit."
         if status in (401, 403):

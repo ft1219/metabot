@@ -12,6 +12,7 @@ from bot_config import (
     SettingsError,
     batch_size_for_money,
     forecaster_kwargs,
+    money_needed_for_one_question,
     load_settings,
     pick_questions_to_forecast,
     reasoning_kwargs,
@@ -144,9 +145,21 @@ def test_questions_at_once_shrink_to_fit_openrouter_money():
     # DeepSeek holds only cents.
     assert batch_size_for_money(settings, DEFAULT_FORECAST_MODEL, 0.30) == 1
     assert batch_size_for_money(settings, DEFAULT_FORECAST_MODEL, 1.00) == 5
-    # Forecasts on OpenAI need OpenRouter only for parsing.
-    assert batch_size_for_money(settings, OPENAI_FORECAST_MODEL, 0.60) == 5
-    assert batch_size_for_money(settings, OPENAI_FORECAST_MODEL, 0.01) == 0
+    # Forecasts on OpenAI need OpenRouter only for their 5 parse calls.
+    assert batch_size_for_money(settings, OPENAI_FORECAST_MODEL, 0.60) == 3
+    assert batch_size_for_money(settings, OPENAI_FORECAST_MODEL, 0.10) == 0
+    # Any OpenRouter model not known to be cheap is treated like Claude.
+    assert batch_size_for_money(settings, "openrouter/google/gemini-3.7-flash", 0.50) == 0
+    # Nothing on OpenRouter at all: an overdrawn account changes nothing.
+    off = load_settings({"PARSER_MODEL": "openai/gpt-6-luna"})
+    assert batch_size_for_money(off, OPENAI_FORECAST_MODEL, -0.04) == 5
+
+
+def test_money_needed_for_one_question():
+    assert money_needed_for_one_question(load_settings({})) == pytest.approx(1.05)
+    assert money_needed_for_one_question(
+        load_settings({"PREDICTIONS_PER_QUESTION": "3"})
+    ) == pytest.approx(0.65)
 
 
 def _question(name, closes_in_hours, forecasted=False):
