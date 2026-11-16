@@ -1,19 +1,19 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-16 10:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-16 11:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move | 333 | 214/333 | +6.6% | +$109.58 | 11 | 84 | too early |
-| 2 | sure_thing | 1643 | 1527/1643 | -0.5% | -$40.87 | 9 | 27 | too early |
-| 3 | safe_no_week | 660 | 608/660 | -3.9% | -$127.22 | 11 | 114 | too early |
-| 4 | fade_move | 366 | 110/366 | -14.6% | -$266.78 | 11 | 90 | too early |
-| 5 | sports_underdog | 1164 | 266/1164 | -14.9% | -$861.96 | 8 | 16 | too early |
-| 6 | weather_forecast | 506 | 260/506 | -19.6% | -$489.48 | 9 | 24 | too early |
+| 1 | follow_move | 333 | 214/333 | +6.6% | +$109.58 | 11 | 92 | too early |
+| 2 | sure_thing | 1643 | 1527/1643 | -0.5% | -$40.87 | 9 | 35 | too early |
+| 3 | safe_no_week | 660 | 608/660 | -3.9% | -$127.22 | 11 | 122 | too early |
+| 4 | fade_move | 366 | 110/366 | -14.6% | -$266.78 | 11 | 98 | too early |
+| 5 | sports_underdog | 1164 | 266/1164 | -14.9% | -$861.96 | 8 | 19 | too early |
+| 6 | weather_forecast | 506 | 260/506 | -19.6% | -$489.48 | 9 | 32 | too early |
 | 7 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 8 | coin_flip | 1835 | 901/1835 | -5.6% | -$508.58 | 11 | 26 | yardstick |
+| 8 | coin_flip | 1835 | 901/1835 | -5.6% | -$508.58 | 11 | 34 | yardstick |
 
 What each one does:
 
@@ -45,18 +45,18 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-16 follow_move: Will 28+ ships transit the Strait of Hormuz week of November 16? -> No at 0.671 ($5.00)
-- 2026-11-16 sure_thing: Spread: Brazil (-1.5) -> Brazil at 0.925 ($5.00)
-- 2026-11-16 safe_no_week: Will ChatGPT be #2 Free App in the US Apple App Store on November 20? -> No at 0.971 ($5.00)
-- 2026-11-16 fade_move: Will the price of Bitcoin be above $64,000 on November 19? -> Yes at 0.601 ($5.00)
-- 2026-11-16 sports_underdog: Dota 2: Froglings vs Inner Circle (BO3) - DreamLeague Division 2 Playoffs -> Inner Circle at 0.331 ($5.00)
-- 2026-11-16 weather_forecast: Will the lowest temperature in Jeddah be 27°C on November 18? -> No at 0.632 ($5.00)
+- 2026-11-16 follow_move: Will S&P 500 (SPY) hit (HIGH) $760 Week of November 16 2026? -> Yes at 0.610 ($5.00)
+- 2026-11-16 sure_thing: Spread: Magic (-6.5) -> Celtics at 0.905 ($5.00)
+- 2026-11-16 safe_no_week: Will Miranda Lambert win Female Vocalist of the Year at the 2026 CMA Awards? -> No at 0.986 ($5.00)
+- 2026-11-16 fade_move: Will NVIDIA (NVDA) hit (HIGH) $172 Week of November 16 2026? -> Yes at 0.440 ($5.00)
+- 2026-11-16 sports_underdog: Counter-Strike: Omega vs PRIVATE (BO3) - CCT Europe Playoffs -> Omega at 0.290 ($5.00)
+- 2026-11-16 weather_forecast: Will the highest temperature in Madrid be 16°C on November 17? -> No at 0.526 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-16 coin_flip: Spread: Benin (-1.5) -> Central African Republic at 0.632 ($5.00)
-- 2026-11-16 follow_move: Will Donald Trump post 60-79 Truth Social posts from November 13 to November 20, 2026? -> Yes at 0.324 ($5.00)
-- 2026-11-16 sure_thing: Cuba vs. Grenada: O/U 6.5 -> Under at 0.952 ($5.00)
-- 2026-11-16 safe_no_week: Will the highest temperature in Seattle be between 54-55°F on November 17? -> No at 0.971 ($5.00)
-- 2026-11-16 fade_move: Will the price of Bitcoin be above $64,000 on November 18? -> Yes at 0.621 ($5.00)
+- 2026-11-16 coin_flip: AHL: Chicago Wolves vs. Rockford IceHogs -> Rockford IceHogs at 0.527 ($5.00)
+- 2026-11-16 follow_move: Will Robinhood Markets, Inc. (HOOD) hit (HIGH) $82.50 Week of November 16 2026? -> No at 0.836 ($5.00)
+- 2026-11-16 sure_thing: Aruba leading at halftime? -> No at 0.943 ($5.00)
+- 2026-11-16 safe_no_week: Will the price of Ethereum be between $1,500 and $1,600 on November 20? -> No at 0.985 ($5.00)
+- 2026-11-16 fade_move: Will NVIDIA (NVDA) close above $160 on November 16? -> Yes at 0.490 ($5.00)
 
 ## Price gaps seen today
 
