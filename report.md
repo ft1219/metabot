@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-16 08:55 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-16 09:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -63,4 +63,4 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 No near-gaps today.
 
 Runs in the last 24 hours: 37 (37 with a problem).
-Latest problem: events: 7 slice reads failed, Gamma seems down: https://gamma-api.polymarket.com/events?active=true&closed=false&limit=100&offset=0&end_date_min=2026-11-17T20%3A55%3A51Z&end_date_max=2026-11-18T02%3A5
+Latest problem: events: 7 slice reads failed, Gamma seems down: https://gamma-api.polymarket.com/events?active=true&closed=false&limit=100&offset=0&end_date_min=2026-11-17T21%3A27%3A22Z&end_date_max=2026-11-18T03%3A2
