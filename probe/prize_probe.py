@@ -4,7 +4,7 @@ from collections import Counter
 
 TOKEN = os.environ["METACULUS_TOKEN"]
 BASE = "https://www.metaculus.com/api"
-DEADLINE = time.time() + 16 * 60
+DEADLINE = time.time() + 20 * 60
 
 
 def get(path):
@@ -64,16 +64,35 @@ def project(slug_or_id):
     return None
 
 
-def posts(tournament, statuses):
-    out, url = [], f"/posts/?tournaments={tournament}&statuses={statuses}&limit=100&order_by=-open_time"
-    while url:
-        status, body = get(url)
+def posts(tournament, statuses, max_pages=4):
+    out = []
+    for page in range(max_pages):
+        status, body = get(f"/posts/?tournaments={tournament}&statuses={statuses}&limit=100&offset={page*100}&with_cp=true")
         if status != 200 or not isinstance(body, dict):
-            print(f"   posts {tournament} {statuses}: HTTP {status} {str(body)[:120]}", flush=True)
+            print(f"   posts {tournament} {statuses} page {page}: HTTP {status} {str(body)[:120]}", flush=True)
             break
-        out.extend(body.get("results", []))
-        url = body.get("next")
+        res = body.get("results") or []
+        out.extend(res)
+        if len(res) < 100:
+            break
     return out
+
+
+def qs(post):
+    if post.get("group_of_questions"):
+        return post["group_of_questions"].get("questions") or []
+    if post.get("conditional"):
+        return [post["conditional"].get("question_yes") or {}]
+    return [post["question"]] if post.get("question") else []
+
+
+def ts(x):
+    if x is None:
+        return None
+    if isinstance(x, (int, float)):
+        import datetime
+        return datetime.datetime.utcfromtimestamp(x).strftime("%Y-%m-%dT%H:%M")
+    return str(x)[:16]
 
 
 status, me = get("/users/me")
@@ -81,44 +100,29 @@ uid = me.get("id") if isinstance(me, dict) else None
 print(f"== me id={uid}", flush=True)
 
 # 1) FutureEval: full leaderboard + project text (prize rules).
-dump_leaderboard(33121, "FE", uid)
-project("fall-futureeval-2026")
 
-# 2) Question pipeline in FutureEval.
-first_q_keys_printed = False
-for st in ("open", "upcoming", "closed", "resolved"):
-    ps = posts(33121, st)
-    print(f"== FE {st}: {len(ps)} posts", flush=True)
-    weeks = Counter()
-    for p in ps:
-        q = p.get("question") or {}
-        if not first_q_keys_printed and q:
-            print("   question keys:", sorted(q.keys()), flush=True)
-            print("   post keys:", sorted(p.keys()), flush=True)
-            first_q_keys_printed = True
-        ot = (q.get("open_time") or p.get("open_time") or "")[:10]
-        weeks[ot] += 1
-        if st in ("open", "upcoming", "closed"):
-            print(f"Q\t{st}\tpost={p.get('id')}\tq={q.get('id')}\ttype={q.get('type')}\topen={q.get('open_time')}\tclose={q.get('scheduled_close_time')}\t"
-                  f"cp_reveal={q.get('cp_reveal_time')}\tspot={q.get('spot_scoring_time')}\tresolve={q.get('scheduled_resolve_time')}\t"
-                  f"nfc={p.get('nr_forecasters') or q.get('nr_forecasters')}\t{(p.get('title') or '')[:70]}", flush=True)
-    print(f"   {st} by open date:", sorted(weeks.items()), flush=True)
-
-# 3) Does a post detail show our own forecast? (one open + one resolved example)
-for st in ("open", "resolved"):
-    status, body = get(f"/posts/?tournaments=33121&statuses={st}&forecaster_id={uid}&limit=2")
-    if status == 200 and body.get("results"):
-        pid = body["results"][0]["id"]
-        s2, d = get(f"/posts/{pid}/")
-        q = (d or {}).get("question") or {}
-        mf = q.get("my_forecasts")
-        print(f"== detail post {pid} ({st}): my_forecasts keys={sorted(mf.keys()) if isinstance(mf, dict) else mf!r}", flush=True)
-        if isinstance(mf, dict):
-            print("   latest:", json.dumps(mf.get("latest"))[:400], "| score_data:", json.dumps(mf.get("score_data"))[:600], flush=True)
-        agg = (q.get("aggregations") or {})
-        print("   aggregations keys:", sorted(agg.keys()) if isinstance(agg, dict) else agg, flush=True)
-    else:
-        print(f"== forecaster_id filter {st}: HTTP {status} {str(body)[:120]}", flush=True)
+# 2) Question pipeline in FutureEval and MiniBench, with our own forecast times and scores.
+for tour, label in (("33121", "FE"), ("minibench", "MB")):
+    for st in ("open", "closed", "resolved"):
+        ps = posts(tour, st)
+        weeks, n_q, n_mine = Counter(), 0, 0
+        for p in ps:
+            for q in qs(p):
+                n_q += 1
+                mf = q.get("my_forecasts") or {}
+                hist = mf.get("history") or []
+                first = min((h.get("start_time") for h in hist if h.get("start_time")), default=None)
+                last = max((h.get("start_time") for h in hist if h.get("start_time")), default=None)
+                sd = mf.get("score_data") or {}
+                n_mine += bool(hist)
+                weeks[(ts(q.get("open_time")) or "")[:10]] += 1
+                print(f"Q\t{label}\t{st}\tpost={p.get('id')}\tq={q.get('id')}\topen={ts(q.get('open_time'))}\tclose={ts(q.get('scheduled_close_time'))}\t"
+                      f"cp_reveal={ts(q.get('cp_reveal_time'))}\tspot={ts(q.get('spot_scoring_time'))}\tresolve={ts(q.get('scheduled_resolve_time'))}\t"
+                      f"mine_first={ts(first)}\tmine_last={ts(last)}\tn_mine={len(hist)}\tspot_peer={sd.get('spot_peer_score')}\tpeer={sd.get('peer_score')}\t{(p.get('title') or '')[:60]}", flush=True)
+        print(f"== {label} {st}: {len(ps)} posts, {n_q} questions, we forecast {n_mine}; by open date: {sorted(weeks.items())}", flush=True)
+        if ps and st == "open":
+            q0 = qs(ps[0])[0] if qs(ps[0]) else {}
+            print("   question keys:", sorted(q0.keys()), flush=True)
 
 # 4) MiniBench: project info + leaderboards.
 mb = project("minibench")
