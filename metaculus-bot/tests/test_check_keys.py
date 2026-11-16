@@ -119,11 +119,38 @@ def test_openrouter_credit_balance():
     assert verdict == OK and "$22.22 left of $30.00" in message
     verdict, message = check_keys.check_openrouter_credit("k", _credits(10, 7.78))
     assert verdict == LOW and "$2.22" in message
-    verdict, message = check_keys.check_openrouter_credit("k", _credits(10, 9.9))
+    verdict, message = check_keys.check_openrouter_credit("k", _credits(10, 9.99))
     assert verdict == BAD and "used up" in message
+    # Under about $1.05 a question's five parallel calls are refused (15 November 2026).
+    assert check_keys.check_openrouter_credit("k", _credits(10, 8.97))[0] == BAD
+    assert check_keys.check_openrouter_credit("k", _credits(10, 8.9))[0] == LOW
     assert check_keys.check_openrouter_credit("k", _answer(500))[0] == UNSURE
     assert check_keys.check_openrouter_credit("k", _answer(200, {"data": {"total_credits": "x"}}))[0] == UNSURE
     assert check_keys.check_openrouter_credit(None)[0] == UNSURE
+    assert check_keys.read_openrouter_credit("k", _credits(30, 7.5)) == (22.5, 30.0)
+    assert check_keys.read_openrouter_credit("k", _answer(401)) is None
+    # Missing or empty fields are unreadable, not $0.
+    assert check_keys.read_openrouter_credit("k", _answer(200, {"data": {}})) is None
+    assert check_keys.read_openrouter_credit("k", _credits(None, None)) is None
+    assert check_keys.read_openrouter_credit("k", _credits(10, float("nan"))) is None
+    # An overdrawn account reads $0.00, not a negative amount.
+    verdict, message = check_keys.check_openrouter_credit("k", _credits(10, 10.04))
+    assert verdict == BAD and "$0.00 left" in message
+
+
+def test_key_limit_nearly_used_up_is_a_problem():
+    verdict, message = check_keys.check_openrouter(
+        "k", _answer(200, {"data": {"limit": 30, "usage": 29.5, "limit_remaining": 0.5}})
+    )
+    assert verdict == BAD and "$0.50 is left" in message and "under Keys" in message
+
+
+def test_key_limit_left():
+    read = check_keys.read_openrouter_key_left
+    assert read("k", _answer(200, {"data": {"limit": 30, "usage": 9.99, "limit_remaining": 20.01}})) == 20.01
+    assert read("k", _answer(200, {"data": {"limit": 30, "usage": 29.5}})) == 0.5
+    assert read("k", _answer(200, {"data": {"limit": None, "usage": 3}})) is None
+    assert read("k", _answer(401)) is None
 
 
 def test_openai_key_is_optional():

@@ -11,13 +11,16 @@ import dotenv
 from budget import BudgetedLlm, RunBudget
 from bot_config import (
     BotSettings,
+    batch_size_for_money,
     load_settings,
     pick_questions_to_forecast,
     forecaster_kwargs,
 )
 from bot_helpers import (
     check_environment,
+    announce_openrouter_money,
     drop_blank_env_vars,
+    openrouter_money_left,
     print_run_summary_banner,
     print_startup_banner,
     silence_noisy_dependencies,
@@ -788,6 +791,93 @@ def load_questions(
     return strong, [], errors
 
 
+def models_to_call(
+    settings: BotSettings,
+    chosen_strong: list[MetaculusQuestion],
+    chosen_cheap: list[MetaculusQuestion],
+) -> list[str]:
+    """The models this run will call for the questions it picked."""
+    if not (chosen_strong or chosen_cheap):
+        return []
+    models = [settings.parser_model]
+    if chosen_strong:
+        models.append(settings.tournament_forecast_model)
+    if chosen_cheap:
+        models.append(settings.forecast_model)
+    return models
+
+
+class OpenRouterGate:
+    """
+    Before each batch of questions, before its research is paid for, reads
+    what the bot can still spend on OpenRouter and says how many questions
+    fit at once. Questions that do not fit at all are held back for the next
+    run. Reading again before every batch accounts for what earlier batches
+    spent, and judging each group by its own model lets MiniBench on OpenAI
+    run while Claude cannot.
+    """
+
+    def __init__(self, settings: BotSettings, read_money=None):
+        self.settings = settings
+        self.read_money = read_money or openrouter_money_left
+        self.held_back: list[MetaculusQuestion] = []
+        self.money_when_held = None
+        self.lowest_money = None
+
+    def batch_sizer(self, model: str):
+        def next_batch_size(remaining: list[MetaculusQuestion]) -> int:
+            money = self.read_money()
+            if money is not None and (self.lowest_money is None or money.left < self.lowest_money.left):
+                self.lowest_money = money
+            size = batch_size_for_money(self.settings, model, money.left if money else None)
+            if size == 0:
+                self.held_back.extend(remaining)
+                self.money_when_held = self.money_when_held or money
+            return size
+
+        return next_batch_size
+
+    def announce(self) -> None:
+        announce_openrouter_money(self.money_when_held or self.lowest_money, len(self.held_back))
+
+
+async def forecast_chosen(
+    settings: BotSettings,
+    tournament_bot: ForecastBot,
+    other_bot: ForecastBot,
+    chosen_strong: list[MetaculusQuestion],
+    chosen_cheap: list[MetaculusQuestion],
+    budget: RunBudget,
+    read_money=None,
+) -> tuple[list, list[MetaculusQuestion], list[MetaculusQuestion]]:
+    """
+    Forecast the main tournament questions, then MiniBench/Cup, within the
+    run budget and the OpenRouter money left. Returns (reports, questions not
+    attempted because the run budget ran out, questions held back for lack of
+    OpenRouter money).
+    """
+    uses_openrouter = any(
+        m.startswith("openrouter/")
+        for m in models_to_call(settings, chosen_strong, chosen_cheap)
+    )
+    gate = OpenRouterGate(settings, read_money) if uses_openrouter else None
+
+    def sizer(model):
+        return gate.batch_sizer(model) if gate else None
+
+    reports, not_attempted = await forecast_groups(
+        [
+            (tournament_bot, chosen_strong, sizer(settings.tournament_forecast_model)),
+            (other_bot, chosen_cheap, sizer(settings.forecast_model)),
+        ],
+        settings.questions_in_parallel,
+        budget,
+    )
+    if gate:
+        gate.announce()
+    return reports, not_attempted, (gate.held_back if gate else [])
+
+
 def split_by_model(
     chosen: list[MetaculusQuestion], strong: list[MetaculusQuestion]
 ) -> tuple[list[MetaculusQuestion], list[MetaculusQuestion]]:
@@ -804,35 +894,48 @@ async def forecast_in_batches(
     questions: list[MetaculusQuestion],
     batch_size: int,
     budget: RunBudget,
+    next_batch_size=None,
 ) -> tuple[list, list[MetaculusQuestion]]:
     """
     Forecast `batch_size` questions at a time, stopping before the next batch
     once the run budget is spent. Returns (reports, questions not attempted).
+
+    `next_batch_size(remaining questions)`, when given, decides each batch's
+    size instead; 0 stops the group, and it keeps track of the questions left.
     """
     reports: list = []
-    for start in range(0, len(questions), batch_size):
+    start = 0
+    while start < len(questions):
         if budget.exhausted:
             return reports, list(questions[start:])
-        batch = questions[start : start + batch_size]
+        size = batch_size if next_batch_size is None else next_batch_size(list(questions[start:]))
+        if size <= 0:
+            return reports, []
+        batch = questions[start : start + size]
         reports.extend(await bot.forecast_questions(batch, return_exceptions=True))
+        start += size
     return reports, []
 
 
 async def forecast_groups(
-    groups: list[tuple[ForecastBot, list[MetaculusQuestion]]],
+    groups: list[tuple],
     batch_size: int,
     budget: RunBudget,
 ) -> tuple[list, list[MetaculusQuestion]]:
     """
-    Forecast each (bot, questions) group in turn under one shared run budget.
-    Returns (reports, questions not attempted) across all groups.
+    Forecast each (bot, questions) group in turn under one shared run budget,
+    `batch_size` questions at a time. A group may carry a third item, a
+    next_batch_size function for forecast_in_batches. Returns (reports,
+    questions not attempted) across all groups.
     """
     reports: list = []
     not_attempted: list[MetaculusQuestion] = []
-    for bot, questions in groups:
+    for bot, questions, *sizer in groups:
         if not questions:
             continue
-        done, skipped = await forecast_in_batches(bot, questions, batch_size, budget)
+        done, skipped = await forecast_in_batches(
+            bot, questions, batch_size, budget, sizer[0] if sizer else None
+        )
         reports.extend(done)
         not_attempted.extend(skipped)
     return reports, not_attempted
@@ -903,22 +1006,24 @@ if __name__ == "__main__":
 
     # Main tournament questions first: if the budget runs out, MiniBench waits.
     chosen_strong, chosen_cheap = split_by_model(chosen, strong_questions)
-    forecast_reports, not_attempted = asyncio.run(
-        forecast_groups(
-            [(tournament_bot, chosen_strong), (other_bot, chosen_cheap)],
-            settings.questions_in_parallel,
-            budget,
+    # Questions OpenRouter would refuse wait for the next run, before their
+    # research is paid for; the run then shows as failed (which emails the
+    # owner) and its page says why.
+    forecast_reports, not_attempted, held_back = asyncio.run(
+        forecast_chosen(
+            settings, tournament_bot, other_bot, chosen_strong, chosen_cheap, budget
         )
     )
 
-    # raise_errors=False so the summary lines below still print when a question
-    # failed; the exit code at the end reports the failure.
-    tournament_bot.log_report_summary(forecast_reports, raise_errors=False)
-    print_run_summary_banner(
-        forecast_reports,
-        will_publish=publish_to_metaculus,
-        tournament_url=TOURNAMENT_URLS.get(run_mode),
-    )
+    if forecast_reports or not held_back:
+        # raise_errors=False so the summary lines below still print when a
+        # question failed; the exit code at the end reports the failure.
+        tournament_bot.log_report_summary(forecast_reports, raise_errors=False)
+        print_run_summary_banner(
+            forecast_reports,
+            will_publish=publish_to_metaculus,
+            tournament_url=TOURNAMENT_URLS.get(run_mode),
+        )
     print(
         f"💰  AI cost this run: ${budget.spent_usd:.4f} over {budget.calls} call(s) "
         f"(limit ${settings.max_cost_per_run_usd:.2f})"
@@ -939,9 +1044,14 @@ if __name__ == "__main__":
         )
     if deferred:
         print(f"⏭️   {len(deferred)} question(s) left for the next run.")
+    if held_back:
+        print(
+            f"💳  {len(held_back)} question(s) not forecast: too little OpenRouter "
+            "money left. They will be tried on the next run."
+        )
 
     # A failed question makes the GitHub Actions run show as failed, which
     # emails the repository owner. The next run retries it automatically.
     failures = [r for r in forecast_reports if isinstance(r, BaseException)]
-    if failures or load_errors or not_attempted:
+    if failures or load_errors or not_attempted or held_back:
         sys.exit(1)

@@ -10,7 +10,9 @@ from bot_config import (
     DEFAULT_MAX_QUESTIONS_PER_RUN,
     OPENAI_FORECAST_MODEL,
     SettingsError,
+    batch_size_for_money,
     forecaster_kwargs,
+    money_needed_for_one_question,
     load_settings,
     pick_questions_to_forecast,
     reasoning_kwargs,
@@ -128,6 +130,36 @@ def test_other_models_keep_temperature_and_openrouter_reasoning():
         "temperature": 0.3,
         "extra_body": {"reasoning": {"enabled": True}},
     }
+
+
+def test_questions_at_once_shrink_to_fit_openrouter_money():
+    settings = load_settings({})
+    claude = DEFAULT_TOURNAMENT_FORECAST_MODEL
+    # Claude holds about $1 per question (5 calls); $0.05 is kept for parsing.
+    assert batch_size_for_money(settings, claude, None) == 5
+    assert batch_size_for_money(settings, claude, 0.01) == 0
+    assert batch_size_for_money(settings, claude, 1.04) == 0
+    assert batch_size_for_money(settings, claude, 1.05) == 1
+    assert batch_size_for_money(settings, claude, 2.22) == 2
+    assert batch_size_for_money(settings, claude, 40) == 5
+    # DeepSeek holds only cents.
+    assert batch_size_for_money(settings, DEFAULT_FORECAST_MODEL, 0.30) == 1
+    assert batch_size_for_money(settings, DEFAULT_FORECAST_MODEL, 1.00) == 5
+    # Forecasts on OpenAI need OpenRouter only for their 5 parse calls.
+    assert batch_size_for_money(settings, OPENAI_FORECAST_MODEL, 0.60) == 3
+    assert batch_size_for_money(settings, OPENAI_FORECAST_MODEL, 0.10) == 0
+    # Any OpenRouter model not known to be cheap is treated like Claude.
+    assert batch_size_for_money(settings, "openrouter/google/gemini-3.7-flash", 0.50) == 0
+    # Nothing on OpenRouter at all: an overdrawn account changes nothing.
+    off = load_settings({"PARSER_MODEL": "openai/gpt-6-luna"})
+    assert batch_size_for_money(off, OPENAI_FORECAST_MODEL, -0.04) == 5
+
+
+def test_money_needed_for_one_question():
+    assert money_needed_for_one_question(load_settings({})) == pytest.approx(1.05)
+    assert money_needed_for_one_question(
+        load_settings({"PREDICTIONS_PER_QUESTION": "3"})
+    ) == pytest.approx(0.65)
 
 
 def _question(name, closes_in_hours, forecasted=False):
