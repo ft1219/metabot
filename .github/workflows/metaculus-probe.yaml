@@ -10,6 +10,6 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-      - run: python3 -u probe/prize_probe.py
+      - run: python3 -u probe/minibench_history.py
         env:
           METACULUS_TOKEN: ${{ secrets.METACULUS_TOKEN }}
