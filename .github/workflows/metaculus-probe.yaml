@@ -7,12 +7,9 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-      - run: python3 -u probe/openrouter_credits.py
-        env:
-          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-      - run: python3 -u probe/score_report.py
+      - run: python3 -u probe/prize_probe.py
         env:
           METACULUS_TOKEN: ${{ secrets.METACULUS_TOKEN }}
