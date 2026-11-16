@@ -12,7 +12,7 @@ import logging
 import os
 import sys
 import warnings
-from typing import Any, Sequence
+from typing import Any, NamedTuple, Sequence
 
 logger = logging.getLogger(__name__)
 
@@ -128,47 +128,73 @@ def check_environment(strict: bool = True, researcher: str | None = None) -> Non
             sys.exit(1)
 
 
-def openrouter_credit_ok(models: Sequence[str], get=None) -> bool:
-    """
-    Before any question is researched: False when the OpenRouter account has
-    too little credit for a forecast to finish, after printing why as a GitHub
-    error annotation, which the failed run's page shows at the top. Without
-    this the run spent AskNews research on each question, then failed with
-    OpenRouter's message buried in the log.
+class OpenRouterMoney(NamedTuple):
+    left: float  # dollars the bot can still spend on OpenRouter
+    limited_by: str  # "credit" (account balance) or "key limit"
+    bought: float | None  # credit bought in total, when known
 
-    Prints a warning annotation, and returns True, when credit is running low.
-    Returns True whenever the balance cannot be read, so a hiccup at
-    OpenRouter never stops a forecast that might have worked.
-    """
-    import check_keys  # standard library only; imported here to keep startup light
 
-    if not any(m.startswith("openrouter/") for m in models):
-        return True
+def openrouter_money_left(get=None) -> OpenRouterMoney | None:
+    """
+    What the bot can still spend on OpenRouter: the account's credit or the
+    key's own spending limit, whichever is lower. None when neither can be
+    read, so a hiccup at OpenRouter never stops a forecast that might have
+    worked. Never logs or prints the key.
+    """
+    import check_keys  # standard library only
+
     key = (os.getenv("OPENROUTER_API_KEY") or "").strip()
     if not key:
-        return True  # check_environment reports a missing key
-    try:
-        credit = check_keys.read_openrouter_credit(key, get)
-    except Exception as e:
-        credit = None
-        logger.warning(f"Could not check OpenRouter credit ({type(e).__name__}); forecasting anyway.")
-    if credit is None:
-        logger.warning("Could not read the OpenRouter credit balance; forecasting anyway.")
-        return True
-    left, bought = credit
-    if left < check_keys.EMPTY_CREDIT_USD:
+        return None  # check_environment reports a missing key
+
+    def safely(read):
+        try:
+            return read(key, get)
+        except Exception as e:
+            logger.warning(f"Could not read OpenRouter balance ({type(e).__name__}).")
+            return None
+
+    credit = safely(check_keys.read_openrouter_credit)
+    key_left = safely(check_keys.read_openrouter_key_left)
+    options = []
+    if credit is not None:
+        options.append((credit[0], "credit"))
+    if key_left is not None:
+        options.append((key_left, "key limit"))
+    if not options:
+        logger.warning("Could not read the OpenRouter balance; forecasting as usual.")
+        return None
+    left, limited_by = min(options)
+    return OpenRouterMoney(left, limited_by, credit[1] if credit is not None else None)
+
+
+def announce_openrouter_money(money: OpenRouterMoney | None, questions_held_back: int) -> None:
+    """
+    Explain a credit problem as a GitHub annotation, which the run's page
+    shows at the top: an error when questions were held back, a warning when
+    money is running low. Each annotation must stay on one line.
+    """
+    import check_keys
+
+    if money is None:
+        return
+    left = max(money.left, 0.0)
+    if money.limited_by == "key limit":
+        where = "raise the bot key's limit at openrouter.ai under Keys"
+        what = f"Only ${left:.2f} is left under the OpenRouter key's spending limit"
+        title = "OpenRouter key limit reached" if questions_held_back else "OpenRouter key limit nearly reached"
+    else:
+        where = "add credit at openrouter.ai under Settings > Credits"
+        bought = f" (${money.bought:.2f} bought)" if money.bought is not None else ""
+        what = f"Only ${left:.2f} of OpenRouter credit is left{bought}"
+        title = "OpenRouter credit used up" if questions_held_back else "OpenRouter credit running low"
+    if questions_held_back:
         print(
-            f"::error title=OpenRouter credit used up::Only ${left:.2f} of OpenRouter credit is left "
-            f"(${bought:.2f} bought), too little for a forecast to finish, so nothing was forecast. "
-            "Add credit at openrouter.ai under Settings > Credits; the next run forecasts the waiting questions."
+            f"::error title={title}::{what}, too little to forecast, so {questions_held_back} "
+            f"question(s) were not forecast. To fix it, {where}; the next run forecasts the waiting questions."
         )
-        return False
-    if left < check_keys.LOW_CREDIT_USD:
-        print(
-            f"::warning title=OpenRouter credit running low::Only ${left:.2f} of OpenRouter credit is left "
-            f"(${bought:.2f} bought). Add credit soon at openrouter.ai under Settings > Credits."
-        )
-    return True
+    elif money.left < check_keys.LOW_CREDIT_USD:
+        print(f"::warning title={title}::{what}. Soon, {where}.")
 
 
 def print_startup_banner(run_mode: str, will_publish: bool) -> None:

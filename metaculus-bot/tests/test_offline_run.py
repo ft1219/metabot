@@ -306,3 +306,46 @@ def test_models_to_call_follow_the_questions_picked():
         settings.parser_model,
         settings.forecast_model,
     ]
+
+
+def test_credit_holds_back_only_what_it_cannot_cover():
+    settings = load_settings({"OPENAI_API_KEY": "sk-test"})  # MiniBench on OpenAI
+    strong, cheap = _questions(3), _questions(2)
+    # 15 November 2026: $0.01 left. Nothing can even be parsed.
+    groups, held = main.fit_to_openrouter_money(settings, 0.01, strong, cheap)
+    assert [g[0] for g in groups] == [[], []] and held == strong + cheap
+    # $0.60: no Claude question fits, but MiniBench on OpenAI still runs.
+    groups, held = main.fit_to_openrouter_money(settings, 0.60, strong, cheap)
+    assert groups[0][0] == [] and held == strong
+    assert groups[1] == (cheap, 5)
+    # $2.22: the Claude questions run two at a time instead of all at once.
+    groups, held = main.fit_to_openrouter_money(settings, 2.22, strong, cheap)
+    assert held == [] and groups[0] == (strong, 2)
+    # Balance unknown: the usual run.
+    groups, held = main.fit_to_openrouter_money(settings, None, strong, cheap)
+    assert held == [] and groups == [(strong, 5), (cheap, 5)]
+
+
+def test_each_group_runs_at_its_own_batch_size(fake_model, monkeypatch):
+    settings = load_settings({})
+    budget = RunBudget(settings.max_cost_per_run_usd, settings.max_llm_calls_per_run)
+    sizes = []
+    real = main.forecast_in_batches
+
+    async def spy(bot, questions, batch_size, budget):
+        sizes.append(batch_size)
+        return await real(bot, questions, batch_size, budget)
+
+    monkeypatch.setattr(main, "forecast_in_batches", spy)
+    questions = _questions(3)
+    reports, not_attempted = asyncio.run(
+        main.forecast_groups(
+            [
+                (_bot(settings, budget, settings.tournament_forecast_model), questions[:2], 1),
+                (_bot(settings, budget), questions[2:]),
+            ],
+            5,
+            budget,
+        )
+    )
+    assert sizes == [1, 5] and len(reports) == 3 and not not_attempted

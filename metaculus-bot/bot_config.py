@@ -198,6 +198,47 @@ def forecaster_kwargs(settings: BotSettings, model: str | None = None) -> dict:
     return {"temperature": 0.3, **reasoning_kwargs(settings, model)}
 
 
+# While a call runs, OpenRouter holds back its largest possible cost and
+# refuses new calls the remaining credit cannot cover ("This request would
+# exceed your available credits given your current in-flight requests").
+# Claude Sonnet 5.5 with max_tokens 16,000: 16,000 x $10/M output plus a
+# prompt of a few thousand tokens at $2/M, about $0.17; rounded up. DeepSeek
+# V3.2 is about $0.38/M output, a few cents a call even at its largest.
+CLAUDE_CALL_HOLD_USD = 0.20
+OTHER_OPENROUTER_CALL_HOLD_USD = 0.03
+# Kept back for the parser's DeepSeek calls, which turn answers into numbers.
+PARSER_HOLD_USD = 0.05
+
+
+def question_hold_usd(settings: BotSettings, model: str) -> float:
+    """OpenRouter credit that one question's forecasts on `model` hold back at once."""
+    if not model.startswith("openrouter/"):
+        return 0.0
+    per_call = CLAUDE_CALL_HOLD_USD if is_claude(model) else OTHER_OPENROUTER_CALL_HOLD_USD
+    return per_call * settings.predictions_per_question
+
+
+def batch_size_for_money(settings: BotSettings, model: str, money_left: float | None) -> int:
+    """
+    How many questions on `model` to forecast at once with `money_left`
+    dollars to spend on OpenRouter: the usual QUESTIONS_IN_PARALLEL, fewer when
+    their calls together would be refused, and 0 when not even one question's
+    calls fit. None (balance unknown) means the usual number.
+    """
+    usual = settings.questions_in_parallel
+    if money_left is None:
+        return usual
+    parser_hold = PARSER_HOLD_USD if settings.parser_model.startswith("openrouter/") else 0.0
+    spare = money_left - parser_hold
+    if spare < 0:
+        return 0  # the answers could not even be read
+    hold = question_hold_usd(settings, model)
+    if hold == 0:
+        return usual
+    # The small tolerance keeps $1.05 from counting as 0.99999 of a question.
+    return max(0, min(usual, int(spare / hold + 1e-9)))
+
+
 def pick_questions_to_forecast(questions: list, max_questions: int) -> tuple[list, list]:
     """
     Keep questions we have not forecast yet, soonest-closing first, up to
