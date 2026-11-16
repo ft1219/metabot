@@ -88,3 +88,51 @@ def test_a_record_without_a_readable_time_is_passed_on_once():
 def test_an_unreadable_history_point_is_skipped():
     body = {"history": [{"t": 60, "p": 0.5}, {"t": 120, "p": None}, {"t": 180, "p": "0.52"}]}
     assert pmapi.price_history("tok", 0, 200, lambda url, b: body) == [(60, 0.5), (180, 0.52)]
+
+
+class FakeResponse:
+    def __init__(self, body, encoding=None):
+        self.body, self.headers = body, {"Content-Encoding": encoding} if encoding else {}
+
+    def read(self):
+        return self.body
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        return False
+
+
+def test_http_json_asks_for_gzip_and_unpacks_it(monkeypatch):
+    import gzip
+    import json
+
+    seen = []
+
+    def urlopen(request, timeout):
+        seen.append(dict(request.header_items()))
+        return FakeResponse(gzip.compress(json.dumps([{"id": "1"}]).encode()), "gzip")
+
+    monkeypatch.setattr(pmapi.urllib.request, "urlopen", urlopen)
+    assert pmapi.http_json(f"{pmapi.GAMMA}/events?limit=100") == [{"id": "1"}]
+    assert seen[0].get("Accept-encoding") == "gzip"
+
+
+def test_http_json_still_reads_a_plain_answer(monkeypatch):
+    monkeypatch.setattr(pmapi.urllib.request, "urlopen", lambda request, timeout: FakeResponse(b'{"ok": true}'))
+    assert pmapi.http_json(f"{pmapi.CLOB}/book") == {"ok": True}
+
+
+def test_http_json_retries_a_broken_gzip_answer(monkeypatch):
+    calls = []
+
+    def urlopen(request, timeout):
+        calls.append(1)
+        return FakeResponse(b"not gzip at all", "gzip")
+
+    monkeypatch.setattr(pmapi.urllib.request, "urlopen", urlopen)
+    monkeypatch.setattr(pmapi.time, "sleep", lambda s: None)
+    with pytest.raises(pmapi.ApiError):
+        pmapi.http_json(f"{pmapi.GAMMA}/events?limit=100", tries=2)
+    assert len(calls) == 2
