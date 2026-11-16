@@ -1,19 +1,19 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-16 15:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-16 16:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move | 334 | 214/334 | +6.3% | +$104.58 | 11 | 127 | too early |
-| 2 | sure_thing | 1646 | 1528/1646 | -0.6% | -$49.98 | 10 | 79 | too early |
-| 3 | safe_no_week | 662 | 610/662 | -3.8% | -$126.90 | 11 | 168 | too early |
-| 4 | fade_move | 369 | 111/369 | -14.9% | -$274.74 | 11 | 137 | too early |
-| 5 | sports_underdog | 1165 | 266/1165 | -15.0% | -$866.96 | 9 | 49 | too early |
-| 6 | weather_forecast | 506 | 260/506 | -19.6% | -$489.48 | 9 | 80 | too early |
+| 1 | follow_move | 336 | 215/336 | +6.1% | +$102.62 | 11 | 129 | too early |
+| 2 | sure_thing | 1647 | 1529/1647 | -0.6% | -$49.83 | 10 | 86 | too early |
+| 3 | safe_no_week | 668 | 615/668 | -3.9% | -$130.83 | 11 | 170 | too early |
+| 4 | fade_move | 373 | 112/373 | -14.6% | -$271.84 | 11 | 140 | too early |
+| 5 | sports_underdog | 1167 | 266/1167 | -15.1% | -$876.96 | 9 | 55 | too early |
+| 6 | weather_forecast | 506 | 260/506 | -19.6% | -$489.48 | 9 | 88 | too early |
 | 7 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 8 | coin_flip | 1838 | 902/1838 | -5.6% | -$514.10 | 11 | 78 | yardstick |
+| 8 | coin_flip | 1839 | 903/1839 | -5.6% | -$509.62 | 11 | 85 | yardstick |
 
 What each one does:
 
@@ -32,7 +32,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move | sure_thing | safe_no_week | fade_move | sports_underdog | weather_forecast | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|
-| 2026-11-16 | -$12.52 | -$9.11 | +$3.35 | +$2.34 | -$5.00 |  | +$0.08 | -$5.95 |
+| 2026-11-16 | -$14.48 | -$8.97 | -$0.58 | +$5.24 | -$15.00 |  | +$0.08 | -$1.47 |
 | 2026-11-15 | +$17.97 | +$0.34 | -$26.64 | +$30.37 |  | -$0.94 |  | -$47.97 |
 | 2026-11-14 | -$7.86 |  | -$37.34 | +$18.94 |  | -$4.48 |  | -$13.50 |
 | 2026-11-13 | +$81.98 | -$14.31 | -$18.10 | -$172.42 | +$3.98 | -$35.87 |  | -$19.82 |
@@ -45,18 +45,18 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-16 follow_move: Will Rocket Lab USA, Inc. (RKLB) hit (LOW) $58 Week of November 16 2026? -> Yes at 0.855 ($5.00)
-- 2026-11-16 sure_thing: Spread: Scotland (-1.5) -> Switzerland at 0.933 ($5.00)
-- 2026-11-16 safe_no_week: Will Zelenskyy post 20-39 posts from November 13 to November 20, 2026? -> No at 0.986 ($5.00)
-- 2026-11-16 fade_move: Will Micron (MU) close at <$680 on the final day of trading of the week of Nov 16 – Nov 20? -> No at 0.757 ($5.00)
-- 2026-11-16 sports_underdog: Counter-Strike: Leo Team vs Honvéd (BO3) - CCT Europe Group Stage -> Honvéd at 0.310 ($5.00)
-- 2026-11-16 weather_forecast: Will the highest temperature in Wuhan be 16°C on November 18? -> No at 0.720 ($5.00)
+- 2026-11-16 follow_move: Will Micron (MU) finish week of November 16 above $780? -> No at 0.728 ($5.00)
+- 2026-11-16 sure_thing: Rocket Lab (RKLB) Up or Down on November 16? -> Down at 0.923 ($5.00)
+- 2026-11-16 safe_no_week: Will the price of XRP be above $0.80 on November 20? -> Yes at 0.969 ($5.00)
+- 2026-11-16 fade_move: Will Micron (MU) finish week of November 16 above $780? -> Yes at 0.319 ($5.00)
+- 2026-11-16 sports_underdog: Will Cuba win on 2026-11-16? -> No at 0.243 ($5.00)
+- 2026-11-16 weather_forecast: Will the highest temperature in Mexico City be 21°C on November 17? -> No at 0.734 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-16 coin_flip: Georgia to score first vs. Ukraine? -> No at 0.661 ($5.00)
-- 2026-11-16 follow_move: Will the price of Solana be between $60 and $70 on November 17? -> Yes at 0.487 ($5.00)
-- 2026-11-16 sure_thing: East Texas A&M Lions vs. Oregon State Beavers -> Oregon State Beavers at 0.933 ($5.00)
-- 2026-11-16 safe_no_week: Will Jean-Michel Basquiat's “Untitled (Leonardo and His Five Grotesque Heads)” sell for at least $60m at auction? -> No at 0.943 ($5.00)
-- 2026-11-16 fade_move: Will the price of Solana be between $60 and $70 on November 17? -> No at 0.558 ($5.00)
+- 2026-11-16 coin_flip: Hyperliquid Up or Down - November 16, 2:10PM-2:15PM ET -> Up at 0.527 ($5.00)
+- 2026-11-16 follow_move: Will NVIDIA (NVDA) finish week of November 16 above $160? -> No at 0.530 ($5.00)
+- 2026-11-16 sure_thing: Meta (META) Up or Down on November 16? -> Down at 0.952 ($5.00)
+- 2026-11-16 safe_no_week: Will the price of Solana be above $60 on November 21? -> Yes at 0.967 ($5.00)
+- 2026-11-16 fade_move: Will Coinbase Global, Inc. (COIN) hit (HIGH) $140 Week of November 16 2026? -> Yes at 0.149 ($5.00)
 
 ## Price gaps seen today
 
