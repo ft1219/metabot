@@ -24,8 +24,11 @@ OK, BAD, UNSURE, LOW = "OK", "PROBLEM", "COULD NOT CONFIRM", "RUNNING LOW"
 # Below this much OpenRouter credit the check warns: about a day of main
 # tournament questions on Claude Sonnet 5.5.
 LOW_CREDIT_USD = 5.0
-# Below this the bot stops partway through a run.
-EMPTY_CREDIT_USD = 0.5
+# Below this no forecast can finish. OpenRouter holds back each request's
+# largest possible cost while it runs (about $0.17 for Claude Sonnet 5.5 with
+# 16,000 output tokens), and a question sends 5 at once, so with $0.30-0.50
+# left on 15 November 2026 three of the five were refused.
+EMPTY_CREDIT_USD = 1.0
 
 
 def http(url: str, headers: dict, data: bytes | None = None, timeout: float = 20):
@@ -121,23 +124,31 @@ def check_openrouter(key: str | None, get=None) -> tuple[str, str]:
     return UNSURE, f"OpenRouter did not answer normally (HTTP {status})."
 
 
+def read_openrouter_credit(key: str, get=None) -> tuple[float, float] | None:
+    """(credit left, credit bought) in dollars, or None if OpenRouter's answer can't be read."""
+    get = get or http
+    status, body = get("https://openrouter.ai/api/v1/credits", {"Authorization": f"Bearer {key}"})
+    data = body.get("data") if isinstance(body, dict) else None
+    if status != 200 or not isinstance(data, dict):
+        return None
+    try:
+        total, used = float(data.get("total_credits") or 0), float(data.get("total_usage") or 0)
+    except (TypeError, ValueError):
+        return None
+    return total - used, total
+
+
 def check_openrouter_credit(key: str | None, get=None) -> tuple[str, str]:
     """
     The key's limit is not the money: an account with $2 of credit stops
     forecasting long before a $30 key limit is reached.
     """
-    get = get or http
     if not key:
         return UNSURE, "Skipped the OpenRouter credit check because OPENROUTER_API_KEY is missing."
-    status, body = get("https://openrouter.ai/api/v1/credits", {"Authorization": f"Bearer {key}"})
-    data = body.get("data") if isinstance(body, dict) else None
-    if status != 200 or not isinstance(data, dict):
-        return UNSURE, f"Could not read the OpenRouter credit balance (HTTP {status})."
-    try:
-        total, used = float(data.get("total_credits") or 0), float(data.get("total_usage") or 0)
-    except (TypeError, ValueError):
-        return UNSURE, "Could not read the OpenRouter credit balance."
-    left = total - used
+    credit = read_openrouter_credit(key, get)
+    if credit is None:
+        return UNSURE, "Could not read the OpenRouter credit balance. Try again later."
+    left, total = credit
     if left < EMPTY_CREDIT_USD:
         return BAD, (
             f"OpenRouter credit is used up (${left:.2f} left of ${total:.2f} bought), so the bot cannot "

@@ -119,11 +119,15 @@ def test_openrouter_credit_balance():
     assert verdict == OK and "$22.22 left of $30.00" in message
     verdict, message = check_keys.check_openrouter_credit("k", _credits(10, 7.78))
     assert verdict == LOW and "$2.22" in message
-    verdict, message = check_keys.check_openrouter_credit("k", _credits(10, 9.9))
+    verdict, message = check_keys.check_openrouter_credit("k", _credits(10, 9.99))
     assert verdict == BAD and "used up" in message
+    # Under $1 a question's five parallel calls are refused (15 November 2026).
+    assert check_keys.check_openrouter_credit("k", _credits(10, 9.2))[0] == BAD
     assert check_keys.check_openrouter_credit("k", _answer(500))[0] == UNSURE
     assert check_keys.check_openrouter_credit("k", _answer(200, {"data": {"total_credits": "x"}}))[0] == UNSURE
     assert check_keys.check_openrouter_credit(None)[0] == UNSURE
+    assert check_keys.read_openrouter_credit("k", _credits(30, 7.5)) == (22.5, 30.0)
+    assert check_keys.read_openrouter_credit("k", _answer(401)) is None
 
 
 def test_openai_key_is_optional():

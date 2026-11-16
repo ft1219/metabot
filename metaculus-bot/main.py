@@ -18,6 +18,7 @@ from bot_config import (
 from bot_helpers import (
     check_environment,
     drop_blank_env_vars,
+    openrouter_credit_ok,
     print_run_summary_banner,
     print_startup_banner,
     silence_noisy_dependencies,
@@ -788,6 +789,22 @@ def load_questions(
     return strong, [], errors
 
 
+def models_to_call(
+    settings: BotSettings,
+    chosen_strong: list[MetaculusQuestion],
+    chosen_cheap: list[MetaculusQuestion],
+) -> list[str]:
+    """The models this run will call for the questions it picked."""
+    if not (chosen_strong or chosen_cheap):
+        return []
+    models = [settings.parser_model]
+    if chosen_strong:
+        models.append(settings.tournament_forecast_model)
+    if chosen_cheap:
+        models.append(settings.forecast_model)
+    return models
+
+
 def split_by_model(
     chosen: list[MetaculusQuestion], strong: list[MetaculusQuestion]
 ) -> tuple[list[MetaculusQuestion], list[MetaculusQuestion]]:
@@ -903,6 +920,10 @@ if __name__ == "__main__":
 
     # Main tournament questions first: if the budget runs out, MiniBench waits.
     chosen_strong, chosen_cheap = split_by_model(chosen, strong_questions)
+    if not openrouter_credit_ok(models_to_call(settings, chosen_strong, chosen_cheap)):
+        # Before any research is paid for. The run shows as failed, which
+        # emails the owner, and the next run tries the questions again.
+        sys.exit(1)
     forecast_reports, not_attempted = asyncio.run(
         forecast_groups(
             [(tournament_bot, chosen_strong), (other_bot, chosen_cheap)],

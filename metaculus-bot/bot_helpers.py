@@ -14,6 +14,7 @@ import sys
 import warnings
 from typing import Any, Sequence
 
+logger = logging.getLogger(__name__)
 
 # Placeholder values shipped in .env.template. If a real env var still equals
 # one of these the user forgot to replace it; we'd rather fail loudly here than
@@ -125,6 +126,49 @@ def check_environment(strict: bool = True, researcher: str | None = None) -> Non
             print(f"    • {p}")
         if strict:
             sys.exit(1)
+
+
+def openrouter_credit_ok(models: Sequence[str], get=None) -> bool:
+    """
+    Before any question is researched: False when the OpenRouter account has
+    too little credit for a forecast to finish, after printing why as a GitHub
+    error annotation, which the failed run's page shows at the top. Without
+    this the run spent AskNews research on each question, then failed with
+    OpenRouter's message buried in the log.
+
+    Prints a warning annotation, and returns True, when credit is running low.
+    Returns True whenever the balance cannot be read, so a hiccup at
+    OpenRouter never stops a forecast that might have worked.
+    """
+    import check_keys  # standard library only; imported here to keep startup light
+
+    if not any(m.startswith("openrouter/") for m in models):
+        return True
+    key = (os.getenv("OPENROUTER_API_KEY") or "").strip()
+    if not key:
+        return True  # check_environment reports a missing key
+    try:
+        credit = check_keys.read_openrouter_credit(key, get)
+    except Exception as e:
+        credit = None
+        logger.warning(f"Could not check OpenRouter credit ({type(e).__name__}); forecasting anyway.")
+    if credit is None:
+        logger.warning("Could not read the OpenRouter credit balance; forecasting anyway.")
+        return True
+    left, bought = credit
+    if left < check_keys.EMPTY_CREDIT_USD:
+        print(
+            f"::error title=OpenRouter credit used up::Only ${left:.2f} of OpenRouter credit is left "
+            f"(${bought:.2f} bought), too little for a forecast to finish, so nothing was forecast. "
+            "Add credit at openrouter.ai under Settings > Credits; the next run forecasts the waiting questions."
+        )
+        return False
+    if left < check_keys.LOW_CREDIT_USD:
+        print(
+            f"::warning title=OpenRouter credit running low::Only ${left:.2f} of OpenRouter credit is left "
+            f"(${bought:.2f} bought). Add credit soon at openrouter.ai under Settings > Credits."
+        )
+    return True
 
 
 def print_startup_banner(run_mode: str, will_publish: bool) -> None:

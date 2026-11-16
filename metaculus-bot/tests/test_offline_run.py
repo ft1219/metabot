@@ -292,3 +292,17 @@ def test_one_tournament_failing_to_load_does_not_block_the_other():
     questions, errors = main.collect_questions(FakeClient(), [33121, "minibench"])
     assert len(questions) == 2
     assert len(errors) == 1
+
+
+def test_models_to_call_follow_the_questions_picked():
+    settings = load_settings({})
+    strong, cheap = _questions(1), _questions(1)
+    assert main.models_to_call(settings, [], []) == []
+    assert main.models_to_call(settings, strong, []) == [
+        settings.parser_model,
+        settings.tournament_forecast_model,
+    ]
+    assert main.models_to_call(settings, [], cheap) == [
+        settings.parser_model,
+        settings.forecast_model,
+    ]
