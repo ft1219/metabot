@@ -15,14 +15,14 @@ The research behind this plan is in [Trading Bot Plan: What Survived the Stress 
 You only do this once. Nothing here needs any coding.
 
 1. **Metaculus.** Create an account at [metaculus.com](https://www.metaculus.com). Go to your profile → **Settings → My Forecasting Bots → Create a Bot**, and copy the bot's API token. Then fill in the [participation form](https://forms.gle/aQdYMq9Pisrf1v7d8) (3 required questions).
-2. **OpenRouter** (pays for the AI). Create an account at [openrouter.ai](https://openrouter.ai), add $20 of credit, and create a key at [openrouter.ai/keys](https://openrouter.ai/keys) with a **credit limit** of $40-60. That limit is the bot's hard spending cap for the season.
+2. **OpenRouter** (pays for the AI). Create an account at [openrouter.ai](https://openrouter.ai), add $20 of credit, and create a key at [openrouter.ai/keys](https://openrouter.ai/keys). The credit you add is the bot's hard spending cap as long as **Auto Top-Up** stays off; a credit limit on the key is an optional second cap.
 3. **AskNews** (news search, free tier). Create an account at [asknews.app](https://asknews.app) and create API credentials (a client ID and a secret).
 4. **Give the keys to GitHub, not to anyone in chat.** In this repository open **Settings → Secrets and variables → Actions → New repository secret** and add each of these, names exactly as written:
    - `METACULUS_TOKEN`
    - `OPENROUTER_API_KEY`
    - `ASKNEWS_CLIENT_ID` and `ASKNEWS_SECRET` (or `ASKNEWS_API_KEY` if AskNews gives you a single key)
    - Optional: `OPENAI_API_KEY`, an API key from platform.openai.com. When it is set, MiniBench and Metaculus Cup questions use GPT-6 Sol paid from your OpenAI credit instead of DeepSeek.
-5. **Check the keys.** Open the **Actions** tab → **Check my keys** → **Run workflow**. The run's summary says which keys work, which are missing, and whether the OpenRouter key has a spending limit. It never shows the keys themselves.
+5. **Check the keys.** Open the **Actions** tab → **Check my keys** → **Run workflow**. The run's summary says which keys work, which are missing, and how much OpenRouter credit and key limit are left. It never shows the keys themselves.
 6. **Practice run.** Open the **Actions** tab → **Metaculus - test on practice questions** → **Run workflow**. After a few minutes, the run should end with "Bot submitted N forecast(s)". These practice questions don't count for prizes.
 7. **Outside timer.** GitHub's own scheduler never started this workflow on time (since late August 2026 it has been starting scheduled runs hours late or not at all, worst for new repositories), so a free [cron-job.org](https://cron-job.org) account starts it instead:
    - Create a GitHub key with [this pre-filled link](https://github.com/settings/personal-access-tokens/new?name=Bot+timer&expires_in=90&actions=write). Under **Repository access** choose **Only select repositories → trading-bot**, check that **Actions** is **Read and write**, then **Generate token**. Save it as the secret `BOT_TIMER_TOKEN`. It can only manage this repository's Actions runs, not read or change the code.

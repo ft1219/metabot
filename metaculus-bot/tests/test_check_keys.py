@@ -28,9 +28,10 @@ def test_metaculus_rejected_token():
     assert check_keys.check_metaculus("t", _answer(503))[0] == UNSURE
 
 
-def test_openrouter_needs_a_limit():
-    verdict, message = check_keys.check_openrouter("k", _answer(200, {"data": {"limit": None, "usage": 0}}))
-    assert verdict == BAD and "no spending limit" in message
+def test_openrouter_key_limit_is_optional():
+    # 16 November 2026: the owner topped up $50 and removed the key's limit.
+    verdict, message = check_keys.check_openrouter("k", _answer(200, {"data": {"limit": None, "usage": 9.99}}))
+    assert verdict == OK and "no spending limit" in message and "Auto Top-Up off" in message
     verdict, message = check_keys.check_openrouter("k", _answer(200, {"data": {"limit": 40, "usage": 1.5}}))
     assert verdict == OK and "$1.50 used of its $40.00 limit" in message
 
