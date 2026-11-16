@@ -1,19 +1,19 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-16 09:28 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-16 10:25 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move | 333 | 214/333 | +6.6% | +$109.58 | 11 | 68 | too early |
-| 2 | sure_thing | 1643 | 1527/1643 | -0.5% | -$40.87 | 9 | 11 | too early |
-| 3 | safe_no_week | 660 | 608/660 | -3.9% | -$127.22 | 11 | 98 | too early |
-| 4 | fade_move | 366 | 110/366 | -14.6% | -$266.78 | 11 | 74 | too early |
-| 5 | sports_underdog | 1164 | 266/1164 | -14.9% | -$861.96 | 8 | 8 | too early |
-| 6 | weather_forecast | 506 | 260/506 | -19.6% | -$489.48 | 9 | 8 | too early |
+| 1 | follow_move | 333 | 214/333 | +6.6% | +$109.58 | 11 | 76 | too early |
+| 2 | sure_thing | 1643 | 1527/1643 | -0.5% | -$40.87 | 9 | 19 | too early |
+| 3 | safe_no_week | 660 | 608/660 | -3.9% | -$127.22 | 11 | 106 | too early |
+| 4 | fade_move | 366 | 110/366 | -14.6% | -$266.78 | 11 | 82 | too early |
+| 5 | sports_underdog | 1164 | 266/1164 | -14.9% | -$861.96 | 8 | 15 | too early |
+| 6 | weather_forecast | 506 | 260/506 | -19.6% | -$489.48 | 9 | 16 | too early |
 | 7 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 8 | coin_flip | 1835 | 901/1835 | -5.6% | -$508.58 | 11 | 10 | yardstick |
+| 8 | coin_flip | 1835 | 901/1835 | -5.6% | -$508.58 | 11 | 18 | yardstick |
 
 What each one does:
 
@@ -45,18 +45,18 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-16 follow_move: Will Elon Musk post 280-299 tweets from November 10 to November 17, 2026? -> Yes at 0.402 ($5.00)
-- 2026-11-16 sure_thing: Exact Score: Namibia 0 - 0 Cameroon? -> No at 0.914 ($5.00)
-- 2026-11-16 safe_no_week: Will the price of Bitcoin be between $68,000 and $70,000 on November 19? -> No at 0.944 ($5.00)
-- 2026-11-16 fade_move: Will S&P 500 (SPY) hit (HIGH) $765 Week of November 16 2026? -> No at 0.610 ($5.00)
-- 2026-11-16 sports_underdog: Counter-Strike: EYEBALLERS vs Teletubisie (BO3) - United21 Playoffs -> Teletubisie at 0.321 ($5.00)
-- 2026-11-16 weather_forecast: Will the highest temperature in Wuhan be 14°C on November 17? -> No at 0.582 ($5.00)
+- 2026-11-16 follow_move: Will NVIDIA (NVDA) close above $160 on November 16? -> No at 0.574 ($5.00)
+- 2026-11-16 sure_thing: Exact Score: Kazakhstan 0 - 0 Slovakia? -> No at 0.933 ($5.00)
+- 2026-11-16 safe_no_week: Will Microsoft Corporation (MSFT) hit (HIGH) $570 Week of November 16 2026? -> No at 0.942 ($5.00)
+- 2026-11-16 fade_move: Will Microsoft Corporation (MSFT) hit (HIGH) $540 Week of November 16 2026? -> No at 0.480 ($5.00)
+- 2026-11-16 sports_underdog: Spread: Cameroon (-2.5) -> Cameroon at 0.208 ($5.00)
+- 2026-11-16 weather_forecast: Will the highest temperature in Tokyo be 15°C on November 17? -> No at 0.582 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-16 coin_flip: BNB Up or Down - November 17, 3:40AM-3:45AM ET -> Down at 0.527 ($5.00)
-- 2026-11-16 follow_move: S&P 500 (SPX) Up or Down on November 16? -> Up at 0.410 ($5.00)
-- 2026-11-16 sure_thing: Will Tahiti vs. Cook Islands end in a draw? -> No at 0.943 ($5.00)
-- 2026-11-16 safe_no_week: Will Walmart say "Tariff" during earnings call? -> Yes at 0.971 ($5.00)
-- 2026-11-16 fade_move: Will OpenRouter process less than 210T tokens the week of November 16? -> No at 0.689 ($5.00)
+- 2026-11-16 coin_flip: Sabres vs. Flyers: O/U 6.5 -> Over at 0.492 ($5.00)
+- 2026-11-16 follow_move: EWY (EWY) Up or Down on November 16? -> Down at 0.855 ($5.00)
+- 2026-11-16 sure_thing: Lamar Cardinals vs. Texas A&M Aggies (W) -> Texas A&M Aggies at 0.962 ($5.00)
+- 2026-11-16 safe_no_week: Will the highest temperature in Moscow be 3°C on November 18? -> No at 0.933 ($5.00)
+- 2026-11-16 fade_move: Solana Up or Down on November 16? -> Up at 0.433 ($5.00)
 
 ## Price gaps seen today
 
