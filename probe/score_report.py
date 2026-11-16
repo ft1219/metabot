@@ -94,21 +94,32 @@ print(f"== me: id={uid} username={uname}", flush=True)
 
 leaderboard(33121, uid, uname)
 
-# Main tournament: our resolved questions and their peer scores.
-status, body = get(f"/posts/?tournaments=33121&forecaster_id={uid}&statuses=resolved&limit=100")
-if status == 200:
-    res = body.get("results", [])
-    total = 0.0
-    print(f"== main-tournament resolved posts we forecast: {len(res)} (count={body.get('count')})", flush=True)
-    for post in res:
-        q = post.get("question") or {}
-        sd = ((q.get("my_forecasts") or {}).get("score_data")) or {}
-        total += sd.get("peer_score") or 0
-        print(f"   q{q.get('id')} res={q.get('resolution')} peer={round(sd.get('peer_score') or 0, 1)} "
-              f"baseline={round(sd.get('baseline_score') or 0, 1)} | {(post.get('title') or '')[:60]}")
-    print(f"   sum of peer scores: {round(total, 1)}", flush=True)
-else:
-    print("main-tournament posts:", status, str(body)[:150])
+# Main tournament: our resolved questions, their scores and when we forecast them.
+rows, url = [], f"/posts/?tournaments=33121&forecaster_id={uid}&statuses=resolved&limit=100"
+while url:
+    status, body = get(url)
+    if status != 200 or not isinstance(body, dict):
+        print("main-tournament posts:", status, str(body)[:150])
+        break
+    for post in body.get("results", []):
+        for q in [post.get("question")] + [x for x in ((post.get("group_of_questions") or {}).get("questions") or [])]:
+            if not q:
+                continue
+            mf = q.get("my_forecasts") or {}
+            sd = mf.get("score_data") or {}
+            hist = mf.get("history") or []
+            first = min((h.get("start_time") for h in hist if h.get("start_time")), default=None)
+            if not rows:
+                print("   score_data keys:", sorted(sd.keys()), "| history keys:", sorted(hist[0].keys()) if hist else None, flush=True)
+            rows.append((q.get("id"), first, q.get("resolution"), sd, (post.get("title") or "")[:50], q.get("actual_resolve_time") or q.get("resolution_set_time")))
+    url = body.get("next")
+print(f"== main-tournament resolved questions we forecast: {len(rows)}", flush=True)
+for qid, first, res, sd, title, rt in sorted(rows, key=lambda r: str(r[1])):
+    def g(k):
+        v = sd.get(k)
+        return None if v is None else round(v, 1)
+    first_s = first if isinstance(first, str) else (__import__("datetime").datetime.utcfromtimestamp(first).strftime("%Y-%m-%dT%H:%MZ") if first else None)
+    print(f"ROW\t{qid}\t{first_s}\t{res}\tspot_peer={g('spot_peer_score')}\tpeer={g('peer_score')}\tspot_base={g('spot_baseline_score')}\tbase={g('baseline_score')}\t{title}", flush=True)
 
 # MiniBench: find its current project id from one of our MiniBench posts, then its scores and leaderboard.
 status, body = get(f"/posts/?tournaments=minibench&forecaster_id={uid}&statuses=resolved&limit=50")

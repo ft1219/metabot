@@ -13,4 +13,6 @@ jobs:
       - run: python3 -u probe/openrouter_credits.py
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-      - run: python3 -u probe/openrouter_prices.py
+      - run: python3 -u probe/score_report.py
+        env:
+          METACULUS_TOKEN: ${{ secrets.METACULUS_TOKEN }}
