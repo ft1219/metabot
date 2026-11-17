@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Check the Claude API key (free model lookup + one tiny request)
-        run: python3 -u probe/anthropic_key_check.py
+      - name: FutureEval question schedule (read-only)
+        run: python3 -u probe/question_schedule.py
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          METACULUS_TOKEN: ${{ secrets.METACULUS_TOKEN }}
