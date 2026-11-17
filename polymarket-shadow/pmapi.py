@@ -31,7 +31,7 @@ from typing import Any, Callable, Iterable
 CLOB = "https://clob.polymarket.com"
 DATA = "https://data-api.polymarket.com"
 GAMMA = "https://gamma-api.polymarket.com"
-USER_AGENT = "trading-bot-shadow/0.1 (read-only)"
+USER_AGENT = "market-recorder/0.1 (read-only)"
 TRADES_PAGE = 1000
 # At 40-minute polling even the busiest market we track trades far fewer than
 # TRADES_PAGE * TRADES_MAX_PAGES records between runs.

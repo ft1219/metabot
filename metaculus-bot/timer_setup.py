@@ -9,7 +9,9 @@ repositories, while calls to the dispatch endpoint start a run at once.
 Needs secrets BOT_TIMER_TOKEN (fine-grained GitHub token, this repository
 only, Actions: read and write) and CRONJOB_API_KEY (cron-job.org API key).
 Checks the GitHub key by starting one run, and never prints either secret.
-Run it again after replacing an expired BOT_TIMER_TOKEN.
+Run it again after replacing an expired BOT_TIMER_TOKEN, and after renaming
+the repository: the jobs call this repository by its current name, which
+GitHub Actions passes in as GITHUB_REPOSITORY.
 """
 from __future__ import annotations
 
@@ -20,10 +22,13 @@ import time
 import urllib.error
 import urllib.request
 
-REPO = "ft1219/trading-bot"
 WORKFLOW = "metaculus-forecast.yaml"
-DISPATCH_URL = f"https://api.github.com/repos/{REPO}/actions/workflows/{WORKFLOW}/dispatches"
 CRON_API = "https://api.cron-job.org"
+
+
+def workflow_url(repo: str) -> str:
+    return f"https://api.github.com/repos/{repo}/actions/workflows/{WORKFLOW}"
+
 
 # :07 and :47 of even hours, :27 of odd hours (UTC): one run every 40 minutes.
 JOBS = [
@@ -33,7 +38,7 @@ JOBS = [
 
 
 def call(method: str, url: str, token: str, body: dict | None = None, extra: dict | None = None):
-    headers = {"Authorization": f"Bearer {token}", "User-Agent": "trading-bot-timer-setup"}
+    headers = {"Authorization": f"Bearer {token}", "User-Agent": "bot-timer-setup"}
     headers.update(extra or {})
     data = None
     if body is not None:
@@ -50,6 +55,11 @@ def call(method: str, url: str, token: str, body: dict | None = None, extra: dic
 
 
 def main() -> int:
+    repo = os.environ.get("GITHUB_REPOSITORY", "").strip()
+    if not repo:
+        print("::error::GITHUB_REPOSITORY is not set; run this from the GitHub Actions workflow.")
+        return 1
+    dispatch_url = f"{workflow_url(repo)}/dispatches"
     gh_token = os.environ.get("BOT_TIMER_TOKEN", "").strip()
     cron_key = os.environ.get("CRONJOB_API_KEY", "").strip()
     missing = [n for n, v in (("BOT_TIMER_TOKEN", gh_token), ("CRONJOB_API_KEY", cron_key)) if not v]
@@ -60,13 +70,13 @@ def main() -> int:
     gh_extra = {"Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28"}
 
     # 1. The GitHub key can see the workflow and start it.
-    status, body = call("GET", f"https://api.github.com/repos/{REPO}/actions/workflows/{WORKFLOW}", gh_token, extra=gh_extra)
+    status, body = call("GET", workflow_url(repo), gh_token, extra=gh_extra)
     if status != 200:
         print(f"::error::BOT_TIMER_TOKEN cannot read the workflow (HTTP {status}). "
-              "Check it was made for trading-bot with Actions: Read and write.")
+              "Check it was made for this repository with Actions: Read and write.")
         return 1
     print(f"GitHub key can see workflow '{body.get('name')}' (state {body.get('state')}).")
-    status, body = call("POST", DISPATCH_URL, gh_token, body={"ref": "main"}, extra=gh_extra)
+    status, body = call("POST", dispatch_url, gh_token, body={"ref": "main"}, extra=gh_extra)
     if status not in (200, 204):
         print(f"::error::BOT_TIMER_TOKEN cannot start the workflow (HTTP {status}): {body}")
         return 1
@@ -83,7 +93,7 @@ def main() -> int:
     ids = []
     for title, hours, minutes in JOBS:
         job = {
-            "url": DISPATCH_URL,
+            "url": dispatch_url,
             "enabled": True,
             "title": title,
             "saveResponses": False,

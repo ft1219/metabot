@@ -5,6 +5,7 @@ import pytest
 import timer_setup
 
 GH_TOKEN = "github_pat_secret123"
+REPO = "someone/renamed-repo"
 CRON_KEY = "cron-secret456"
 
 
@@ -45,6 +46,7 @@ def apis(monkeypatch):
     fake = FakeApis()
     monkeypatch.setattr(timer_setup, "call", fake)
     monkeypatch.setattr(timer_setup.time, "sleep", lambda s: None)
+    monkeypatch.setenv("GITHUB_REPOSITORY", REPO)
     monkeypatch.setenv("BOT_TIMER_TOKEN", GH_TOKEN)
     monkeypatch.setenv("CRONJOB_API_KEY", CRON_KEY)
     return fake
@@ -63,7 +65,7 @@ def test_creates_both_jobs_that_post_to_the_dispatch_endpoint(apis):
     for job in apis.jobs.values():
         assert job["enabled"] is True
         assert job["requestMethod"] == 1
-        assert job["url"].endswith("/actions/workflows/metaculus-forecast.yaml/dispatches")
+        assert job["url"] == f"https://api.github.com/repos/{REPO}/actions/workflows/metaculus-forecast.yaml/dispatches"
         assert job["extendedData"]["headers"]["Authorization"] == f"Bearer {GH_TOKEN}"
         assert json.loads(job["extendedData"]["body"]) == {"ref": "main"}
         assert job["schedule"]["timezone"] == "UTC"
@@ -95,3 +97,16 @@ def test_a_refused_key_stops_without_creating_jobs(apis, field):
     setattr(apis, field, 403)
     assert timer_setup.main() == 1
     assert apis.jobs == {}
+
+
+def test_uses_the_repository_name_github_passes_in(apis):
+    assert timer_setup.main() == 0
+    github_urls = [url for _, url, _ in apis.calls if "api.github.com" in url]
+    assert github_urls and all(f"/repos/{REPO}/" in url for url in github_urls)
+
+
+def test_missing_repository_name_stops_before_any_call(apis, monkeypatch, capsys):
+    monkeypatch.delenv("GITHUB_REPOSITORY")
+    assert timer_setup.main() == 1
+    assert apis.calls == []
+    assert "GITHUB_REPOSITORY" in capsys.readouterr().out
