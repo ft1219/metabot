@@ -201,7 +201,7 @@ STRATEGIES: dict[str, dict] = {
     "follow_move_2": {"rule": follow_move_2, "active": True, "since": "2026-11-17",
                       "plain": "Same as follow_move, restarted on 17 Nov so it is judged on new trades only"},
     "follow_move_crypto": {"rule": follow_move_crypto, "active": True, "since": "2026-11-17",
-                           "plain": "follow_move, crypto price markets only (from 17 Nov)"},
+                           "plain": "follow_move, Bitcoin, Ethereum, Solana, XRP and Dogecoin markets only (from 17 Nov)"},
     "follow_move_cheap": {"rule": follow_move_cheap, "active": True, "since": "2026-11-17",
                           "plain": "follow_move, only when the side that went up costs 50c or less (from 17 Nov)"},
     "follow_move_big": {"rule": follow_move_big, "active": True, "since": "2026-11-17",
