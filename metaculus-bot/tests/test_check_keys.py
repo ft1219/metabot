@@ -183,19 +183,19 @@ def test_anthropic_key_is_optional():
 
     def get(url, headers, *rest):
         seen.append((url, headers))
-        return 200, {"id": "claude-sonnet-5-5", "type": "model"}
+        return 200, {"id": "claude-fable-5-2", "type": "model"}
 
     verdict, message = check_keys.check_anthropic("sk-ant-k", get)
-    assert verdict == OK and "claude-sonnet-5-5" in message and "sk-ant-k" not in message
+    assert verdict == OK and "claude-fable-5-2" in message and "sk-ant-k" not in message
     # A free lookup of the model, with the Claude API's own headers.
     assert seen == [(
-        "https://api.anthropic.com/v1/models/claude-sonnet-5-5",
+        "https://api.anthropic.com/v1/models/claude-fable-5-2",
         {"x-api-key": "sk-ant-k", "anthropic-version": "2023-06-01"},
     )]
     verdict, message = check_keys.check_anthropic("k", _answer(401))
     assert verdict == BAD and "does not accept ANTHROPIC_API_KEY" in message
     verdict, message = check_keys.check_anthropic("k", _answer(404))
-    assert verdict == BAD and "cannot use claude-sonnet-5-5" in message
+    assert verdict == BAD and "cannot use claude-fable-5-2" in message
     assert check_keys.check_anthropic("k", _answer(None))[0] == UNSURE
     assert check_keys.check_anthropic("k", _answer(529))[0] == UNSURE
 
@@ -212,6 +212,7 @@ def test_anthropic_key_unused_because_of_the_model_variable_is_flagged():
     assert called == []
     # The OpenRouter name of Claude Sonnet 5.5 is moved to the Claude API.
     assert check_keys.check_anthropic("k", get, "openrouter/anthropic/claude-sonnet-5.5")[0] == OK
+    assert called[-1] == "https://api.anthropic.com/v1/models/claude-sonnet-5-5"
     # Another Claude API model is looked up by its own name.
     verdict, message = check_keys.check_anthropic("k", get, "anthropic/claude-opus-5-5")
     assert verdict == OK and called[-1] == "https://api.anthropic.com/v1/models/claude-opus-5-5"

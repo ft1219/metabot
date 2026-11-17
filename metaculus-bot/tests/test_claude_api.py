@@ -26,7 +26,9 @@ from bot_helpers import OpenRouterMoney
 from budget import RunBudget
 
 KEY = "sk-ant-test-key-123"
-CLAUDE_API_MODEL = "anthropic/claude-sonnet-5-5"
+# The default main-tournament model when ANTHROPIC_API_KEY is saved.
+CLAUDE_API_MODEL = "anthropic/claude-fable-5-2"
+SONNET_API_MODEL = "anthropic/claude-sonnet-5-5"
 CLAUDE_ANSWER = "Claude API says... Probability: 37%"
 OPENROUTER_ANSWER = "OpenRouter says... Probability: 41%"
 
@@ -37,7 +39,7 @@ def reply(text=CLAUDE_ANSWER, stop_reason="end_turn", content=None, cache_read=0
         "id": "msg_1",
         "type": "message",
         "role": "assistant",
-        "model": "claude-sonnet-5-5",
+        "model": "claude-fable-5-2",
         "content": blocks if content is None else content,
         "stop_reason": stop_reason,
         "stop_sequence": None,
@@ -76,6 +78,10 @@ def servers(monkeypatch):
         if isinstance(answer, Exception):
             raise answer
         status, body, headers = answer
+        if status == 200:
+            # The real API names the model that was asked for, and litellm
+            # prices the call by it.
+            body = {**body, "model": json.loads(request.content)["model"]}
         return httpx.Response(status, json=body, headers=headers)
 
     def http_client(*args, **kwargs):
@@ -111,8 +117,8 @@ class FakeClock:
         return self.now
 
 
-def _forecaster(clock=None):
-    settings = load_settings({"ANTHROPIC_API_KEY": KEY})
+def _forecaster(clock=None, model=""):
+    settings = load_settings({"ANTHROPIC_API_KEY": KEY, "TOURNAMENT_FORECAST_MODEL": model})
     run_budget = RunBudget(10.0, 100)
     status = claude_api.ClaudeApiStatus(clock) if clock else claude_api.ClaudeApiStatus()
     llm = main.build_llms(settings, run_budget, settings.tournament_forecast_model, status)["default"]
@@ -129,11 +135,12 @@ def test_request_body_has_no_sampling_or_thinking_fields(servers):
     assert request.headers["x-api-key"] == KEY
     assert request.headers["anthropic-version"] == "2023-06-01"
     assert "anthropic-beta" not in request.headers
-    # The whole body: no temperature/top_p/top_k (400 on Claude Sonnet 5.5),
-    # no thinking (left out, Claude thinks adaptively at effort high), no
-    # reasoning or output_config fields from extra_body.
+    # The whole body: no temperature/top_p/top_k (400 on Claude Fable 5.2 and
+    # Sonnet 5.5), no thinking (left out, Claude thinks adaptively), no effort
+    # (high is Fable's default; setting it adds a beta header), no reasoning
+    # or output_config fields from extra_body.
     assert json.loads(request.content) == {
-        "model": "claude-sonnet-5-5",
+        "model": "claude-fable-5-2",
         "messages": [{"role": "user", "content": [{"type": "text", "text": "Will it rain?"}]}],
         "max_tokens": 16000,
     }
@@ -144,8 +151,18 @@ def test_request_body_has_no_sampling_or_thinking_fields(servers):
     assert not {"extra_body", "reasoning_effort", "thinking", "top_p", "top_k"} & set(kwargs)
     assert servers.openrouter_calls == []
     assert status.answered == 1 and status.annotation() is None
-    # 7,000 tokens in at $2/M and 8,000 out at $10/M.
-    assert run_budget.spent_by_provider["Claude API"] == pytest.approx(0.094)
+    # 7,000 tokens in at $8/M and 8,000 out at $40/M.
+    assert run_budget.spent_by_provider["Claude API"] == pytest.approx(0.376)
+
+
+def test_sonnet_can_still_be_chosen_on_the_claude_api(servers):
+    # The TOURNAMENT_FORECAST_MODEL variable set to Sonnet's OpenRouter name.
+    llm, run_budget, status = _forecaster(model=DEFAULT_TOURNAMENT_FORECAST_MODEL)
+    assert asyncio.run(llm.invoke("Will it rain?")) == CLAUDE_ANSWER
+    [body] = servers.bodies()
+    assert body["model"] == "claude-sonnet-5-5" and "output_config" not in body
+    assert "anthropic-beta" not in servers.claude_requests[0].headers
+    assert llm.fallback.model == DEFAULT_TOURNAMENT_FORECAST_MODEL
 
 
 def test_litellm_would_turn_reasoning_effort_into_a_thinking_budget():
@@ -174,18 +191,28 @@ def test_other_claude_api_models_are_asked_for_effort_high(servers):
     }]
 
 
-def test_claude_api_calls_are_priced_without_litellms_downloaded_price_list(servers, monkeypatch):
-    # litellm 1.80's bundled price list has no claude-sonnet-5-5; the newer one
-    # it downloads at start-up does. Our own registration must cover a failed
+@pytest.mark.parametrize(
+    "variable, name, cost",
+    [
+        # 7,000 at $8/M + 1,000 cache reads at $0.20/M + 8,000 out at $40/M.
+        ("", "claude-fable-5-2", 0.3762),
+        # 7,000 at $2/M + 1,000 cache reads at $0.10/M + 8,000 out at $10/M.
+        (DEFAULT_TOURNAMENT_FORECAST_MODEL, "claude-sonnet-5-5", 0.0941),
+    ],
+)
+def test_claude_api_calls_are_priced_without_litellms_downloaded_price_list(
+    servers, monkeypatch, variable, name, cost
+):
+    # litellm 1.80's bundled price list has neither model; the newer one it
+    # downloads at start-up may. Our own registration must cover a failed
     # download, cache reads included.
-    for name in ("claude-sonnet-5-5", CLAUDE_API_MODEL):
-        monkeypatch.delitem(litellm.model_cost, name, raising=False)
+    for key in (name, f"anthropic/{name}"):
+        monkeypatch.delitem(litellm.model_cost, key, raising=False)
     budget.register_extra_prices()
     servers.replies = [reply(cache_read=1000)]
-    llm, run_budget, status = _forecaster()
+    llm, run_budget, status = _forecaster(model=variable)
     asyncio.run(llm.invoke("Will it rain?"))
-    # 7,000 at $2/M + 1,000 cache reads at $0.10/M + 8,000 out at $10/M.
-    assert run_budget.spent_usd == pytest.approx(0.0941)
+    assert run_budget.spent_usd == pytest.approx(cost)
     assert run_budget.calls_without_cost == 0
 
 
@@ -459,7 +486,7 @@ def test_tournament_forecasts_go_to_the_claude_api(servers, monkeypatch):
     assert len(servers.claude_requests) == 10 and servers.openrouter_calls == []
     assert status.answered == 10
     line = run_budget.cost_line()
-    assert line.startswith("AI cost this run: $0.9400 (Claude API $0.9400) over 10 call(s)")
+    assert line.startswith("AI cost this run: $3.7600 (Claude API $3.7600) over 10 call(s)")
 
 
 def test_no_question_is_missed_when_the_claude_api_credit_runs_out(servers, monkeypatch, capsys):

@@ -4,6 +4,7 @@ from types import SimpleNamespace
 import pytest
 
 from bot_config import (
+    CLAUDE_API_TOURNAMENT_MODEL,
     DEFAULT_FORECAST_MODEL,
     DEFAULT_TOURNAMENT_FORECAST_MODEL,
     DEFAULT_MAX_COST_PER_RUN_USD,
@@ -21,6 +22,7 @@ from bot_config import (
 )
 
 CLAUDE_API_MODEL = "anthropic/claude-sonnet-5-5"
+FABLE = "anthropic/claude-fable-5-2"
 
 
 def test_defaults_when_nothing_is_set():
@@ -105,9 +107,13 @@ def test_openai_key_switches_minibench_to_gpt6_sol():
     )
 
 
-def test_anthropic_key_moves_the_main_tournament_to_the_claude_api():
-    assert load_settings({"ANTHROPIC_API_KEY": "sk-ant"}).tournament_forecast_model == CLAUDE_API_MODEL
-    # The repository variable set to the OpenRouter model counts the same.
+def test_anthropic_key_moves_the_main_tournament_to_fable_on_the_claude_api():
+    assert CLAUDE_API_TOURNAMENT_MODEL == FABLE
+    assert load_settings({"ANTHROPIC_API_KEY": "sk-ant"}).tournament_forecast_model == FABLE
+    blank = {"ANTHROPIC_API_KEY": "sk-ant", "TOURNAMENT_FORECAST_MODEL": "  "}
+    assert load_settings(blank).tournament_forecast_model == FABLE
+    # The repository variable set to Sonnet's OpenRouter name goes back to
+    # Sonnet, still on the Claude API.
     explicit = {"ANTHROPIC_API_KEY": "sk-ant", "TOURNAMENT_FORECAST_MODEL": DEFAULT_TOURNAMENT_FORECAST_MODEL}
     assert load_settings(explicit).tournament_forecast_model == CLAUDE_API_MODEL
     # No key, or a blank one (a secret never created): exactly as before.
@@ -124,6 +130,9 @@ def test_anthropic_key_moves_the_main_tournament_to_the_claude_api():
 
 def test_claude_api_models_fall_back_to_their_openrouter_version():
     assert openrouter_twin(CLAUDE_API_MODEL) == DEFAULT_TOURNAMENT_FORECAST_MODEL
+    # Fable's fallback is Sonnet on OpenRouter: Fable there would cost 4 times
+    # as much cash.
+    assert openrouter_twin(FABLE) == DEFAULT_TOURNAMENT_FORECAST_MODEL
     # A Claude API model with no known OpenRouter name still has a fallback.
     assert openrouter_twin("anthropic/claude-opus-5-5") == DEFAULT_TOURNAMENT_FORECAST_MODEL
     assert openrouter_twin(DEFAULT_TOURNAMENT_FORECAST_MODEL) is None
@@ -137,7 +146,13 @@ def test_claude_api_gets_only_the_answer_length():
         "temperature": None,
         "max_tokens": 16000,
     }
-    # Its default effort is high; Opus 5.5's is medium, so it gets high set.
+    # Fable 5.2's default effort is high too, so it gets no effort either:
+    # setting one makes litellm add a beta header.
+    assert forecaster_kwargs(load_settings({}), FABLE) == {
+        "temperature": None,
+        "max_tokens": 16000,
+    }
+    # Their default effort is high; Opus 5.5's is medium, so it gets high set.
     assert forecaster_kwargs(load_settings({}), "anthropic/claude-opus-5-5") == {
         "temperature": None,
         "max_tokens": 16000,
