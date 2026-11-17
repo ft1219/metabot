@@ -4,7 +4,7 @@ Checks the keys saved as GitHub secrets, without printing them.
 Run it from the Actions tab ("Check my keys"). It tells you, in plain words,
 which keys are missing, which ones the services accept, whether the
 OpenRouter key has a spending limit, and how much OpenRouter credit is left.
-Standard library only.
+Each check is a free request. Standard library only.
 """
 from __future__ import annotations
 
@@ -221,6 +221,41 @@ def check_openai(key: str | None, get=None) -> tuple[str, str]:
     return UNSURE, f"OpenAI did not answer normally (HTTP {status}). Try again later."
 
 
+def check_anthropic(key: str | None, get=None) -> tuple[str, str]:
+    """
+    ANTHROPIC_API_KEY is optional: without it the main tournament uses Claude
+    through OpenRouter. Looking the model up is free.
+    """
+    get = get or http
+    if not key:
+        return OK, (
+            "ANTHROPIC_API_KEY is not set, so main-tournament forecasts use Claude through OpenRouter "
+            "(that is fine)."
+        )
+    model = bot_config.CLAUDE_API_VERSIONS[bot_config.DEFAULT_TOURNAMENT_FORECAST_MODEL].split("/", 1)[1]
+    status, _ = get(
+        f"https://api.anthropic.com/v1/models/{model}",
+        {"x-api-key": key, "anthropic-version": "2023-06-01"},
+    )
+    if status == 200:
+        return OK, (
+            f"ANTHROPIC_API_KEY works and can use {model}, so main-tournament forecasts use your Claude API "
+            "credit and move to OpenRouter when it runs out. Keys cannot read the credit balance; see it at "
+            "platform.claude.com."
+        )
+    if status == 401:
+        return BAD, (
+            "The Claude API does not accept ANTHROPIC_API_KEY (until it is fixed, the bot uses OpenRouter). "
+            "Create a new key at platform.claude.com and save it again."
+        )
+    if status in (403, 404):
+        return BAD, (
+            f"ANTHROPIC_API_KEY works but cannot use {model} (HTTP {status}), so the bot uses OpenRouter. "
+            "Check the key's workspace at platform.claude.com, or delete the secret."
+        )
+    return UNSURE, f"The Claude API did not answer normally (HTTP {status}). Try again later."
+
+
 def check_asknews(client_id: str | None, secret: str | None, api_key: str | None, post=None) -> tuple[str, str]:
     post = post or http
     if api_key and not (client_id and secret):
@@ -254,7 +289,7 @@ def main() -> int:
     # The bot trims spaces and line breaks from these too (bot_helpers.drop_blank_env_vars).
     env = {k: (os.getenv(k) or "").strip() or None for k in (
         "METACULUS_TOKEN", "OPENROUTER_API_KEY", "ASKNEWS_CLIENT_ID", "ASKNEWS_SECRET", "ASKNEWS_API_KEY",
-        "OPENAI_API_KEY")}
+        "OPENAI_API_KEY", "ANTHROPIC_API_KEY")}
     researcher = (os.getenv("RESEARCHER") or "").strip() or bot_config.DEFAULT_RESEARCHER
     results = [
         _safely(check_metaculus, env["METACULUS_TOKEN"]),
@@ -262,6 +297,7 @@ def main() -> int:
         _safely(check_openrouter, env["OPENROUTER_API_KEY"]),
         _safely(check_openrouter_credit, env["OPENROUTER_API_KEY"]),
         _safely(check_openai, env["OPENAI_API_KEY"]),
+        _safely(check_anthropic, env["ANTHROPIC_API_KEY"]),
     ]
     if researcher.startswith("asknews/"):
         results.append(_safely(check_asknews, env["ASKNEWS_CLIENT_ID"], env["ASKNEWS_SECRET"], env["ASKNEWS_API_KEY"]))

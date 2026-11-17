@@ -145,6 +145,24 @@ def test_openai_key_moves_minibench_to_gpt6_sol(fake_model):
         assert k.get("temperature") is None
 
 
+def test_cost_line_splits_the_cost_by_provider(fake_model):
+    budget = RunBudget(max_cost_usd=3.0, max_calls=100)
+    budget.record(0.47, "Claude API")
+    budget.record(0.0123, "OpenRouter")
+    budget.record_failure("Claude API")
+    budget.record(0.02, "OpenAI")
+    assert budget.cost_line() == (
+        "AI cost this run: $0.5023 (Claude API $0.4700, OpenRouter $0.0123, OpenAI $0.0200) "
+        "over 4 call(s) (limit $3.00)"
+    )
+    assert RunBudget(3.0, 100).cost_line() == "AI cost this run: $0.0000 over 0 call(s) (limit $3.00)"
+    # Calls through BudgetedLlm are filed under their provider.
+    settings = load_settings({})
+    run_budget = RunBudget(settings.max_cost_per_run_usd, settings.max_llm_calls_per_run)
+    asyncio.run(_bot(settings, run_budget).forecast_questions(_questions(1), return_exceptions=True))
+    assert run_budget.cost_line() == "AI cost this run: $0.0500 (OpenRouter $0.0500) over 5 call(s) (limit $3.00)"
+
+
 def test_gpt6_sol_calls_are_priced():
     cost = litellm.completion_cost(
         model=OPENAI_FORECAST_MODEL, prompt="x" * 400, completion="y" * 400

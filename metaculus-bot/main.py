@@ -9,10 +9,12 @@ import dotenv
 
 # Runtime helpers (env validation, banners, dependency-warning suppression).
 from budget import BudgetedLlm, RunBudget
+from claude_api import ClaudeApiLlm, ClaudeApiStatus
 from bot_config import (
     BotSettings,
     batch_size_for_money,
     load_settings,
+    openrouter_twin,
     pick_questions_to_forecast,
     forecaster_kwargs,
 )
@@ -699,22 +701,48 @@ class FallTemplateBot2026(ForecastBot):
         )
 
 
+def build_forecaster(
+    settings: BotSettings,
+    budget: RunBudget,
+    model: str,
+    claude_api: ClaudeApiStatus | None = None,
+) -> BudgetedLlm:
+    """
+    The model that writes the forecasts. A Claude API model ("anthropic/...")
+    redoes the forecasts it cannot make on its OpenRouter version.
+    """
+    # The timeout caps a whole call, not a silence. DeepSeek V3.2 with
+    # reasoning takes 1.5 to 3 minutes on OpenRouter's cheaper hosts, so 180 s
+    # failed whole questions on 2026-10-19. Metaculus runs its own DeepSeek
+    # V3.2 reasoning bot with 300 s.
+    if model.startswith("anthropic/"):
+        twin = openrouter_twin(model)
+        return ClaudeApiLlm(
+            model=model,
+            budget=budget,
+            timeout=300,
+            status=claude_api or ClaudeApiStatus(),
+            fallback=build_forecaster(settings, budget, twin) if twin else None,
+            **forecaster_kwargs(settings, model),
+        )
+    return BudgetedLlm(
+        model=model,
+        budget=budget,
+        timeout=300,
+        allowed_tries=2,
+        **forecaster_kwargs(settings, model),
+    )
+
+
 def build_llms(
-    settings: BotSettings, budget: RunBudget, forecast_model: str | None = None
+    settings: BotSettings,
+    budget: RunBudget,
+    forecast_model: str | None = None,
+    claude_api: ClaudeApiStatus | None = None,
 ) -> dict[str, str | GeneralLlm]:
     forecast_model = forecast_model or settings.forecast_model
     return {
-        "default": BudgetedLlm(
-            model=forecast_model,
-            budget=budget,
-            # The timeout caps a whole call, not a silence. DeepSeek V3.2 with
-            # reasoning takes 1.5 to 3 minutes on OpenRouter's cheaper hosts,
-            # so 180 s failed whole questions on 2026-10-19. Metaculus runs
-            # its own DeepSeek V3.2 reasoning bot with 300 s.
-            timeout=300,
-            allowed_tries=2,
-            **forecaster_kwargs(settings, forecast_model),
-        ),
+        "default": build_forecaster(settings, budget, forecast_model, claude_api),
         "summarizer": BudgetedLlm(
             model=settings.parser_model, budget=budget, temperature=0.3
         ),
@@ -735,6 +763,7 @@ def make_bot(
     budget: RunBudget,
     publish: bool,
     forecast_model: str | None = None,
+    claude_api: ClaudeApiStatus | None = None,
 ) -> FallTemplateBot2026:
     return FallTemplateBot2026(
         research_reports_per_question=1,
@@ -747,7 +776,7 @@ def make_bot(
         folder_to_save_reports_to=None,
         skip_previously_forecasted_questions=True,
         extra_metadata_in_explanation=True,
-        llms=build_llms(settings, budget, forecast_model),
+        llms=build_llms(settings, budget, forecast_model, claude_api),
     )
 
 
@@ -804,7 +833,8 @@ def models_to_call(
         models.append(settings.tournament_forecast_model)
     if chosen_cheap:
         models.append(settings.forecast_model)
-    return models
+    # A Claude API model's failed forecasts are redone on its OpenRouter version.
+    return models + [twin for twin in map(openrouter_twin, models) if twin]
 
 
 class OpenRouterGate:
@@ -824,12 +854,16 @@ class OpenRouterGate:
         self.money_when_held = None
         self.lowest_money = None
 
-    def batch_sizer(self, model: str):
+    def batch_sizer(self, model):
+        """`model`: the model whose forecasts OpenRouter pays for, or a function
+        that says which it is now (read again before every batch)."""
+
         def next_batch_size(remaining: list[MetaculusQuestion]) -> int:
             money = self.read_money()
             if money is not None and (self.lowest_money is None or money.left < self.lowest_money.left):
                 self.lowest_money = money
-            size = batch_size_for_money(self.settings, model, money.left if money else None)
+            current = model() if callable(model) else model
+            size = batch_size_for_money(self.settings, current, money.left if money else None)
             if size == 0:
                 self.held_back.extend(remaining)
                 self.money_when_held = self.money_when_held or money
@@ -849,6 +883,7 @@ async def forecast_chosen(
     chosen_cheap: list[MetaculusQuestion],
     budget: RunBudget,
     read_money=None,
+    claude_api: ClaudeApiStatus | None = None,
 ) -> tuple[list, list[MetaculusQuestion], list[MetaculusQuestion]]:
     """
     Forecast the main tournament questions, then MiniBench/Cup, within the
@@ -862,8 +897,26 @@ async def forecast_chosen(
     )
     gate = OpenRouterGate(settings, read_money) if uses_openrouter else None
 
+    def paid_on_openrouter(model: str):
+        # The money rule for the Claude API. While it answers, a question on it
+        # needs OpenRouter only for its parse calls (and for any forecast
+        # redone there after a one-off failure), so it is judged like a
+        # forecast made on OpenAI: low OpenRouter money does not hold it back.
+        # Once the Claude API is down for the run (key, credit, access), every
+        # forecast goes to OpenRouter, so the questions still waiting are
+        # judged by the OpenRouter model, exactly as without the key. The gate
+        # asks before every batch, so an outage in one batch counts from the
+        # next.
+        def now() -> str:
+            twin = openrouter_twin(model)
+            if twin and claude_api is not None and claude_api.down_reason:
+                return twin
+            return model
+
+        return now
+
     def sizer(model):
-        return gate.batch_sizer(model) if gate else None
+        return gate.batch_sizer(paid_on_openrouter(model)) if gate else None
 
     reports, not_attempted = await forecast_groups(
         [
@@ -969,6 +1022,8 @@ if __name__ == "__main__":
     print_startup_banner(run_mode, will_publish=publish_to_metaculus)
     logger.info(f"Settings: {settings}")
     budget = RunBudget(settings.max_cost_per_run_usd, settings.max_llm_calls_per_run)
+    # What the Claude API did this run (used when ANTHROPIC_API_KEY is saved).
+    claude_api = ClaudeApiStatus()
 
     # The main tournament gets the stronger model; MiniBench and the Cup keep
     # the cheaper one. Both share the run budget.
@@ -977,8 +1032,11 @@ if __name__ == "__main__":
         budget,
         publish=publish_to_metaculus,
         forecast_model=settings.tournament_forecast_model,
+        claude_api=claude_api,
     )
-    other_bot = make_bot(settings, budget, publish=publish_to_metaculus)
+    other_bot = make_bot(
+        settings, budget, publish=publish_to_metaculus, claude_api=claude_api
+    )
 
     TOURNAMENT_URLS = {
         "tournament": "https://www.metaculus.com/tournament/fall-futureeval-2026/",
@@ -1011,7 +1069,13 @@ if __name__ == "__main__":
     # owner) and its page says why.
     forecast_reports, not_attempted, held_back = asyncio.run(
         forecast_chosen(
-            settings, tournament_bot, other_bot, chosen_strong, chosen_cheap, budget
+            settings,
+            tournament_bot,
+            other_bot,
+            chosen_strong,
+            chosen_cheap,
+            budget,
+            claude_api=claude_api,
         )
     )
 
@@ -1024,10 +1088,12 @@ if __name__ == "__main__":
             will_publish=publish_to_metaculus,
             tournament_url=TOURNAMENT_URLS.get(run_mode),
         )
-    print(
-        f"💰  AI cost this run: ${budget.spent_usd:.4f} over {budget.calls} call(s) "
-        f"(limit ${settings.max_cost_per_run_usd:.2f})"
-    )
+    print(f"💰  {budget.cost_line()}")
+    # The Claude API being down, or some forecasts redone on OpenRouter, shows
+    # as a warning on the run's page; the run still passes if they worked.
+    claude_api_note = claude_api.annotation()
+    if claude_api_note:
+        print(claude_api_note)
     if budget.calls_without_cost:
         print(
             f"⚠️   {budget.calls_without_cost} call(s) had no price; the cost above is too low."

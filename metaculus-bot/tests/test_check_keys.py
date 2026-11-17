@@ -77,6 +77,7 @@ def test_asknews_skipped_when_another_researcher_is_used(capsys, monkeypatch):
     monkeypatch.setattr(check_keys, "check_openrouter", lambda key: (OK, "o"))
     monkeypatch.setattr(check_keys, "check_openrouter_credit", lambda key: (LOW, "c"))
     monkeypatch.setattr(check_keys, "check_openai", lambda key: (OK, "g"))
+    monkeypatch.setattr(check_keys, "check_anthropic", lambda key: (OK, "c2"))
     # Running low is a warning, not a failed check.
     assert check_keys.main() == 0
     assert "AskNews keys are not needed" in capsys.readouterr().out
@@ -93,6 +94,7 @@ def test_one_crashing_check_does_not_hide_the_others(capsys, monkeypatch):
     monkeypatch.setattr(check_keys, "check_openrouter", lambda key: (OK, "o"))
     monkeypatch.setattr(check_keys, "check_openrouter_credit", lambda key: (OK, "c"))
     monkeypatch.setattr(check_keys, "check_openai", lambda key: (OK, "g"))
+    monkeypatch.setattr(check_keys, "check_anthropic", lambda key: (OK, "c2"))
     monkeypatch.setattr(check_keys, "check_asknews", lambda *a: (OK, "a"))
     check_keys.main()
     out = capsys.readouterr().out
@@ -103,12 +105,14 @@ def test_secrets_never_appear_in_output(capsys, monkeypatch):
     monkeypatch.setenv("METACULUS_TOKEN", "secret-token-123")
     monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-secret-456")
     monkeypatch.setenv("OPENAI_API_KEY", "sk-proj-secret-789")
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-secret-000")
     monkeypatch.delenv("GITHUB_STEP_SUMMARY", raising=False)
     monkeypatch.setattr(check_keys, "http", lambda *a, **k: (401, None))
     assert check_keys.main() == 1
     out = capsys.readouterr().out
     assert "secret-token-123" not in out and "sk-or-secret-456" not in out
-    assert "sk-proj-secret-789" not in out
+    assert "sk-proj-secret-789" not in out and "sk-ant-secret-000" not in out
+    assert "does not accept ANTHROPIC_API_KEY" in out
 
 
 def _credits(total, used):
@@ -170,3 +174,37 @@ def test_openai_key_is_optional():
     verdict, message = check_keys.check_openai("k", _answer(404))
     assert verdict == BAD and "cannot use gpt-6-sol" in message
     assert check_keys.check_openai("k", _answer(None))[0] == UNSURE
+
+
+def test_anthropic_key_is_optional():
+    verdict, message = check_keys.check_anthropic(None)
+    assert verdict == OK and "through OpenRouter" in message
+    seen = []
+
+    def get(url, headers, *rest):
+        seen.append((url, headers))
+        return 200, {"id": "claude-sonnet-5-5", "type": "model"}
+
+    verdict, message = check_keys.check_anthropic("sk-ant-k", get)
+    assert verdict == OK and "claude-sonnet-5-5" in message and "sk-ant-k" not in message
+    # A free lookup of the model, with the Claude API's own headers.
+    assert seen == [(
+        "https://api.anthropic.com/v1/models/claude-sonnet-5-5",
+        {"x-api-key": "sk-ant-k", "anthropic-version": "2023-06-01"},
+    )]
+    verdict, message = check_keys.check_anthropic("k", _answer(401))
+    assert verdict == BAD and "does not accept ANTHROPIC_API_KEY" in message
+    verdict, message = check_keys.check_anthropic("k", _answer(404))
+    assert verdict == BAD and "cannot use claude-sonnet-5-5" in message
+    assert check_keys.check_anthropic("k", _answer(None))[0] == UNSURE
+    assert check_keys.check_anthropic("k", _answer(529))[0] == UNSURE
+
+
+def test_unset_anthropic_key_is_not_an_error(capsys, monkeypatch):
+    for k in ("ANTHROPIC_API_KEY", "GITHUB_STEP_SUMMARY"):
+        monkeypatch.delenv(k, raising=False)
+    monkeypatch.setenv("RESEARCHER", "no_research")
+    for name in ("check_metaculus", "check_forecast_data", "check_openrouter", "check_openrouter_credit", "check_openai"):
+        monkeypatch.setattr(check_keys, name, lambda key: (OK, "fine"))
+    assert check_keys.main() == 0
+    assert "ANTHROPIC_API_KEY is not set" in capsys.readouterr().out

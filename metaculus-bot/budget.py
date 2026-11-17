@@ -17,15 +17,23 @@ the OpenRouter key's own limit.
 """
 from __future__ import annotations
 
+from collections import Counter
+
 import litellm
 from forecasting_tools import GeneralLlm
 
-# litellm 1.80 has no prices for these newer models. OpenRouter reports each
-# call's cost itself, but OpenAI does not, so without these the run budget
-# and the "AI cost this run" line would count GPT-6 calls as free.
-# US dollars per million tokens (input, output), from OpenRouter's price list
-# on 2026-11-12, which matches OpenAI's own prices.
+# litellm 1.80 ships no prices for these newer models (it downloads a newer
+# price list at start-up, but that can fail). OpenRouter reports each call's
+# cost itself, but OpenAI and the Claude API do not, so without these the run
+# budget and the "AI cost this run" line would count their calls as free.
+# US dollars per million tokens (input, output). GPT-6 Sol: OpenRouter's price
+# list on 2026-11-12, which matches OpenAI's own prices.
 EXTRA_PRICES_PER_MILLION_TOKENS = {"gpt-6-sol": (2.0, 10.0)}
+# Claude Sonnet 5.5 on the Claude API, from Anthropic's price list: $2 / $10,
+# cache reads $0.10 and (5-minute) cache writes $2.50 per million tokens.
+CLAUDE_API_PRICES_PER_MILLION_TOKENS = {
+    "claude-sonnet-5-5": {"input": 2.0, "output": 10.0, "cache_read": 0.10, "cache_write": 2.50},
+}
 
 
 def register_extra_prices() -> None:
@@ -38,9 +46,27 @@ def register_extra_prices() -> None:
             "supports_reasoning": True,
         }
         litellm.register_model({name: entry, f"openai/{name}": entry})
+    for name, price in CLAUDE_API_PRICES_PER_MILLION_TOKENS.items():
+        entry = {
+            "input_cost_per_token": price["input"] / 1_000_000,
+            "output_cost_per_token": price["output"] / 1_000_000,
+            "cache_read_input_token_cost": price["cache_read"] / 1_000_000,
+            "cache_creation_input_token_cost": price["cache_write"] / 1_000_000,
+            "litellm_provider": "anthropic",
+            "mode": "chat",
+        }
+        litellm.register_model({name: entry, f"anthropic/{name}": entry})
 
 
 register_extra_prices()
+
+# Who bills each call, by the model's prefix, for the cost split in the log.
+PROVIDER_NAMES = {"anthropic": "Claude API", "openrouter": "OpenRouter", "openai": "OpenAI"}
+
+
+def provider_of(model: str) -> str:
+    prefix = model.split("/", 1)[0]
+    return PROVIDER_NAMES.get(prefix, prefix)
 
 
 class RunBudgetExceeded(RuntimeError):
@@ -55,6 +81,10 @@ class RunBudget:
         self.calls = 0
         self.calls_without_cost = 0
         self.failed_calls = 0
+        # Calls and dollars by provider, so the log shows how much of the
+        # Claude API credit a run used and how much OpenRouter paid.
+        self.calls_by_provider: Counter = Counter()
+        self.spent_by_provider: Counter = Counter()
 
     @property
     def exhausted(self) -> bool:
@@ -72,21 +102,42 @@ class RunBudget:
                 "Remaining questions wait for the next run."
             )
 
-    def record(self, cost_usd: float | None) -> None:
+    def record(self, cost_usd: float | None, provider: str = "") -> None:
         self.calls += 1
+        self.calls_by_provider[provider] += 1
         if not cost_usd:
             # litellm could not price the call (unknown model). The call limit
             # still bounds the run.
             self.calls_without_cost += 1
             return
         self.spent_usd += cost_usd
+        self.spent_by_provider[provider] += cost_usd
 
-    def record_failure(self) -> None:
+    def record_failure(self, provider: str = "") -> None:
         # The call was sent but raised (a timeout, or an empty answer that
         # OpenRouter still billed). Its cost is unknown; counting it keeps
         # the call limit honest when a model keeps failing.
         self.calls += 1
         self.failed_calls += 1
+        self.calls_by_provider[provider] += 1
+
+    def cost_line(self) -> str:
+        """
+        "AI cost this run: $0.5200 (Claude API $0.4800, OpenRouter $0.0400)
+        over 30 call(s) (limit $3.00)". Every provider called is listed, even
+        at $0, so a run whose Claude API calls all failed shows it.
+        """
+        order = list(PROVIDER_NAMES.values())
+        providers = sorted(
+            self.calls_by_provider,
+            key=lambda p: (order.index(p) if p in order else len(order), p),
+        )
+        split = ", ".join(f"{p or 'other'} ${self.spent_by_provider[p]:.4f}" for p in providers)
+        return (
+            f"AI cost this run: ${self.spent_usd:.4f}"
+            + (f" ({split})" if split else "")
+            + f" over {self.calls} call(s) (limit ${self.max_cost_usd:.2f})"
+        )
 
 
 class BudgetedLlm(GeneralLlm):
@@ -104,9 +155,9 @@ class BudgetedLlm(GeneralLlm):
         try:
             response = await super()._mockable_direct_call_to_model(prompt)
         except Exception:
-            self._budget.record_failure()
+            self._budget.record_failure(provider_of(self.model))
             raise
         # response.cost is the price litellm attached to this one call; the
         # library's own cost managers count each call twice.
-        self._budget.record(getattr(response, "cost", None))
+        self._budget.record(getattr(response, "cost", None), provider_of(self.model))
         return response
