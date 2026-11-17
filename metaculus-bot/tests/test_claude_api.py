@@ -308,18 +308,15 @@ def test_a_claude_api_that_never_answers_is_stopped_after_a_few_timeouts(servers
 
 
 def test_slow_calls_at_the_end_of_an_answered_batch_do_not_stop_the_claude_api(servers):
-    # A batch's calls run side by side, so its slowest calls time out one
-    # after another just after the others were answered.
+    # A batch's calls start together and run side by side, so its slowest
+    # calls time out one after another just after the others were answered.
+    # The clock stands still here: every call starts at the same moment.
     clock = FakeClock()
     llm, run_budget, status = _forecaster(clock)
     servers.replies = [reply()] * 22 + [httpx.ReadTimeout("no answer in 300 s")] * 3 + [reply()]
-
-    async def batch():
-        return await asyncio.gather(*(llm.invoke(f"q{i}") for i in range(25)))
-
-    answers = asyncio.run(batch())
-    assert sorted(answers) == sorted([CLAUDE_ANSWER] * 22 + [OPENROUTER_ANSWER] * 3)
-    assert status.causes == {"timed out": 3} and status.down_reason is None
+    answers = [asyncio.run(llm.invoke(f"q{i}")) for i in range(25)]
+    assert answers == [CLAUDE_ANSWER] * 22 + [OPENROUTER_ANSWER] * 3
+    assert status.timeouts_in_a_row == 3 and status.down_reason is None
     # The next batch still uses the Claude API.
     clock.now += 300
     assert asyncio.run(llm.invoke("next batch")) == CLAUDE_ANSWER
