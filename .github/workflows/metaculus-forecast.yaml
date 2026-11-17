@@ -54,7 +54,7 @@ jobs:
     # A batch of 5 questions usually takes 3-6 minutes; slow hosts can stretch
     # one to about 15 (two 300 s tries per forecast, then parsing), and to
     # about 20 when the Claude API times out first. After three Claude API
-    # timeouts in a row with no answer for 4 minutes the run sends the rest
+    # timeouts in a row with no answer in between, the run sends the rest
     # straight to OpenRouter.
     timeout-minutes: 40
     permissions:

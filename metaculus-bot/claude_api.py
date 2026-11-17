@@ -12,9 +12,9 @@ a question:
 - a timeout, a refusal by Claude's safety classifiers or an empty answer goes
   to OpenRouter at once;
 - a problem with the account (key missing or rejected, credit used up, spend
-  limit reached, model not available), or timeouts in a row with no answer for
-  several minutes (the Claude API hangs), also stops the Claude API for the
-  rest of the run, so later forecasts go straight to OpenRouter.
+  limit reached, model not available), or timeouts in a row with no answer
+  since those calls started (the Claude API hangs), also stops the Claude API
+  for the rest of the run, so later forecasts go straight to OpenRouter.
 
 At the end of the run ClaudeApiStatus.annotation() says, in one GitHub
 annotation line, what went to OpenRouter and why.
@@ -39,17 +39,14 @@ logger = logging.getLogger(__name__)
 # meet the Claude API's ramp limit, which clears within seconds.
 CLAUDE_API_TRIES = 3
 LONGEST_PAUSE_SECONDS = 60
-# The run stops using the Claude API after this many timeouts in a row (no
-# answer in between) when it has also not answered for QUIET_SECONDS_BEFORE_DOWN.
-# A timed-out forecast waits 300 s before its OpenRouter tries, so a Claude API
-# that hangs must not do that to every batch: the 40-minute job would run out
-# of time. The quiet time matters because a batch's calls run side by side:
-# its slowest calls finish last, so a few timeouts at the end of a batch that
-# was otherwise answered come one after another without meaning it hangs. A
-# call times out 300 s after it started, so an answer within the last 240 s
-# came while those calls were waiting.
+# The run stops using the Claude API after this many timeouts in a row when
+# no answer has come back since those calls started. A timed-out forecast
+# waits 300 s before its OpenRouter tries, so a Claude API that hangs must not
+# do that to every batch: the 40-minute job would run out of time. A batch's
+# calls run side by side, so its slowest calls finish last: a few timeouts at
+# the end of a batch that was otherwise answered come one after another, but
+# answers came while they were waiting, so they do not mean it hangs.
 TIMEOUTS_BEFORE_DOWN = 3
-QUIET_SECONDS_BEFORE_DOWN = 240
 TIMED_OUT = "timed out"
 
 DOWN, BUSY, FAILED = "down", "busy", "failed"
@@ -163,25 +160,27 @@ class ClaudeApiStatus:
         self.timeouts_in_a_row = 0
         self._last_answer_at = self._clock()
 
-    def _quiet_for_a_while(self) -> bool:
-        return (
-            self._last_answer_at is None
-            or self._clock() - self._last_answer_at >= QUIET_SECONDS_BEFORE_DOWN
-        )
+    def started(self) -> float:
+        """When a call starts, for note_failure."""
+        return self._clock()
 
-    def note_failure(self, error: Exception) -> str:
+    def _no_answer_since(self, started_at: float | None) -> bool:
+        if self._last_answer_at is None:
+            return True
+        return started_at is not None and self._last_answer_at < started_at
+
+    def note_failure(self, error: Exception, started_at: float | None = None) -> str:
         kind, why = classify(error)
         if why == TIMED_OUT:
             self.timeouts_in_a_row += 1
             if (
                 self.timeouts_in_a_row >= TIMEOUTS_BEFORE_DOWN
                 and self.down_reason is None
-                and self._quiet_for_a_while()
+                and self._no_answer_since(started_at)
             ):
                 self.down_reason = (
-                    f"The Claude API timed out {self.timeouts_in_a_row} times in a row and has not "
-                    f"answered for {QUIET_SECONDS_BEFORE_DOWN // 60} minutes; "
-                    "using OpenRouter for the rest of this run"
+                    f"The Claude API timed out {self.timeouts_in_a_row} times in a row with no answer "
+                    "in between; using OpenRouter for the rest of this run"
                 )
         if kind == DOWN and self.down_reason is None:
             self.down_reason = why
@@ -239,12 +238,13 @@ class ClaudeApiLlm(BudgetedLlm):
         if self.fallback is None:
             return await self._invoke_on_claude_api(prompt, system_prompt)
         if self.status.down_reason is None:
+            started_at = self.status.started()
             try:
                 return await self._invoke_on_claude_api(prompt, system_prompt)
             except RunBudgetExceeded:
                 raise
             except Exception as e:
-                why = self.status.note_failure(e)
+                why = self.status.note_failure(e, started_at)
                 logger.warning(
                     f"The Claude API could not make this forecast ({why}); "
                     f"redoing it on {self.fallback.model}."

@@ -313,14 +313,36 @@ def test_slow_calls_at_the_end_of_an_answered_batch_do_not_stop_the_claude_api(s
     clock = FakeClock()
     llm, run_budget, status = _forecaster(clock)
     servers.replies = [reply()] * 22 + [httpx.ReadTimeout("no answer in 300 s")] * 3 + [reply()]
-    answers = [asyncio.run(llm.invoke(f"q{i}")) for i in range(22)]
-    clock.now += 200
-    answers += [asyncio.run(llm.invoke(f"q{i}")) for i in range(22, 25)]
-    assert answers == [CLAUDE_ANSWER] * 22 + [OPENROUTER_ANSWER] * 3
-    assert status.down_reason is None
+
+    async def batch():
+        return await asyncio.gather(*(llm.invoke(f"q{i}") for i in range(25)))
+
+    answers = asyncio.run(batch())
+    assert sorted(answers) == sorted([CLAUDE_ANSWER] * 22 + [OPENROUTER_ANSWER] * 3)
+    assert status.causes == {"timed out": 3} and status.down_reason is None
     # The next batch still uses the Claude API.
+    clock.now += 300
     assert asyncio.run(llm.invoke("next batch")) == CLAUDE_ANSWER
     assert status.annotation().startswith("::warning title=Some forecasts used OpenRouter::")
+
+
+def test_only_timeouts_with_no_answer_since_they_started_stop_the_claude_api():
+    clock = FakeClock()
+    status = claude_api.ClaudeApiStatus(clock)
+    timeout = litellm.Timeout("no answer in 300 s", model=CLAUDE_API_MODEL, llm_provider="anthropic")
+    slow_started = status.started()  # t = 1000
+    clock.now = 1050
+    status.note_answer()  # another call of the batch answers while the slow ones wait
+    clock.now = 1300
+    for _ in range(claude_api.TIMEOUTS_BEFORE_DOWN):
+        status.note_failure(timeout, slow_started)
+    assert status.down_reason is None
+    # Calls that started after the last answer and all timed out: it hangs.
+    hung_started = 1100
+    clock.now = 1400
+    for _ in range(claude_api.TIMEOUTS_BEFORE_DOWN):
+        status.note_failure(timeout, hung_started)
+    assert "timed out" in status.down_reason and "no answer in between" in status.down_reason
 
 
 @pytest.mark.parametrize(
@@ -514,4 +536,14 @@ def test_models_to_call_include_the_openrouter_fallback():
         settings.parser_model,
         CLAUDE_API_MODEL,
         DEFAULT_TOURNAMENT_FORECAST_MODEL,
+    ]
+
+
+def test_a_claude_api_parser_adds_no_openrouter_fallback():
+    # The parser has no fallback, so a Claude API parser must not make the
+    # run read the OpenRouter balance for a model it never calls.
+    settings = load_settings({"PARSER_MODEL": "anthropic/claude-haiku-4-5", "OPENAI_API_KEY": "k"})
+    assert main.models_to_call(settings, [], _questions(1)) == [
+        "anthropic/claude-haiku-4-5",
+        settings.forecast_model,
     ]

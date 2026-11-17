@@ -830,13 +830,15 @@ def models_to_call(
     """The models this run will call for the questions it picked."""
     if not (chosen_strong or chosen_cheap):
         return []
-    models = [settings.parser_model]
+    forecasters = []
     if chosen_strong:
-        models.append(settings.tournament_forecast_model)
+        forecasters.append(settings.tournament_forecast_model)
     if chosen_cheap:
-        models.append(settings.forecast_model)
-    # A Claude API model's failed forecasts are redone on its OpenRouter version.
-    return models + [twin for twin in map(openrouter_twin, models) if twin]
+        forecasters.append(settings.forecast_model)
+    # A Claude API forecaster's failed forecasts are redone on OpenRouter (the
+    # parser has no such fallback, so it adds none).
+    twins = [twin for twin in map(openrouter_twin, forecasters) if twin]
+    return [settings.parser_model] + forecasters + twins
 
 
 class OpenRouterGate:
