@@ -1,4 +1,4 @@
-# trading-bot
+# Forecasting bots
 
 Automated bots that try to earn money from forecasting and markets, built step by step and tested before any real money is used.
 
@@ -26,7 +26,7 @@ You only do this once. Nothing here needs any coding.
 5. **Check the keys.** Open the **Actions** tab → **Check my keys** → **Run workflow**. The run's summary says which keys work, which are missing, whether the Claude API key is used, and how much OpenRouter credit and key limit are left. It never shows the keys themselves.
 6. **Practice run.** Open the **Actions** tab → **Metaculus - test on practice questions** → **Run workflow**. After a few minutes, the run should end with "Bot submitted N forecast(s)". These practice questions don't count for prizes.
 7. **Outside timer.** GitHub's own scheduler never started this workflow on time (since late August 2026 it has been starting scheduled runs hours late or not at all, worst for new repositories), so a free [cron-job.org](https://cron-job.org) account starts it instead:
-   - Create a GitHub key with [this pre-filled link](https://github.com/settings/personal-access-tokens/new?name=Bot+timer&expires_in=90&actions=write). Under **Repository access** choose **Only select repositories → trading-bot**, check that **Actions** is **Read and write**, then **Generate token**. Save it as the secret `BOT_TIMER_TOKEN`. It can only manage this repository's Actions runs, not read or change the code.
+   - Create a GitHub key with [this pre-filled link](https://github.com/settings/personal-access-tokens/new?name=Bot+timer&expires_in=90&actions=write). Under **Repository access** choose **Only select repositories →** this repository, check that **Actions** is **Read and write**, then **Generate token**. Save it as the secret `BOT_TIMER_TOKEN`. It can only manage this repository's Actions runs, not read or change the code.
    - Create a cron-job.org account, then an API key under **Settings** in its console (no IP limit). Save it as the secret `CRONJOB_API_KEY`.
    - Open the **Actions** tab → **Metaculus - set up the outside timer** → **Run workflow**. It checks the GitHub key by starting one run, then creates two cron-job.org jobs that start **Bots - every 40 minutes** every 40 minutes, and prints their next run times.
 
