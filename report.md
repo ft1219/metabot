@@ -1,19 +1,19 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-17 01:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-17 02:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move | 377 | 243/377 | +6.5% | +$123.21 | 12 | 118 | too early |
-| 2 | sure_thing | 1711 | 1590/1711 | -0.5% | -$42.77 | 11 | 134 | too early |
-| 3 | safe_no_week | 691 | 635/691 | -4.1% | -$141.27 | 11 | 235 | too early |
-| 4 | sports_underdog | 1243 | 288/1243 | -14.2% | -$875.75 | 10 | 45 | too early |
-| 5 | fade_move | 416 | 123/416 | -14.8% | -$307.58 | 12 | 126 | too early |
-| 6 | weather_forecast | 506 | 260/506 | -19.6% | -$489.48 | 9 | 100 | too early |
+| 1 | follow_move | 377 | 243/377 | +6.5% | +$123.21 | 12 | 121 | too early |
+| 2 | sure_thing | 1712 | 1591/1712 | -0.5% | -$42.57 | 11 | 141 | too early |
+| 3 | safe_no_week | 691 | 635/691 | -4.1% | -$141.27 | 11 | 236 | too early |
+| 4 | sports_underdog | 1244 | 289/1244 | -14.0% | -$863.51 | 10 | 47 | too early |
+| 5 | fade_move | 416 | 123/416 | -14.8% | -$307.58 | 12 | 128 | too early |
+| 6 | weather_forecast | 506 | 260/506 | -19.6% | -$489.48 | 9 | 101 | too early |
 | 7 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 8 | coin_flip | 1881 | 920/1881 | -6.0% | -$559.96 | 12 | 155 | yardstick |
+| 8 | coin_flip | 1887 | 922/1887 | -6.1% | -$571.00 | 12 | 157 | yardstick |
 
 What each one does:
 
@@ -32,7 +32,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move | sure_thing | safe_no_week | sports_underdog | fade_move | weather_forecast | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|
-| 2026-11-17 | -$5.46 | +$4.50 |  | -$35.72 | -$13.04 |  |  | -$30.52 |
+| 2026-11-17 | -$5.46 | +$4.70 |  | -$23.49 | -$13.04 |  |  | -$41.56 |
 | 2026-11-16 | +$11.58 | -$6.40 | -$11.02 | +$21.94 | -$17.46 |  | +$0.08 | -$21.29 |
 | 2026-11-15 | +$17.97 | +$0.34 | -$26.64 |  | +$30.37 | -$0.94 |  | -$47.97 |
 | 2026-11-14 | -$7.86 |  | -$37.34 |  | +$18.94 | -$4.48 |  | -$13.50 |
@@ -45,18 +45,18 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-17 follow_move: Will SpaceX (SPCX) hit (HIGH) $142.50 Week of November 16 2026? -> No at 0.370 ($5.00)
-- 2026-11-17 sure_thing: Spread: Guinea-Bissau (-3.5) -> Madagascar at 0.933 ($5.00)
-- 2026-11-17 safe_no_week: Will Chromagraph Camera be #1 Paid App in the US Apple App Store on November 20? -> No at 0.981 ($5.00)
-- 2026-11-17 sports_underdog: Sydney: Kokoro Isomura vs Sebastian Gorzny -> Kokoro Isomura at 0.156 ($5.00)
-- 2026-11-17 fade_move: Will SpaceX (SPCX) hit (HIGH) $142.50 Week of November 16 2026? -> Yes at 0.699 ($5.00)
-- 2026-11-16 weather_forecast: Will the highest temperature in Jeddah be 34°C on November 18? -> No at 0.586 ($5.00)
+- 2026-11-17 follow_move: Will Paul Cézanne's “Arlequin” sell for at least $140m at auction? -> Yes at 0.600 ($5.00)
+- 2026-11-17 sure_thing: Exact Score: Poland 0 - 0 Sweden? -> No at 0.952 ($5.00)
+- 2026-11-17 safe_no_week: Will the highest temperature in Panama City be 34°C or higher on November 18? -> No at 0.980 ($5.00)
+- 2026-11-17 sports_underdog: Kobe: Mili Poljicak vs Jay Dylan Friend -> Mili Poljicak at 0.300 ($5.00)
+- 2026-11-17 fade_move: Will Paul Cézanne's “Arlequin” sell for between $120m and $130m at auction? -> Yes at 0.112 ($5.00)
+- 2026-11-17 weather_forecast: Will the lowest temperature in Wellington be 11°C on November 18? -> Yes at 0.104 ($1.11)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-17 coin_flip: Solana Up or Down - November 17, 1:55AM-2:00AM ET -> Down at 0.527 ($5.00)
-- 2026-11-17 follow_move: Will "The Hunger Games: Sunrise on the Reaping" score at least 80 on the Rotten Tomatoes Tomatometer? -> No at 0.730 ($5.00)
-- 2026-11-17 sure_thing: Spread: Wales (-1.5) -> Portugal at 0.962 ($5.00)
-- 2026-11-17 safe_no_week: Intuit (INTU) beats quarterly earnings? -> Yes at 0.943 ($5.00)
-- 2026-11-17 sports_underdog: Sydney: Dane Sweeny vs Christian Langmo -> Christian Langmo at 0.300 ($5.00)
+- 2026-11-17 coin_flip: XRP Up or Down - November 17, 1:20PM-1:25PM ET -> Up at 0.527 ($5.00)
+- 2026-11-17 follow_move: Will Elon Musk post 90-114 tweets from November 16 to November 18, 2026? -> Yes at 0.392 ($5.00)
+- 2026-11-17 sure_thing: Will Argentina win on 2026-11-17? -> Yes at 0.914 ($5.00)
+- 2026-11-17 safe_no_week: Will Chromagraph Camera be #1 Paid App in the US Apple App Store on November 20? -> No at 0.981 ($5.00)
+- 2026-11-17 sports_underdog: Kobe: Masamichi Imamura vs Yuta Shimizu -> Masamichi Imamura at 0.270 ($5.00)
 
 ## Price gaps seen today
 
