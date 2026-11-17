@@ -1,19 +1,19 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-17 08:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-17 09:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move | 379 | 244/379 | +6.7% | +$125.98 | 12 | 133 | too early |
-| 2 | sure_thing | 1760 | 1638/1760 | -0.4% | -$31.18 | 11 | 162 | too early |
-| 3 | safe_no_week | 695 | 639/695 | -4.0% | -$140.32 | 12 | 271 | too early |
-| 4 | sports_underdog | 1287 | 306/1287 | -11.9% | -$761.10 | 10 | 17 | too early |
-| 5 | fade_move | 419 | 124/419 | -14.7% | -$308.74 | 12 | 137 | too early |
-| 6 | weather_forecast | 506 | 260/506 | -19.6% | -$489.48 | 9 | 125 | too early |
+| 1 | follow_move | 379 | 244/379 | +6.7% | +$125.98 | 12 | 134 | too early |
+| 2 | sure_thing | 1762 | 1640/1762 | -0.3% | -$30.24 | 11 | 167 | too early |
+| 3 | safe_no_week | 695 | 639/695 | -4.0% | -$140.32 | 12 | 277 | too early |
+| 4 | sports_underdog | 1290 | 306/1290 | -12.1% | -$776.10 | 10 | 18 | too early |
+| 5 | fade_move | 419 | 124/419 | -14.7% | -$308.74 | 12 | 138 | too early |
+| 6 | weather_forecast | 506 | 260/506 | -19.6% | -$489.48 | 9 | 127 | too early |
 | 7 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 8 | coin_flip | 1935 | 943/1935 | -6.3% | -$605.22 | 12 | 180 | yardstick |
+| 8 | coin_flip | 1941 | 944/1941 | -6.5% | -$625.75 | 12 | 182 | yardstick |
 
 What each one does:
 
@@ -32,7 +32,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move | sure_thing | safe_no_week | sports_underdog | fade_move | weather_forecast | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|
-| 2026-11-17 | -$2.70 | +$16.09 | +$0.95 | +$78.92 | -$14.20 |  |  | -$75.78 |
+| 2026-11-17 | -$2.70 | +$17.03 | +$0.95 | +$63.92 | -$14.20 |  |  | -$96.31 |
 | 2026-11-16 | +$11.58 | -$6.40 | -$11.02 | +$21.94 | -$17.46 |  | +$0.08 | -$21.29 |
 | 2026-11-15 | +$17.97 | +$0.34 | -$26.64 |  | +$30.37 | -$0.94 |  | -$47.97 |
 | 2026-11-14 | -$7.86 |  | -$37.34 |  | +$18.94 | -$4.48 |  | -$13.50 |
@@ -45,22 +45,22 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-17 follow_move: Will the price of Solana be above $75 on November 19? -> Yes at 0.345 ($5.00)
-- 2026-11-17 sure_thing: Spread: Rwanda (-1.5) -> Mali at 0.956 ($5.00)
-- 2026-11-17 safe_no_week: Will UMich Consumer Sentiment be at least 55.0 in November? -> No at 0.976 ($5.00)
-- 2026-11-17 sports_underdog: Counter-Strike: BRUTE SQ vs STATE (BO3) - United21 Playoffs -> BRUTE SQ at 0.249 ($5.00)
-- 2026-11-17 fade_move: Will the price of Solana be above $75 on November 20? -> No at 0.698 ($5.00)
-- 2026-11-17 weather_forecast: Will the lowest temperature in New York City be between 44-45°F on November 19? -> No at 0.792 ($5.00)
+- 2026-11-17 follow_move: Ethereum Up or Down on November 17? -> Down at 0.744 ($5.00)
+- 2026-11-17 sure_thing: Will Microsoft (MSFT) close above $500 on November 17? -> Yes at 0.935 ($5.00)
+- 2026-11-17 safe_no_week: Will the highest temperature in Chongqing be 16°C on November 19? -> No at 0.986 ($5.00)
+- 2026-11-17 sports_underdog: Spread: China PR (-1.5) -> China PR at 0.280 ($5.00)
+- 2026-11-17 fade_move: Ethereum Up or Down on November 17? -> Up at 0.294 ($5.00)
+- 2026-11-17 weather_forecast: Will the highest temperature in Karachi be 32°C on November 19? -> No at 0.562 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-17 coin_flip: ZCash Up or Down - November 17, 8:20AM-8:25AM ET -> Down at 0.527 ($5.00)
-- 2026-11-17 follow_move: Will the price of Solana be above $75 on November 20? -> Yes at 0.360 ($5.00)
-- 2026-11-17 sure_thing: Spread: Capitals (-3.5) -> Lightning at 0.952 ($5.00)
-- 2026-11-17 safe_no_week: Will the highest temperature in Hong Kong be 19°C on November 19? -> No at 0.962 ($5.00)
-- 2026-11-17 sports_underdog: Valorant: Young Gaming vs Any Questions Gaming (BO3) - China National Tournament Split Omega: Pro Division Group B -> Young Gaming at 0.310 ($5.00)
+- 2026-11-17 coin_flip: Gold Up or Down - November 17, 2:30PM-2:45PM ET -> Down at 0.527 ($5.00)
+- 2026-11-17 follow_move: Will the price of Solana be above $75 on November 19? -> Yes at 0.345 ($5.00)
+- 2026-11-17 sure_thing: Spread: Kent State (-6.5) -> Miami (OH) at 0.914 ($5.00)
+- 2026-11-17 safe_no_week: Will NVIDIA (NVDA) hit (HIGH) $188 Week of November 16 2026? -> No at 0.933 ($5.00)
+- 2026-11-17 sports_underdog: Spread: China PR (-1.5) -> China PR at 0.280 ($5.00)
 
 ## Price gaps seen today
 
 No near-gaps today.
 
-Runs in the last 24 hours: 37 (37 with a problem).
+Runs in the last 24 hours: 36 (36 with a problem).
 Latest problem: 42 position(s) still open more than 3 days after their market ended
