@@ -3,7 +3,6 @@ name = "metac-bot-template"
 version = "0.1.0"
 description = ""
 authors = ["Vasile Popescu <elisescu@elisescu.com>"]
-readme = "README.md"
 package-mode = false
 
 [tool.poetry.dependencies]
