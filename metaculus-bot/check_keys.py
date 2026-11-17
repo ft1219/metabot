@@ -16,8 +16,10 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import date, datetime, timezone
 
 import bot_config
+import claude_month
 import precheck
 
 OK, BAD, UNSURE, LOW = "OK", "PROBLEM", "COULD NOT CONFIRM", "RUNNING LOW"
@@ -285,6 +287,38 @@ def check_anthropic(key: str | None, get=None, tournament_model: str | None = No
     return UNSURE, f"The Claude API did not answer normally (HTTP {status}). Try again later."
 
 
+def check_claude_month(env=None, call=None, today: date | None = None) -> tuple[str, str]:
+    """
+    The Claude API credit the bot has used this credit month, by its own
+    count (claude_month.py), against the limit after which the main
+    tournament moves from Fable to Sonnet.
+    """
+    env = dict(os.environ if env is None else env)
+    settings = bot_config.load_settings({**env, "ANTHROPIC_API_KEY": "saved"})
+    if not bot_config.uses_monthly_claude_limit(settings):
+        return OK, "The monthly Claude API limit does not apply to the chosen main-tournament model."
+    today = today or datetime.now(timezone.utc).date()
+    reset_day = settings.claude_credit_reset_day
+    renews = claude_month.next_reset(today, reset_day)
+    renews_on = f"{renews.day} {renews:%B}"
+    limit = settings.claude_monthly_limit_usd
+    spent = claude_month.read_month_spend(today, reset_day, env, call)
+    if spent is None:
+        return UNSURE, (
+            "Could not read this month's Claude API spend (the bot-spend-data branch); until it can, "
+            "the main tournament uses Claude Sonnet 5.5 instead of Fable."
+        )
+    if spent >= limit:
+        return LOW, (
+            f"Claude API credit used this month: ${spent:.2f}, past the ${limit:.0f} limit, so the main "
+            f"tournament uses Claude Sonnet 5.5 until the credit renews on {renews_on}."
+        )
+    return OK, (
+        f"Claude API credit used this month (the bot's own count): ${spent:.2f} of the ${limit:.0f} "
+        f"limit for Fable; the credit renews on {renews_on}."
+    )
+
+
 def check_asknews(client_id: str | None, secret: str | None, api_key: str | None, post=None) -> tuple[str, str]:
     post = post or http
     if api_key and not (client_id and secret):
@@ -331,6 +365,8 @@ def main() -> int:
         _safely(check_openai, env["OPENAI_API_KEY"]),
         anthropic,
     ]
+    if claude_api_works:
+        results.append(_safely(check_claude_month))
     if researcher.startswith("asknews/"):
         results.append(_safely(check_asknews, env["ASKNEWS_CLIENT_ID"], env["ASKNEWS_SECRET"], env["ASKNEWS_API_KEY"]))
     else:

@@ -7,9 +7,16 @@ name: Bots - every 40 minutes
 # of those jobs can write to the repository. Set the repository variable
 # METACULUS_BOT to "off" to pause the bot.
 #
+# After a forecast run that used the Claude API, the record-claude-spend job
+# adds its cost to this credit month's count on the bot-spend-data branch,
+# with nothing but the runner's own Python (claude_month.py). The forecast job
+# reads that count at the start of each run and moves the main tournament from
+# Fable to Sonnet once it reaches CLAUDE_MONTHLY_LIMIT_USD.
+#
 # The polymarket-lab job runs beside them, on its own: pretend trading only
 # (public data, no keys, no money), saved to the polymarket-lab-data branch.
-# It is the only job that may write, and only that branch. It takes 2-4
+# It and record-claude-spend are the only jobs that may write, each only to
+# its own data branch. It takes 2-4
 # minutes a run and is billed as its own job (free while the repository is
 # public). If it fails, the run turns red and GitHub emails the owner, but
 # the forecasting jobs are not affected. Set POLYMARKET_LAB to "off" to pause it.
@@ -59,6 +66,8 @@ jobs:
     timeout-minutes: 40
     permissions:
       contents: read
+    outputs:
+      claude_api_usd: ${{ steps.bot.outputs.claude_api_usd }}
     defaults:
       run:
         working-directory: metaculus-bot
@@ -84,8 +93,11 @@ jobs:
       - name: Install dependencies
         run: poetry install --no-interaction --no-root
       - name: Run bot
+        id: bot
         run: poetry run python main.py --mode tournament
         env:
+          # Read-only: this month's Claude API spend on the bot-spend-data branch.
+          SPEND_LEDGER_TOKEN: ${{ github.token }}
           METACULUS_TOKEN: ${{ secrets.METACULUS_TOKEN }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -104,6 +116,28 @@ jobs:
           MAX_COST_PER_RUN_USD: ${{ vars.MAX_COST_PER_RUN_USD }}
           MAX_LLM_CALLS_PER_RUN: ${{ vars.MAX_LLM_CALLS_PER_RUN }}
           QUESTIONS_IN_PARALLEL: ${{ vars.QUESTIONS_IN_PARALLEL }}
+          CLAUDE_MONTHLY_LIMIT_USD: ${{ vars.CLAUDE_MONTHLY_LIMIT_USD }}
+          CLAUDE_CREDIT_RESET_DAY: ${{ vars.CLAUDE_CREDIT_RESET_DAY }}
+
+  record-claude-spend:
+    needs: forecast
+    # Also after a failed forecast run: the calls it made were still charged.
+    if: ${{ always() && needs.forecast.outputs.claude_api_usd != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write  # for the bot-spend-data branch only
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Add this run's Claude API cost to the month's count
+        working-directory: metaculus-bot
+        run: python3 claude_month.py record "$CLAUDE_API_USD"
+        env:
+          CLAUDE_API_USD: ${{ needs.forecast.outputs.claude_api_usd }}
+          GH_TOKEN: ${{ github.token }}
+          CLAUDE_CREDIT_RESET_DAY: ${{ vars.CLAUDE_CREDIT_RESET_DAY }}
 
   polymarket-lab:
     if: vars.POLYMARKET_LAB != 'off'

@@ -24,6 +24,10 @@ jobs:
   forecast:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    permissions:
+      contents: read
+    outputs:
+      claude_api_usd: ${{ steps.bot.outputs.claude_api_usd }}
     defaults:
       run:
         working-directory: metaculus-bot
@@ -47,8 +51,11 @@ jobs:
       - name: Install dependencies
         run: poetry install --no-interaction --no-root
       - name: Run bot
+        id: bot
         run: poetry run python main.py --mode test_questions
         env:
+          # Read-only: this month's Claude API spend on the bot-spend-data branch.
+          SPEND_LEDGER_TOKEN: ${{ github.token }}
           METACULUS_TOKEN: ${{ secrets.METACULUS_TOKEN }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
@@ -66,3 +73,25 @@ jobs:
           MAX_COST_PER_RUN_USD: ${{ vars.MAX_COST_PER_RUN_USD }}
           MAX_LLM_CALLS_PER_RUN: ${{ vars.MAX_LLM_CALLS_PER_RUN }}
           QUESTIONS_IN_PARALLEL: ${{ vars.QUESTIONS_IN_PARALLEL }}
+          CLAUDE_MONTHLY_LIMIT_USD: ${{ vars.CLAUDE_MONTHLY_LIMIT_USD }}
+          CLAUDE_CREDIT_RESET_DAY: ${{ vars.CLAUDE_CREDIT_RESET_DAY }}
+
+  # Practice runs use the same Claude API credit, so they count too.
+  record-claude-spend:
+    needs: forecast
+    if: ${{ always() && needs.forecast.outputs.claude_api_usd != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write  # for the bot-spend-data branch only
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Add this run's Claude API cost to the month's count
+        working-directory: metaculus-bot
+        run: python3 claude_month.py record "$CLAUDE_API_USD"
+        env:
+          CLAUDE_API_USD: ${{ needs.forecast.outputs.claude_api_usd }}
+          GH_TOKEN: ${{ github.token }}
+          CLAUDE_CREDIT_RESET_DAY: ${{ vars.CLAUDE_CREDIT_RESET_DAY }}

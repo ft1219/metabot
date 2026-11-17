@@ -15,6 +15,7 @@ has free OpenAI credit), otherwise DeepSeek V3.2.
 """
 from __future__ import annotations
 
+import dataclasses
 import os
 from dataclasses import dataclass
 from typing import Mapping
@@ -51,6 +52,18 @@ CLAUDE_API_TOURNAMENT_MODEL = "anthropic/claude-fable-5-2"
 CLAUDE_API_VERSIONS = {
     "openrouter/anthropic/claude-sonnet-5.5": "anthropic/claude-sonnet-5-5",
 }
+# Once the Claude API credit used this credit month reaches
+# CLAUDE_MONTHLY_LIMIT_USD (claude_month.py keeps the count), the main
+# tournament moves from Fable to Sonnet 5.5, still on the Claude API, so the
+# rest of the month's questions fit in what is left of the owner's $100.
+# $80 leaves room for one more Fable run (at most the $8 run cap) and about
+# 90 Sonnet questions ($0.13 each). Sonnet, not Opus 5.5: it costs half as
+# much and scored higher in this tournament (40th against 48th).
+CLAUDE_API_AFTER_LIMIT_MODEL = "anthropic/claude-sonnet-5-5"
+DEFAULT_CLAUDE_MONTHLY_LIMIT_USD = 80.0
+# The day of the month the owner's Claude API credit renews: they claimed it
+# on 17 November 2026.
+DEFAULT_CLAUDE_CREDIT_RESET_DAY = 17
 # Claude API models whose default effort is already high (forecaster_kwargs).
 CLAUDE_API_HIGH_EFFORT_BY_DEFAULT = {"anthropic/claude-sonnet-5-5", "anthropic/claude-fable-5-2"}
 DEFAULT_PARSER_MODEL = "openrouter/deepseek/deepseek-v3.2"
@@ -96,6 +109,8 @@ class BotSettings:
     max_cost_per_run_usd: float
     max_llm_calls_per_run: int
     questions_in_parallel: int
+    claude_monthly_limit_usd: float = DEFAULT_CLAUDE_MONTHLY_LIMIT_USD
+    claude_credit_reset_day: int = DEFAULT_CLAUDE_CREDIT_RESET_DAY
 
 
 def _text(env: Mapping[str, str], name: str, default: str) -> str:
@@ -197,6 +212,57 @@ def load_settings(env: Mapping[str, str] | None = None) -> BotSettings:
         questions_in_parallel=_int(
             env, "QUESTIONS_IN_PARALLEL", DEFAULT_QUESTIONS_IN_PARALLEL, 1
         ),
+        claude_monthly_limit_usd=_float(
+            env, "CLAUDE_MONTHLY_LIMIT_USD", DEFAULT_CLAUDE_MONTHLY_LIMIT_USD
+        ),
+        claude_credit_reset_day=_reset_day(env),
+    )
+
+
+def _reset_day(env: Mapping[str, str]) -> int:
+    day = _int(env, "CLAUDE_CREDIT_RESET_DAY", DEFAULT_CLAUDE_CREDIT_RESET_DAY, 1)
+    # Every month has a 28th, so the credit month never starts on a day that
+    # does not exist.
+    if day > 28:
+        raise SettingsError(f"CLAUDE_CREDIT_RESET_DAY must be 1 to 28, got {day}")
+    return day
+
+
+def uses_monthly_claude_limit(settings: BotSettings) -> bool:
+    """True when the main tournament is on a Claude API model the monthly limit moves to Sonnet."""
+    model = settings.tournament_forecast_model
+    return model.startswith("anthropic/") and model != CLAUDE_API_AFTER_LIMIT_MODEL
+
+
+def apply_monthly_claude_limit(
+    settings: BotSettings, spent_usd: float | None, renews_on: str
+) -> tuple[BotSettings, str | None]:
+    """
+    The settings for this run once the month's Claude API spend is known,
+    and a line for the run's page. At or past the limit, or when the spend
+    could not be read (None), the main tournament uses Sonnet 5.5: an unread
+    count must not let Fable use up the credit.
+    """
+    if not uses_monthly_claude_limit(settings):
+        return settings, None
+    limit = settings.claude_monthly_limit_usd
+    name = settings.tournament_forecast_model.split("/", 1)[1]
+    if spent_usd is not None and spent_usd < limit:
+        return settings, (
+            f"Claude API credit used this month: ${spent_usd:.2f} of the ${limit:.0f} limit for "
+            f"{name} (the credit renews on {renews_on})."
+        )
+    switched = dataclasses.replace(settings, tournament_forecast_model=CLAUDE_API_AFTER_LIMIT_MODEL)
+    if spent_usd is None:
+        return switched, (
+            "::warning title=Claude API spend unknown::Could not read this month's Claude API spend "
+            f"(the bot-spend-data branch), so this run uses Claude Sonnet 5.5 instead of {name} to "
+            "stay inside the monthly credit."
+        )
+    return switched, (
+        f"::notice title=Monthly limit for {name} reached::The Claude API credit used this month is "
+        f"${spent_usd:.2f}, past the ${limit:.0f} limit, so main-tournament questions use Claude "
+        f"Sonnet 5.5 until the credit renews on {renews_on}."
     )
 
 
