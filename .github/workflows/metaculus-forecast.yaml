@@ -62,7 +62,8 @@ jobs:
     # one to about 15 (two 300 s tries per forecast, then parsing), and to
     # about 20 when the Claude API times out first. After three Claude API
     # timeouts in a row with no answer in between, the run sends the rest
-    # straight to OpenRouter.
+    # straight to OpenRouter. ChatGPT web search runs beside AskNews and stops
+    # after 150 s, so it adds at most about 2 minutes to a batch.
     timeout-minutes: 40
     permissions:
       contents: read
@@ -110,6 +111,7 @@ jobs:
           TOURNAMENT_FORECAST_MODEL: ${{ vars.TOURNAMENT_FORECAST_MODEL }}
           PARSER_MODEL: ${{ vars.PARSER_MODEL }}
           RESEARCHER: ${{ vars.RESEARCHER }}
+          WEB_SEARCH_MODEL: ${{ vars.WEB_SEARCH_MODEL }}
           FORECAST_REASONING: ${{ vars.FORECAST_REASONING }}
           PREDICTIONS_PER_QUESTION: ${{ vars.PREDICTIONS_PER_QUESTION }}
           MAX_QUESTIONS_PER_RUN: ${{ vars.MAX_QUESTIONS_PER_RUN }}

@@ -402,12 +402,28 @@ def test_no_balance_read_without_openrouter_models(fake_model):
         {
             "OPENAI_API_KEY": "sk-test",
             "TOURNAMENT_FORECAST_MODEL": OPENAI_FORECAST_MODEL,
-            "PARSER_MODEL": "openai/gpt-6-luna",
+            "PARSER_MODEL": "anthropic/claude-haiku-4-5",
         }
     )
     read = _money(0.0)
     reports, not_attempted, held = _forecast(settings, _questions(1), _questions(1), read)
     assert read.reads == [] and held == [] and len(reports) == 2
+
+
+def test_a_parser_on_openai_still_needs_money_for_its_openrouter_fallback(fake_model):
+    # Every forecast on OpenAI, the parser too, but a used-up OpenAI credit
+    # sends every parse to OpenRouter at once, so an empty OpenRouter account
+    # still holds the questions back before their research is paid for.
+    settings = load_settings({"OPENAI_API_KEY": "sk-test", "TOURNAMENT_FORECAST_MODEL": OPENAI_FORECAST_MODEL})
+    assert settings.parser_model == "openai/gpt-6-luna"
+    assert main.models_to_call(settings, _questions(1), []) == [
+        "openai/gpt-6-luna",
+        "openrouter/deepseek/deepseek-v3.2",
+        OPENAI_FORECAST_MODEL,
+    ]
+    read = _money(0.0)
+    reports, not_attempted, held = _forecast(settings, _questions(1), _questions(1), read)
+    assert read.reads == [0.0, 0.0] and len(held) == 2 and reports == []
 
 
 def test_each_group_runs_at_its_own_batch_size(fake_model, monkeypatch):

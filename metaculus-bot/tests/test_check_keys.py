@@ -159,21 +159,43 @@ def test_key_limit_left():
 
 
 def test_openai_key_is_optional():
-    verdict, message = check_keys.check_openai(None)
-    assert verdict == OK and "DeepSeek" in message
+    verdict, message = check_keys.check_openai(None, env={})
+    assert verdict == OK and "DeepSeek" in message and "web search" in message
     seen = []
 
     def get(url, headers, *rest):
         seen.append(url)
-        return 200, {"id": "gpt-6-sol"}
+        return 200, {"id": url.rsplit("/", 1)[1]}
 
-    verdict, message = check_keys.check_openai("k", get)
-    assert verdict == OK and "gpt-6-sol" in message
-    assert seen == ["https://api.openai.com/v1/models/gpt-6-sol"]
-    assert check_keys.check_openai("k", _answer(401))[0] == BAD
-    verdict, message = check_keys.check_openai("k", _answer(404))
-    assert verdict == BAD and "cannot use gpt-6-sol" in message
-    assert check_keys.check_openai("k", _answer(None))[0] == UNSURE
+    verdict, message = check_keys.check_openai("k", get, env={})
+    assert verdict == OK
+    assert "gpt-6-sol (MiniBench forecasts and ChatGPT web search)" in message
+    assert "gpt-6-luna (the parser)" in message and "redone on DeepSeek" in message
+    # Each model the key will use is looked up once.
+    assert seen == ["https://api.openai.com/v1/models/gpt-6-sol", "https://api.openai.com/v1/models/gpt-6-luna"]
+    assert check_keys.check_openai("k", _answer(401), env={})[0] == BAD
+    verdict, message = check_keys.check_openai("k", _answer(404), env={})
+    assert verdict == BAD and "cannot use gpt-6-sol for MiniBench forecasts and ChatGPT web search" in message
+    assert check_keys.check_openai("k", _answer(None), env={})[0] == UNSURE
+
+
+def test_openai_check_follows_the_model_variables():
+    seen = []
+
+    def get(url, headers, *rest):
+        seen.append(url.rsplit("/", 1)[1])
+        return (404, None) if url.endswith("gpt-6-astra") else (200, {})
+
+    env = {"PARSER_MODEL": "openrouter/deepseek/deepseek-v3.2", "WEB_SEARCH_MODEL": "gpt-6-astra"}
+    verdict, message = check_keys.check_openai("k", get, env)
+    assert seen == ["gpt-6-sol", "gpt-6-astra"]
+    assert verdict == BAD and "cannot use gpt-6-astra for ChatGPT web search" in message
+    seen.clear()
+    verdict, message = check_keys.check_openai("k", get, {"WEB_SEARCH_MODEL": "none"})
+    assert verdict == OK and seen == ["gpt-6-sol", "gpt-6-luna"] and "web search" not in message
+    # A variable the bot would refuse is a problem to fix, not a crash.
+    verdict, message = check_keys.check_openai("k", get, {"WEB_SEARCH_MODEL": "openrouter/x/y"})
+    assert verdict == BAD and "WEB_SEARCH_MODEL" in message
 
 
 def test_anthropic_key_is_optional():

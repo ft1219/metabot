@@ -31,6 +31,10 @@ jobs:
           ASKNEWS_API_KEY: ${{ secrets.ASKNEWS_API_KEY }}
           RESEARCHER: ${{ vars.RESEARCHER }}
           TOURNAMENT_FORECAST_MODEL: ${{ vars.TOURNAMENT_FORECAST_MODEL }}
+          # The OpenAI models OPENAI_API_KEY is checked against.
+          FORECAST_MODEL: ${{ vars.FORECAST_MODEL }}
+          PARSER_MODEL: ${{ vars.PARSER_MODEL }}
+          WEB_SEARCH_MODEL: ${{ vars.WEB_SEARCH_MODEL }}
           # Read-only: this month's Claude API spend on the bot-spend-data branch.
           SPEND_LEDGER_TOKEN: ${{ github.token }}
           CLAUDE_MONTHLY_LIMIT_USD: ${{ vars.CLAUDE_MONTHLY_LIMIT_USD }}

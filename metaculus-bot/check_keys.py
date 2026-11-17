@@ -34,8 +34,10 @@ LOW_CREDIT_USD = 5.0
 EMPTY_CREDIT_USD = bot_config.money_needed_for_one_question(bot_config.load_settings({}))
 # With a working ANTHROPIC_API_KEY the main-tournament forecasts are written
 # on the Claude API and OpenRouter pays only for their parsing (about $0.20 a
-# question), until the Claude API credit runs out and EMPTY_CREDIT_USD applies
-# again. Between the two the check warns instead of failing.
+# question; with an OPENAI_API_KEY too, only for the parses OpenAI cannot
+# make, but the same amount is kept back for them), until the Claude API
+# credit runs out and EMPTY_CREDIT_USD applies again. Between the two the
+# check warns instead of failing.
 CLAUDE_API_EMPTY_CREDIT_USD = bot_config.money_needed_for_one_question(
     bot_config.load_settings({"ANTHROPIC_API_KEY": "saved"})
 )
@@ -221,26 +223,65 @@ def check_openrouter_credit(key: str | None, get=None, claude_api_works: bool = 
     return OK, f"OpenRouter credit: ${left:.2f} left of ${total:.2f} bought."
 
 
-def check_openai(key: str | None, get=None) -> tuple[str, str]:
-    """OPENAI_API_KEY is optional: without it MiniBench uses DeepSeek through OpenRouter."""
+def openai_models(key: str, env=None) -> dict[str, list[str]]:
+    """
+    The OpenAI models the bot will use with this key, each with what it does:
+    MiniBench forecasts, the parser and ChatGPT web search, as the FORECAST_MODEL,
+    PARSER_MODEL and WEB_SEARCH_MODEL variables leave them.
+    """
+    env = os.environ if env is None else env
+    names = ("FORECAST_MODEL", "PARSER_MODEL", "WEB_SEARCH_MODEL")
+    settings = bot_config.load_settings({"OPENAI_API_KEY": key, **{n: env.get(n) or "" for n in names}})
+    uses: dict[str, list[str]] = {}
+    for model, job in (
+        (settings.forecast_model, "MiniBench forecasts"),
+        (settings.parser_model, "the parser"),
+        (settings.web_search_model, "ChatGPT web search"),
+    ):
+        if model and model.startswith("openai/"):
+            uses.setdefault(model.split("/", 1)[1], []).append(job)
+    return uses
+
+
+def check_openai(key: str | None, get=None, env=None) -> tuple[str, str]:
+    """
+    OPENAI_API_KEY is optional: without it MiniBench and the parser use
+    DeepSeek through OpenRouter and AskNews is the only news source. With it,
+    every OpenAI model the bot will use is looked up (free).
+    """
     get = get or http
     if not key:
-        return OK, "OPENAI_API_KEY is not set, so MiniBench uses DeepSeek through OpenRouter (that is fine)."
-    model = bot_config.OPENAI_FORECAST_MODEL.split("/", 1)[1]
-    status, _ = get(f"https://api.openai.com/v1/models/{model}", {"Authorization": f"Bearer {key}"})
-    if status == 200:
         return OK, (
-            f"OPENAI_API_KEY works and can use {model}. OpenAI does not show the credit balance to keys, "
-            "so check it at platform.openai.com under Settings > Billing."
+            "OPENAI_API_KEY is not set, so MiniBench and the parser use DeepSeek through OpenRouter and there is "
+            "no ChatGPT web search next to AskNews (that is fine)."
         )
-    if status == 401:
-        return BAD, "OpenAI does not accept OPENAI_API_KEY. Create a new key and save it again."
-    if status in (403, 404):
-        return BAD, (
-            f"OPENAI_API_KEY works but cannot use {model} (HTTP {status}). Check the key's project "
-            "permissions at platform.openai.com, or delete the secret to go back to DeepSeek."
-        )
-    return UNSURE, f"OpenAI did not answer normally (HTTP {status}). Try again later."
+    try:
+        uses = openai_models(key, env)
+    except bot_config.SettingsError as e:
+        return BAD, f"{e}. Fix the repository variable (Settings > Secrets and variables > Actions > Variables)."
+    for model, jobs in uses.items():
+        status, _ = get(f"https://api.openai.com/v1/models/{model}", {"Authorization": f"Bearer {key}"})
+        if status == 401:
+            return BAD, "OpenAI does not accept OPENAI_API_KEY. Create a new key and save it again."
+        if status in (403, 404):
+            return BAD, (
+                f"OPENAI_API_KEY works but cannot use {model} for {' and '.join(jobs)} (HTTP {status}). Check the "
+                "key's project permissions at platform.openai.com, or delete the secret to go back to DeepSeek "
+                "and AskNews alone."
+            )
+        if status != 200:
+            return UNSURE, f"OpenAI did not answer normally (HTTP {status}). Try again later."
+    listed = "; ".join(f"{model} ({' and '.join(jobs)})" for model, jobs in uses.items())
+    fallback = (
+        " A parse OpenAI cannot make is redone on DeepSeek through OpenRouter."
+        if any("the parser" in jobs for jobs in uses.values())
+        else ""
+    )
+    return OK, (
+        f"OPENAI_API_KEY works and can use {listed or 'no OpenAI model the bot is set to use'}.{fallback} "
+        "OpenAI does not show the credit balance to keys, so check it at platform.openai.com under "
+        "Settings > Billing."
+    )
 
 
 def check_anthropic(key: str | None, get=None, tournament_model: str | None = None) -> tuple[str, str]:
