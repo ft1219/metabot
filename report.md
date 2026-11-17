@@ -1,23 +1,23 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-17 17:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-17 18:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
 | 1 | follow_move | 396 | 253/396 | +5.3% | +$105.13 | 12 | 150 | too early |
-| 2 | sure_thing | 1814 | 1685/1814 | -0.5% | -$44.75 | 11 | 197 | too early |
-| 3 | safe_no_week | 710 | 651/710 | -4.3% | -$152.74 | 12 | 300 | too early |
-| 4 | sports_underdog | 1322 | 314/1322 | -12.0% | -$789.94 | 10 | 69 | too early |
+| 2 | sure_thing | 1824 | 1692/1824 | -0.6% | -$57.35 | 11 | 194 | too early |
+| 3 | safe_no_week | 710 | 651/710 | -4.3% | -$152.74 | 12 | 307 | too early |
+| 4 | sports_underdog | 1328 | 314/1328 | -12.4% | -$819.94 | 10 | 71 | too early |
 | 5 | fade_move | 436 | 131/436 | -13.3% | -$289.84 | 12 | 159 | too early |
-| 6 | weather_forecast | 522 | 268/522 | -19.4% | -$501.24 | 10 | 137 | too early |
-| 7 | follow_move_2 | 7 | 7/7 | +38.0% | +$13.29 | 1 | 77 | too early |
-| 8 | follow_move_crypto | 7 | 6/7 | +24.7% | +$8.64 | 1 | 30 | too early |
+| 6 | weather_forecast | 522 | 268/522 | -19.4% | -$501.24 | 10 | 138 | too early |
+| 7 | follow_move_2 | 7 | 7/7 | +38.0% | +$13.29 | 1 | 79 | too early |
+| 8 | follow_move_crypto | 7 | 6/7 | +24.7% | +$8.64 | 1 | 31 | too early |
 | 9 | follow_move_big | 6 | 5/6 | +10.4% | +$3.11 | 1 | 49 | too early |
 | 10 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 11 | follow_move_cheap | 0 | - | - | +$0.00 | 0 | 50 | too early |
-| 12 | coin_flip | 2022 | 989/2022 | -5.8% | -$589.40 | 12 | 197 | yardstick |
+| 11 | follow_move_cheap | 0 | - | - | +$0.00 | 0 | 51 | too early |
+| 12 | coin_flip | 2027 | 992/2027 | -5.8% | -$589.92 | 12 | 200 | yardstick |
 
 What each one does:
 
@@ -40,7 +40,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move | sure_thing | safe_no_week | sports_underdog | fade_move | weather_forecast | follow_move_2 | follow_move_crypto | follow_move_big | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-17 | -$23.55 | +$2.52 | -$11.47 | +$50.08 | +$4.70 | -$11.76 | +$13.29 | +$8.64 | +$3.11 |  | -$59.96 |
+| 2026-11-17 | -$23.55 | -$10.08 | -$11.47 | +$20.08 | +$4.70 | -$11.76 | +$13.29 | +$8.64 | +$3.11 |  | -$60.48 |
 | 2026-11-16 | +$11.58 | -$6.40 | -$11.02 | +$21.94 | -$17.46 |  |  |  |  | +$0.08 | -$21.29 |
 | 2026-11-15 | +$17.97 | +$0.34 | -$26.64 |  | +$30.37 | -$0.94 |  |  |  |  | -$47.97 |
 | 2026-11-14 | -$7.86 |  | -$37.34 |  | +$18.94 | -$4.48 |  |  |  |  | -$13.50 |
@@ -54,21 +54,21 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 ## Latest pretend buys (newest of each strategy first)
 
 - 2026-11-17 follow_move: Will Elon Musk post 90-114 tweets from November 19 to November 21, 2026? -> No at 0.750 ($5.00)
-- 2026-11-17 sure_thing: Montserrat leading at halftime? -> No at 0.943 ($5.00)
-- 2026-11-17 safe_no_week: Will the lowest temperature in New York City be between 50-51°F on November 19? -> No at 0.952 ($5.00)
-- 2026-11-17 sports_underdog: Spread: Ukraine (-1.5) -> Ukraine at 0.229 ($5.00)
+- 2026-11-17 sure_thing: Rocket Lab (RKLB) Up or Down on November 17? -> Down at 0.946 ($5.00)
+- 2026-11-17 safe_no_week: Will any other model be the best AI model on November 23, 2026? -> No at 0.942 ($5.00)
+- 2026-11-17 sports_underdog: Will Liberia win on 2026-11-17? -> Yes at 0.208 ($5.00)
 - 2026-11-17 fade_move: Will the price of Ethereum be above $1,800 on November 23? -> Yes at 0.467 ($5.00)
-- 2026-11-17 weather_forecast: Will the highest temperature in Milan be 14°C on November 18? -> No at 0.645 ($5.00)
-- 2026-11-17 follow_move_2: Will Maura Higgins be eliminated in week 10 of Dancing With The Stars: Season 35? -> No at 0.572 ($5.00)
-- 2026-11-17 follow_move_crypto: Will the price of XRP be between $0.90 and $1.00 on November 20? -> Yes at 0.567 ($5.00)
+- 2026-11-17 weather_forecast: Will the lowest temperature in Helsinki be 2°C on November 19? -> No at 0.742 ($5.00)
+- 2026-11-17 follow_move_2: Will the price of Solana be between $70 and $80 on November 18? -> Yes at 0.830 ($5.00)
+- 2026-11-17 follow_move_crypto: Will the price of Solana be between $70 and $80 on November 18? -> Yes at 0.830 ($5.00)
 - 2026-11-17 follow_move_big: Will the price of XRP be between $0.90 and $1.00 on November 20? -> Yes at 0.567 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-17 follow_move_cheap: Will "Stop The Wedding! - Ashe" be the #2 US song this week? -> No at 0.341 ($5.00)
-- 2026-11-17 coin_flip: BNB Up or Down - November 18, 6:25AM-6:30AM ET -> Down at 0.527 ($5.00)
+- 2026-11-17 follow_move_cheap: Will South Korea ETF (EWY) hit (HIGH) $140 Week of November 16 2026? -> No at 0.460 ($5.00)
+- 2026-11-17 coin_flip: Hyperliquid Up or Down - November 18, 5:55AM-6:00AM ET -> Down at 0.527 ($5.00)
 
 ## Price gaps seen today
 
-No near-gaps today.
+1 near-gaps recorded (full sets within a few cents of their payout). Cheapest: ATEEZ 'Golden Hour: Part.6' First Week Album Sales? (no), 4.029 for a $4 payout.
 
 Runs in the last 24 hours: 35 (35 with a problem).
 Latest problem: 42 position(s) still open more than 3 days after their market ended
