@@ -9,8 +9,8 @@ that airport's local date.
 This is the one strategy with an information source of its own: compare
 each range's price with the chance a weather forecast gives it, and buy
 where the forecast disagrees by a lot. (The history replay that first
-pointed at these markets turned out to be an artifact of near-empty books,
-see README; the live record is the only evidence for or against this idea.)
+pointed at these markets turned out to be an artifact of near-empty books;
+the live record is the only evidence for or against this idea.)
 
 Forecast: Open-Meteo's free ensemble API (ECMWF 51 members + GFS 31 members),
 no key needed, non-commercial terms. A range's chance is computed twice:
