@@ -7,11 +7,11 @@ Actions these come from repository *variables* (Settings -> Secrets and
 variables -> Actions -> Variables), so switching models needs no code change.
 
 The main tournament, where most of the prize money is, gets the strongest
-model the budget allows: Claude Sonnet 5.5, on the Claude API when an
+model the budget allows: Claude Fable 5.2 on the Claude API when an
 ANTHROPIC_API_KEY is saved (the owner's Max plan includes monthly Claude API
-credit), otherwise through OpenRouter. MiniBench and the Cup use a cheaper
-one: GPT-6 Sol when an OPENAI_API_KEY is saved (the owner has free OpenAI
-credit), otherwise DeepSeek V3.2.
+credit), otherwise Claude Sonnet 5.5 through OpenRouter. MiniBench and the
+Cup use a cheaper one: GPT-6 Sol when an OPENAI_API_KEY is saved (the owner
+has free OpenAI credit), otherwise DeepSeek V3.2.
 """
 from __future__ import annotations
 
@@ -33,16 +33,26 @@ OPENAI_FORECAST_MODEL = "openai/gpt-6-sol"
 # the square of the season score, so the main tournament is where a better
 # model pays; MiniBench pays only its top few bots each round.
 DEFAULT_TOURNAMENT_FORECAST_MODEL = "openrouter/anthropic/claude-sonnet-5.5"
-# The same Claude models on the Claude API, paid from the owner's monthly
-# Claude API credit ($100 a month with the Max plan) at the same $2 / $10 per
-# million tokens. With ANTHROPIC_API_KEY saved, the main tournament uses the
-# Claude API version, and any forecast it cannot make is redone through
-# OpenRouter (claude_api.py).
+# With ANTHROPIC_API_KEY saved and no TOURNAMENT_FORECAST_MODEL variable, the
+# main tournament runs on Claude Fable 5.2 on the Claude API, paid from the
+# owner's monthly Claude API credit ($100 a month with the Max plan), which
+# costs no cash. $8 / $40 per million tokens, about 4 times Sonnet 5.5. In
+# the same tournament in mid-November 2026, after 33 scored questions,
+# Metaculus's reference bots ranked claude-fable-5-1-high 12th (+587),
+# claude-sonnet-5-5-high 40th (+476) and claude-opus-5-5-high 48th (+445).
+# Any forecast it cannot make (credit used up, busy, timed out) is redone on
+# DEFAULT_TOURNAMENT_FORECAST_MODEL through OpenRouter (openrouter_twin), not
+# on Fable there, which would cost 4 times as much cash.
+CLAUDE_API_TOURNAMENT_MODEL = "anthropic/claude-fable-5-2"
+# Claude models the TOURNAMENT_FORECAST_MODEL variable can name by their
+# OpenRouter name: with ANTHROPIC_API_KEY saved they run on the Claude API at
+# the same price, so setting the variable to Sonnet's OpenRouter name goes
+# back to Sonnet on the Claude credit.
 CLAUDE_API_VERSIONS = {
     "openrouter/anthropic/claude-sonnet-5.5": "anthropic/claude-sonnet-5-5",
 }
 # Claude API models whose default effort is already high (forecaster_kwargs).
-CLAUDE_API_HIGH_EFFORT_BY_DEFAULT = {"anthropic/claude-sonnet-5-5"}
+CLAUDE_API_HIGH_EFFORT_BY_DEFAULT = {"anthropic/claude-sonnet-5-5", "anthropic/claude-fable-5-2"}
 DEFAULT_PARSER_MODEL = "openrouter/deepseek/deepseek-v3.2"
 DEFAULT_RESEARCHER = "asknews/news-summaries"
 
@@ -52,10 +62,12 @@ DEFAULT_PREDICTIONS_PER_QUESTION = 5
 # missed run while still bounding the cost of any single run.
 DEFAULT_MAX_QUESTIONS_PER_RUN = 12
 # Metaculus releases at most 5 questions at a time; 5 main-tournament questions
-# on Claude Sonnet 5.5 plus 5 MiniBench ones on GPT-6 Sol should stay under
-# this. The season-wide cap is the spending limit set on the OpenRouter key
+# on Claude Fable 5.2 (very roughly $0.60 to $0.80 each, on the Claude API
+# credit) plus 5 MiniBench ones on GPT-6 Sol (about $0.05 each) should stay
+# under this. A run that reaches it leaves the rest for the next run. The
+# season-wide cap on cash is the spending limit set on the OpenRouter key
 # itself.
-DEFAULT_MAX_COST_PER_RUN_USD = 3.00
+DEFAULT_MAX_COST_PER_RUN_USD = 8.00
 # Backstop for models litellm cannot price. A normal question takes about
 # 10-15 calls (5 forecasts and their parsing); conditional questions take
 # about 4 times that.
@@ -130,18 +142,22 @@ def _bool(env: Mapping[str, str], name: str, default: bool) -> bool:
 
 
 def _tournament_model(env: Mapping[str, str]) -> str:
-    model = _text(env, "TOURNAMENT_FORECAST_MODEL", DEFAULT_TOURNAMENT_FORECAST_MODEL)
-    if (env.get("ANTHROPIC_API_KEY") or "").strip():
-        return CLAUDE_API_VERSIONS.get(model, model)
-    return model
+    has_claude_key = bool((env.get("ANTHROPIC_API_KEY") or "").strip())
+    chosen = _text(env, "TOURNAMENT_FORECAST_MODEL", "")
+    if not chosen:
+        return CLAUDE_API_TOURNAMENT_MODEL if has_claude_key else DEFAULT_TOURNAMENT_FORECAST_MODEL
+    if has_claude_key:
+        return CLAUDE_API_VERSIONS.get(chosen, chosen)
+    return chosen
 
 
 def openrouter_twin(model: str) -> str | None:
     """
     The OpenRouter model that redoes the forecasts a Claude API model cannot
-    make: the same model when its OpenRouter name is known, otherwise the
-    default main-tournament model, so no Claude API model is left without a
-    fallback (a used-up monthly credit would otherwise fail every forecast).
+    make: the same model when it is in CLAUDE_API_VERSIONS, otherwise the
+    default main-tournament model (Sonnet 5.5), so no Claude API model is left
+    without a fallback (a used-up monthly credit would otherwise fail every
+    forecast) and Fable's fallbacks cost Sonnet's price in cash, not Fable's.
     None for a model that is not on the Claude API.
     """
     if not model.startswith("anthropic/"):
@@ -203,10 +219,10 @@ def forecaster_kwargs(settings: BotSettings, model: str | None = None) -> dict:
     """
     Request options for the model that writes the forecasts.
 
-    Claude Sonnet 5.5 always thinks (adaptively) and returns an error for a
-    temperature other than its default or for a fixed thinking budget, so it
-    gets neither; `effort: high` is its default and matches Metaculus's
-    reference bot. OpenAI's GPT-6 models are reasoning models that also take no
+    Claude Sonnet 5.5 and Fable 5.2 always think (adaptively) and return an
+    error for a temperature other than the default or for a fixed thinking
+    budget, so they get neither; `effort: high` is their default and matches
+    Metaculus's reference bots. OpenAI's GPT-6 models are reasoning models that also take no
     temperature; their reasoning depth is `reasoning_effort`, `high` like the
     reference bots.
     """
@@ -218,9 +234,11 @@ def forecaster_kwargs(settings: BotSettings, model: str | None = None) -> dict:
         # both. So no `thinking` field is sent (the model then thinks
         # adaptively), and effort high is set the Claude API's own way,
         # output_config, which litellm passes on unchanged (adding an old
-        # effort beta header). Claude Sonnet 5.5 runs at high by default, so
-        # its request leaves it out; other Claude models may not (Opus 5.5's
-        # default is medium).
+        # effort beta header). Claude Sonnet 5.5 and Claude Fable 5.2 run at
+        # high by default, so their requests leave it out; other Claude models
+        # may not (Opus 5.5's default is medium). Fable's thinking counts
+        # toward max_tokens too; 16,000 is about as much as it writes inside
+        # the 300 s call timeout anyway.
         effort = (
             {}
             if model in CLAUDE_API_HIGH_EFFORT_BY_DEFAULT

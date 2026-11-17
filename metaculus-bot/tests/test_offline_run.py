@@ -160,7 +160,7 @@ def test_cost_line_splits_the_cost_by_provider(fake_model):
     settings = load_settings({})
     run_budget = RunBudget(settings.max_cost_per_run_usd, settings.max_llm_calls_per_run)
     asyncio.run(_bot(settings, run_budget).forecast_questions(_questions(1), return_exceptions=True))
-    assert run_budget.cost_line() == "AI cost this run: $0.0500 (OpenRouter $0.0500) over 5 call(s) (limit $3.00)"
+    assert run_budget.cost_line() == "AI cost this run: $0.0500 (OpenRouter $0.0500) over 5 call(s) (limit $8.00)"
 
 
 def test_gpt6_sol_calls_are_priced():

@@ -8,12 +8,12 @@ run budget before the call (raising RunBudgetExceeded, which does reach the
 bot) and records the call's real cost afterwards.
 
 A few questions are forecast at a time, so a run can overshoot the limit by
-the calls already in flight when it is reached: about a dollar with five
-main-tournament questions on Claude Sonnet 5.5. The parser that reads those
-forecasts' answers is exempt from the spending limit (it costs a fraction of
-a cent and only reads answers already paid for), so a run that crosses the
-limit still publishes the forecasts it paid for. The season-wide hard cap is
-the OpenRouter key's own limit.
+the calls already in flight when it is reached: a few dollars of Claude API
+credit with five main-tournament questions on Claude Fable 5.2. The parser
+that reads those forecasts' answers is exempt from the spending limit (it
+costs a fraction of a cent and only reads answers already paid for), so a
+run that crosses the limit still publishes the forecasts it paid for. The
+season-wide hard cap is the OpenRouter key's own limit.
 """
 from __future__ import annotations
 
@@ -29,10 +29,12 @@ from forecasting_tools import GeneralLlm
 # US dollars per million tokens (input, output). GPT-6 Sol: OpenRouter's price
 # list on 2026-11-12, which matches OpenAI's own prices.
 EXTRA_PRICES_PER_MILLION_TOKENS = {"gpt-6-sol": (2.0, 10.0)}
-# Claude on the Claude API, from Anthropic's price list: Sonnet 5.5 $2 / $10,
-# cache reads $0.10 and (5-minute) cache writes $2.50 per million tokens;
-# Opus 5.5 (if TOURNAMENT_FORECAST_MODEL picks it) $4 / $20, $0.20 and $5.
+# Claude on the Claude API, from Anthropic's price list: Fable 5.2 $8 / $40,
+# cache reads $0.20 and (5-minute) cache writes $10 per million tokens;
+# Sonnet 5.5 $2 / $10, $0.10 and $2.50; Opus 5.5 (if TOURNAMENT_FORECAST_MODEL
+# picks it) $4 / $20, $0.20 and $5.
 CLAUDE_API_PRICES_PER_MILLION_TOKENS = {
+    "claude-fable-5-2": {"input": 8.0, "output": 40.0, "cache_read": 0.20, "cache_write": 10.00},
     "claude-sonnet-5-5": {"input": 2.0, "output": 10.0, "cache_read": 0.10, "cache_write": 2.50},
     "claude-opus-5-5": {"input": 4.0, "output": 20.0, "cache_read": 0.20, "cache_write": 5.00},
 }
