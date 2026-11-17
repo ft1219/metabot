@@ -182,6 +182,104 @@ def test_an_explicit_openai_parser_without_the_key_falls_back(models, monkeypatc
     assert parser.status.down_reason == "OPENAI_API_KEY is not set"
 
 
+def test_an_older_openai_parser_parses_at_temperature_zero_with_no_reasoning_setting(models):
+    # gpt-4o-mini refuses a reasoning effort (HTTP 400), which would send
+    # every parse to OpenRouter.
+    parser, run_budget = _parser({"PARSER_MODEL": "openai/gpt-4o-mini"})
+    assert isinstance(parser, openai_credit.OpenAiParserLlm) and parser.fallback.model == PARSER_FALLBACK_MODEL
+    assert _parse(parser).prediction_in_decimal == 0.42
+    assert models.models() == ["openai/gpt-4o-mini", "openai/gpt-4o-mini"]
+    for k in models.calls:
+        assert k["temperature"] == 0.0 and "extra_body" not in k and k["max_retries"] == 0
+    assert set(run_budget.spent_by_provider) == {"OpenAI"} and parser.status.failed == 0
+
+
+def rate_limited():
+    return litellm.RateLimitError(
+        message="OpenAIException - Rate limit reached for gpt-6-luna on tokens per min (TPM). (rate_limit_exceeded)",
+        llm_provider="openai",
+        model="gpt-6-luna",
+    )
+
+
+def test_parses_failing_together_count_as_one_failure(monkeypatch):
+    # Parse calls overlap; one passing rate limit that hits several of them
+    # is one failure, not enough to send the rest of the run to OpenRouter.
+    started = []
+    real_acompletion = litellm.acompletion
+
+    async def busy_openai(**kwargs):
+        kwargs.pop("extra_body", None)
+        if kwargs["model"].startswith("openai/"):
+            started.append(1)
+            while len(started) < 3:
+                await asyncio.sleep(0.001)
+            raise rate_limited()
+        response = await real_acompletion(mock_response=PARSED, **kwargs)
+        response._hidden_params["response_cost"] = FALLBACK_COST
+        return response
+
+    monkeypatch.setattr(general_llm, "acompletion", busy_openai)
+    parser, _ = _parser()
+
+    async def together():
+        return await asyncio.gather(*(parser.invoke("hi") for _ in range(3)))
+
+    assert asyncio.run(together()) == [PARSED] * 3
+    status = parser.status
+    assert status.down_reason is None and status.failed == 3 and status.failures_in_a_row == 1
+    assert status.done_instead == 3
+    # Failures one after another still stop OpenAI for parsing.
+    asyncio.run(parser.invoke("hi"))
+    assert status.down_reason is None
+    asyncio.run(parser.invoke("hi"))
+    assert "3 failures in a row" in status.down_reason and "rate limited" in status.down_reason
+
+
+def test_status_counts_a_burst_once():
+    now = [0.0]
+    status = openai_credit.OpenAiStatus("Job", "were done another way", clock=lambda: now[0])
+    sent = [status.started() for _ in range(5)]
+    now[0] = 1.0
+    assert not any(status.note_failure(openai_credit.FAILED, "rate limited (HTTP 429)", t) for t in sent)
+    assert status.failures_in_a_row == 1 and status.failed == 5
+    # Sent after that failure came back: a failure of its own.
+    now[0] = 2.0
+    second = status.started()
+    now[0] = 3.0
+    assert not status.note_failure(openai_credit.FAILED, "timed out", second)
+    # A call sent before the second failure came back is part of that burst.
+    assert not status.note_failure(openai_credit.FAILED, "timed out", second)
+    now[0] = 4.0
+    third = status.started()
+    now[0] = 5.0
+    assert status.note_failure(openai_credit.FAILED, "timed out", third)
+    assert status.down_reason.startswith("3 failures in a row (timed out the last time)")
+    # Without a start time (an older caller) every failure counts, as before.
+    plain = openai_credit.OpenAiStatus("Job", "x")
+    assert [plain.note_failure(openai_credit.FAILED, "timed out") for _ in range(3)] == [False, False, True]
+
+
+def test_an_account_problem_stops_at_once_even_within_a_burst():
+    now = [0.0]
+    status = openai_credit.OpenAiStatus("Job", "x", clock=lambda: now[0])
+    sent = status.started()
+    now[0] = 1.0
+    status.note_failure(openai_credit.FAILED, "rate limited (HTTP 429)", sent)
+    assert status.note_failure(openai_credit.DOWN, "OpenAI credit used up", sent)
+    assert status.down_reason == "OpenAI credit used up"
+
+
+def test_a_thrown_away_answer_never_stops_the_job():
+    status = openai_credit.OpenAiStatus("Job", "x")
+    status.note_failure(openai_credit.FAILED, "timed out", status.started())
+    status.note_failure(openai_credit.FAILED, "timed out", status.started())
+    for _ in range(5):
+        assert not status.note_failure(openai_credit.DISCARDED, "opened a Metaculus page", status.started())
+    # OpenAI answered, so the failures before it are no longer in a row.
+    assert status.down_reason is None and status.failures_in_a_row == 0 and status.failed == 7
+
+
 def test_run_limits_are_not_dodged_by_the_fallback(models):
     # The call limit stops the parser outright; it is not "a failure" to redo.
     parser, run_budget = _parser(run_budget=RunBudget(10.0, 1))

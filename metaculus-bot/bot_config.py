@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import dataclasses
 import os
+import re
 from dataclasses import dataclass
 from typing import Mapping
 
@@ -86,6 +87,12 @@ PARSER_FALLBACK_MODEL = DEFAULT_PARSER_MODEL
 # thinking. "low" rather than "minimal": every reasoning model OpenAI offers
 # takes "low", and a value it refused would send every parse to OpenRouter.
 PARSER_REASONING_EFFORT = "low"
+# OpenAI's reasoning models: the o-series, and GPT-5 and later except their
+# "-chat" versions. Only these take a reasoning effort, and they take no
+# temperature; OpenAI refuses a reasoning effort from any other model (HTTP
+# 400), so an older model that PARSER_MODEL or WEB_SEARCH_MODEL names, such as
+# gpt-4o-mini or gpt-4.1, is sent neither and keeps its temperature.
+_OPENAI_REASONING_MODEL = re.compile(r"^(?:o\d|gpt-(?:[5-9]|\d{2,}))(?!.*chat)", re.IGNORECASE)
 DEFAULT_RESEARCHER = "asknews/news-summaries"
 # The second news source when OPENAI_API_KEY is set: ChatGPT web search, paid
 # from the free OpenAI credit, next to the paid AskNews. The WEB_SEARCH_MODEL
@@ -212,6 +219,11 @@ def openrouter_twin(model: str) -> str | None:
         if claude_api_model == model:
             return openrouter_model
     return DEFAULT_TOURNAMENT_FORECAST_MODEL
+
+
+def is_openai_reasoning_model(model: str) -> bool:
+    """True for an OpenAI reasoning model ("openai/gpt-6-luna", "o3"), which takes a reasoning effort and no temperature."""
+    return bool(_OPENAI_REASONING_MODEL.match(model.removeprefix("openai/")))
 
 
 def parser_fallback(parser_model: str) -> str | None:
@@ -396,22 +408,27 @@ def forecaster_kwargs(settings: BotSettings, model: str | None = None) -> dict:
 def parser_kwargs(model: str) -> dict:
     """
     Request options for the parser, which copies the number out of each
-    forecast's written answer. A GPT-6 model takes no temperature (one would
-    cost a refused call first) and thinks little (PARSER_REASONING_EFFORT),
-    set in the request body like forecaster_kwargs. It is tried once, without litellm's
+    forecast's written answer. Any model off OpenAI, and an older OpenAI
+    model that is not a reasoning model (gpt-4o-mini, say), parses at
+    temperature 0 as before. An OpenAI reasoning model such as GPT-6 Luna
+    takes no temperature (one would cost a refused call first) and thinks
+    little (PARSER_REASONING_EFFORT), set in the request body like
+    forecaster_kwargs. Every OpenAI parser is tried once, without litellm's
     own retries, because a failed parse goes straight to the OpenRouter
     fallback: retrying a used-up credit would only delay it. 90 s, not
     GeneralLlm's 60 s default for models it does not know, leaves room for a
     long answer; DeepSeek keeps its 210 s default.
     """
-    if model.startswith("openai/"):
-        return {
-            "temperature": None,
-            "timeout": 90,
-            "max_retries": 0,
-            "extra_body": {"reasoning_effort": PARSER_REASONING_EFFORT},
-        }
-    return {"temperature": 0.0}
+    if not model.startswith("openai/"):
+        return {"temperature": 0.0}
+    tried_once = {"timeout": 90, "max_retries": 0}
+    if not is_openai_reasoning_model(model):
+        return {"temperature": 0.0, **tried_once}
+    return {
+        "temperature": None,
+        **tried_once,
+        "extra_body": {"reasoning_effort": PARSER_REASONING_EFFORT},
+    }
 
 
 # While a call runs, OpenRouter holds back its largest possible cost and

@@ -1318,6 +1318,11 @@ if __name__ == "__main__":
             f"⚠️   {budget.failed_calls} call(s) failed after being sent; any cost they "
             "had is not in the total above."
         )
+    if budget.estimated_calls:
+        print(
+            f"⚠️   {budget.estimated_calls} call(s) were cut off before their answer came back; "
+            "the total above counts each at the most it is likely to have cost."
+        )
     if not_attempted:
         print(
             f"🛑  Run budget used up; {len(not_attempted)} question(s) not attempted. "

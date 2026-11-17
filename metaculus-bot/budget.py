@@ -9,7 +9,9 @@ bot) and records the call's real cost afterwards.
 
 ChatGPT web search (web_search.py) is not a litellm call, so it checks and
 records the same budget itself: its tokens at the model's price plus
-OpenAI's fee for every search it ran.
+OpenAI's fee for every search it ran, and for a search cut off before its
+answer came back (a timeout, a lost connection, a cancelled run) the most it
+is likely to have cost, since OpenAI may have billed it in full.
 
 A few questions are forecast at a time, so a run can overshoot the limit by
 the calls already in flight when it is reached: a few dollars of Claude API
@@ -117,6 +119,8 @@ class RunBudget:
         self.calls = 0
         self.calls_without_cost = 0
         self.failed_calls = 0
+        # Failed calls counted at an estimate of their cost instead.
+        self.estimated_calls = 0
         # Calls and dollars by provider, so the log shows how much of the
         # Claude API credit a run used and how much OpenRouter paid.
         self.calls_by_provider: Counter = Counter()
@@ -154,13 +158,24 @@ class RunBudget:
         self.spent_usd += cost_usd
         self.spent_by_provider[provider] += cost_usd
 
-    def record_failure(self, provider: str = "") -> None:
-        # The call was sent but raised (a timeout, or an empty answer that
-        # OpenRouter still billed). Its cost is unknown; counting it keeps
-        # the call limit honest when a model keeps failing.
+    def record_failure(self, provider: str = "", estimated_usd: float = 0.0) -> None:
+        """
+        The call was sent but raised (a timeout, or an empty answer that
+        OpenRouter still billed). Its cost is unknown; counting it keeps the
+        call limit honest when a model keeps failing. `estimated_usd`, when
+        the caller can tell, is the most the call is likely to have cost (a
+        ChatGPT web search cut off before its answer came back); it is added
+        to the spending, so the spending limit and the cost line err on the
+        high side instead of leaving the call out.
+        """
         self.calls += 1
-        self.failed_calls += 1
         self.calls_by_provider[provider] += 1
+        if estimated_usd > 0:
+            self.estimated_calls += 1
+            self.spent_usd += estimated_usd
+            self.spent_by_provider[provider] += estimated_usd
+        else:
+            self.failed_calls += 1
 
     def cost_line(self) -> str:
         """

@@ -19,6 +19,7 @@ from forecasting_tools.ai_models import general_llm
 from forecasting_tools.data_models.markdown_tree import MarkdownTree
 
 import main
+import openai_credit
 import web_search
 from bot_config import load_settings
 from budget import RunBudget
@@ -33,14 +34,27 @@ NEWS = (
 ASKNEWS = "Here are the relevant news articles:\n\n**Rates cut**\nThe central bank cut rates.\n"
 
 
-def answer(text=NEWS, searches=2, input_tokens=20_000, output_tokens=3_000, status="completed", content=None, **extra):
+def answer(
+    text=NEWS,
+    searches=2,
+    input_tokens=20_000,
+    output_tokens=3_000,
+    status="completed",
+    content=None,
+    actions=None,
+    annotations=(),
+    **extra,
+):
+    """`actions`: each web_search_call's action, in place of `searches` plain searches."""
+    if actions is None:
+        actions = [SimpleNamespace(type="search", query="rate cut") for _ in range(searches)]
     output = [
-        SimpleNamespace(type="web_search_call", id=f"ws_{i}", status="completed", action=SimpleNamespace(type="search"))
-        for i in range(searches)
+        SimpleNamespace(type="web_search_call", id=f"ws_{i}", status="completed", action=action)
+        for i, action in enumerate(actions)
     ]
     output.append(SimpleNamespace(type="reasoning", id="rs_1", summary=[]))
     if content is None:
-        content = [SimpleNamespace(type="output_text", text=text, annotations=[])]
+        content = [SimpleNamespace(type="output_text", text=text, annotations=list(annotations))]
     output.append(SimpleNamespace(type="message", id="msg_1", role="assistant", content=content))
     return SimpleNamespace(
         status=status,
@@ -51,11 +65,21 @@ def answer(text=NEWS, searches=2, input_tokens=20_000, output_tokens=3_000, stat
     )
 
 
-def api_error(cls, status, body):
+def api_error(cls, status, body, headers=None):
     # Duck-typed response: the SDK's own httpx differs between openai versions.
     request = SimpleNamespace(method="POST", url="https://api.openai.com/v1/responses")
-    response = SimpleNamespace(status_code=status, headers={}, request=request)
+    response = SimpleNamespace(status_code=status, headers=headers or {}, request=request)
     return cls(f"Error code: {status} - {body}", response=response, body=body.get("error"))
+
+
+def rate_limited(headers=None):
+    # Busy, not out of credit: OpenAI does not bill it, and it passes.
+    return api_error(
+        openai.RateLimitError,
+        429,
+        {"error": {"message": "Rate limit reached for gpt-6-sol on tokens per min (TPM).", "type": "tokens", "code": "rate_limit_exceeded"}},
+        headers,
+    )
 
 
 def quota_used_up():
@@ -86,6 +110,18 @@ class FakeOpenAI:
         if isinstance(reply, BaseException):
             raise reply
         return reply
+
+
+@pytest.fixture(autouse=True)
+def pauses(monkeypatch):
+    """No real waiting before a search is sent again; the waits asked for are kept."""
+    waited = []
+
+    async def no_wait(seconds):
+        waited.append(seconds)
+
+    monkeypatch.setattr(web_search, "_pause", no_wait)
+    return waited
 
 
 def _question(i=0, **fields):
@@ -226,9 +262,15 @@ def test_a_slow_search_is_cut_off_at_its_timeout():
     async def slow(**kwargs):
         await asyncio.sleep(5)
 
-    search, _, run_budget = _search(slow, timeout=0.05)
+    search, client, run_budget = _search(slow, timeout=0.05)
     result = _run(search)
-    assert result.why == "timed out" and run_budget.failed_calls == 1
+    assert result.why == "timed out" and len(client.calls) == 1
+    # OpenAI may have billed it in full: it is counted at the most it is
+    # likely to have cost, not left out of the spending.
+    worst = search.most_a_search_can_cost(web_search.web_search_prompt(_question(), TODAY))
+    assert 0.20 < worst < 0.35  # GPT-6 Sol: 10 searches, their pages and 8,000 tokens out
+    assert run_budget.spent_by_provider["OpenAI"] == pytest.approx(worst)
+    assert run_budget.calls == 1 and run_budget.estimated_calls == 1 and run_budget.failed_calls == 0
 
 
 def test_a_used_up_credit_stops_web_search_for_the_rest_of_the_run():
@@ -294,6 +336,228 @@ def test_the_run_spending_limit_stops_the_search_before_it_is_sent():
     run_budget.record(0.01, "OpenRouter")
     search, client, _ = _search(run_budget=run_budget)
     assert _run(search).skipped and client.calls == []
+
+
+# ---- Costs of searches cut off, and requests OpenAI turns away as busy ----
+
+
+def test_a_cut_off_search_counts_toward_the_spending_limit():
+    run_budget = RunBudget(0.25, 100)
+    search, client, _ = _search(timed_out(), run_budget=run_budget)
+    assert _run(search).why == "timed out"
+    assert run_budget.spent_usd > 0.25 and "OpenAI $0.2" in run_budget.cost_line()
+    later = _run(search, _question(1))
+    assert later.skipped == "run budget used up" and len(client.calls) == 1
+
+
+def test_a_lost_connection_is_counted_at_its_most_too():
+    lost = openai.APIConnectionError(request=SimpleNamespace(method="POST", url="https://api.openai.com/v1/responses"))
+    search, client, run_budget = _search(lost)
+    result = _run(search)
+    assert result.why == "server or connection error"
+    # Never sent again: a second try could be billed a second time unseen.
+    assert len(client.calls) == 1 and run_budget.estimated_calls == 1 and run_budget.spent_usd > 0.2
+
+
+def test_a_search_cancelled_mid_call_is_counted_at_its_most():
+    async def hang(**kwargs):
+        await asyncio.sleep(5)
+
+    search, _, run_budget = _search(hang)
+
+    async def cancel_it():
+        task = asyncio.create_task(search.search(_question()))
+        await asyncio.sleep(0.01)
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+
+    asyncio.run(cancel_it())
+    worst = search.most_a_search_can_cost(web_search.web_search_prompt(_question(), TODAY))
+    assert run_budget.estimated_calls == 1 and run_budget.spent_by_provider["OpenAI"] == pytest.approx(worst)
+
+
+def test_a_busy_openai_is_asked_once_more(pauses):
+    search, client, run_budget = _search(rate_limited({"retry-after": "3"}), answer())
+    result = _run(search)
+    assert result.text and len(client.calls) == 2 and pauses == [3.0]
+    # The refusal was not billed; only the answer is in the run's cost.
+    assert run_budget.calls == 1 and run_budget.spent_usd == pytest.approx(0.09)
+    assert search.status.failed == 0
+    # A long retry-after is cut short; without one it waits a moment.
+    search, _, _ = _search(rate_limited({"retry-after": "60"}), answer())
+    _run(search)
+    search, _, _ = _search(api_error(openai.InternalServerError, 503, {"error": {"message": "busy"}}), answer())
+    assert _run(search).text
+    assert pauses == [3.0, web_search.MAX_RETRY_PAUSE_SECONDS, web_search.RETRY_PAUSE_SECONDS]
+
+
+def test_a_server_error_twice_is_a_failure_with_no_cost_guess(pauses):
+    search, client, run_budget = _search(api_error(openai.InternalServerError, 500, {"error": {"message": "oops"}}))
+    result = _run(search)
+    assert result.why == "server or connection error" and len(client.calls) == web_search.SEND_TRIES
+    # OpenAI answered with an error: not billed in full, so no estimate.
+    assert run_budget.calls == 1 and run_budget.failed_calls == 1 and run_budget.estimated_calls == 0
+    assert run_budget.spent_usd == 0
+
+
+def test_a_used_up_credit_is_not_asked_again(pauses):
+    search, client, _ = _search(quota_used_up())
+    _run(search)
+    assert len(client.calls) == 1 and pauses == []
+
+
+def test_searches_failing_together_count_as_one_failure():
+    # Five searches sent at once all hit the same rate limit: one passing
+    # burst, which must not stop web search for the rest of the run.
+    started = []
+
+    async def busy(**kwargs):
+        started.append(1)
+        while len(started) < 5:
+            await asyncio.sleep(0.001)
+        raise rate_limited()
+
+    search, client, _ = _search(busy)
+
+    async def together():
+        return await asyncio.gather(*(search.search(_question(i)) for i in range(5)))
+
+    results = asyncio.run(together())
+    assert all(r.why == "rate limited (HTTP 429)" and not r.stopped for r in results)
+    assert search.status.down_reason is None and search.status.failures_in_a_row == 1
+    assert search.status.failed == 5
+    # Later searches are still sent; failures one after another still stop it.
+    second, third = _run(search, _question(8)), _run(search, _question(9))
+    assert not second.skipped and not second.stopped and third.stopped
+    assert "3 failures in a row" in search.status.down_reason
+    assert _run(search, _question(10)).skipped
+
+
+def test_an_older_model_is_sent_no_reasoning_setting():
+    settings = load_settings({"OPENAI_API_KEY": "sk-test", "WEB_SEARCH_MODEL": "gpt-4.1"})
+    assert settings.web_search_model == "openai/gpt-4.1"
+    client = FakeOpenAI()
+    search = ChatGptWebSearch(settings.web_search_model, RunBudget(10.0, 100), client=client)
+    assert _run(search).text
+    (call,) = client.calls
+    assert call["model"] == "gpt-4.1" and "reasoning" not in call
+    assert call["tools"] == [{"type": "web_search", "search_context_size": "medium"}]
+
+
+# ---- Metaculus ----
+
+
+@pytest.mark.parametrize(
+    "text, kept",
+    [
+        (  # the source on a line of its own under the fact
+            "- 2026-11-10: Rates were cut ([reuters.com](https://www.reuters.com/a)).\n"
+            "- Nov 14, 2026: Forecasters on the question page put the chance at 35%.\n"
+            "  Source: [metaculus.com](https://www.metaculus.com/questions/12345/)\n"
+            "- Status: no cut announced since.",
+            "- 2026-11-10: Rates were cut ([reuters.com](https://www.reuters.com/a)).\n- Status: no cut announced since.",
+        ),
+        (  # the source on the next line, not indented
+            "- Forecasters on the page put it at 35%.\nSource: https://www.metaculus.com/q/1\n- Rates were cut.",
+            "- Rates were cut.",
+        ),
+        (  # footnotes
+            "- Rates were cut on Nov 10 [1].\n- Aggregate forecast stands at 22% [2]\n- Status: open [1][3].\n\n"
+            "[1]: https://www.reuters.com/a\n[2]: https://www.metaculus.com/questions/999/\n[3]: https://www.ft.com/b",
+            "- Rates were cut on Nov 10 [1].\n- Status: open [1][3].\n\n[1]: https://www.reuters.com/a\n[3]: https://www.ft.com/b",
+        ),
+        (  # footnote markers grouped, and the footnote written as [^2]
+            "- Rates were cut [1].\n- Forecasters see 22% [1, 2].\n\n[^1]: https://www.reuters.com/a\n[^2]: metaculus.com/q/2",
+            "- Rates were cut [1].\n\n[^1]: https://www.reuters.com/a",
+        ),
+        (  # a numbered list of sources
+            "- Rates were cut [1].\n- Forecasters see 22% [2].\n\nSources:\n1. https://www.reuters.com/a\n"
+            "2. https://www.metaculus.com/questions/999/",
+            "- Rates were cut [1].\n\nSources:\n1. https://www.reuters.com/a",
+        ),
+        (  # a bulleted list of sources
+            "- Cut [1]. Forecast 22% [2].\n- Status open [1].\n\n- [1] https://reuters.com/a\n- [2] https://metaculus.com/q/2",
+            "- Status open [1].\n\n- [1] https://reuters.com/a",
+        ),
+        (  # a section under a heading that names Metaculus
+            "**Latest**\n- Rates were cut.\n\n**Metaculus forecasts**\n- 35% chance.\n- 40% last week.\n\n"
+            "### Status\n- Not met.",
+            "**Latest**\n- Rates were cut.\n\n**Status**\n- Not met.",
+        ),
+        (  # sub-bullets under a bullet that names Metaculus, and one that does on its own
+            "- Metaculus forecasters:\n  - 35% now\n  - 40% last week\n- Polls:\n  - Metaculus: 35%\n"
+            "  - Some poll: 20%\n- Status: open",
+            "- Polls:\n  - Some poll: 20%\n- Status: open",
+        ),
+        (  # a line that leads into a list
+            "- On the question page forecasters (Metaculus) say:\n- 35% chance\n- 40% a week ago\n\n- Status: open",
+            "- Status: open",
+        ),
+    ],
+)
+def test_a_fact_from_metaculus_goes_with_its_source(text, kept):
+    out, dropped = web_search.drop_metaculus(text)
+    assert web_search.tidy(out) == kept
+    assert dropped > 0 and "35%" not in out and "22%" not in out
+
+
+def test_answers_without_metaculus_are_left_as_they_are():
+    for text in (NEWS, "- a [1]\n  continued\n\n[1]: https://reuters.com/a", "**Latest**\n- a\n  - b\n\nSources:\n1. x.com"):
+        assert web_search.drop_metaculus(text) == (text, 0)
+
+
+def _action(kind, **fields):
+    return SimpleNamespace(type=kind, **fields)
+
+
+@pytest.mark.parametrize(
+    "reply, why",
+    [
+        (
+            answer(actions=[_action("search", query="rate cut"), _action("open_page", url="https://www.metaculus.com/questions/2000/")]),
+            "opened a Metaculus page",
+        ),
+        (
+            answer(actions=[_action("find_in_page", url="metaculus.com/questions/2000/", pattern="community")]),
+            "opened a Metaculus page",
+        ),
+        (answer(actions=[_action("search", query="metaculus central bank rate cut 2027")]), "searched for Metaculus"),
+        (
+            answer(
+                annotations=[
+                    SimpleNamespace(type="url_citation", start_index=0, end_index=5, url="https://metaculus.com/questions/2000/", title="x")
+                ]
+            ),
+            "cited a Metaculus page",
+        ),
+    ],
+)
+def test_an_answer_that_drew_on_metaculus_is_not_used(reply, why):
+    # The text itself never names Metaculus: the model's own steps show it.
+    search, client, run_budget = _search(reply)
+    results = [_run(search, _question(i)) for i in range(4)]
+    assert all(r.text is None and r.why == f"{why}, so its answer was not used" for r in results)
+    # Paid for all the same.
+    assert run_budget.calls == 4 and run_budget.spent_usd > 0
+    # It is about what the model read, not OpenAI failing: it never stops
+    # web search for the run.
+    assert len(client.calls) == 4 and search.status.down_reason is None
+    assert not any(r.stopped for r in results) and search.status.failed == 4
+    note = web_search.failure_annotation(_question().page_url, results[0], search.status, "Forecast with AskNews news only")
+    assert note == (
+        f"::warning title=ChatGPT web search failed::https://www.metaculus.com/questions/2000/: {why}, so its "
+        "answer was not used. Forecast with AskNews news only."
+    )
+
+
+def test_pages_elsewhere_are_fine():
+    reply = answer(
+        actions=[_action("open_page", url="https://www.reuters.com/metaculus-is-not-here"), _action("find_in_page", url="https://ft.com/a")],
+        annotations=[SimpleNamespace(type="url_citation", start_index=0, end_index=5, url="https://www.reuters.com/a", title="r")],
+    )
+    search, _, _ = _search(reply)
+    assert _run(search).text
 
 
 def _real_sdk(status, body, seen):
@@ -375,6 +639,35 @@ def test_the_real_openai_sdk_reports_a_used_up_credit():
     search = ChatGptWebSearch("openai/gpt-6-sol", RunBudget(10.0, 100), client=_real_sdk(429, body, seen))
     result = _run(search)
     assert result.stopped and "credit used up" in search.status.down_reason and len(seen) == 1
+
+
+
+def test_the_real_openai_sdk_shows_an_opened_metaculus_page():
+    seen = []
+    body = json.loads(json.dumps(REAL_ANSWER))
+    body["output"][1]["action"]["url"] = "https://www.metaculus.com/questions/2000/"
+    search = ChatGptWebSearch("openai/gpt-6-sol", RunBudget(10.0, 100), client=_real_sdk(200, body, seen))
+    result = _run(search)
+    assert result.text is None and result.why.startswith("opened a Metaculus page")
+    cited = json.loads(json.dumps(REAL_ANSWER))
+    cited["output"][3]["content"][0]["annotations"][0]["url"] = "https://www.metaculus.com/questions/2000/"
+    search = ChatGptWebSearch("openai/gpt-6-sol", RunBudget(10.0, 100), client=_real_sdk(200, cited, seen))
+    assert _run(search).why.startswith("cited a Metaculus page")
+
+
+def test_the_real_openai_sdk_sends_an_older_model_no_reasoning():
+    seen = []
+    search = ChatGptWebSearch("openai/gpt-4.1", RunBudget(10.0, 100), client=_real_sdk(200, REAL_ANSWER, seen))
+    assert _run(search).text
+    ((_, body),) = seen
+    assert body["model"] == "gpt-4.1" and "reasoning" not in body
+
+
+def test_the_sdk_made_for_the_run_does_not_retry_on_its_own(monkeypatch):
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-test-key")
+    search = ChatGptWebSearch("openai/gpt-6-sol", RunBudget(10.0, 100))
+    client = search._openai()
+    assert client.max_retries == 0 and client.timeout == web_search.WEB_SEARCH_TIMEOUT_SECONDS
 
 
 # ---- Research for a question: AskNews and ChatGPT web search together ----
@@ -490,7 +783,7 @@ def test_chatgpt_carries_the_question_when_asknews_fails(asknews, capsys):
     assert research == f"## News from ChatGPT web search (searched {TODAY} UTC)\n{NEWS.replace('?utm_source=openai', '')}"
     assert "AskNews" not in research
     note = search.covered_annotation()
-    assert note.startswith("::warning title=AskNews failed, ChatGPT web search used alone::1 question(s)")
+    assert note.startswith("::warning title=AskNews failed so ChatGPT web search was used alone::1 question(s)")
     assert "ValueError x1" in note
 
 
@@ -557,3 +850,44 @@ def test_a_question_whose_research_fails_is_a_failed_question(asknews, monkeypat
     bot = _bot(search)
     reports = asyncio.run(bot.forecast_questions([_question()], return_exceptions=True))
     assert len(reports) == 1 and isinstance(reports[0], BaseException)
+
+
+
+def test_metaculus_answer_leaves_asknews_alone(asknews, capsys):
+    search, _, _ = _search(answer(actions=[_action("open_page", url="https://www.metaculus.com/questions/2000/")]))
+    assert _research(_bot(search)) == ASKNEWS
+    (line,) = [line for line in capsys.readouterr().out.splitlines() if line.startswith("::")]
+    assert "opened a Metaculus page, so its answer was not used. Forecast with AskNews news only." in line
+
+
+def _title(note):
+    return note.split("::")[1].split("title=", 1)[1]
+
+
+def test_annotation_titles_have_no_comma_or_colon():
+    # GitHub splits a title at a comma (or a colon), so the run page would
+    # show only its first part.
+    search, _, _ = _search(timed_out())
+    failed = _run(search)
+    covered, _, _ = _search()
+    covered.covered_for["ValueError"] += 2
+    stopped_search, _, _ = _search(quota_used_up())
+    stopped = _run(stopped_search)
+    status = openai_credit.parser_status()
+    status.note_failure(openai_credit.FAILED, "timed out")
+    status.done_instead += 1
+    down = openai_credit.parser_status()
+    down.note_failure(openai_credit.DOWN, "OpenAI credit used up")
+    down.done_instead += 1
+    notes = [
+        covered.covered_annotation(),
+        web_search.failure_annotation("u", failed, search.status, "x"),
+        web_search.failure_annotation("u", stopped, stopped_search.status, "x"),
+        status.annotation(),
+        down.annotation(),
+    ]
+    assert all(notes)
+    for note in notes:
+        title = _title(note)
+        assert title and "," not in title and ":" not in title, note
+    assert _title(covered.covered_annotation()) == "AskNews failed so ChatGPT web search was used alone"

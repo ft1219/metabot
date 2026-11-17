@@ -17,6 +17,7 @@ from bot_config import (
     batch_size_for_money,
     batch_size_on_claude_api,
     forecaster_kwargs,
+    is_openai_reasoning_model,
     money_needed_for_one_question,
     load_settings,
     openrouter_twin,
@@ -339,6 +340,42 @@ def test_parser_request_options():
         "extra_body": {"reasoning_effort": "low"},
     }
     assert parser_kwargs(PARSER_FALLBACK_MODEL) == {"temperature": 0.0}
+
+
+@pytest.mark.parametrize(
+    "model, reasoning",
+    [
+        ("openai/gpt-6-luna", True),
+        ("openai/gpt-6-sol", True),
+        ("gpt-6-astra", True),
+        ("openai/gpt-5-mini", True),
+        ("openai/o3", True),
+        ("openai/o4-mini", True),
+        ("openai/gpt-10", True),
+        ("openai/gpt-5-chat-latest", False),
+        ("openai/gpt-4o-mini", False),
+        ("openai/gpt-4.1-mini", False),
+        ("openai/gpt-4.1", False),
+        ("openai/chatgpt-4o-latest", False),
+        ("openai/gpt-3.5-turbo", False),
+    ],
+)
+def test_only_openai_reasoning_models_are_sent_a_reasoning_effort(model, reasoning):
+    assert is_openai_reasoning_model(model) is reasoning
+    kwargs = parser_kwargs(model if "/" in model else f"openai/{model}")
+    assert ("extra_body" in kwargs) is reasoning
+    # A reasoning model takes no temperature; any other parses at 0 as it
+    # did before the parser moved to OpenAI.
+    assert kwargs["temperature"] == (None if reasoning else 0.0)
+    assert kwargs["max_retries"] == 0 and kwargs["timeout"] == 90
+
+
+def test_an_older_openai_parser_override_keeps_temperature_and_its_fallback():
+    for env in ({"OPENAI_API_KEY": "sk-test"}, {}):
+        settings = load_settings({**env, "PARSER_MODEL": "openai/gpt-4o-mini"})
+        assert settings.parser_model == "openai/gpt-4o-mini"
+        assert settings.parser_fallback_model == PARSER_FALLBACK_MODEL
+        assert parser_kwargs(settings.parser_model) == {"temperature": 0.0, "timeout": 90, "max_retries": 0}
 
 
 def test_money_kept_back_for_the_parser_follows_its_openrouter_fallback():

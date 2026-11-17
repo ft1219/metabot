@@ -239,6 +239,21 @@ def test_parser_still_stops_at_the_call_limit(fake_model):
         asyncio.run(llm.invoke("hi"))
 
 
+def test_a_failed_call_counted_at_an_estimate_is_in_the_spending(fake_model):
+    # A ChatGPT web search cut off before its answer came back.
+    budget = RunBudget(max_cost_usd=0.30, max_calls=100)
+    budget.record_failure("OpenAI", estimated_usd=0.28)
+    assert budget.calls == 1 and budget.estimated_calls == 1 and budget.failed_calls == 0
+    assert "OpenAI $0.2800" in budget.cost_line()
+    budget.check()
+    budget.record_failure("OpenAI", estimated_usd=0.05)
+    with pytest.raises(RunBudgetExceeded, match="spending limit"):
+        budget.check()
+    # Without an estimate the cost stays unknown, as before.
+    budget.record_failure("OpenAI")
+    assert budget.failed_calls == 1 and budget.spent_usd == pytest.approx(0.33)
+
+
 def test_calls_that_fail_after_being_sent_still_count(monkeypatch):
     # An empty answer is billed by OpenRouter but raises inside GeneralLlm.
     real_acompletion = litellm.acompletion
