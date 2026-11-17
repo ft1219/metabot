@@ -29,10 +29,12 @@ from forecasting_tools import GeneralLlm
 # US dollars per million tokens (input, output). GPT-6 Sol: OpenRouter's price
 # list on 2026-11-12, which matches OpenAI's own prices.
 EXTRA_PRICES_PER_MILLION_TOKENS = {"gpt-6-sol": (2.0, 10.0)}
-# Claude Sonnet 5.5 on the Claude API, from Anthropic's price list: $2 / $10,
-# cache reads $0.10 and (5-minute) cache writes $2.50 per million tokens.
+# Claude on the Claude API, from Anthropic's price list: Sonnet 5.5 $2 / $10,
+# cache reads $0.10 and (5-minute) cache writes $2.50 per million tokens;
+# Opus 5.5 (if TOURNAMENT_FORECAST_MODEL picks it) $4 / $20, $0.20 and $5.
 CLAUDE_API_PRICES_PER_MILLION_TOKENS = {
     "claude-sonnet-5-5": {"input": 2.0, "output": 10.0, "cache_read": 0.10, "cache_write": 2.50},
+    "claude-opus-5-5": {"input": 4.0, "output": 20.0, "cache_read": 0.20, "cache_write": 5.00},
 }
 
 
@@ -154,10 +156,15 @@ class BudgetedLlm(GeneralLlm):
         self._budget.check(self._enforce_spending_limit)
         try:
             response = await super()._mockable_direct_call_to_model(prompt)
-        except Exception:
-            self._budget.record_failure(provider_of(self.model))
+        except Exception as e:
+            if self._counts_as_a_call(e):
+                self._budget.record_failure(provider_of(self.model))
             raise
         # response.cost is the price litellm attached to this one call; the
         # library's own cost managers count each call twice.
         self._budget.record(getattr(response, "cost", None), provider_of(self.model))
         return response
+
+    def _counts_as_a_call(self, error: Exception) -> bool:
+        """Whether a call that raised `error` counts toward the call limit."""
+        return True

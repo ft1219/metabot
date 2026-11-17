@@ -41,6 +41,8 @@ DEFAULT_TOURNAMENT_FORECAST_MODEL = "openrouter/anthropic/claude-sonnet-5.5"
 CLAUDE_API_VERSIONS = {
     "openrouter/anthropic/claude-sonnet-5.5": "anthropic/claude-sonnet-5-5",
 }
+# Claude API models whose default effort is already high (forecaster_kwargs).
+CLAUDE_API_HIGH_EFFORT_BY_DEFAULT = {"anthropic/claude-sonnet-5-5"}
 DEFAULT_PARSER_MODEL = "openrouter/deepseek/deepseek-v3.2"
 DEFAULT_RESEARCHER = "asknews/news-summaries"
 
@@ -209,10 +211,19 @@ def forecaster_kwargs(settings: BotSettings, model: str | None = None) -> dict:
     if model.startswith("anthropic/"):
         # The Claude API, through litellm's own Anthropic provider. litellm
         # would turn a reasoning_effort into a fixed thinking budget and would
-        # copy extra_body's fields into the request as they are; Claude Sonnet
-        # 5.5 refuses both. So only the length is sent: without a `thinking`
-        # field the model thinks adaptively, at its default effort, high.
-        return {"temperature": None, "max_tokens": 16000}
+        # copy extra_body into the request as it is; Claude Sonnet 5.5 refuses
+        # both. So no `thinking` field is sent (the model then thinks
+        # adaptively), and effort high is set the Claude API's own way,
+        # output_config, which litellm passes on unchanged (adding an old
+        # effort beta header). Claude Sonnet 5.5 runs at high by default, so
+        # its request leaves it out; other Claude models may not (Opus 5.5's
+        # default is medium).
+        effort = (
+            {}
+            if model in CLAUDE_API_HIGH_EFFORT_BY_DEFAULT
+            else {"output_config": {"effort": "high"}}
+        )
+        return {"temperature": None, "max_tokens": 16000, **effort}
     if is_claude(model):
         return {
             "temperature": None,
@@ -282,6 +293,28 @@ def batch_size_for_money(settings: BotSettings, model: str, money_left: float | 
         return 0
     # The small tolerance keeps $1.05 from counting as 0.99999 of a question.
     return max(0, min(usual, int(spare / hold + 1e-9)))
+
+
+def batch_size_on_claude_api(
+    settings: BotSettings, model: str, money_left: float | None, proven: bool
+) -> int:
+    """
+    How many questions on the Claude API `model` to forecast at once with
+    `money_left` dollars on OpenRouter. Once the Claude API has `proven` it
+    carries the forecasts this run (it has answered, and the last batch
+    needed no fallback), OpenRouter pays only for parsing. Before that, at the
+    start of every run and after any batch with fallbacks, each forecast may
+    be redone on OpenRouter (credit used up, rate limits), so the batch is
+    sized for OpenRouter's version of the model, but at least one question
+    goes when its parsing fits: low OpenRouter money then risks at most one
+    question's fallbacks, and never holds back questions the Claude API
+    would answer.
+    """
+    on_claude_api = batch_size_for_money(settings, model, money_left)
+    if proven:
+        return on_claude_api
+    on_openrouter = batch_size_for_money(settings, openrouter_twin(model) or model, money_left)
+    return max(on_openrouter, min(1, on_claude_api))
 
 
 def money_needed_for_one_question(settings: BotSettings) -> float:

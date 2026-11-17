@@ -52,7 +52,9 @@ jobs:
     if: ${{ needs.check.outputs.to_forecast == 'true' }}
     runs-on: ubuntu-latest
     # A batch of 5 questions usually takes 3-6 minutes; slow hosts can stretch
-    # one to about 15 (two 300 s tries per forecast, then parsing).
+    # one to about 15 (two 300 s tries per forecast, then parsing), and to
+    # about 20 when the Claude API times out first. After three Claude API
+    # timeouts in a row the run sends the rest straight to OpenRouter.
     timeout-minutes: 40
     permissions:
       contents: read

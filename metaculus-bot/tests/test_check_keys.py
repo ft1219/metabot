@@ -74,10 +74,10 @@ def test_asknews_skipped_when_another_researcher_is_used(capsys, monkeypatch):
     monkeypatch.setenv("RESEARCHER", "no_research")
     monkeypatch.setattr(check_keys, "check_metaculus", lambda token: (OK, "m"))
     monkeypatch.setattr(check_keys, "check_forecast_data", lambda token: (OK, "f"))
-    monkeypatch.setattr(check_keys, "check_openrouter", lambda key: (OK, "o"))
-    monkeypatch.setattr(check_keys, "check_openrouter_credit", lambda key: (LOW, "c"))
+    monkeypatch.setattr(check_keys, "check_openrouter", lambda key, *rest: (OK, "o"))
+    monkeypatch.setattr(check_keys, "check_openrouter_credit", lambda key, *rest: (LOW, "c"))
     monkeypatch.setattr(check_keys, "check_openai", lambda key: (OK, "g"))
-    monkeypatch.setattr(check_keys, "check_anthropic", lambda key: (OK, "c2"))
+    monkeypatch.setattr(check_keys, "check_anthropic", lambda key, *rest: (OK, "c2"))
     # Running low is a warning, not a failed check.
     assert check_keys.main() == 0
     assert "AskNews keys are not needed" in capsys.readouterr().out
@@ -91,10 +91,10 @@ def test_one_crashing_check_does_not_hide_the_others(capsys, monkeypatch):
 
     monkeypatch.setattr(check_keys, "check_metaculus", boom)
     monkeypatch.setattr(check_keys, "check_forecast_data", lambda token: (OK, "f"))
-    monkeypatch.setattr(check_keys, "check_openrouter", lambda key: (OK, "o"))
-    monkeypatch.setattr(check_keys, "check_openrouter_credit", lambda key: (OK, "c"))
+    monkeypatch.setattr(check_keys, "check_openrouter", lambda key, *rest: (OK, "o"))
+    monkeypatch.setattr(check_keys, "check_openrouter_credit", lambda key, *rest: (OK, "c"))
     monkeypatch.setattr(check_keys, "check_openai", lambda key: (OK, "g"))
-    monkeypatch.setattr(check_keys, "check_anthropic", lambda key: (OK, "c2"))
+    monkeypatch.setattr(check_keys, "check_anthropic", lambda key, *rest: (OK, "c2"))
     monkeypatch.setattr(check_keys, "check_asknews", lambda *a: (OK, "a"))
     check_keys.main()
     out = capsys.readouterr().out
@@ -200,11 +200,66 @@ def test_anthropic_key_is_optional():
     assert check_keys.check_anthropic("k", _answer(529))[0] == UNSURE
 
 
+def test_anthropic_key_unused_because_of_the_model_variable_is_flagged():
+    called = []
+
+    def get(url, headers, *rest):
+        called.append(url)
+        return 200, {}
+
+    verdict, message = check_keys.check_anthropic("k", get, "openrouter/google/gemini-3.7-flash")
+    assert verdict == BAD and "does not use the key" in message and "gemini-3.7-flash" in message
+    assert called == []
+    # The OpenRouter name of Claude Sonnet 5.5 is moved to the Claude API.
+    assert check_keys.check_anthropic("k", get, "openrouter/anthropic/claude-sonnet-5.5")[0] == OK
+    # Another Claude API model is looked up by its own name.
+    verdict, message = check_keys.check_anthropic("k", get, "anthropic/claude-opus-5-5")
+    assert verdict == OK and called[-1] == "https://api.anthropic.com/v1/models/claude-opus-5-5"
+
+
+def test_less_openrouter_money_is_enough_with_a_working_claude_api_key():
+    # $0.60 left: too little for OpenRouter's Claude ($1.05 a question), enough
+    # to parse forecasts made on the Claude API ($0.20).
+    assert check_keys.check_openrouter_credit("k", _credits(10, 9.40))[0] == BAD
+    verdict, message = check_keys.check_openrouter_credit("k", _credits(10, 9.40), True)
+    assert verdict == LOW and "Claude API" in message
+    assert check_keys.check_openrouter_credit("k", _credits(10, 9.85), True)[0] == BAD
+    limit = _answer(200, {"data": {"limit": 30, "usage": 29.40, "limit_remaining": 0.60}})
+    assert check_keys.check_openrouter("k", limit)[0] == BAD
+    assert check_keys.check_openrouter("k", limit, True)[0] == LOW
+
+
+def test_check_run_passes_on_little_openrouter_money_with_the_claude_api(capsys, monkeypatch):
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-k")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-k")
+    monkeypatch.setenv("RESEARCHER", "no_research")
+    for k in ("TOURNAMENT_FORECAST_MODEL", "GITHUB_STEP_SUMMARY"):
+        monkeypatch.delenv(k, raising=False)
+    for name in ("check_metaculus", "check_forecast_data", "check_openai"):
+        monkeypatch.setattr(check_keys, name, lambda key, *rest: (OK, "fine"))
+
+    def http(url, headers, *rest):
+        if "anthropic.com" in url:
+            return 200, {"id": "claude-sonnet-5-5"}
+        if url.endswith("/credits"):
+            return 200, {"data": {"total_credits": 20, "total_usage": 19.40}}
+        return 200, {"data": {"limit": None, "usage": 19.40}}
+
+    monkeypatch.setattr(check_keys, "http", http)
+    assert check_keys.main() == 0
+    assert "RUNNING LOW" in capsys.readouterr().out
+    # The same money with the key unused is a problem.
+    monkeypatch.setenv("TOURNAMENT_FORECAST_MODEL", "openrouter/deepseek/deepseek-v3.2")
+    assert check_keys.main() == 1
+    out = capsys.readouterr().out
+    assert "OpenRouter credit is used up" in out and "does not use the key" in out
+
+
 def test_unset_anthropic_key_is_not_an_error(capsys, monkeypatch):
     for k in ("ANTHROPIC_API_KEY", "GITHUB_STEP_SUMMARY"):
         monkeypatch.delenv(k, raising=False)
     monkeypatch.setenv("RESEARCHER", "no_research")
     for name in ("check_metaculus", "check_forecast_data", "check_openrouter", "check_openrouter_credit", "check_openai"):
-        monkeypatch.setattr(check_keys, name, lambda key: (OK, "fine"))
+        monkeypatch.setattr(check_keys, name, lambda key, *rest: (OK, "fine"))
     assert check_keys.main() == 0
     assert "ANTHROPIC_API_KEY is not set" in capsys.readouterr().out

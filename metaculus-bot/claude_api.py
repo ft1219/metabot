@@ -12,8 +12,9 @@ a question:
 - a timeout, a refusal by Claude's safety classifiers or an empty answer goes
   to OpenRouter at once;
 - a problem with the account (key missing or rejected, credit used up, spend
-  limit reached, model not available) also stops the Claude API for the rest
-  of the run, so later forecasts go straight to OpenRouter.
+  limit reached, model not available), or a few timeouts in a row, also stops
+  the Claude API for the rest of the run, so later forecasts go straight to
+  OpenRouter.
 
 At the end of the run ClaudeApiStatus.annotation() says, in one GitHub
 annotation line, what went to OpenRouter and why.
@@ -37,6 +38,12 @@ logger = logging.getLogger(__name__)
 # meet the Claude API's ramp limit, which clears within seconds.
 CLAUDE_API_TRIES = 3
 LONGEST_PAUSE_SECONDS = 60
+# Timeouts in a row (no answer in between) after which the run stops using
+# the Claude API. A timed-out forecast waits 300 s before its OpenRouter
+# tries, so a Claude API that hangs must not do that to every batch: the
+# 40-minute job would run out of time.
+TIMEOUTS_BEFORE_DOWN = 3
+TIMED_OUT = "timed out"
 
 DOWN, BUSY, FAILED = "down", "busy", "failed"
 
@@ -92,7 +99,7 @@ def classify(error: Exception) -> tuple[str, str]:
         )
     # litellm's Timeout is a kind of APIConnectionError, so it comes first.
     if isinstance(error, litellm.Timeout):
-        return FAILED, "timed out"
+        return FAILED, TIMED_OUT
     if isinstance(error, litellm.RateLimitError):
         return BUSY, "rate limited (HTTP 429)"
     if "overloaded" in text:
@@ -135,9 +142,21 @@ class ClaudeApiStatus:
         self.answered = 0  # forecasts written on the Claude API
         self.redone = 0  # forecasts made on OpenRouter instead
         self.causes: Counter = Counter()
+        self.timeouts_in_a_row = 0
+
+    def note_answer(self) -> None:
+        self.answered += 1
+        self.timeouts_in_a_row = 0
 
     def note_failure(self, error: Exception) -> str:
         kind, why = classify(error)
+        if why == TIMED_OUT:
+            self.timeouts_in_a_row += 1
+            if self.timeouts_in_a_row >= TIMEOUTS_BEFORE_DOWN and self.down_reason is None:
+                self.down_reason = (
+                    f"The Claude API timed out {self.timeouts_in_a_row} times in a row; "
+                    "using OpenRouter for the rest of this run"
+                )
         if kind == DOWN and self.down_reason is None:
             self.down_reason = why
         self.causes[why] += 1
@@ -206,7 +225,7 @@ class ClaudeApiLlm(BudgetedLlm):
         while True:
             try:
                 answer = await super().invoke(prompt, system_prompt)
-                self.status.answered += 1
+                self.status.note_answer()
                 return answer
             except RunBudgetExceeded:
                 raise
@@ -218,6 +237,12 @@ class ClaudeApiLlm(BudgetedLlm):
                 logger.info(f"Claude API {why}; trying again in {wait:.0f} s.")
                 await _pause(wait)
                 attempt += 1
+
+    def _counts_as_a_call(self, error: Exception) -> bool:
+        # The Claude API does not bill a request it turns away as busy (429,
+        # 529, server errors), and CLAUDE_API_TRIES bounds those tries, so
+        # they do not use up the run's call limit, which the parser needs.
+        return classify(error)[0] != BUSY
 
     async def _call_litellm(self, prompt):
         response = await super()._call_litellm(prompt)

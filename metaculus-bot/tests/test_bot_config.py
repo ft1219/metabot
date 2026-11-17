@@ -11,6 +11,7 @@ from bot_config import (
     OPENAI_FORECAST_MODEL,
     SettingsError,
     batch_size_for_money,
+    batch_size_on_claude_api,
     forecaster_kwargs,
     money_needed_for_one_question,
     load_settings,
@@ -135,6 +136,12 @@ def test_claude_api_gets_only_the_answer_length():
         "temperature": None,
         "max_tokens": 16000,
     }
+    # Its default effort is high; Opus 5.5's is medium, so it gets high set.
+    assert forecaster_kwargs(load_settings({}), "anthropic/claude-opus-5-5") == {
+        "temperature": None,
+        "max_tokens": 16000,
+        "output_config": {"effort": "high"},
+    }
 
 
 def test_claude_api_questions_need_openrouter_money_only_for_parsing():
@@ -146,6 +153,20 @@ def test_claude_api_questions_need_openrouter_money_only_for_parsing():
     assert money_needed_for_one_question(settings) == pytest.approx(0.20)
     # Its OpenRouter fallback is judged as before.
     assert batch_size_for_money(settings, openrouter_twin(model), 0.50) == 0
+
+
+def test_claude_api_batches_are_sized_for_openrouter_until_it_has_proven_itself():
+    settings = load_settings({"ANTHROPIC_API_KEY": "sk-ant"})
+    model = settings.tournament_forecast_model
+    # Proven this run: OpenRouter pays only for parsing.
+    assert batch_size_on_claude_api(settings, model, 0.50, proven=True) == 3
+    # Not yet (start of a run, or fallbacks in the last batch): sized for
+    # OpenRouter's Claude, but one question always goes when its parsing fits.
+    assert batch_size_on_claude_api(settings, model, 0.50, proven=False) == 1
+    assert batch_size_on_claude_api(settings, model, 2.22, proven=False) == 2
+    assert batch_size_on_claude_api(settings, model, 40, proven=False) == 5
+    assert batch_size_on_claude_api(settings, model, None, proven=False) == 5
+    assert batch_size_on_claude_api(settings, model, 0.10, proven=False) == 0
 
 
 def test_claude_gets_adaptive_thinking_and_no_temperature():

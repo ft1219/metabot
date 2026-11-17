@@ -151,6 +151,21 @@ def test_litellm_would_turn_reasoning_effort_into_a_thinking_budget():
     assert kwargs == {"temperature": None, "max_tokens": 16000}
 
 
+def test_other_claude_api_models_are_asked_for_effort_high(servers):
+    # Claude Opus 5.5 defaults to effort medium, so it is set explicitly, the
+    # Claude API's own way; still no thinking budget or temperature.
+    settings = load_settings({"ANTHROPIC_API_KEY": KEY, "TOURNAMENT_FORECAST_MODEL": "anthropic/claude-opus-5-5"})
+    llm = main.build_llms(settings, RunBudget(10.0, 100), settings.tournament_forecast_model)["default"]
+    servers.replies = [reply()]
+    assert asyncio.run(llm.invoke("Will it rain?")) == CLAUDE_ANSWER
+    assert servers.bodies() == [{
+        "model": "claude-opus-5-5",
+        "messages": [{"role": "user", "content": [{"type": "text", "text": "Will it rain?"}]}],
+        "max_tokens": 16000,
+        "output_config": {"effort": "high"},
+    }]
+
+
 def test_claude_api_calls_are_priced_without_litellms_downloaded_price_list(servers, monkeypatch):
     # litellm 1.80's bundled price list has no claude-sonnet-5-5; the newer one
     # it downloads at start-up does. Our own registration must cover a failed
@@ -250,8 +265,22 @@ def test_retry_after_is_respected_and_a_second_try_can_succeed(servers):
     assert asyncio.run(llm.invoke("q")) == CLAUDE_ANSWER
     assert len(servers.pauses) == 1 and 7 <= servers.pauses[0] <= 10
     assert servers.openrouter_calls == [] and status.annotation() is None
-    # The failed try is counted against the call limit like any failed call.
-    assert run_budget.calls == 2 and run_budget.failed_calls == 1
+    # The busy try is not billed, so it does not use up the call limit.
+    assert run_budget.calls == 1 and run_budget.failed_calls == 0
+
+
+def test_timeouts_in_a_row_stop_the_claude_api_for_the_run(servers):
+    llm, run_budget, status = _forecaster()
+    timeout = httpx.ReadTimeout("no answer in 300 s")
+    # A timeout, then an answer, then timeouts: only those in a row count.
+    servers.replies = [timeout, reply()] + [timeout] * claude_api.TIMEOUTS_BEFORE_DOWN
+    answers = [asyncio.run(llm.invoke(f"q{i}")) for i in range(claude_api.TIMEOUTS_BEFORE_DOWN + 3)]
+    assert answers == [OPENROUTER_ANSWER, CLAUDE_ANSWER] + [OPENROUTER_ANSWER] * (claude_api.TIMEOUTS_BEFORE_DOWN + 1)
+    # The forecast after the last timeout goes straight to OpenRouter.
+    assert len(servers.claude_requests) == claude_api.TIMEOUTS_BEFORE_DOWN + 2
+    assert "timed out 3 times in a row" in status.down_reason
+    note = status.annotation()
+    assert note.startswith("::warning title=Claude API not used::") and "\n" not in note
 
 
 @pytest.mark.parametrize(
@@ -375,7 +404,10 @@ def test_low_openrouter_money_does_not_hold_back_claude_api_questions(servers, m
     read = _money(0.50)
     reports, held, status, run_budget = _run(settings, strong, read, monkeypatch)
     assert len(reports) == 5 and held == []
-    assert read.reads == [0.50, 0.50]  # batches of 3 and 2
+    # One question first (the Claude API has not answered yet this run), then
+    # batches of 3 (parsing only) and 1.
+    assert read.reads == [0.50, 0.50, 0.50]
+    assert status.answered == 25 and servers.openrouter_calls == []
     # Only the usual "running low" warning, no questions held back.
     assert "::error" not in capsys.readouterr().out
 
@@ -386,14 +418,33 @@ def test_low_openrouter_money_does_not_hold_back_claude_api_questions(servers, m
 
 
 def test_money_guard_judges_by_openrouter_once_the_claude_api_is_down(servers, monkeypatch, capsys):
-    # The first batch finds the credit used up and is redone on OpenRouter;
-    # with $0.50 left, the questions after it wait for the next run.
+    # Every run starts as if the Claude API might be down, so with $0.50 of
+    # OpenRouter money only one question risks being redone there. It finds
+    # the credit used up; the questions after it wait for the next run.
     servers.replies = [ACCOUNT_PROBLEMS["credit used up"][0]]
     settings = load_settings({"ANTHROPIC_API_KEY": KEY})
     strong = _questions(5)
     reports, held, status, run_budget = _run(settings, strong, _money(0.50), monkeypatch)
-    assert len(reports) == 3 and held == strong[3:]
+    assert len(reports) == 1 and held == strong[1:]
+    assert len(servers.openrouter_calls) == 5
     assert "::error title=OpenRouter credit used up::" in capsys.readouterr().out
+
+
+def test_money_guard_keeps_batches_small_while_forecasts_fall_back(servers, monkeypatch):
+    # A rate-limit storm never marks the Claude API down, but every forecast
+    # is redone on OpenRouter. With $0.80 there (not enough for one question
+    # on OpenRouter's Claude), the batches stay at one question each instead
+    # of the four that parsing alone would allow.
+    servers.replies = [BUSY["rate limited"]]
+    settings = load_settings({"ANTHROPIC_API_KEY": KEY})
+    read = _money(0.80)
+    reports, held, status, run_budget = _run(settings, _questions(3), read, monkeypatch)
+    assert len(reports) == 3 and held == []
+    assert read.reads == [0.80, 0.80, 0.80]
+    assert status.down_reason is None and status.redone == 15
+    # The 45 busy tries are free and leave the call limit to the rest.
+    assert len(servers.claude_requests) == 45
+    assert run_budget.calls == 15 and run_budget.failed_calls == 0
 
 
 def test_models_to_call_include_the_openrouter_fallback():

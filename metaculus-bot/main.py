@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import logging
+import os
 import sys
 from datetime import datetime, timezone
 from typing import Literal
@@ -13,6 +14,7 @@ from claude_api import ClaudeApiLlm, ClaudeApiStatus
 from bot_config import (
     BotSettings,
     batch_size_for_money,
+    batch_size_on_claude_api,
     load_settings,
     openrouter_twin,
     pick_questions_to_forecast,
@@ -856,14 +858,14 @@ class OpenRouterGate:
 
     def batch_sizer(self, model):
         """`model`: the model whose forecasts OpenRouter pays for, or a function
-        that says which it is now (read again before every batch)."""
+        that turns the money left into a batch size (asked before every batch)."""
 
         def next_batch_size(remaining: list[MetaculusQuestion]) -> int:
             money = self.read_money()
             if money is not None and (self.lowest_money is None or money.left < self.lowest_money.left):
                 self.lowest_money = money
-            current = model() if callable(model) else model
-            size = batch_size_for_money(self.settings, current, money.left if money else None)
+            left = money.left if money else None
+            size = model(left) if callable(model) else batch_size_for_money(self.settings, model, left)
             if size == 0:
                 self.held_back.extend(remaining)
                 self.money_when_held = self.money_when_held or money
@@ -899,21 +901,28 @@ async def forecast_chosen(
 
     def paid_on_openrouter(model: str):
         # The money rule for the Claude API. While it answers, a question on it
-        # needs OpenRouter only for its parse calls (and for any forecast
-        # redone there after a one-off failure), so it is judged like a
-        # forecast made on OpenAI: low OpenRouter money does not hold it back.
-        # Once the Claude API is down for the run (key, credit, access), every
-        # forecast goes to OpenRouter, so the questions still waiting are
-        # judged by the OpenRouter model, exactly as without the key. The gate
-        # asks before every batch, so an outage in one batch counts from the
-        # next.
-        def now() -> str:
-            twin = openrouter_twin(model)
-            if twin and claude_api is not None and claude_api.down_reason:
-                return twin
+        # needs OpenRouter only for its parse calls, so low OpenRouter money
+        # does not hold it back. Until it has answered this run, and after a
+        # batch in which some forecasts were redone on OpenRouter, the next
+        # batch is sized for OpenRouter but always lets one question through
+        # (bot_config.batch_size_on_claude_api). Once the Claude API is down
+        # for the run (key, credit, access, repeated timeouts), every forecast
+        # goes to OpenRouter, so the questions still waiting are judged by the
+        # OpenRouter model, exactly as without the key.
+        twin = openrouter_twin(model)
+        if not twin or claude_api is None:
             return model
+        redone_before = claude_api.redone
 
-        return now
+        def size_for(money_left: float | None) -> int:
+            nonlocal redone_before
+            proven = claude_api.answered > 0 and claude_api.redone == redone_before
+            redone_before = claude_api.redone
+            if claude_api.down_reason:
+                return batch_size_for_money(settings, twin, money_left)
+            return batch_size_on_claude_api(settings, model, money_left, proven)
+
+        return size_for
 
     def sizer(model):
         return gate.batch_sizer(paid_on_openrouter(model)) if gate else None
@@ -1021,6 +1030,14 @@ if __name__ == "__main__":
     publish_to_metaculus = not args.dry_run
     print_startup_banner(run_mode, will_publish=publish_to_metaculus)
     logger.info(f"Settings: {settings}")
+    claude_api_key_saved = bool((os.getenv("ANTHROPIC_API_KEY") or "").strip())
+    if claude_api_key_saved and not settings.tournament_forecast_model.startswith("anthropic/"):
+        # The saved key would otherwise go unused without a word.
+        print(
+            f"::notice title=Claude API key not used::TOURNAMENT_FORECAST_MODEL is "
+            f"{settings.tournament_forecast_model}, which has no Claude API version, so this run "
+            "does not use ANTHROPIC_API_KEY. Leave the variable blank to use the Claude API credit."
+        )
     budget = RunBudget(settings.max_cost_per_run_usd, settings.max_llm_calls_per_run)
     # What the Claude API did this run (used when ANTHROPIC_API_KEY is saved).
     claude_api = ClaudeApiStatus()
