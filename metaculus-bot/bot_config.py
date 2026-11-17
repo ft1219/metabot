@@ -61,9 +61,9 @@ CLAUDE_API_VERSIONS = {
 # much and scored higher in this tournament (40th against 48th).
 CLAUDE_API_AFTER_LIMIT_MODEL = "anthropic/claude-sonnet-5-5"
 DEFAULT_CLAUDE_MONTHLY_LIMIT_USD = 80.0
-# The day of the month the owner's Claude API credit renews: they claimed it
-# on 17 November 2026.
-DEFAULT_CLAUDE_CREDIT_RESET_DAY = 17
+# The day of the month the owner's Claude API credit renews. Their Claude
+# billing page (linked 17 November 2026) shows "Next credit: Dec 3, 2026".
+DEFAULT_CLAUDE_CREDIT_RESET_DAY = 3
 # Claude API models whose default effort is already high (forecaster_kwargs).
 CLAUDE_API_HIGH_EFFORT_BY_DEFAULT = {"anthropic/claude-sonnet-5-5", "anthropic/claude-fable-5-2"}
 DEFAULT_PARSER_MODEL = "openrouter/deepseek/deepseek-v3.2"
