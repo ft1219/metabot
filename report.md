@@ -1,19 +1,19 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-17 03:54 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-17 04:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
 | 1 | follow_move | 377 | 243/377 | +6.5% | +$123.21 | 12 | 126 | too early |
-| 2 | sure_thing | 1723 | 1601/1723 | -0.5% | -$43.14 | 11 | 138 | too early |
-| 3 | safe_no_week | 692 | 636/692 | -4.1% | -$141.18 | 12 | 237 | too early |
-| 4 | sports_underdog | 1259 | 294/1259 | -13.6% | -$852.41 | 10 | 37 | too early |
+| 2 | sure_thing | 1732 | 1610/1732 | -0.5% | -$39.78 | 11 | 137 | too early |
+| 3 | safe_no_week | 692 | 636/692 | -4.1% | -$141.18 | 12 | 239 | too early |
+| 4 | sports_underdog | 1266 | 297/1266 | -12.9% | -$812.53 | 10 | 30 | too early |
 | 5 | fade_move | 416 | 123/416 | -14.8% | -$307.58 | 12 | 132 | too early |
-| 6 | weather_forecast | 506 | 260/506 | -19.6% | -$489.48 | 9 | 102 | too early |
+| 6 | weather_forecast | 506 | 260/506 | -19.6% | -$489.48 | 9 | 103 | too early |
 | 7 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 8 | coin_flip | 1904 | 929/1904 | -6.3% | -$595.36 | 12 | 148 | yardstick |
+| 8 | coin_flip | 1905 | 929/1905 | -6.3% | -$600.36 | 12 | 155 | yardstick |
 
 What each one does:
 
@@ -32,7 +32,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move | sure_thing | safe_no_week | sports_underdog | fade_move | weather_forecast | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|
-| 2026-11-17 | -$5.46 | +$4.13 | +$0.10 | -$12.39 | -$13.04 |  |  | -$65.92 |
+| 2026-11-17 | -$5.46 | +$7.49 | +$0.10 | +$27.49 | -$13.04 |  |  | -$70.92 |
 | 2026-11-16 | +$11.58 | -$6.40 | -$11.02 | +$21.94 | -$17.46 |  | +$0.08 | -$21.29 |
 | 2026-11-15 | +$17.97 | +$0.34 | -$26.64 |  | +$30.37 | -$0.94 |  | -$47.97 |
 | 2026-11-14 | -$7.86 |  | -$37.34 |  | +$18.94 | -$4.48 |  | -$13.50 |
@@ -46,21 +46,21 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 ## Latest pretend buys (newest of each strategy first)
 
 - 2026-11-17 follow_move: Will the price of XRP be between $0.90 and $1.00 on November 19? -> Yes at 0.587 ($5.00)
-- 2026-11-17 sure_thing: Spread: Romania (-1.5) -> Bosnia and Herzegovina at 0.924 ($5.00)
-- 2026-11-17 safe_no_week: Will 280+ ships transit the Suez Canal week of November 16? -> Yes at 0.953 ($5.00)
+- 2026-11-17 sure_thing: Spread: Harborough Town FC (-1.5) -> South Shields at 0.924 ($5.00)
+- 2026-11-17 safe_no_week: Will "I Play Rocky" Opening Weekend Box Office be between 7m and 10m? -> No at 0.981 ($5.00)
 - 2026-11-17 sports_underdog: Yemen vs. Malaysia: O/U 3.5 -> Over at 0.361 ($5.00)
 - 2026-11-17 fade_move: Will the price of XRP be between $0.90 and $1.00 on November 19? -> No at 0.497 ($5.00)
-- 2026-11-17 weather_forecast: Will the lowest temperature in Austin be between 40-41°F on November 18? -> No at 0.808 ($5.00)
+- 2026-11-17 weather_forecast: Will the highest temperature in Denver be between 58-59°F on November 18? -> No at 0.671 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-17 coin_flip: KHL: CSKA Moscow vs. Lokomotiv Yaroslavl -> Lokomotiv Yaroslavl at 0.502 ($5.00)
+- 2026-11-17 coin_flip: Will Bonaire win on 2026-11-17? -> No at 0.808 ($4.04)
 - 2026-11-17 follow_move: Solana Up or Down on November 17? -> Up at 0.753 ($5.00)
-- 2026-11-17 sure_thing: Exact Score: Dominica 0 - 0 Cayman Islands? -> No at 0.952 ($5.00)
-- 2026-11-17 safe_no_week: Will the highest temperature in Mexico City be 21°C on November 18? -> No at 0.938 ($5.00)
+- 2026-11-17 sure_thing: Spread: Liberia (-1.5) -> Cape Verde at 0.952 ($5.00)
+- 2026-11-17 safe_no_week: Will "Housewife - Tate McRae" be the #2 US song this week? -> No at 0.932 ($5.00)
 - 2026-11-17 sports_underdog: Will Yemen win on 2026-11-17? -> Yes at 0.247 ($5.00)
 
 ## Price gaps seen today
 
 No near-gaps today.
 
-Runs in the last 24 hours: 36 (36 with a problem).
+Runs in the last 24 hours: 37 (37 with a problem).
 Latest problem: 42 position(s) still open more than 3 days after their market ended
