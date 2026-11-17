@@ -94,6 +94,46 @@ def test_follow_and_fade_take_opposite_sides():
     assert S.follow_move(temp, rng) is None
 
 
+def test_follow_move_variants_pick_subsets_of_follow_move():
+    rng = random.Random(1)
+    crypto_ev = [{"id": "c1", "title": "Solana above ___ on November 19?"}]
+    # A crypto market whose rising side costs 35 cents after a 25-cent move: every variant takes it.
+    cheap_big = lab.market_view(gamma(end_h=48, bid=0.34, ask=0.35, oneDayPriceChange=0.25, events=crypto_ev), NOW)
+    assert S.follow_move(cheap_big, rng) == (0, 0.85)
+    assert S.follow_move_2(cheap_big, rng) == (0, 0.85)
+    assert S.follow_move_crypto(cheap_big, rng) == (0, 0.85)
+    assert S.follow_move_cheap(cheap_big, rng) == (0, 0.50)
+    assert S.follow_move_big(cheap_big, rng) == (0, 0.85)
+    # Not crypto, 61 cents, a 12-cent move: only follow_move and follow_move_2 take it.
+    plain = lab.market_view(gamma(end_h=48, bid=0.6, ask=0.61, oneDayPriceChange=0.12,
+                                  events=[{"id": "p1", "title": "Will the Fed cut rates in December?"}]), NOW)
+    assert S.follow_move(plain, rng) == (0, 0.85) and S.follow_move_2(plain, rng) == (0, 0.85)
+    assert S.follow_move_crypto(plain, rng) is None
+    assert S.follow_move_cheap(plain, rng) is None
+    assert S.follow_move_big(plain, rng) is None
+    # A fall: the side that rose is No, at 1 - bid = 0.45, so the cheap variant takes No.
+    fell = lab.market_view(gamma(end_h=48, bid=0.55, ask=0.56, oneDayPriceChange=-0.3, events=crypto_ev), NOW)
+    assert S.follow_move_cheap(fell, rng) == (1, 0.50)
+    assert S.follow_move_big(fell, rng) == (1, 0.85)
+    # Words that merely contain a coin's letters are not crypto ("Ethiopia", "Bethesda").
+    not_coin = lab.market_view(gamma(end_h=48, bid=0.34, ask=0.35, oneDayPriceChange=0.25,
+                                     events=[{"id": "e1", "title": "Ethiopia election in Bethesda?"}]), NOW)
+    assert S.follow_move_crypto(not_coin, rng) is None
+    # No variant trades what follow_move itself would not (sports, temperature, no volume).
+    quiet = lab.market_view(gamma(end_h=48, bid=0.34, ask=0.35, oneDayPriceChange=0.25, volume24hr=0,
+                                  events=crypto_ev), NOW)
+    for rule in (S.follow_move_2, S.follow_move_crypto, S.follow_move_cheap, S.follow_move_big):
+        assert rule(quiet, rng) is None
+
+
+def test_new_variants_start_on_their_own_date():
+    for name in ("follow_move_2", "follow_move_crypto", "follow_move_cheap", "follow_move_big"):
+        cfg = S.STRATEGIES[name]
+        assert cfg["active"] and cfg["since"] == "2026-11-17" and cfg.get("judge", "bet") == "bet"
+    # The original keeps its own start date and record.
+    assert S.STRATEGIES["follow_move"]["since"] == "2026-11-05"
+
+
 def test_make_trade_needs_minimum_order():
     v = lab.market_view(gamma(bid=0.94, ask=0.95), NOW)
     thin = {"asks": [{"price": "0.95", "size": "3"}]}  # 3 shares < the 5-share minimum

@@ -23,6 +23,7 @@ the game start, sports only), "sport" (Gamma's sportsMarketType or None),
 from __future__ import annotations
 
 import random
+import re
 from typing import Callable
 
 STAKE_USD = 5.0  # pretend dollars per trade
@@ -125,6 +126,47 @@ def fade_move(m: dict, rng: random.Random):
     return None
 
 
+# follow_move variants, added 2026-11-17 and judged only on trades from that
+# day on. The owner asked whether the better follow_move bets can be picked
+# out. In its first 12 days (6-17 Nov) its profit came from crypto price
+# markets and from cheap sides; picking those subsets from the same 12 days
+# would only pick the lucky bets after the fact, so each idea gets its own
+# fresh record here instead. follow_move_2 is follow_move itself, restarted,
+# so its verdict rests on new trades only.
+_CRYPTO = re.compile(r"\b(bitcoin|btc|ethereum|eth|solana|xrp|dogecoin|crypto)\b", re.IGNORECASE)
+
+
+def _is_crypto(m: dict) -> bool:
+    return bool(_CRYPTO.search(f"{m.get('event_title') or ''} {m.get('question') or ''}"))
+
+
+def follow_move_2(m: dict, rng: random.Random):
+    """follow_move's rule unchanged, with a fresh record from 2026-11-17."""
+    return follow_move(m, rng)
+
+
+def follow_move_crypto(m: dict, rng: random.Random):
+    """follow_move, only on crypto price markets (Bitcoin, Ethereum, Solana, XRP, Dogecoin)."""
+    return follow_move(m, rng) if _is_crypto(m) else None
+
+
+def follow_move_cheap(m: dict, rng: random.Random):
+    """follow_move, only when the side that rose still costs 50 cents or less."""
+    hit = follow_move(m, rng)
+    if hit is None:
+        return None
+    ask = dict(_sides(m)).get(hit[0])
+    return (hit[0], 0.50) if ask is not None and ask <= 0.50 else None
+
+
+def follow_move_big(m: dict, rng: random.Random):
+    """follow_move, only after a move of 20 cents or more in a day."""
+    ch = _moved(m)
+    if ch is None or abs(ch) < 0.20:
+        return None
+    return follow_move(m, rng)
+
+
 def coin_flip(m: dict, rng: random.Random):
     """
     Yardstick, not a strategy: a random side of a random market ending within
@@ -156,6 +198,14 @@ STRATEGIES: dict[str, dict] = {
                                  "(history says this loses; kept as a check)"},
     "follow_move": {"rule": follow_move, "active": True, "since": "2026-11-05",
                     "plain": "After a traded 10c+ move in a day, buy the side that went up"},
+    "follow_move_2": {"rule": follow_move_2, "active": True, "since": "2026-11-17",
+                      "plain": "Same as follow_move, restarted on 17 Nov so it is judged on new trades only"},
+    "follow_move_crypto": {"rule": follow_move_crypto, "active": True, "since": "2026-11-17",
+                           "plain": "follow_move, crypto price markets only (from 17 Nov)"},
+    "follow_move_cheap": {"rule": follow_move_cheap, "active": True, "since": "2026-11-17",
+                          "plain": "follow_move, only when the side that went up costs 50c or less (from 17 Nov)"},
+    "follow_move_big": {"rule": follow_move_big, "active": True, "since": "2026-11-17",
+                        "plain": "follow_move, only after a 20c+ move in a day (from 17 Nov)"},
     "fade_move": {"rule": fade_move, "active": True, "since": "2026-11-05",
                   "plain": "After a traded 10c+ move in a day, buy the side that went down"},
     "weather_forecast": {"rule": None, "active": True, "since": "2026-11-05",
