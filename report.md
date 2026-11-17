@@ -1,19 +1,19 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-17 00:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-17 00:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move | 377 | 243/377 | +6.5% | +$123.21 | 12 | 115 | too early |
-| 2 | sure_thing | 1706 | 1585/1706 | -0.5% | -$45.45 | 11 | 123 | too early |
-| 3 | safe_no_week | 691 | 635/691 | -4.1% | -$141.27 | 11 | 230 | too early |
-| 4 | sports_underdog | 1238 | 287/1238 | -14.1% | -$870.02 | 10 | 46 | too early |
-| 5 | fade_move | 416 | 123/416 | -14.8% | -$307.58 | 12 | 123 | too early |
+| 1 | follow_move | 377 | 243/377 | +6.5% | +$123.21 | 12 | 117 | too early |
+| 2 | sure_thing | 1709 | 1588/1709 | -0.5% | -$44.18 | 11 | 128 | too early |
+| 3 | safe_no_week | 691 | 635/691 | -4.1% | -$141.27 | 11 | 233 | too early |
+| 4 | sports_underdog | 1243 | 288/1243 | -14.2% | -$875.75 | 10 | 44 | too early |
+| 5 | fade_move | 416 | 123/416 | -14.8% | -$307.58 | 12 | 125 | too early |
 | 6 | weather_forecast | 506 | 260/506 | -19.6% | -$489.48 | 9 | 100 | too early |
 | 7 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 8 | coin_flip | 1876 | 919/1876 | -5.8% | -$544.44 | 12 | 144 | yardstick |
+| 8 | coin_flip | 1877 | 919/1877 | -5.9% | -$549.44 | 12 | 151 | yardstick |
 
 What each one does:
 
@@ -32,7 +32,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move | sure_thing | safe_no_week | sports_underdog | fade_move | weather_forecast | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|
-| 2026-11-17 | -$5.46 | +$1.83 |  | -$30.00 | -$13.04 |  |  | -$15.00 |
+| 2026-11-17 | -$5.46 | +$3.09 |  | -$35.72 | -$13.04 |  |  | -$20.00 |
 | 2026-11-16 | +$11.58 | -$6.40 | -$11.02 | +$21.94 | -$17.46 |  | +$0.08 | -$21.29 |
 | 2026-11-15 | +$17.97 | +$0.34 | -$26.64 |  | +$30.37 | -$0.94 |  | -$47.97 |
 | 2026-11-14 | -$7.86 |  | -$37.34 |  | +$18.94 | -$4.48 |  | -$13.50 |
@@ -45,22 +45,22 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-17 follow_move: Will it rain in Los Angeles, CA on November 16? -> No at 0.711 ($5.00)
-- 2026-11-17 sure_thing: Spread: Mauritania (-1.5) -> Burkina Faso at 0.905 ($5.00)
-- 2026-11-17 safe_no_week: Will the price of Solana be between $80 and $90 on November 23? -> No at 0.935 ($5.00)
-- 2026-11-17 sports_underdog: Canucks vs. Utah -> Canucks at 0.270 ($5.00)
-- 2026-11-17 fade_move: Will Disney say "Iger" during earnings call? -> Yes at 0.165 ($5.00)
+- 2026-11-17 follow_move: Will "The Hunger Games: Sunrise on the Reaping" score at least 80 on the Rotten Tomatoes Tomatometer? -> No at 0.730 ($5.00)
+- 2026-11-17 sure_thing: Uruguay vs. Dominican Republic: O/U 6.5 -> Under at 0.952 ($5.00)
+- 2026-11-17 safe_no_week: Will the price of Ethereum be between $1,500 and $1,600 on November 21? -> No at 0.985 ($5.00)
+- 2026-11-17 sports_underdog: Sydney: Dane Sweeny vs Christian Langmo -> Christian Langmo at 0.300 ($5.00)
+- 2026-11-17 fade_move: Will "The Hunger Games: Sunrise on the Reaping" score at least 80 on the Rotten Tomatoes Tomatometer? -> Yes at 0.321 ($5.00)
 - 2026-11-16 weather_forecast: Will the highest temperature in Jeddah be 34°C on November 18? -> No at 0.586 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-17 coin_flip: ZCash Up or Down - November 17, 5:35AM-5:40AM ET -> Up at 0.527 ($5.00)
-- 2026-11-17 follow_move: Will Palantir (PLTR) finish week of November 16 above $171? -> No at 0.845 ($5.00)
-- 2026-11-17 sure_thing: Will Uruguay win on 2026-11-17? -> Yes at 0.912 ($5.00)
-- 2026-11-16 safe_no_week: Will the price of Ethereum be less than $1,600 on November 19? -> No at 0.986 ($5.00)
-- 2026-11-17 sports_underdog: Spread: UCLA Bruins (-34.5) -> UCLA Bruins at 0.361 ($5.00)
+- 2026-11-17 coin_flip: Bitcoin Up or Down on November 17? -> Down at 0.597 ($5.00)
+- 2026-11-17 follow_move: Will 34+ ships transit the Bab el-Mandeb Strait on any day week of November 16? -> No at 0.602 ($5.00)
+- 2026-11-17 sure_thing: United States vs. Haiti: O/U 1.5 -> Over at 0.924 ($5.00)
+- 2026-11-17 safe_no_week: Will "I Play Rocky" score at least 83 on the Rotten Tomatoes Tomatometer? -> Yes at 0.952 ($5.00)
+- 2026-11-17 sports_underdog: Sydney: Tristan Schoolkate vs Carl Overbeck -> Carl Overbeck at 0.321 ($5.00)
 
 ## Price gaps seen today
 
 No near-gaps today.
 
-Runs in the last 24 hours: 39 (39 with a problem).
+Runs in the last 24 hours: 38 (38 with a problem).
 Latest problem: 42 position(s) still open more than 3 days after their market ended
