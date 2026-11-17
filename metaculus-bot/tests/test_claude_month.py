@@ -300,7 +300,7 @@ def test_the_run_hands_its_cost_to_the_record_job(tmp_path):
 
 def test_the_limit_settings():
     settings = load_settings({})
-    assert settings.claude_monthly_limit_usd == 80.0 and settings.claude_credit_reset_day == 3
+    assert settings.claude_monthly_limit_usd == 95.0 and settings.claude_credit_reset_day == 3
     chosen = load_settings({"CLAUDE_MONTHLY_LIMIT_USD": "90", "CLAUDE_CREDIT_RESET_DAY": "1"})
     assert chosen.claude_monthly_limit_usd == 90.0 and chosen.claude_credit_reset_day == 1
     for day in ("0", "29", "31"):
@@ -311,20 +311,20 @@ def test_the_limit_settings():
 def test_fable_runs_until_the_monthly_limit():
     fable = load_settings({"ANTHROPIC_API_KEY": "k"})
     assert fable.tournament_forecast_model == CLAUDE_API_TOURNAMENT_MODEL
-    same, note = apply_monthly_claude_limit(fable, 79.99, "17 December")
+    same, note = apply_monthly_claude_limit(fable, 94.99, "17 December")
     assert same is fable
     assert note == (
-        "Claude API credit used this month: $79.99 of the $80 limit for claude-fable-5-2 "
+        "Claude API credit used this month: $94.99 of the $95 limit for claude-fable-5-2 "
         "(the credit renews on 17 December)."
     )
 
 
 def test_sonnet_takes_over_at_the_limit():
     fable = load_settings({"ANTHROPIC_API_KEY": "k"})
-    switched, note = apply_monthly_claude_limit(fable, 80.0, "17 December")
+    switched, note = apply_monthly_claude_limit(fable, 95.0, "17 December")
     assert switched.tournament_forecast_model == CLAUDE_API_AFTER_LIMIT_MODEL == "anthropic/claude-sonnet-5-5"
     assert note.startswith("::notice title=Monthly limit for claude-fable-5-2 reached::")
-    assert "$80.00" in note and "17 December" in note
+    assert "$95.00" in note and "17 December" in note
     # Nothing else changes.
     assert switched.forecast_model == fable.forecast_model
     assert switched.max_cost_per_run_usd == fable.max_cost_per_run_usd
@@ -353,7 +353,7 @@ def test_the_limit_leaves_other_models_alone():
 
 def test_each_run_reads_the_count_before_choosing_the_model(monkeypatch, capsys):
     fable = load_settings({"ANTHROPIC_API_KEY": "k"})
-    github = FakeGitHub(_ledger(**{claude_month.month_start(datetime.now(timezone.utc).date(), DEFAULT_CLAUDE_CREDIT_RESET_DAY).isoformat(): 85.0}))
+    github = FakeGitHub(_ledger(**{claude_month.month_start(datetime.now(timezone.utc).date(), DEFAULT_CLAUDE_CREDIT_RESET_DAY).isoformat(): 96.0}))
     monkeypatch.setattr(claude_month, "http", github)
     settings = main.settings_for_this_month(fable, _env())
     assert settings.tournament_forecast_model == CLAUDE_API_AFTER_LIMIT_MODEL
@@ -372,8 +372,8 @@ def test_check_my_keys_shows_the_months_spend():
     assert month == "2026-11-03"
     verdict, message = check_keys.check_claude_month(_env(), FakeGitHub(_ledger(**{month: 12.3})), TODAY)
     assert verdict == check_keys.OK
-    assert "$12.30 of the $80 limit for Fable" in message and "3 December" in message
-    verdict, message = check_keys.check_claude_month(_env(), FakeGitHub(_ledger(**{month: 81})), TODAY)
+    assert "$12.30 of the $95 limit for Fable" in message and "3 December" in message
+    verdict, message = check_keys.check_claude_month(_env(), FakeGitHub(_ledger(**{month: 96})), TODAY)
     assert verdict == check_keys.LOW and "Sonnet" in message
     verdict, _ = check_keys.check_claude_month({}, FakeGitHub(), TODAY)
     assert verdict == check_keys.UNSURE
