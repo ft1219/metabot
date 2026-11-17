@@ -31,3 +31,7 @@ jobs:
           ASKNEWS_API_KEY: ${{ secrets.ASKNEWS_API_KEY }}
           RESEARCHER: ${{ vars.RESEARCHER }}
           TOURNAMENT_FORECAST_MODEL: ${{ vars.TOURNAMENT_FORECAST_MODEL }}
+          # Read-only: this month's Claude API spend on the bot-spend-data branch.
+          SPEND_LEDGER_TOKEN: ${{ github.token }}
+          CLAUDE_MONTHLY_LIMIT_USD: ${{ vars.CLAUDE_MONTHLY_LIMIT_USD }}
+          CLAUDE_CREDIT_RESET_DAY: ${{ vars.CLAUDE_CREDIT_RESET_DAY }}

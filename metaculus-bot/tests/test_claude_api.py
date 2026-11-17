@@ -391,6 +391,40 @@ def test_failed_forecast_is_redone_on_openrouter_at_once(servers, answer, cause)
     assert cause in status.annotation()
 
 
+@pytest.mark.parametrize(
+    "answer, counted",
+    [
+        (reply(), 0.376),
+        # Charged although they raise and are redone on OpenRouter: 7,000
+        # tokens in at $8/M and 8,000 out at $40/M.
+        (reply(text="I can't help with", stop_reason="refusal"), 0.376),
+        (reply(content=[{"type": "thinking", "thinking": "", "signature": "s"}], stop_reason="max_tokens"), 0.376),
+        # No reply: the most it could have cost, 16,000 tokens out at $40/M.
+        (httpx.ReadTimeout("no answer in 300 s"), 0.64),
+        # Turned away: not charged.
+        (error(400, "invalid_request_error", "messages: something unexpected"), 0.0),
+        (error(529, "overloaded_error", "Overloaded"), 0.0),
+    ],
+    ids=["answer", "refusal", "cut off", "timeout", "400", "busy"],
+)
+def test_every_charged_claude_api_reply_counts_toward_the_monthly_credit(servers, answer, counted):
+    servers.replies = [answer]
+    llm, run_budget, status = _forecaster()
+    asyncio.run(llm.invoke("q"))
+    # OpenRouter's redone forecasts are paid in cash, so they are not in it.
+    assert status.credit_used_usd() == pytest.approx(counted)
+
+
+def test_timeouts_while_the_claude_api_is_down_are_not_counted(servers):
+    servers.replies = [httpx.ReadTimeout("no answer in 300 s")]
+    llm, run_budget, status = _forecaster(FakeClock())
+    for _ in range(claude_api.TIMEOUTS_BEFORE_DOWN):
+        assert asyncio.run(llm.invoke("q")) == OPENROUTER_ANSWER
+    assert "timed out" in status.down_reason
+    # It was not answering at all, so nothing was written or charged.
+    assert status.credit_used_usd() == 0.0
+
+
 def test_another_claude_api_model_falls_back_to_the_default_openrouter_model(servers):
     settings = load_settings({"ANTHROPIC_API_KEY": KEY, "TOURNAMENT_FORECAST_MODEL": "anthropic/claude-opus-5-5"})
     status = claude_api.ClaudeApiStatus()

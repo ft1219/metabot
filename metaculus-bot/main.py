@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import atexit
 import logging
 import os
 import sys
@@ -9,10 +10,13 @@ from typing import Literal
 import dotenv
 
 # Runtime helpers (env validation, banners, dependency-warning suppression).
+import claude_month
 from budget import BudgetedLlm, RunBudget
 from claude_api import ClaudeApiLlm, ClaudeApiStatus
 from bot_config import (
     BotSettings,
+    apply_monthly_claude_limit,
+    uses_monthly_claude_limit,
     batch_size_for_money,
     batch_size_on_claude_api,
     load_settings,
@@ -1005,6 +1009,30 @@ async def forecast_groups(
     return reports, not_attempted
 
 
+def settings_for_this_month(settings: BotSettings, env=None) -> BotSettings:
+    """
+    Moves the main tournament from Fable to Sonnet once this credit month's
+    Claude API spend reaches the monthly limit, or when it cannot be read.
+    """
+    if not uses_monthly_claude_limit(settings):
+        return settings
+    today = datetime.now(timezone.utc).date()
+    reset_day = settings.claude_credit_reset_day
+    try:
+        spent = claude_month.read_month_spend(today, reset_day, env)
+    except Exception as e:
+        # Never let the count stop the forecasts; an unknown count means Sonnet.
+        logger.warning(f"Could not read this month's Claude API spend: {e!r}")
+        spent = None
+    renews = claude_month.next_reset(today, reset_day)
+    settings, note = apply_monthly_claude_limit(
+        settings, spent, f"{renews.day} {renews:%B}"
+    )
+    if note:
+        print(note, flush=True)
+    return settings
+
+
 if __name__ == "__main__":
     logging.basicConfig(
         level=logging.INFO,
@@ -1031,6 +1059,7 @@ if __name__ == "__main__":
     check_environment(strict=True, researcher=settings.researcher)
     publish_to_metaculus = not args.dry_run
     print_startup_banner(run_mode, will_publish=publish_to_metaculus)
+    settings = settings_for_this_month(settings)
     logger.info(f"Settings: {settings}")
     claude_api_key_saved = bool((os.getenv("ANTHROPIC_API_KEY") or "").strip())
     if claude_api_key_saved and not settings.tournament_forecast_model.startswith("anthropic/"):
@@ -1043,6 +1072,10 @@ if __name__ == "__main__":
     budget = RunBudget(settings.max_cost_per_run_usd, settings.max_llm_calls_per_run)
     # What the Claude API did this run (used when ANTHROPIC_API_KEY is saved).
     claude_api = ClaudeApiStatus()
+    # The Claude API credit the run used goes to the job's outputs, for the
+    # job that adds it to this month's count, however the run ends (failed
+    # questions exit with 1; an error ends it with a traceback).
+    atexit.register(lambda: claude_month.write_run_output(claude_api.credit_used_usd()))
 
     # The main tournament gets the stronger model; MiniBench and the Cup keep
     # the cheaper one. Both share the run budget.
@@ -1108,6 +1141,11 @@ if __name__ == "__main__":
             tournament_url=TOURNAMENT_URLS.get(run_mode),
         )
     print(f"💰  {budget.cost_line()}")
+    credit_used = claude_api.credit_used_usd()
+    if credit_used:
+        # What goes into this month's count: also replies that were charged
+        # but gave no forecast (refusals, answers cut off, timeouts).
+        print(f"🧮  Claude API credit counted toward this month: ${credit_used:.4f}")
     # The Claude API being down, or some forecasts redone on OpenRouter, shows
     # as a warning on the run's page; the run still passes if they worked.
     claude_api_note = claude_api.annotation()
