@@ -179,8 +179,87 @@ def test_a_record_that_keeps_failing_gives_up():
     github = FakeGitHub(_ledger(**{"2026-11-17": 10.0}))
     github.fail_gets = 99
     (ok, message), pauses = _record(github)
-    assert not ok and "after 5 tries" in message
-    assert len(pauses) == 5 and github.ledger["months"]["2026-11-17"]["usd"] == 10.0
+    assert not ok and "after 8 tries" in message
+    assert len(pauses) == 8 and github.ledger["months"]["2026-11-17"]["usd"] == 10.0
+    # About two and a half minutes of tries in all.
+    assert 120 <= sum(pauses) <= 180
+
+
+def test_a_write_whose_reply_was_lost_is_not_added_twice():
+    github = FakeGitHub(_ledger(**{"2026-11-17": 10.0}))
+    real = github.__call__
+    lost = []
+
+    def call(method, url, token, body=None):
+        answer = real(method, url, token, body)
+        if method == "PUT" and not lost:
+            lost.append(1)
+            return None, None  # GitHub wrote it, but the reply never came
+        return answer
+
+    ok, message = claude_month.record(
+        REPO, "w", 5.0, TODAY, 17, "abc123", "now", call, lambda s: None, run_id="777.1"
+    )
+    assert ok and "Already recorded" in message
+    assert github.ledger["months"]["2026-11-17"]["usd"] == 15.0
+    assert github.ledger["months"]["2026-11-17"]["run_ids"] == ["777.1"]
+    # The record command names the run.
+    env = {"GITHUB_REPOSITORY": REPO, "GH_TOKEN": "w", "GITHUB_SHA": "abc123",
+           "GITHUB_RUN_ID": "888", "GITHUB_RUN_ATTEMPT": "2"}
+    assert claude_month.main(["record", "1"], env, github) == 0
+    assert github.ledger["months"]["2026-11-17"]["run_ids"] == ["777.1", "888.2"]
+    assert claude_month.main(["record", "1"], env, github) == 0
+    assert github.ledger["months"]["2026-11-17"]["usd"] == 16.0
+
+
+@pytest.mark.parametrize(
+    "ledger",
+    [
+        {"months": {"2026-11-17": 85}},
+        {"months": ["2026-11-17", 85]},
+        {"months": {"2026-11-17": {"usd": None}}},
+        {"months": {"2026-11-17": {"usd": "85"}}},
+        {"months": {"2026-11-17": {"usd": -1}}},
+        {"months": {"2026-11-17": {"usd": True}}},
+        {"months": {"2026-11-17": {"usd": float("nan")}}},
+        {"months": {"2026-11-17": {"usd": float("inf")}}},
+    ],
+)
+def test_a_count_edited_into_another_shape_is_unknown_not_zero(ledger):
+    github = FakeGitHub(ledger)
+    assert claude_month.read_month_spend(TODAY, 17, _env(), github) is None
+    # And the record job leaves it alone instead of overwriting it.
+    (ok, _), _ = _record(github)
+    assert not ok and github.ledger == ledger
+    assert not [c for c in github.calls if c[0] == "PUT"]
+
+
+def test_a_cut_off_error_reply_from_github_is_not_a_crash(monkeypatch):
+    import http.client
+    import io
+    import urllib.error
+
+    class Broken(io.BytesIO):
+        def read(self, *args):
+            raise http.client.IncompleteRead(b"{")
+
+    def urlopen(request, timeout):
+        raise urllib.error.HTTPError(request.full_url, 502, "Bad Gateway", {}, Broken())
+
+    monkeypatch.setattr(claude_month.urllib.request, "urlopen", urlopen)
+    assert claude_month.http("GET", "https://api.github.com/x", "t") == (502, None)
+    assert claude_month.read_month_spend(TODAY, 17, _env()) is None
+
+
+def test_a_crash_while_reading_the_count_means_sonnet_not_a_failed_run(monkeypatch, capsys):
+    def boom(*args, **kwargs):
+        raise RuntimeError("unexpected")
+
+    monkeypatch.setattr(claude_month, "read_month_spend", boom)
+    fable = load_settings({"ANTHROPIC_API_KEY": "k"})
+    settings = main.settings_for_this_month(fable, _env())
+    assert settings.tournament_forecast_model == CLAUDE_API_AFTER_LIMIT_MODEL
+    assert "::warning title=Claude API spend unknown::" in capsys.readouterr().out
 
 
 def test_record_command(capsys):

@@ -154,6 +154,14 @@ class ClaudeApiStatus:
         self.timeouts_in_a_row = 0
         self._clock = clock
         self._last_answer_at: float | None = None
+        # For the monthly count of Claude API credit (claude_month.py): the
+        # price of every reply the Claude API sent, a refusal or an answer
+        # cut off at max_tokens included (those are charged but raise, so the
+        # run budget does not see them), and the most each timed-out call
+        # could have been charged.
+        self.billed_usd = 0.0
+        self.timeouts_worst_usd = 0.0
+        self._timed_out_while_down = False
 
     def note_answer(self) -> None:
         self.answered += 1
@@ -182,10 +190,22 @@ class ClaudeApiStatus:
                     f"The Claude API timed out {self.timeouts_in_a_row} times in a row with no answer "
                     "in between; using OpenRouter for the rest of this run"
                 )
+                self._timed_out_while_down = True
         if kind == DOWN and self.down_reason is None:
             self.down_reason = why
         self.causes[why] += 1
         return why
+
+    def credit_used_usd(self) -> float:
+        """
+        The Claude API credit this run used, as far as the bot can tell: every
+        reply's price, plus the most each timed-out call could have cost,
+        except when the timeouts stopped the Claude API for the run. Then it
+        was not answering at all (an outage), so those calls are taken to have
+        written nothing.
+        """
+        timeouts = 0.0 if self._timed_out_while_down else self.timeouts_worst_usd
+        return self.billed_usd + timeouts
 
     def annotation(self) -> str | None:
         """
@@ -211,6 +231,14 @@ class ClaudeApiStatus:
                 "they were redone on OpenRouter."
             )
         return None
+
+
+def _price_per_token(model: str, kind: str) -> float:
+    entry = litellm.model_cost.get(model) or litellm.model_cost.get(model.split("/", 1)[-1]) or {}
+    try:
+        return float(entry.get(f"{kind}_cost_per_token") or 0.0)
+    except (TypeError, ValueError):
+        return 0.0
 
 
 class ClaudeApiLlm(BudgetedLlm):
@@ -270,6 +298,15 @@ class ClaudeApiLlm(BudgetedLlm):
                 await _pause(wait)
                 attempt += 1
 
+    def _most_a_call_can_cost(self, prompt) -> float:
+        """A timed-out call's worst case: its prompt plus max_tokens written."""
+        max_tokens = int(self.litellm_kwargs.get("max_tokens") or 16000)
+        prompt_tokens = len(str(prompt)) // 3  # about 4 characters a token; rounded up
+        return (
+            prompt_tokens * _price_per_token(self.model, "input")
+            + max_tokens * _price_per_token(self.model, "output")
+        )
+
     def _counts_as_a_call(self, error: Exception) -> bool:
         # The Claude API does not bill a request it turns away as busy (429,
         # 529, server errors), and CLAUDE_API_TRIES bounds those tries, so
@@ -277,7 +314,18 @@ class ClaudeApiLlm(BudgetedLlm):
         return classify(error)[0] != BUSY
 
     async def _call_litellm(self, prompt):
-        response = await super()._call_litellm(prompt)
+        try:
+            response = await super()._call_litellm(prompt)
+        except litellm.Timeout:
+            self.status.timeouts_worst_usd += self._most_a_call_can_cost(prompt)
+            raise
+        # Every reply is charged, whether or not it turns out to be a usable
+        # forecast.
+        cost = (getattr(response, "_hidden_params", None) or {}).get("response_cost")
+        try:
+            self.status.billed_usd += float(cost or 0.0)
+        except (TypeError, ValueError):
+            pass
         # A refusal is a normal answer whose stop reason is "refusal"; any
         # text in it is not a forecast.
         if response.choices and response.choices[0].finish_reason == "refusal":
