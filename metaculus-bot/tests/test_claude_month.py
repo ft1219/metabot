@@ -15,6 +15,7 @@ import main
 from bot_config import (
     CLAUDE_API_AFTER_LIMIT_MODEL,
     CLAUDE_API_TOURNAMENT_MODEL,
+    DEFAULT_CLAUDE_CREDIT_RESET_DAY,
     DEFAULT_TOURNAMENT_FORECAST_MODEL,
     SettingsError,
     apply_monthly_claude_limit,
@@ -206,10 +207,15 @@ def test_a_write_whose_reply_was_lost_is_not_added_twice():
     # The record command names the run.
     env = {"GITHUB_REPOSITORY": REPO, "GH_TOKEN": "w", "GITHUB_SHA": "abc123",
            "GITHUB_RUN_ID": "888", "GITHUB_RUN_ATTEMPT": "2"}
+    # It counts in the credit month of the day it runs, with the default reset day.
+    month = claude_month.month_start(
+        datetime.now(timezone.utc).date(), DEFAULT_CLAUDE_CREDIT_RESET_DAY
+    ).isoformat()
+    github.ledger["months"].setdefault(month, {"usd": 15.0, "runs": 1, "run_ids": ["777.1"]})
     assert claude_month.main(["record", "1"], env, github) == 0
-    assert github.ledger["months"]["2026-11-17"]["run_ids"] == ["777.1", "888.2"]
+    assert github.ledger["months"][month]["run_ids"] == ["777.1", "888.2"]
     assert claude_month.main(["record", "1"], env, github) == 0
-    assert github.ledger["months"]["2026-11-17"]["usd"] == 16.0
+    assert github.ledger["months"][month]["usd"] == 16.0
 
 
 @pytest.mark.parametrize(
@@ -294,7 +300,7 @@ def test_the_run_hands_its_cost_to_the_record_job(tmp_path):
 
 def test_the_limit_settings():
     settings = load_settings({})
-    assert settings.claude_monthly_limit_usd == 80.0 and settings.claude_credit_reset_day == 17
+    assert settings.claude_monthly_limit_usd == 80.0 and settings.claude_credit_reset_day == 3
     chosen = load_settings({"CLAUDE_MONTHLY_LIMIT_USD": "90", "CLAUDE_CREDIT_RESET_DAY": "1"})
     assert chosen.claude_monthly_limit_usd == 90.0 and chosen.claude_credit_reset_day == 1
     for day in ("0", "29", "31"):
@@ -347,7 +353,7 @@ def test_the_limit_leaves_other_models_alone():
 
 def test_each_run_reads_the_count_before_choosing_the_model(monkeypatch, capsys):
     fable = load_settings({"ANTHROPIC_API_KEY": "k"})
-    github = FakeGitHub(_ledger(**{claude_month.month_start(datetime.now(timezone.utc).date(), 17).isoformat(): 85.0}))
+    github = FakeGitHub(_ledger(**{claude_month.month_start(datetime.now(timezone.utc).date(), DEFAULT_CLAUDE_CREDIT_RESET_DAY).isoformat(): 85.0}))
     monkeypatch.setattr(claude_month, "http", github)
     settings = main.settings_for_this_month(fable, _env())
     assert settings.tournament_forecast_model == CLAUDE_API_AFTER_LIMIT_MODEL
@@ -362,10 +368,11 @@ def test_each_run_reads_the_count_before_choosing_the_model(monkeypatch, capsys)
 
 
 def test_check_my_keys_shows_the_months_spend():
-    month = claude_month.month_start(TODAY, 17).isoformat()
+    month = claude_month.month_start(TODAY, DEFAULT_CLAUDE_CREDIT_RESET_DAY).isoformat()
+    assert month == "2026-11-03"
     verdict, message = check_keys.check_claude_month(_env(), FakeGitHub(_ledger(**{month: 12.3})), TODAY)
     assert verdict == check_keys.OK
-    assert "$12.30 of the $80 limit for Fable" in message and "17 December" in message
+    assert "$12.30 of the $80 limit for Fable" in message and "3 December" in message
     verdict, message = check_keys.check_claude_month(_env(), FakeGitHub(_ledger(**{month: 81})), TODAY)
     assert verdict == check_keys.LOW and "Sonnet" in message
     verdict, _ = check_keys.check_claude_month({}, FakeGitHub(), TODAY)
