@@ -1,0 +1,1 @@
+Data only: the Metaculus bot's own count of the Claude API credit it has used in each credit month (claude-api-spend.json), written by the record-claude-spend job. See metaculus-bot/claude_month.py on main.
