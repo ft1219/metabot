@@ -67,6 +67,7 @@ jobs:
           TOURNAMENT_FORECAST_MODEL: ${{ inputs.model || vars.TOURNAMENT_FORECAST_MODEL }}
           PARSER_MODEL: ${{ vars.PARSER_MODEL }}
           RESEARCHER: ${{ vars.RESEARCHER }}
+          WEB_SEARCH_MODEL: ${{ vars.WEB_SEARCH_MODEL }}
           FORECAST_REASONING: ${{ vars.FORECAST_REASONING }}
           PREDICTIONS_PER_QUESTION: ${{ vars.PREDICTIONS_PER_QUESTION }}
           MAX_QUESTIONS_PER_RUN: ${{ inputs.max_questions || vars.MAX_QUESTIONS_PER_RUN }}

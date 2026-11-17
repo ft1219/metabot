@@ -239,6 +239,21 @@ def test_parser_still_stops_at_the_call_limit(fake_model):
         asyncio.run(llm.invoke("hi"))
 
 
+def test_a_failed_call_counted_at_an_estimate_is_in_the_spending(fake_model):
+    # A ChatGPT web search cut off before its answer came back.
+    budget = RunBudget(max_cost_usd=0.30, max_calls=100)
+    budget.record_failure("OpenAI", estimated_usd=0.28)
+    assert budget.calls == 1 and budget.estimated_calls == 1 and budget.failed_calls == 0
+    assert "OpenAI $0.2800" in budget.cost_line()
+    budget.check()
+    budget.record_failure("OpenAI", estimated_usd=0.05)
+    with pytest.raises(RunBudgetExceeded, match="spending limit"):
+        budget.check()
+    # Without an estimate the cost stays unknown, as before.
+    budget.record_failure("OpenAI")
+    assert budget.failed_calls == 1 and budget.spent_usd == pytest.approx(0.33)
+
+
 def test_calls_that_fail_after_being_sent_still_count(monkeypatch):
     # An empty answer is billed by OpenRouter but raises inside GeneralLlm.
     real_acompletion = litellm.acompletion
@@ -402,12 +417,28 @@ def test_no_balance_read_without_openrouter_models(fake_model):
         {
             "OPENAI_API_KEY": "sk-test",
             "TOURNAMENT_FORECAST_MODEL": OPENAI_FORECAST_MODEL,
-            "PARSER_MODEL": "openai/gpt-6-luna",
+            "PARSER_MODEL": "anthropic/claude-haiku-4-5",
         }
     )
     read = _money(0.0)
     reports, not_attempted, held = _forecast(settings, _questions(1), _questions(1), read)
     assert read.reads == [] and held == [] and len(reports) == 2
+
+
+def test_a_parser_on_openai_still_needs_money_for_its_openrouter_fallback(fake_model):
+    # Every forecast on OpenAI, the parser too, but a used-up OpenAI credit
+    # sends every parse to OpenRouter at once, so an empty OpenRouter account
+    # still holds the questions back before their research is paid for.
+    settings = load_settings({"OPENAI_API_KEY": "sk-test", "TOURNAMENT_FORECAST_MODEL": OPENAI_FORECAST_MODEL})
+    assert settings.parser_model == "openai/gpt-6-luna"
+    assert main.models_to_call(settings, _questions(1), []) == [
+        "openai/gpt-6-luna",
+        "openrouter/deepseek/deepseek-v3.2",
+        OPENAI_FORECAST_MODEL,
+    ]
+    read = _money(0.0)
+    reports, not_attempted, held = _forecast(settings, _questions(1), _questions(1), read)
+    assert read.reads == [0.0, 0.0] and len(held) == 2 and reports == []
 
 
 def test_each_group_runs_at_its_own_batch_size(fake_model, monkeypatch):

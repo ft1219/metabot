@@ -103,8 +103,9 @@ def check_environment(strict: bool = True, researcher: str | None = None) -> Non
             "Get one at https://www.metaculus.com/futureeval/participate/"
         )
 
-    # OpenRouter is needed even with the OpenAI or Claude API keys: the parser,
-    # and any forecast the Claude API cannot make, run there.
+    # OpenRouter is needed even with the OpenAI or Claude API keys: it redoes
+    # any parse OpenAI cannot make (and runs the parser without an OpenAI
+    # key), and any forecast the Claude API cannot make.
     if not _is_real_env("OPENROUTER_API_KEY"):
         problems.append(
             "OPENROUTER_API_KEY is missing or still a placeholder. "

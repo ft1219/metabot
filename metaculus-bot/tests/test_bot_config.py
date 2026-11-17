@@ -10,13 +10,19 @@ from bot_config import (
     DEFAULT_MAX_COST_PER_RUN_USD,
     DEFAULT_MAX_QUESTIONS_PER_RUN,
     OPENAI_FORECAST_MODEL,
+    OPENAI_PARSER_MODEL,
+    OPENAI_WEB_SEARCH_MODEL,
+    PARSER_FALLBACK_MODEL,
     SettingsError,
     batch_size_for_money,
     batch_size_on_claude_api,
     forecaster_kwargs,
+    is_openai_reasoning_model,
     money_needed_for_one_question,
     load_settings,
     openrouter_twin,
+    parser_kwargs,
+    parser_openrouter_model,
     pick_questions_to_forecast,
     reasoning_kwargs,
 )
@@ -234,8 +240,18 @@ def test_questions_at_once_shrink_to_fit_openrouter_money():
     assert batch_size_for_money(settings, OPENAI_FORECAST_MODEL, 0.10) == 0
     # Any OpenRouter model not known to be cheap is treated like Claude.
     assert batch_size_for_money(settings, "openrouter/google/gemini-3.7-flash", 0.50) == 0
+    # A parser on OpenAI keeps back what its OpenRouter fallback may need,
+    # exactly as a parser on OpenRouter would, so it never holds back less.
+    luna = load_settings({"OPENAI_API_KEY": "sk-test"})
+    assert luna.parser_model == OPENAI_PARSER_MODEL
+    for money in (0.60, 0.10, -0.04):
+        assert batch_size_for_money(luna, OPENAI_FORECAST_MODEL, money) == batch_size_for_money(
+            settings, OPENAI_FORECAST_MODEL, money
+        )
+    explicit = load_settings({"PARSER_MODEL": OPENAI_PARSER_MODEL})
+    assert batch_size_for_money(explicit, OPENAI_FORECAST_MODEL, -0.04) == 0
     # Nothing on OpenRouter at all: an overdrawn account changes nothing.
-    off = load_settings({"PARSER_MODEL": "openai/gpt-6-luna"})
+    off = load_settings({"PARSER_MODEL": "anthropic/claude-haiku-4-5"})
     assert batch_size_for_money(off, OPENAI_FORECAST_MODEL, -0.04) == 5
 
 
@@ -277,3 +293,101 @@ def test_already_forecasted_none_counts_as_not_forecasted():
     chosen, deferred = pick_questions_to_forecast(questions, max_questions=5)
     assert [q.name for q in chosen] == ["unknown"]
     assert deferred == []
+
+
+def test_openai_key_moves_the_parser_to_luna_with_deepseek_as_its_fallback():
+    plain = load_settings({})
+    assert plain.parser_model == PARSER_FALLBACK_MODEL == "openrouter/deepseek/deepseek-v3.2"
+    assert plain.parser_fallback_model is None
+    keyed = load_settings({"OPENAI_API_KEY": "sk-test"})
+    assert keyed.parser_model == OPENAI_PARSER_MODEL == "openai/gpt-6-luna"
+    assert keyed.parser_fallback_model == PARSER_FALLBACK_MODEL
+    # A blank key is no key, and a blank variable is the default.
+    assert load_settings({"OPENAI_API_KEY": "  "}).parser_model == PARSER_FALLBACK_MODEL
+    assert load_settings({"OPENAI_API_KEY": "sk-test", "PARSER_MODEL": " "}).parser_model == OPENAI_PARSER_MODEL
+    # PARSER_MODEL still wins; only a parser on OpenAI gets the fallback.
+    chosen = load_settings({"OPENAI_API_KEY": "sk-test", "PARSER_MODEL": "openrouter/x/y"})
+    assert (chosen.parser_model, chosen.parser_fallback_model) == ("openrouter/x/y", None)
+    claude = load_settings({"OPENAI_API_KEY": "sk-test", "PARSER_MODEL": "anthropic/claude-haiku-4-5"})
+    assert claude.parser_fallback_model is None
+    explicit = load_settings({"PARSER_MODEL": "openai/gpt-6-sol"})
+    assert explicit.parser_fallback_model == PARSER_FALLBACK_MODEL
+
+
+def test_web_search_runs_on_sol_only_with_the_openai_key():
+    assert load_settings({}).web_search_model is None
+    assert load_settings({"OPENAI_API_KEY": "sk-test"}).web_search_model == OPENAI_WEB_SEARCH_MODEL == "openai/gpt-6-sol"
+    # The variable picks another OpenAI model, with or without the prefix.
+    for value in ("gpt-6-astra", "openai/gpt-6-astra", " gpt-6-astra "):
+        settings = load_settings({"OPENAI_API_KEY": "sk-test", "WEB_SEARCH_MODEL": value})
+        assert settings.web_search_model == "openai/gpt-6-astra"
+    # Off, in the words people use; a blank variable is the default.
+    for value in ("none", "None", "off", "false", "0", "no"):
+        assert load_settings({"OPENAI_API_KEY": "sk-test", "WEB_SEARCH_MODEL": value}).web_search_model is None
+    assert load_settings({"OPENAI_API_KEY": "sk-test", "WEB_SEARCH_MODEL": ""}).web_search_model == OPENAI_WEB_SEARCH_MODEL
+    # Paid from the OpenAI credit, so never without the key.
+    assert load_settings({"WEB_SEARCH_MODEL": "gpt-6-sol"}).web_search_model is None
+    # Only OpenAI's own API has this web search.
+    with pytest.raises(SettingsError, match="WEB_SEARCH_MODEL"):
+        load_settings({"OPENAI_API_KEY": "sk-test", "WEB_SEARCH_MODEL": "openrouter/openai/gpt-6-sol"})
+
+
+def test_parser_request_options():
+    assert parser_kwargs(OPENAI_PARSER_MODEL) == {
+        "temperature": None,
+        "timeout": 90,
+        "max_retries": 0,
+        "extra_body": {"reasoning_effort": "low"},
+    }
+    assert parser_kwargs(PARSER_FALLBACK_MODEL) == {"temperature": 0.0}
+
+
+@pytest.mark.parametrize(
+    "model, reasoning",
+    [
+        ("openai/gpt-6-luna", True),
+        ("openai/gpt-6-sol", True),
+        ("gpt-6-astra", True),
+        ("openai/gpt-5-mini", True),
+        ("openai/o3", True),
+        ("openai/o4-mini", True),
+        ("openai/gpt-10", True),
+        ("openai/gpt-5-chat-latest", False),
+        ("openai/gpt-4o-mini", False),
+        ("openai/gpt-4.1-mini", False),
+        ("openai/gpt-4.1", False),
+        ("openai/chatgpt-4o-latest", False),
+        ("openai/gpt-3.5-turbo", False),
+    ],
+)
+def test_only_openai_reasoning_models_are_sent_a_reasoning_effort(model, reasoning):
+    assert is_openai_reasoning_model(model) is reasoning
+    kwargs = parser_kwargs(model if "/" in model else f"openai/{model}")
+    assert ("extra_body" in kwargs) is reasoning
+    # A reasoning model takes no temperature; any other parses at 0 as it
+    # did before the parser moved to OpenAI.
+    assert kwargs["temperature"] == (None if reasoning else 0.0)
+    assert kwargs["max_retries"] == 0 and kwargs["timeout"] == 90
+
+
+def test_an_older_openai_parser_override_keeps_temperature_and_its_fallback():
+    for env in ({"OPENAI_API_KEY": "sk-test"}, {}):
+        settings = load_settings({**env, "PARSER_MODEL": "openai/gpt-4o-mini"})
+        assert settings.parser_model == "openai/gpt-4o-mini"
+        assert settings.parser_fallback_model == PARSER_FALLBACK_MODEL
+        assert parser_kwargs(settings.parser_model) == {"temperature": 0.0, "timeout": 90, "max_retries": 0}
+
+
+def test_money_kept_back_for_the_parser_follows_its_openrouter_fallback():
+    assert parser_openrouter_model(load_settings({})) == PARSER_FALLBACK_MODEL
+    keyed = load_settings({"OPENAI_API_KEY": "sk-test"})
+    assert parser_openrouter_model(keyed) == PARSER_FALLBACK_MODEL
+    assert parser_openrouter_model(load_settings({"PARSER_MODEL": "anthropic/claude-haiku-4-5"})) is None
+    # The same money is needed with the parser on OpenAI as on OpenRouter:
+    # never less.
+    assert money_needed_for_one_question(keyed) == pytest.approx(money_needed_for_one_question(load_settings({})))
+    claude_keyed = load_settings({"OPENAI_API_KEY": "sk-test", "ANTHROPIC_API_KEY": "sk-ant"})
+    assert money_needed_for_one_question(claude_keyed) == pytest.approx(0.20)
+    # A parser that never reaches OpenRouter needs nothing kept back.
+    off = load_settings({"PARSER_MODEL": "anthropic/claude-haiku-4-5", "TOURNAMENT_FORECAST_MODEL": OPENAI_FORECAST_MODEL})
+    assert money_needed_for_one_question(off) == 0

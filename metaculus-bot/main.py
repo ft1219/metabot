@@ -13,6 +13,8 @@ import dotenv
 import claude_month
 from budget import BudgetedLlm, RunBudget
 from claude_api import ClaudeApiLlm, ClaudeApiStatus
+from openai_credit import OpenAiParserLlm, OpenAiStatus, parser_status
+from web_search import ChatGptWebSearch, WebSearchResult, failure_annotation
 from bot_config import (
     BotSettings,
     apply_monthly_claude_limit,
@@ -21,6 +23,7 @@ from bot_config import (
     batch_size_on_claude_api,
     load_settings,
     openrouter_twin,
+    parser_kwargs,
     pick_questions_to_forecast,
     forecaster_kwargs,
 )
@@ -149,13 +152,106 @@ class FallTemplateBot2026(ForecastBot):
     )
     _concurrency_limiter = asyncio.Semaphore(_max_concurrent_questions)
     _structure_output_validation_samples = 2
+    # ChatGPT web search, the second news source (make_bot sets it when
+    # OPENAI_API_KEY is saved); None leaves the researcher alone.
+    web_search: ChatGptWebSearch | None = None
 
     ##################################### RESEARCH #####################################
 
     async def run_research(self, question: MetaculusQuestion) -> str:
+        """
+        The researcher's news (AskNews) and ChatGPT web search's, fetched at
+        the same time and put together. The web search runs outside the
+        limiter that makes AskNews searches wait their turn, so web searches
+        never queue behind each other or behind AskNews; a question's research
+        takes as long as the slower of the two (the web search's timeout caps
+        it). A question goes ahead with whichever source
+        answered, and fails only when no source did: a forecast made without
+        any news scores badly, and the next run tries it again.
+        """
+        researcher = self.get_llm("researcher")
+        web_search = self.web_search
+        (found, failure), searched = await asyncio.gather(
+            self._research_with_researcher(question, researcher),
+            web_search.search(question) if web_search else _no_web_search(),
+        )
+        research = self._put_research_together(question, researcher, found, failure, searched)
+        logger.info(f"Found Research for URL {question.page_url}:\n{research}")
+        return research
+
+    @staticmethod
+    def _researcher_name(researcher: str | GeneralLlm) -> str:
+        name = GeneralLlm.to_model_name(researcher) if researcher else ""
+        return "AskNews" if name.startswith("asknews/") else name
+
+    def _put_research_together(
+        self,
+        question: MetaculusQuestion,
+        researcher: str | GeneralLlm,
+        found: str | None,
+        failure: Exception | None,
+        searched: WebSearchResult | None,
+    ) -> str:
+        """
+        One research text: the researcher's part first, then the web search's
+        under a heading with its date. With no web search part it is the
+        researcher's text exactly as before.
+        """
+        name = self._researcher_name(researcher)
+        uses_researcher = not _no_researcher(researcher)
+        web_text = searched.text if searched else None
+        if searched is not None:
+            if found:
+                instead = f"Forecast with {name} news only"
+            elif failure is not None or not uses_researcher:
+                instead = "No other news came through, so this question is not forecast this run"
+            else:
+                instead = "Forecast without news"
+            note = failure_annotation(question.page_url, searched, self.web_search.status, instead)
+            if note:
+                # print, not the logger: a GitHub annotation must start the line.
+                print(note, flush=True)
+        if not found and not web_text:
+            if failure is not None and searched is not None and searched.why:
+                raise RuntimeError(
+                    f"No news for {question.page_url}: {name} failed ({type(failure).__name__}: "
+                    f"{failure}) and ChatGPT web search failed ({searched.why})"
+                ) from failure
+            if failure is not None:
+                raise failure
+            if searched is not None and not uses_researcher:
+                raise RuntimeError(
+                    f"No news for {question.page_url}: ChatGPT web search "
+                    + (f"failed ({searched.why})" if searched.why else f"was not run ({searched.skipped})")
+                    + " and no other researcher is set"
+                )
+            return found or ""
+        if not web_text:
+            return found
+        web_part = f"## News from ChatGPT web search (searched {searched.searched_on} UTC)\n{web_text}"
+        if failure is not None:
+            logger.warning(
+                f"{name} failed for {question.page_url} ({type(failure).__name__}: {failure}); "
+                "forecasting with ChatGPT web search news only."
+            )
+            self.web_search.covered_for[type(failure).__name__] += 1
+        if not found:
+            return web_part
+        return f"## News from {name}\n{found.strip()}\n\n{web_part}"
+
+    async def _research_with_researcher(
+        self, question: MetaculusQuestion, researcher: str | GeneralLlm
+    ) -> tuple[str | None, Exception | None]:
+        """(the researcher's text, None), or (None, the error it raised)."""
+        try:
+            return await self._run_researcher(question, researcher), None
+        except Exception as e:
+            logger.warning(f"Research for {question.page_url} failed: {type(e).__name__}: {e}")
+            return None, e
+
+    async def _run_researcher(self, question: MetaculusQuestion, researcher: str | GeneralLlm) -> str:
         async with self._concurrency_limiter:
             research = ""
-            researcher = self.get_llm("researcher")
 
             prompt = self._get_research_prompt(question, researcher)
 
@@ -180,11 +276,10 @@ class FallTemplateBot2026(ForecastBot):
                     use_advanced_filters=False,
                 )
                 research = await searcher.invoke(prompt)
-            elif not researcher or researcher == "None" or researcher == "no_research":
+            elif _no_researcher(researcher):
                 research = ""
             else:
                 research = await self.get_llm("researcher", "llm").invoke(prompt)
-            logger.info(f"Found Research for URL {question.page_url}:\n{research}")
             return research
 
     @staticmethod
@@ -707,6 +802,14 @@ class FallTemplateBot2026(ForecastBot):
         )
 
 
+async def _no_web_search() -> None:
+    return None
+
+
+def _no_researcher(researcher: str | GeneralLlm) -> bool:
+    return not researcher or researcher in ("None", "no_research")
+
+
 def build_forecaster(
     settings: BotSettings,
     budget: RunBudget,
@@ -740,28 +843,56 @@ def build_forecaster(
     )
 
 
+def build_parser(
+    settings: BotSettings, budget: RunBudget, status: OpenAiStatus | None = None
+) -> BudgetedLlm:
+    """
+    The parser, which turns each forecast's written answer into a number. On
+    OpenAI (GPT-6 Luna, with an OPENAI_API_KEY) every parse it cannot make is
+    redone on its OpenRouter fallback (settings.parser_fallback_model).
+    """
+    # The parser reads answers that were already paid for, so it keeps
+    # working past the spending limit (the call limit still applies).
+    shared = {"budget": budget, "enforce_spending_limit": False}
+    model, fallback_model = settings.parser_model, settings.parser_fallback_model
+    if not fallback_model:
+        return BudgetedLlm(model=model, **shared, **parser_kwargs(model))
+    return OpenAiParserLlm(
+        model=model,
+        status=status or parser_status(),
+        fallback=BudgetedLlm(model=fallback_model, **shared, **parser_kwargs(fallback_model)),
+        **shared,
+        **parser_kwargs(model),
+    )
+
+
 def build_llms(
     settings: BotSettings,
     budget: RunBudget,
     forecast_model: str | None = None,
     claude_api: ClaudeApiStatus | None = None,
+    parser: OpenAiStatus | None = None,
 ) -> dict[str, str | GeneralLlm]:
     forecast_model = forecast_model or settings.forecast_model
+    # Never called (summaries are off, see make_bot); a GPT-6 model takes no temperature.
+    summarizer_kwargs = parser_kwargs(settings.parser_model)
+    if summarizer_kwargs.get("temperature") is not None:
+        summarizer_kwargs["temperature"] = 0.3
     return {
         "default": build_forecaster(settings, budget, forecast_model, claude_api),
-        "summarizer": BudgetedLlm(
-            model=settings.parser_model, budget=budget, temperature=0.3
-        ),
+        "summarizer": BudgetedLlm(model=settings.parser_model, budget=budget, **summarizer_kwargs),
         "researcher": settings.researcher,
-        # The parser reads answers that were already paid for, so it keeps
-        # working past the spending limit (the call limit still applies).
-        "parser": BudgetedLlm(
-            model=settings.parser_model,
-            budget=budget,
-            temperature=0.0,
-            enforce_spending_limit=False,
-        ),
+        "parser": build_parser(settings, budget, parser),
     }
+
+
+def build_web_search(
+    settings: BotSettings, budget: RunBudget, status: OpenAiStatus | None = None
+) -> ChatGptWebSearch | None:
+    """ChatGPT web search for the whole run, or None when it is off (no OPENAI_API_KEY, or WEB_SEARCH_MODEL=none)."""
+    if not settings.web_search_model:
+        return None
+    return ChatGptWebSearch(settings.web_search_model, budget, status)
 
 
 def make_bot(
@@ -770,8 +901,12 @@ def make_bot(
     publish: bool,
     forecast_model: str | None = None,
     claude_api: ClaudeApiStatus | None = None,
+    web_search: ChatGptWebSearch | None = None,
+    parser: OpenAiStatus | None = None,
 ) -> FallTemplateBot2026:
-    return FallTemplateBot2026(
+    """`web_search` and `parser` are shared by both bots, so a used-up OpenAI
+    credit stops each job once for the whole run."""
+    bot = FallTemplateBot2026(
         research_reports_per_question=1,
         predictions_per_research_report=settings.predictions_per_question,
         use_research_summary_to_forecast=False,
@@ -782,8 +917,10 @@ def make_bot(
         folder_to_save_reports_to=None,
         skip_previously_forecasted_questions=True,
         extra_metadata_in_explanation=True,
-        llms=build_llms(settings, budget, forecast_model, claude_api),
+        llms=build_llms(settings, budget, forecast_model, claude_api, parser),
     )
+    bot.web_search = web_search
+    return bot
 
 
 def collect_questions(
@@ -839,10 +976,11 @@ def models_to_call(
         forecasters.append(settings.tournament_forecast_model)
     if chosen_cheap:
         forecasters.append(settings.forecast_model)
-    # A Claude API forecaster's failed forecasts are redone on OpenRouter (the
-    # parser has no such fallback, so it adds none).
+    # A Claude API forecaster's failed forecasts are redone on OpenRouter, and
+    # so are the parses an OpenAI parser cannot make.
     twins = [twin for twin in map(openrouter_twin, forecasters) if twin]
-    return [settings.parser_model] + forecasters + twins
+    parser_fallback = [settings.parser_fallback_model] if settings.parser_fallback_model else []
+    return [settings.parser_model] + parser_fallback + forecasters + twins
 
 
 class OpenRouterGate:
@@ -907,7 +1045,8 @@ async def forecast_chosen(
 
     def paid_on_openrouter(model: str):
         # The money rule for the Claude API. While it answers, a question on it
-        # needs OpenRouter only for its parse calls, so low OpenRouter money
+        # needs OpenRouter only for its parse calls (with the parser on OpenAI,
+        # only for those OpenAI cannot make), so low OpenRouter money
         # does not hold it back. Until it has answered this run, and after a
         # batch in which some forecasts were redone on OpenRouter, the next
         # batch is sized for OpenRouter but always lets one question through
@@ -1077,17 +1216,29 @@ if __name__ == "__main__":
     # questions exit with 1; an error ends it with a traceback).
     atexit.register(lambda: claude_month.write_run_output(claude_api.credit_used_usd()))
 
+    # With OPENAI_API_KEY saved, ChatGPT web search (a second news source)
+    # and the parser run on the free OpenAI credit; what they did this run.
+    web_search = build_web_search(settings, budget)
+    parser_on_openai = parser_status()
+
     # The main tournament gets the stronger model; MiniBench and the Cup keep
-    # the cheaper one. Both share the run budget.
+    # the cheaper one. Both share the run budget, the web search and the parser.
     tournament_bot = make_bot(
         settings,
         budget,
         publish=publish_to_metaculus,
         forecast_model=settings.tournament_forecast_model,
         claude_api=claude_api,
+        web_search=web_search,
+        parser=parser_on_openai,
     )
     other_bot = make_bot(
-        settings, budget, publish=publish_to_metaculus, claude_api=claude_api
+        settings,
+        budget,
+        publish=publish_to_metaculus,
+        claude_api=claude_api,
+        web_search=web_search,
+        parser=parser_on_openai,
     )
 
     TOURNAMENT_URLS = {
@@ -1151,6 +1302,13 @@ if __name__ == "__main__":
     claude_api_note = claude_api.annotation()
     if claude_api_note:
         print(claude_api_note)
+    if web_search:
+        print(f"🔎  {web_search.summary()}")
+    # Parses redone on OpenRouter, and questions ChatGPT web search carried
+    # alone because AskNews failed, show as warnings on the run's page.
+    for note in (parser_on_openai.annotation(), web_search.covered_annotation() if web_search else None):
+        if note:
+            print(note)
     if budget.calls_without_cost:
         print(
             f"⚠️   {budget.calls_without_cost} call(s) had no price; the cost above is too low."
@@ -1159,6 +1317,11 @@ if __name__ == "__main__":
         print(
             f"⚠️   {budget.failed_calls} call(s) failed after being sent; any cost they "
             "had is not in the total above."
+        )
+    if budget.estimated_calls:
+        print(
+            f"⚠️   {budget.estimated_calls} call(s) were cut off before their answer came back; "
+            "the total above counts each at the most it is likely to have cost."
         )
     if not_attempted:
         print(

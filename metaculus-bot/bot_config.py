@@ -12,11 +12,19 @@ ANTHROPIC_API_KEY is saved (the owner's Max plan includes monthly Claude API
 credit), otherwise Claude Sonnet 5.5 through OpenRouter. MiniBench and the
 Cup use a cheaper one: GPT-6 Sol when an OPENAI_API_KEY is saved (the owner
 has free OpenAI credit), otherwise DeepSeek V3.2.
+
+The OpenAI key also moves two smaller jobs off paid services onto that free
+credit: a second news source next to AskNews (ChatGPT web search on GPT-6
+Sol, web_search.py) and the parser that turns each forecast's text into a
+number (GPT-6 Luna, with DeepSeek V3.2 on OpenRouter redoing any parse OpenAI
+cannot make, openai_credit.py). Without the key both stay as before: AskNews
+alone, and the parser on OpenRouter.
 """
 from __future__ import annotations
 
 import dataclasses
 import os
+import re
 from dataclasses import dataclass
 from typing import Mapping
 
@@ -67,7 +75,30 @@ DEFAULT_CLAUDE_CREDIT_RESET_DAY = 3
 # Claude API models whose default effort is already high (forecaster_kwargs).
 CLAUDE_API_HIGH_EFFORT_BY_DEFAULT = {"anthropic/claude-sonnet-5-5", "anthropic/claude-fable-5-2"}
 DEFAULT_PARSER_MODEL = "openrouter/deepseek/deepseek-v3.2"
+# Replaces DEFAULT_PARSER_MODEL when OPENAI_API_KEY is set, so parsing is paid
+# from the free OpenAI credit instead of OpenRouter cash. $0.10 / $0.50 per
+# million tokens: reading a forecast's answer needs no strong model.
+OPENAI_PARSER_MODEL = "openai/gpt-6-luna"
+# Redoes the parse calls an OpenAI parser cannot make (credit used up, key
+# missing or rejected, an outage, a timeout), so a forecast that was already
+# paid for is never thrown away for want of a parse.
+PARSER_FALLBACK_MODEL = DEFAULT_PARSER_MODEL
+# The parser only copies a number out of a written answer, so it needs little
+# thinking. "low" rather than "minimal": every reasoning model OpenAI offers
+# takes "low", and a value it refused would send every parse to OpenRouter.
+PARSER_REASONING_EFFORT = "low"
+# OpenAI's reasoning models: the o-series, and GPT-5 and later except their
+# "-chat" versions. Only these take a reasoning effort, and they take no
+# temperature; OpenAI refuses a reasoning effort from any other model (HTTP
+# 400), so an older model that PARSER_MODEL or WEB_SEARCH_MODEL names, such as
+# gpt-4o-mini or gpt-4.1, is sent neither and keeps its temperature.
+_OPENAI_REASONING_MODEL = re.compile(r"^(?:o\d|gpt-(?:[5-9]|\d{2,}))(?!.*chat)", re.IGNORECASE)
 DEFAULT_RESEARCHER = "asknews/news-summaries"
+# The second news source when OPENAI_API_KEY is set: ChatGPT web search, paid
+# from the free OpenAI credit, next to the paid AskNews. The WEB_SEARCH_MODEL
+# variable picks another OpenAI model, or "none" to switch it off.
+OPENAI_WEB_SEARCH_MODEL = "openai/gpt-6-sol"
+WEB_SEARCH_OFF_VALUES = {"none", "off", "no", "false", "0"}
 
 # Template default is 5 forecasts per question, averaged. Kept as-is.
 DEFAULT_PREDICTIONS_PER_QUESTION = 5
@@ -76,13 +107,15 @@ DEFAULT_PREDICTIONS_PER_QUESTION = 5
 DEFAULT_MAX_QUESTIONS_PER_RUN = 12
 # Metaculus releases at most 5 questions at a time; 5 main-tournament questions
 # on Claude Fable 5.2 (very roughly $0.60 to $0.80 each, on the Claude API
-# credit) plus 5 MiniBench ones on GPT-6 Sol (about $0.05 each) should stay
-# under this. A run that reaches it leaves the rest for the next run. The
-# season-wide cap on cash is the spending limit set on the OpenRouter key
-# itself.
+# credit) plus 5 MiniBench ones on GPT-6 Sol (about $0.05 each), with a
+# ChatGPT web search for each of the 10 (very roughly $0.05 to $0.15 each, on
+# the OpenAI credit), should stay under this. A run that reaches it leaves the
+# rest for the next run. The season-wide cap on cash is the spending limit set
+# on the OpenRouter key itself.
 DEFAULT_MAX_COST_PER_RUN_USD = 8.00
 # Backstop for models litellm cannot price. A normal question takes about
-# 10-15 calls (5 forecasts and their parsing); conditional questions take
+# 15-20 calls (5 forecasts, their parsing, and one web search; a parse that
+# OpenAI fails and OpenRouter redoes counts twice); conditional questions take
 # about 4 times that.
 DEFAULT_MAX_LLM_CALLS_PER_RUN = 400
 # Questions forecast at the same time. The spending limit is checked before
@@ -111,6 +144,11 @@ class BotSettings:
     questions_in_parallel: int
     claude_monthly_limit_usd: float = DEFAULT_CLAUDE_MONTHLY_LIMIT_USD
     claude_credit_reset_day: int = DEFAULT_CLAUDE_CREDIT_RESET_DAY
+    # The OpenRouter model that redoes the parse calls an OpenAI parser
+    # cannot make; None when the parser is not on OpenAI.
+    parser_fallback_model: str | None = None
+    # The OpenAI model that runs ChatGPT web search; None when it is off.
+    web_search_model: str | None = None
 
 
 def _text(env: Mapping[str, str], name: str, default: str) -> str:
@@ -183,18 +221,52 @@ def openrouter_twin(model: str) -> str | None:
     return DEFAULT_TOURNAMENT_FORECAST_MODEL
 
 
+def is_openai_reasoning_model(model: str) -> bool:
+    """True for an OpenAI reasoning model ("openai/gpt-6-luna", "o3"), which takes a reasoning effort and no temperature."""
+    return bool(_OPENAI_REASONING_MODEL.match(model.removeprefix("openai/")))
+
+
+def parser_fallback(parser_model: str) -> str | None:
+    """
+    The OpenRouter model that redoes the parse calls `parser_model` cannot
+    make: DeepSeek V3.2 for a parser on OpenAI (the default one with an
+    OPENAI_API_KEY, or one PARSER_MODEL names), None for any other parser,
+    which runs as it always has.
+    """
+    return PARSER_FALLBACK_MODEL if parser_model.startswith("openai/") else None
+
+
+def _web_search_model(env: Mapping[str, str], has_openai_key: bool) -> str | None:
+    chosen = _text(env, "WEB_SEARCH_MODEL", OPENAI_WEB_SEARCH_MODEL)
+    if chosen.lower() in WEB_SEARCH_OFF_VALUES:
+        return None
+    if "/" not in chosen:
+        chosen = f"openai/{chosen}"
+    if not chosen.startswith("openai/"):
+        # Web search runs on OpenAI's own Responses API, so another provider's
+        # model cannot do it.
+        raise SettingsError(
+            f"WEB_SEARCH_MODEL must be an OpenAI model such as {OPENAI_WEB_SEARCH_MODEL}, "
+            f"or none to switch ChatGPT web search off; got {chosen!r}"
+        )
+    # Paid from the OpenAI credit, so only with the key saved.
+    return chosen if has_openai_key else None
+
+
 def load_settings(env: Mapping[str, str] | None = None) -> BotSettings:
     env = os.environ if env is None else env
+    has_openai_key = bool((env.get("OPENAI_API_KEY") or "").strip())
+    parser_model = _text(
+        env, "PARSER_MODEL", OPENAI_PARSER_MODEL if has_openai_key else DEFAULT_PARSER_MODEL
+    )
     return BotSettings(
         forecast_model=_text(
             env,
             "FORECAST_MODEL",
-            OPENAI_FORECAST_MODEL
-            if (env.get("OPENAI_API_KEY") or "").strip()
-            else DEFAULT_FORECAST_MODEL,
+            OPENAI_FORECAST_MODEL if has_openai_key else DEFAULT_FORECAST_MODEL,
         ),
         tournament_forecast_model=_tournament_model(env),
-        parser_model=_text(env, "PARSER_MODEL", DEFAULT_PARSER_MODEL),
+        parser_model=parser_model,
         researcher=_text(env, "RESEARCHER", DEFAULT_RESEARCHER),
         forecast_reasoning=_bool(env, "FORECAST_REASONING", True),
         predictions_per_question=_int(
@@ -216,6 +288,8 @@ def load_settings(env: Mapping[str, str] | None = None) -> BotSettings:
             env, "CLAUDE_MONTHLY_LIMIT_USD", DEFAULT_CLAUDE_MONTHLY_LIMIT_USD
         ),
         claude_credit_reset_day=_reset_day(env),
+        parser_fallback_model=parser_fallback(parser_model),
+        web_search_model=_web_search_model(env, has_openai_key),
     )
 
 
@@ -331,6 +405,32 @@ def forecaster_kwargs(settings: BotSettings, model: str | None = None) -> dict:
     return {"temperature": 0.3, **reasoning_kwargs(settings, model)}
 
 
+def parser_kwargs(model: str) -> dict:
+    """
+    Request options for the parser, which copies the number out of each
+    forecast's written answer. Any model off OpenAI, and an older OpenAI
+    model that is not a reasoning model (gpt-4o-mini, say), parses at
+    temperature 0 as before. An OpenAI reasoning model such as GPT-6 Luna
+    takes no temperature (one would cost a refused call first) and thinks
+    little (PARSER_REASONING_EFFORT), set in the request body like
+    forecaster_kwargs. Every OpenAI parser is tried once, without litellm's
+    own retries, because a failed parse goes straight to the OpenRouter
+    fallback: retrying a used-up credit would only delay it. 90 s, not
+    GeneralLlm's 60 s default for models it does not know, leaves room for a
+    long answer; DeepSeek keeps its 210 s default.
+    """
+    if not model.startswith("openai/"):
+        return {"temperature": 0.0}
+    tried_once = {"timeout": 90, "max_retries": 0}
+    if not is_openai_reasoning_model(model):
+        return {"temperature": 0.0, **tried_once}
+    return {
+        "temperature": None,
+        **tried_once,
+        "extra_body": {"reasoning_effort": PARSER_REASONING_EFFORT},
+    }
+
+
 # While a call runs, OpenRouter holds back its largest possible cost and
 # refuses new calls the remaining credit cannot cover ("This request would
 # exceed your available credits given your current in-flight requests").
@@ -340,7 +440,8 @@ def forecaster_kwargs(settings: BotSettings, model: str | None = None) -> dict:
 # $0.38/M output, a few cents a call even at its largest.
 OPENROUTER_CALL_HOLD_USD = 0.20
 DEEPSEEK_CALL_HOLD_USD = 0.03
-# Always kept back for the parser's calls, which turn answers into numbers.
+# Always kept back for the parser's calls, which turn answers into numbers,
+# whenever any of them can reach OpenRouter.
 PARSER_HOLD_USD = 0.05
 
 
@@ -352,14 +453,34 @@ def _call_hold_usd(model: str) -> float:
     return OPENROUTER_CALL_HOLD_USD
 
 
+def parser_openrouter_model(settings: BotSettings) -> str | None:
+    """
+    The OpenRouter model the parser may call: the parser itself, or the
+    fallback that redoes the parses an OpenAI parser cannot make. None when
+    no parse call can reach OpenRouter.
+    """
+    for model in (settings.parser_model, settings.parser_fallback_model):
+        if model and model.startswith("openrouter/"):
+            return model
+    return None
+
+
+def _parser_hold_usd(settings: BotSettings) -> float:
+    return PARSER_HOLD_USD if parser_openrouter_model(settings) else 0.0
+
+
 def question_hold_usd(settings: BotSettings, model: str) -> float:
     """
     OpenRouter credit one question on `model` holds back at once: its
     forecast calls, each followed by its parse call. When the forecasts go
-    elsewhere (OpenAI, or Claude on the Claude API), only the parse calls use
-    OpenRouter.
+    elsewhere (OpenAI, or Claude on the Claude API), only the parse calls can
+    use OpenRouter. With the parser on OpenAI they reach OpenRouter only when
+    OpenAI cannot make them, but then all of them at once (a used-up credit
+    fails every parse), so the hold stays that of the OpenRouter fallback:
+    it is what may be in flight, not what is spent.
     """
-    per_call = _call_hold_usd(model) or _call_hold_usd(settings.parser_model)
+    parser_on_openrouter = parser_openrouter_model(settings) or ""
+    per_call = _call_hold_usd(model) or _call_hold_usd(parser_on_openrouter)
     return per_call * settings.predictions_per_question
 
 
@@ -372,12 +493,14 @@ def batch_size_for_money(settings: BotSettings, model: str, money_left: float | 
     """
     usual = settings.questions_in_parallel
     hold = question_hold_usd(settings, model)
-    parser_hold = PARSER_HOLD_USD if settings.parser_model.startswith("openrouter/") else 0.0
+    parser_hold = _parser_hold_usd(settings)
     if money_left is None or (hold == 0 and parser_hold == 0):
         return usual
     spare = money_left - parser_hold
     if spare < 0:
         return 0
+    if hold == 0:
+        return usual
     # The small tolerance keeps $1.05 from counting as 0.99999 of a question.
     return max(0, min(usual, int(spare / hold + 1e-9)))
 
@@ -406,8 +529,7 @@ def batch_size_on_claude_api(
 
 def money_needed_for_one_question(settings: BotSettings) -> float:
     """OpenRouter money below which no main-tournament question can be forecast."""
-    parser_hold = PARSER_HOLD_USD if settings.parser_model.startswith("openrouter/") else 0.0
-    return question_hold_usd(settings, settings.tournament_forecast_model) + parser_hold
+    return question_hold_usd(settings, settings.tournament_forecast_model) + _parser_hold_usd(settings)
 
 
 def pick_questions_to_forecast(questions: list, max_questions: int) -> tuple[list, list]:
