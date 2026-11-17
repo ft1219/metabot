@@ -1,23 +1,23 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-17 12:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-17 12:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move | 380 | 245/380 | +6.9% | +$130.64 | 12 | 139 | too early |
-| 2 | sure_thing | 1768 | 1644/1768 | -0.4% | -$35.33 | 11 | 192 | too early |
-| 3 | safe_no_week | 695 | 639/695 | -4.0% | -$140.32 | 12 | 286 | too early |
-| 4 | sports_underdog | 1295 | 307/1295 | -12.2% | -$783.87 | 10 | 37 | too early |
-| 5 | fade_move | 419 | 124/419 | -14.7% | -$308.74 | 12 | 146 | too early |
-| 6 | weather_forecast | 507 | 261/507 | -19.4% | -$485.58 | 10 | 135 | too early |
+| 1 | follow_move | 380 | 245/380 | +6.9% | +$130.64 | 12 | 141 | too early |
+| 2 | sure_thing | 1770 | 1646/1770 | -0.4% | -$34.61 | 11 | 195 | too early |
+| 3 | safe_no_week | 695 | 639/695 | -4.0% | -$140.32 | 12 | 289 | too early |
+| 4 | sports_underdog | 1296 | 307/1296 | -12.2% | -$788.87 | 10 | 40 | too early |
+| 5 | fade_move | 419 | 124/419 | -14.7% | -$308.74 | 12 | 147 | too early |
+| 6 | weather_forecast | 507 | 261/507 | -19.4% | -$485.58 | 10 | 136 | too early |
 | 7 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 8 | follow_move_2 | 0 | - | - | +$0.00 | 0 | 29 | too early |
-| 9 | follow_move_crypto | 0 | - | - | +$0.00 | 0 | 19 | too early |
-| 10 | follow_move_cheap | 0 | - | - | +$0.00 | 0 | 27 | too early |
-| 11 | follow_move_big | 0 | - | - | +$0.00 | 0 | 27 | too early |
-| 12 | coin_flip | 1963 | 957/1963 | -6.3% | -$612.52 | 12 | 192 | yardstick |
+| 8 | follow_move_2 | 0 | - | - | +$0.00 | 0 | 37 | too early |
+| 9 | follow_move_crypto | 0 | - | - | +$0.00 | 0 | 27 | too early |
+| 10 | follow_move_cheap | 0 | - | - | +$0.00 | 0 | 28 | too early |
+| 11 | follow_move_big | 0 | - | - | +$0.00 | 0 | 28 | too early |
+| 12 | coin_flip | 1968 | 959/1968 | -6.3% | -$618.56 | 12 | 195 | yardstick |
 
 What each one does:
 
@@ -40,7 +40,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move | sure_thing | safe_no_week | sports_underdog | fade_move | weather_forecast | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|
-| 2026-11-17 | +$1.97 | +$11.95 | +$0.95 | +$56.15 | -$14.20 | +$3.89 |  | -$83.08 |
+| 2026-11-17 | +$1.97 | +$12.66 | +$0.95 | +$51.15 | -$14.20 | +$3.89 |  | -$89.12 |
 | 2026-11-16 | +$11.58 | -$6.40 | -$11.02 | +$21.94 | -$17.46 |  | +$0.08 | -$21.29 |
 | 2026-11-15 | +$17.97 | +$0.34 | -$26.64 |  | +$30.37 | -$0.94 |  | -$47.97 |
 | 2026-11-14 | -$7.86 |  | -$37.34 |  | +$18.94 | -$4.48 |  | -$13.50 |
@@ -53,18 +53,18 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-17 follow_move: Will it rain in Phoenix, AZ on November 17? -> Yes at 0.730 ($5.00)
-- 2026-11-17 sure_thing: Bitcoin above 65,200 on November 17, 8AM ET? -> No at 0.925 ($5.00)
-- 2026-11-17 safe_no_week: Will the lowest temperature in Miami be between 76-77°F on November 18? -> No at 0.985 ($5.00)
-- 2026-11-17 sports_underdog: KHL: Lada Togliatti vs. Metallurg Magnitogorsk -> Lada Togliatti at 0.259 ($5.00)
-- 2026-11-17 fade_move: Will it rain in Phoenix, AZ on November 17? -> No at 0.310 ($5.00)
-- 2026-11-17 weather_forecast: Will the highest temperature in Houston be between 76-77°F on November 19? -> No at 0.710 ($5.00)
+- 2026-11-17 follow_move: Will Solana reach $80 November 16-22? -> Yes at 0.345 ($5.00)
+- 2026-11-17 sure_thing: Exact Score: French Guiana 0 - 0 St. Vincent and the Grenadines? -> No at 0.943 ($5.00)
+- 2026-11-17 safe_no_week: Will the highest temperature in Buenos Aires be 26°C on November 19? -> No at 0.952 ($5.00)
+- 2026-11-17 sports_underdog: Dota 2: PuckChamp vs Nemiga Gaming (BO3) - DreamLeague Division 2 Playoffs -> PuckChamp at 0.361 ($1.81)
+- 2026-11-17 fade_move: Will Solana reach $80 November 16-22? -> No at 0.744 ($5.00)
+- 2026-11-17 weather_forecast: Will the highest temperature in Buenos Aires be 26°C on November 19? -> Yes at 0.102 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-17 follow_move_2: Will Netflix, Inc. (NFLX) hit (LOW) $60 Week of November 16 2026? -> Yes at 0.836 ($5.00)
-- 2026-11-17 follow_move_crypto: Will the price of Solana be above $75 on November 18? -> Yes at 0.300 ($5.00)
-- 2026-11-17 follow_move_cheap: Will Alphabet Inc. (GOOGL) hit (LOW) $270 Week of November 16 2026? -> Yes at 0.319 ($5.00)
-- 2026-11-17 follow_move_big: Will the price of Ethereum be between $1,700 and $1,800 on November 22? -> No at 0.763 ($5.00)
-- 2026-11-17 coin_flip: Games Total: O/U 2.5 -> Over at 0.492 ($5.00)
+- 2026-11-17 follow_move_2: Will Elon Musk post 65-89 tweets from November 16 to November 18, 2026? -> No at 0.759 ($5.00)
+- 2026-11-17 follow_move_crypto: Will the price of Ethereum be above $1,800 on November 18? -> Yes at 0.664 ($5.00)
+- 2026-11-17 follow_move_cheap: Will Solana reach $80 November 16-22? -> Yes at 0.345 ($5.00)
+- 2026-11-17 follow_move_big: Will "Golden Hour: Part.6" - ATEEZ first week album sales be between 200k and 250k? -> Yes at 0.827 ($5.00)
+- 2026-11-17 coin_flip: AHL: Colorado Eagles vs. Bakersfield Condors -> Colorado Eagles at 0.547 ($5.00)
 
 ## Price gaps seen today
 
