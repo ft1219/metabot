@@ -52,7 +52,10 @@ jobs:
     if: ${{ needs.check.outputs.to_forecast == 'true' }}
     runs-on: ubuntu-latest
     # A batch of 5 questions usually takes 3-6 minutes; slow hosts can stretch
-    # one to about 15 (two 300 s tries per forecast, then parsing).
+    # one to about 15 (two 300 s tries per forecast, then parsing), and to
+    # about 20 when the Claude API times out first. After three Claude API
+    # timeouts in a row with no answer in between, the run sends the rest
+    # straight to OpenRouter.
     timeout-minutes: 40
     permissions:
       contents: read
@@ -86,6 +89,7 @@ jobs:
           METACULUS_TOKEN: ${{ secrets.METACULUS_TOKEN }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           ASKNEWS_CLIENT_ID: ${{ secrets.ASKNEWS_CLIENT_ID }}
           ASKNEWS_SECRET: ${{ secrets.ASKNEWS_SECRET }}
           ASKNEWS_API_KEY: ${{ secrets.ASKNEWS_API_KEY }}

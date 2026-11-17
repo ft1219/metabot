@@ -4,7 +4,7 @@ Checks the keys saved as GitHub secrets, without printing them.
 Run it from the Actions tab ("Check my keys"). It tells you, in plain words,
 which keys are missing, which ones the services accept, whether the
 OpenRouter key has a spending limit, and how much OpenRouter credit is left.
-Standard library only.
+Each check is a free request. Standard library only.
 """
 from __future__ import annotations
 
@@ -30,6 +30,13 @@ LOW_CREDIT_USD = 5.0
 # On 15 November 2026, with less than this left, OpenRouter refused most of
 # each question's forecasts.
 EMPTY_CREDIT_USD = bot_config.money_needed_for_one_question(bot_config.load_settings({}))
+# With a working ANTHROPIC_API_KEY the main-tournament forecasts are written
+# on the Claude API and OpenRouter pays only for their parsing (about $0.20 a
+# question), until the Claude API credit runs out and EMPTY_CREDIT_USD applies
+# again. Between the two the check warns instead of failing.
+CLAUDE_API_EMPTY_CREDIT_USD = bot_config.money_needed_for_one_question(
+    bot_config.load_settings({"ANTHROPIC_API_KEY": "saved"})
+)
 
 
 def http(url: str, headers: dict, data: bytes | None = None, timeout: float = 20):
@@ -94,7 +101,7 @@ def check_forecast_data(token: str | None, get=None) -> tuple[str, str]:
     return OK, "Open questions: " + "; ".join(parts) + "."
 
 
-def check_openrouter(key: str | None, get=None) -> tuple[str, str]:
+def check_openrouter(key: str | None, get=None, claude_api_works: bool = False) -> tuple[str, str]:
     get = get or http
     if not key:
         return BAD, "OPENROUTER_API_KEY is missing."
@@ -122,6 +129,12 @@ def check_openrouter(key: str | None, get=None) -> tuple[str, str]:
                     "Raise the limit or add credit in OpenRouter."
                 )
             left = remaining if remaining is not None else limit - usage
+            if left < EMPTY_CREDIT_USD and claude_api_works and left >= CLAUDE_API_EMPTY_CREDIT_USD:
+                return LOW, (
+                    f"Only ${left:.2f} is left under OPENROUTER_API_KEY's ${limit:.2f} limit: enough to parse "
+                    "main-tournament forecasts made on the Claude API, not to redo them on OpenRouter once the "
+                    "Claude API credit runs out. Raise the key's limit at openrouter.ai under Keys soon."
+                )
             if left < EMPTY_CREDIT_USD:
                 return BAD, (
                     f"Only ${left:.2f} is left under OPENROUTER_API_KEY's ${limit:.2f} limit, too little to "
@@ -175,10 +188,11 @@ def read_openrouter_key_left(key: str, get=None) -> float | None:
     return limit - usage
 
 
-def check_openrouter_credit(key: str | None, get=None) -> tuple[str, str]:
+def check_openrouter_credit(key: str | None, get=None, claude_api_works: bool = False) -> tuple[str, str]:
     """
     The key's limit is not the money: an account with $2 of credit stops
-    forecasting long before a $30 key limit is reached.
+    forecasting long before a $30 key limit is reached. `claude_api_works`:
+    ANTHROPIC_API_KEY is saved and used, so less OpenRouter money is enough.
     """
     if not key:
         return UNSURE, "Skipped the OpenRouter credit check because OPENROUTER_API_KEY is missing."
@@ -186,6 +200,12 @@ def check_openrouter_credit(key: str | None, get=None) -> tuple[str, str]:
     if credit is None:
         return UNSURE, "Could not read the OpenRouter credit balance. Try again later."
     left, total = max(credit[0], 0.0), credit[1]
+    if left < EMPTY_CREDIT_USD and claude_api_works and left >= CLAUDE_API_EMPTY_CREDIT_USD:
+        return LOW, (
+            f"Only ${left:.2f} of OpenRouter credit is left (${total:.2f} bought): enough to parse "
+            "main-tournament forecasts made on the Claude API, not to redo them on OpenRouter once the "
+            "Claude API credit runs out. Add credit at openrouter.ai under Settings > Credits soon."
+        )
     if left < EMPTY_CREDIT_USD:
         return BAD, (
             f"OpenRouter credit is used up (${left:.2f} left of ${total:.2f} bought), so the bot cannot "
@@ -221,6 +241,50 @@ def check_openai(key: str | None, get=None) -> tuple[str, str]:
     return UNSURE, f"OpenAI did not answer normally (HTTP {status}). Try again later."
 
 
+def check_anthropic(key: str | None, get=None, tournament_model: str | None = None) -> tuple[str, str]:
+    """
+    ANTHROPIC_API_KEY is optional: without it the main tournament uses Claude
+    through OpenRouter. Looking the model up is free. `tournament_model` is
+    the TOURNAMENT_FORECAST_MODEL variable, which decides whether the key is
+    used at all.
+    """
+    get = get or http
+    if not key:
+        return OK, (
+            "ANTHROPIC_API_KEY is not set, so main-tournament forecasts use Claude through OpenRouter "
+            "(that is fine)."
+        )
+    settings = bot_config.load_settings({"ANTHROPIC_API_KEY": key, "TOURNAMENT_FORECAST_MODEL": tournament_model or ""})
+    if not settings.tournament_forecast_model.startswith("anthropic/"):
+        return BAD, (
+            f"ANTHROPIC_API_KEY is saved, but the TOURNAMENT_FORECAST_MODEL variable is {tournament_model}, which has "
+            "no Claude API version, so the bot does not use the key and pays OpenRouter instead. To use the Claude "
+            "API credit, delete that variable (Settings > Secrets and variables > Actions > Variables)."
+        )
+    model = settings.tournament_forecast_model.split("/", 1)[1]
+    status, _ = get(
+        f"https://api.anthropic.com/v1/models/{model}",
+        {"x-api-key": key, "anthropic-version": "2023-06-01"},
+    )
+    if status == 200:
+        return OK, (
+            f"ANTHROPIC_API_KEY works and can use {model}, so main-tournament forecasts use your Claude API "
+            "credit and move to OpenRouter when it runs out. Keys cannot read the credit balance; see it at "
+            "platform.claude.com."
+        )
+    if status == 401:
+        return BAD, (
+            "The Claude API does not accept ANTHROPIC_API_KEY (until it is fixed, the bot uses OpenRouter). "
+            "Create a new key at platform.claude.com and save it again."
+        )
+    if status in (403, 404):
+        return BAD, (
+            f"ANTHROPIC_API_KEY works but cannot use {model} (HTTP {status}), so the bot uses OpenRouter. "
+            "Check the key's workspace at platform.claude.com, or delete the secret."
+        )
+    return UNSURE, f"The Claude API did not answer normally (HTTP {status}). Try again later."
+
+
 def check_asknews(client_id: str | None, secret: str | None, api_key: str | None, post=None) -> tuple[str, str]:
     post = post or http
     if api_key and not (client_id and secret):
@@ -254,14 +318,18 @@ def main() -> int:
     # The bot trims spaces and line breaks from these too (bot_helpers.drop_blank_env_vars).
     env = {k: (os.getenv(k) or "").strip() or None for k in (
         "METACULUS_TOKEN", "OPENROUTER_API_KEY", "ASKNEWS_CLIENT_ID", "ASKNEWS_SECRET", "ASKNEWS_API_KEY",
-        "OPENAI_API_KEY")}
+        "OPENAI_API_KEY", "ANTHROPIC_API_KEY")}
     researcher = (os.getenv("RESEARCHER") or "").strip() or bot_config.DEFAULT_RESEARCHER
+    anthropic = _safely(check_anthropic, env["ANTHROPIC_API_KEY"], None, os.getenv("TOURNAMENT_FORECAST_MODEL"))
+    # With the Claude API writing the main-tournament forecasts, less OpenRouter money is enough.
+    claude_api_works = bool(env["ANTHROPIC_API_KEY"]) and anthropic[0] == OK
     results = [
         _safely(check_metaculus, env["METACULUS_TOKEN"]),
         _safely(check_forecast_data, env["METACULUS_TOKEN"]),
-        _safely(check_openrouter, env["OPENROUTER_API_KEY"]),
-        _safely(check_openrouter_credit, env["OPENROUTER_API_KEY"]),
+        _safely(check_openrouter, env["OPENROUTER_API_KEY"], None, claude_api_works),
+        _safely(check_openrouter_credit, env["OPENROUTER_API_KEY"], None, claude_api_works),
         _safely(check_openai, env["OPENAI_API_KEY"]),
+        anthropic,
     ]
     if researcher.startswith("asknews/"):
         results.append(_safely(check_asknews, env["ASKNEWS_CLIENT_ID"], env["ASKNEWS_SECRET"], env["ASKNEWS_API_KEY"]))

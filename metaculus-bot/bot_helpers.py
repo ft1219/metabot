@@ -103,8 +103,8 @@ def check_environment(strict: bool = True, researcher: str | None = None) -> Non
             "Get one at https://www.metaculus.com/futureeval/participate/"
         )
 
-    # Our models all go through OpenRouter, whose key carries the season's
-    # spending limit. Falling back to another provider would bypass it.
+    # OpenRouter is needed even with the OpenAI or Claude API keys: the parser,
+    # and any forecast the Claude API cannot make, run there.
     if not _is_real_env("OPENROUTER_API_KEY"):
         problems.append(
             "OPENROUTER_API_KEY is missing or still a placeholder. "

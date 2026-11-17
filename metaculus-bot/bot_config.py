@@ -7,9 +7,11 @@ Actions these come from repository *variables* (Settings -> Secrets and
 variables -> Actions -> Variables), so switching models needs no code change.
 
 The main tournament, where most of the prize money is, gets the strongest
-model the budget allows. MiniBench and the Cup use a cheaper one: GPT-6 Sol
-when an OPENAI_API_KEY is saved (the owner has free OpenAI credit), otherwise
-DeepSeek V3.2.
+model the budget allows: Claude Sonnet 5.5, on the Claude API when an
+ANTHROPIC_API_KEY is saved (the owner's Max plan includes monthly Claude API
+credit), otherwise through OpenRouter. MiniBench and the Cup use a cheaper
+one: GPT-6 Sol when an OPENAI_API_KEY is saved (the owner has free OpenAI
+credit), otherwise DeepSeek V3.2.
 """
 from __future__ import annotations
 
@@ -31,6 +33,16 @@ OPENAI_FORECAST_MODEL = "openai/gpt-6-sol"
 # the square of the season score, so the main tournament is where a better
 # model pays; MiniBench pays only its top few bots each round.
 DEFAULT_TOURNAMENT_FORECAST_MODEL = "openrouter/anthropic/claude-sonnet-5.5"
+# The same Claude models on the Claude API, paid from the owner's monthly
+# Claude API credit ($100 a month with the Max plan) at the same $2 / $10 per
+# million tokens. With ANTHROPIC_API_KEY saved, the main tournament uses the
+# Claude API version, and any forecast it cannot make is redone through
+# OpenRouter (claude_api.py).
+CLAUDE_API_VERSIONS = {
+    "openrouter/anthropic/claude-sonnet-5.5": "anthropic/claude-sonnet-5-5",
+}
+# Claude API models whose default effort is already high (forecaster_kwargs).
+CLAUDE_API_HIGH_EFFORT_BY_DEFAULT = {"anthropic/claude-sonnet-5-5"}
 DEFAULT_PARSER_MODEL = "openrouter/deepseek/deepseek-v3.2"
 DEFAULT_RESEARCHER = "asknews/news-summaries"
 
@@ -117,6 +129,29 @@ def _bool(env: Mapping[str, str], name: str, default: bool) -> bool:
     raise SettingsError(f"{name} must be true or false, got {raw!r}")
 
 
+def _tournament_model(env: Mapping[str, str]) -> str:
+    model = _text(env, "TOURNAMENT_FORECAST_MODEL", DEFAULT_TOURNAMENT_FORECAST_MODEL)
+    if (env.get("ANTHROPIC_API_KEY") or "").strip():
+        return CLAUDE_API_VERSIONS.get(model, model)
+    return model
+
+
+def openrouter_twin(model: str) -> str | None:
+    """
+    The OpenRouter model that redoes the forecasts a Claude API model cannot
+    make: the same model when its OpenRouter name is known, otherwise the
+    default main-tournament model, so no Claude API model is left without a
+    fallback (a used-up monthly credit would otherwise fail every forecast).
+    None for a model that is not on the Claude API.
+    """
+    if not model.startswith("anthropic/"):
+        return None
+    for openrouter_model, claude_api_model in CLAUDE_API_VERSIONS.items():
+        if claude_api_model == model:
+            return openrouter_model
+    return DEFAULT_TOURNAMENT_FORECAST_MODEL
+
+
 def load_settings(env: Mapping[str, str] | None = None) -> BotSettings:
     env = os.environ if env is None else env
     return BotSettings(
@@ -127,9 +162,7 @@ def load_settings(env: Mapping[str, str] | None = None) -> BotSettings:
             if (env.get("OPENAI_API_KEY") or "").strip()
             else DEFAULT_FORECAST_MODEL,
         ),
-        tournament_forecast_model=_text(
-            env, "TOURNAMENT_FORECAST_MODEL", DEFAULT_TOURNAMENT_FORECAST_MODEL
-        ),
+        tournament_forecast_model=_tournament_model(env),
         parser_model=_text(env, "PARSER_MODEL", DEFAULT_PARSER_MODEL),
         researcher=_text(env, "RESEARCHER", DEFAULT_RESEARCHER),
         forecast_reasoning=_bool(env, "FORECAST_REASONING", True),
@@ -178,6 +211,22 @@ def forecaster_kwargs(settings: BotSettings, model: str | None = None) -> dict:
     reference bots.
     """
     model = model or settings.forecast_model
+    if model.startswith("anthropic/"):
+        # The Claude API, through litellm's own Anthropic provider. litellm
+        # would turn a reasoning_effort into a fixed thinking budget and would
+        # copy extra_body into the request as it is; Claude Sonnet 5.5 refuses
+        # both. So no `thinking` field is sent (the model then thinks
+        # adaptively), and effort high is set the Claude API's own way,
+        # output_config, which litellm passes on unchanged (adding an old
+        # effort beta header). Claude Sonnet 5.5 runs at high by default, so
+        # its request leaves it out; other Claude models may not (Opus 5.5's
+        # default is medium).
+        effort = (
+            {}
+            if model in CLAUDE_API_HIGH_EFFORT_BY_DEFAULT
+            else {"output_config": {"effort": "high"}}
+        )
+        return {"temperature": None, "max_tokens": 16000, **effort}
     if is_claude(model):
         return {
             "temperature": None,
@@ -223,7 +272,8 @@ def question_hold_usd(settings: BotSettings, model: str) -> float:
     """
     OpenRouter credit one question on `model` holds back at once: its
     forecast calls, each followed by its parse call. When the forecasts go
-    elsewhere (OpenAI), only the parse calls use OpenRouter.
+    elsewhere (OpenAI, or Claude on the Claude API), only the parse calls use
+    OpenRouter.
     """
     per_call = _call_hold_usd(model) or _call_hold_usd(settings.parser_model)
     return per_call * settings.predictions_per_question
@@ -246,6 +296,28 @@ def batch_size_for_money(settings: BotSettings, model: str, money_left: float | 
         return 0
     # The small tolerance keeps $1.05 from counting as 0.99999 of a question.
     return max(0, min(usual, int(spare / hold + 1e-9)))
+
+
+def batch_size_on_claude_api(
+    settings: BotSettings, model: str, money_left: float | None, proven: bool
+) -> int:
+    """
+    How many questions on the Claude API `model` to forecast at once with
+    `money_left` dollars on OpenRouter. Once the Claude API has `proven` it
+    carries the forecasts this run (it has answered, and the last batch
+    needed no fallback), OpenRouter pays only for parsing. Before that, at the
+    start of every run and after any batch with fallbacks, each forecast may
+    be redone on OpenRouter (credit used up, rate limits), so the batch is
+    sized for OpenRouter's version of the model, but at least one question
+    goes when its parsing fits: low OpenRouter money then risks at most one
+    question's fallbacks, and never holds back questions the Claude API
+    would answer.
+    """
+    on_claude_api = batch_size_for_money(settings, model, money_left)
+    if proven:
+        return on_claude_api
+    on_openrouter = batch_size_for_money(settings, openrouter_twin(model) or model, money_left)
+    return max(on_openrouter, min(1, on_claude_api))
 
 
 def money_needed_for_one_question(settings: BotSettings) -> float:

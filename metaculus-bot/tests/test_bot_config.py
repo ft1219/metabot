@@ -11,12 +11,16 @@ from bot_config import (
     OPENAI_FORECAST_MODEL,
     SettingsError,
     batch_size_for_money,
+    batch_size_on_claude_api,
     forecaster_kwargs,
     money_needed_for_one_question,
     load_settings,
+    openrouter_twin,
     pick_questions_to_forecast,
     reasoning_kwargs,
 )
+
+CLAUDE_API_MODEL = "anthropic/claude-sonnet-5-5"
 
 
 def test_defaults_when_nothing_is_set():
@@ -99,6 +103,71 @@ def test_openai_key_switches_minibench_to_gpt6_sol():
         load_settings({"OPENAI_API_KEY": "sk-test"}).tournament_forecast_model
         == DEFAULT_TOURNAMENT_FORECAST_MODEL
     )
+
+
+def test_anthropic_key_moves_the_main_tournament_to_the_claude_api():
+    assert load_settings({"ANTHROPIC_API_KEY": "sk-ant"}).tournament_forecast_model == CLAUDE_API_MODEL
+    # The repository variable set to the OpenRouter model counts the same.
+    explicit = {"ANTHROPIC_API_KEY": "sk-ant", "TOURNAMENT_FORECAST_MODEL": DEFAULT_TOURNAMENT_FORECAST_MODEL}
+    assert load_settings(explicit).tournament_forecast_model == CLAUDE_API_MODEL
+    # No key, or a blank one (a secret never created): exactly as before.
+    for env in ({}, {"ANTHROPIC_API_KEY": "  "}, {"TOURNAMENT_FORECAST_MODEL": DEFAULT_TOURNAMENT_FORECAST_MODEL}):
+        assert load_settings(env).tournament_forecast_model == DEFAULT_TOURNAMENT_FORECAST_MODEL
+    # Another chosen model is left alone, and MiniBench never changes.
+    other = load_settings({"ANTHROPIC_API_KEY": "sk-ant", "TOURNAMENT_FORECAST_MODEL": "openrouter/x/y"})
+    assert other.tournament_forecast_model == "openrouter/x/y"
+    assert load_settings({"ANTHROPIC_API_KEY": "sk-ant"}).forecast_model == DEFAULT_FORECAST_MODEL
+    # A Claude API model can also be chosen directly.
+    chosen = load_settings({"TOURNAMENT_FORECAST_MODEL": CLAUDE_API_MODEL})
+    assert chosen.tournament_forecast_model == CLAUDE_API_MODEL
+
+
+def test_claude_api_models_fall_back_to_their_openrouter_version():
+    assert openrouter_twin(CLAUDE_API_MODEL) == DEFAULT_TOURNAMENT_FORECAST_MODEL
+    # A Claude API model with no known OpenRouter name still has a fallback.
+    assert openrouter_twin("anthropic/claude-opus-5-5") == DEFAULT_TOURNAMENT_FORECAST_MODEL
+    assert openrouter_twin(DEFAULT_TOURNAMENT_FORECAST_MODEL) is None
+    assert openrouter_twin(OPENAI_FORECAST_MODEL) is None
+
+
+def test_claude_api_gets_only_the_answer_length():
+    # No temperature, reasoning_effort or extra_body: litellm would send them
+    # on (or turn them into a thinking budget) and Claude Sonnet 5.5 refuses.
+    assert forecaster_kwargs(load_settings({}), CLAUDE_API_MODEL) == {
+        "temperature": None,
+        "max_tokens": 16000,
+    }
+    # Its default effort is high; Opus 5.5's is medium, so it gets high set.
+    assert forecaster_kwargs(load_settings({}), "anthropic/claude-opus-5-5") == {
+        "temperature": None,
+        "max_tokens": 16000,
+        "output_config": {"effort": "high"},
+    }
+
+
+def test_claude_api_questions_need_openrouter_money_only_for_parsing():
+    settings = load_settings({"ANTHROPIC_API_KEY": "sk-ant"})
+    model = settings.tournament_forecast_model
+    # 5 parse calls of $0.03 each per question, $0.05 kept for parsing.
+    assert batch_size_for_money(settings, model, 0.50) == 3
+    assert batch_size_for_money(settings, model, 0.10) == 0
+    assert money_needed_for_one_question(settings) == pytest.approx(0.20)
+    # Its OpenRouter fallback is judged as before.
+    assert batch_size_for_money(settings, openrouter_twin(model), 0.50) == 0
+
+
+def test_claude_api_batches_are_sized_for_openrouter_until_it_has_proven_itself():
+    settings = load_settings({"ANTHROPIC_API_KEY": "sk-ant"})
+    model = settings.tournament_forecast_model
+    # Proven this run: OpenRouter pays only for parsing.
+    assert batch_size_on_claude_api(settings, model, 0.50, proven=True) == 3
+    # Not yet (start of a run, or fallbacks in the last batch): sized for
+    # OpenRouter's Claude, but one question always goes when its parsing fits.
+    assert batch_size_on_claude_api(settings, model, 0.50, proven=False) == 1
+    assert batch_size_on_claude_api(settings, model, 2.22, proven=False) == 2
+    assert batch_size_on_claude_api(settings, model, 40, proven=False) == 5
+    assert batch_size_on_claude_api(settings, model, None, proven=False) == 5
+    assert batch_size_on_claude_api(settings, model, 0.10, proven=False) == 0
 
 
 def test_claude_gets_adaptive_thinking_and_no_temperature():
