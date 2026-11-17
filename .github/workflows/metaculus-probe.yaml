@@ -7,17 +7,12 @@ permissions:
 jobs:
   probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Reference bots per resolved question (FutureEval + MiniBench 33135)
-        run: python3 -u probe/probe_ref_bots.py
+      - name: Check the Claude API key (free model lookup + one tiny request)
+        run: python3 -u probe/anthropic_key_check.py
         env:
-          METACULUS_TOKEN: ${{ secrets.METACULUS_TOKEN }}
-      - name: Same for MiniBench 33132
-        run: python3 -u probe/probe_ref_bots.py
-        env:
-          METACULUS_TOKEN: ${{ secrets.METACULUS_TOKEN }}
-          MB_PROJECT: "33132"
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
