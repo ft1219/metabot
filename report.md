@@ -1,23 +1,23 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-17 22:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-17 22:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move_2 | 17 | 17/17 | +40.5% | +$34.40 | 1 | 87 | too early |
-| 2 | follow_move_big | 13 | 11/13 | +15.2% | +$9.87 | 1 | 51 | too early |
+| 1 | follow_move_2 | 17 | 17/17 | +40.5% | +$34.40 | 1 | 89 | too early |
+| 2 | follow_move_big | 13 | 11/13 | +15.2% | +$9.87 | 1 | 52 | too early |
 | 3 | follow_move | 425 | 273/425 | +5.0% | +$107.11 | 12 | 136 | too early |
-| 4 | sure_thing | 1903 | 1768/1903 | -0.5% | -$46.97 | 11 | 158 | too early |
-| 5 | safe_no_week | 727 | 668/727 | -4.1% | -$148.95 | 12 | 299 | too early |
-| 6 | sports_underdog | 1379 | 325/1379 | -12.4% | -$852.25 | 10 | 68 | too early |
-| 7 | fade_move | 466 | 139/466 | -15.6% | -$363.11 | 12 | 141 | too early |
-| 8 | weather_forecast | 527 | 269/527 | -19.9% | -$517.65 | 10 | 138 | too early |
-| 9 | follow_move_crypto | 7 | 6/7 | +24.7% | +$8.64 | 1 | 37 | too early |
-| 10 | follow_move_cheap | 3 | 1/3 | +11.8% | +$1.77 | 1 | 59 | too early |
+| 4 | sure_thing | 1904 | 1769/1904 | -0.5% | -$46.62 | 11 | 165 | too early |
+| 5 | safe_no_week | 727 | 668/727 | -4.1% | -$148.95 | 12 | 300 | too early |
+| 6 | sports_underdog | 1380 | 325/1380 | -12.5% | -$857.25 | 10 | 75 | too early |
+| 7 | fade_move | 466 | 139/466 | -15.6% | -$363.11 | 12 | 142 | too early |
+| 8 | weather_forecast | 530 | 270/530 | -19.8% | -$518.81 | 10 | 135 | too early |
+| 9 | follow_move_crypto | 7 | 6/7 | +24.7% | +$8.64 | 1 | 38 | too early |
+| 10 | follow_move_cheap | 3 | 1/3 | +11.8% | +$1.77 | 1 | 61 | too early |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 12 | coin_flip | 2078 | 1018/2078 | -5.7% | -$592.64 | 12 | 197 | yardstick |
+| 12 | coin_flip | 2089 | 1023/2089 | -5.8% | -$600.24 | 12 | 194 | yardstick |
 
 What each one does:
 
@@ -40,7 +40,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_2 | follow_move_big | follow_move | sure_thing | safe_no_week | sports_underdog | fade_move | weather_forecast | follow_move_crypto | follow_move_cheap | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-17 | +$34.40 | +$9.87 | -$21.56 | +$0.30 | -$7.67 | -$12.23 | -$68.57 | -$28.17 | +$8.64 | +$1.77 |  | -$63.20 |
+| 2026-11-17 | +$34.40 | +$9.87 | -$21.56 | +$0.65 | -$7.67 | -$17.23 | -$68.57 | -$29.34 | +$8.64 | +$1.77 |  | -$70.80 |
 | 2026-11-16 |  |  | +$11.58 | -$6.40 | -$11.02 | +$21.94 | -$17.46 |  |  |  | +$0.08 | -$21.29 |
 | 2026-11-15 |  |  | +$17.97 | +$0.34 | -$26.64 |  | +$30.37 | -$0.94 |  |  |  | -$47.97 |
 | 2026-11-14 |  |  | -$7.86 |  | -$37.34 |  | +$18.94 | -$4.48 |  |  |  | -$13.50 |
@@ -53,22 +53,22 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-17 follow_move_2: Will Apple (AAPL) finish week of November 16 above $355? -> No at 0.731 ($5.00)
-- 2026-11-17 follow_move_big: XRP Up or Down on November 18? -> Up at 0.744 ($5.00)
+- 2026-11-17 follow_move_2: Will the price of Solana be above $75 on November 22? -> Yes at 0.457 ($5.00)
+- 2026-11-17 follow_move_big: Bitcoin Up or Down on November 18? -> Up at 0.802 ($5.00)
 - 2026-11-17 follow_move: Will PARIVISION win 1win Essence III? -> Yes at 0.372 ($5.00)
-- 2026-11-17 sure_thing: BK Häcken FF vs. Manchester City WFC: O/U 6.5 -> Under at 0.962 ($5.00)
-- 2026-11-17 safe_no_week: Will the highest temperature in Miami be between 84-85°F on November 19? -> No at 0.961 ($5.00)
-- 2026-11-17 sports_underdog: SMU Mustangs vs. Kansas State Wildcats (W) -> SMU Mustangs at 0.156 ($5.00)
-- 2026-11-17 fade_move: Will PARIVISION win 1win Essence III? -> No at 0.681 ($5.00)
+- 2026-11-17 sure_thing: Solana Up or Down - November 17, 4:00PM-8:00PM ET -> Up at 0.935 ($5.00)
+- 2026-11-17 safe_no_week: Will the lowest temperature in Tokyo be 10°C on November 19? -> No at 0.933 ($5.00)
+- 2026-11-17 sports_underdog: Will El Salvador win on 2026-11-17? -> No at 0.361 ($5.00)
+- 2026-11-17 fade_move: Will the price of XRP be above $0.90 on November 19? -> No at 0.109 ($5.00)
 - 2026-11-17 weather_forecast: Will the highest temperature in Kuala Lumpur be 32°C on November 19? -> No at 0.760 ($5.00)
-- 2026-11-17 follow_move_crypto: Bitcoin Up or Down on November 18? -> Up at 0.715 ($5.00)
-- 2026-11-17 follow_move_cheap: Will PARIVISION win 1win Essence III? -> Yes at 0.372 ($5.00)
+- 2026-11-17 follow_move_crypto: Will the price of Solana be above $75 on November 22? -> Yes at 0.457 ($5.00)
+- 2026-11-17 follow_move_cheap: Will the price of Solana be above $75 on November 22? -> Yes at 0.457 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-17 coin_flip: FC Bayern München vs. 1. FC Köln: O/U 5.5 -> Over at 0.300 ($5.00)
+- 2026-11-17 coin_flip: Bitcoin Up or Down - November 17, 7:20PM-7:25PM ET -> Down at 0.517 ($5.00)
 
 ## Price gaps seen today
 
 1 near-gaps recorded (full sets within a few cents of their payout). Cheapest: ATEEZ 'Golden Hour: Part.6' First Week Album Sales? (no), 4.029 for a $4 payout.
 
-Runs in the last 24 hours: 35 (35 with a problem).
+Runs in the last 24 hours: 36 (36 with a problem).
 Latest problem: 42 position(s) still open more than 3 days after their market ended
