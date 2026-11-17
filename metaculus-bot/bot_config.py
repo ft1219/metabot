@@ -64,11 +64,16 @@ CLAUDE_API_VERSIONS = {
 # CLAUDE_MONTHLY_LIMIT_USD (claude_month.py keeps the count), the main
 # tournament moves from Fable to Sonnet 5.5, still on the Claude API, so the
 # rest of the month's questions fit in what is left of the owner's $100.
-# $80 leaves room for one more Fable run (at most the $8 run cap) and about
-# 90 Sonnet questions ($0.13 each). Sonnet, not Opus 5.5: it costs half as
-# much and scored higher in this tournament (40th against 48th).
+# $95 is the owner's choice (17 November 2026). A credit month has about 110
+# main questions (24 to 28 a week) at $0.57 to $0.72 each on Fable, so about
+# $70 and at most about $88, and Fable normally answers the whole month. The
+# $5 left covers about 38 Sonnet questions ($0.13 each). A run that starts
+# just under the limit can pass $100 only with a backlog of eight or more
+# Fable questions; the Claude API then refuses, and the rest of that run uses
+# Sonnet on OpenRouter. Sonnet, not Opus 5.5: it costs half as much and
+# scored higher in this tournament (40th against 48th).
 CLAUDE_API_AFTER_LIMIT_MODEL = "anthropic/claude-sonnet-5-5"
-DEFAULT_CLAUDE_MONTHLY_LIMIT_USD = 80.0
+DEFAULT_CLAUDE_MONTHLY_LIMIT_USD = 95.0
 # The day of the month the owner's Claude API credit renews. Their Claude
 # billing page (linked 17 November 2026) shows "Next credit: Dec 3, 2026".
 DEFAULT_CLAUDE_CREDIT_RESET_DAY = 3
