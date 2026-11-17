@@ -139,14 +139,17 @@ def _tournament_model(env: Mapping[str, str]) -> str:
 def openrouter_twin(model: str) -> str | None:
     """
     The OpenRouter model that redoes the forecasts a Claude API model cannot
-    make, or None (not a Claude API model, or none known).
+    make: the same model when its OpenRouter name is known, otherwise the
+    default main-tournament model, so no Claude API model is left without a
+    fallback (a used-up monthly credit would otherwise fail every forecast).
+    None for a model that is not on the Claude API.
     """
     if not model.startswith("anthropic/"):
         return None
     for openrouter_model, claude_api_model in CLAUDE_API_VERSIONS.items():
         if claude_api_model == model:
             return openrouter_model
-    return None
+    return DEFAULT_TOURNAMENT_FORECAST_MODEL
 
 
 def load_settings(env: Mapping[str, str] | None = None) -> BotSettings:

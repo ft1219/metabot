@@ -12,9 +12,9 @@ a question:
 - a timeout, a refusal by Claude's safety classifiers or an empty answer goes
   to OpenRouter at once;
 - a problem with the account (key missing or rejected, credit used up, spend
-  limit reached, model not available), or a few timeouts in a row, also stops
-  the Claude API for the rest of the run, so later forecasts go straight to
-  OpenRouter.
+  limit reached, model not available), or timeouts in a row with no answer for
+  several minutes (the Claude API hangs), also stops the Claude API for the
+  rest of the run, so later forecasts go straight to OpenRouter.
 
 At the end of the run ClaudeApiStatus.annotation() says, in one GitHub
 annotation line, what went to OpenRouter and why.
@@ -24,6 +24,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import random
+import time
 from collections import Counter
 
 import litellm
@@ -38,11 +39,17 @@ logger = logging.getLogger(__name__)
 # meet the Claude API's ramp limit, which clears within seconds.
 CLAUDE_API_TRIES = 3
 LONGEST_PAUSE_SECONDS = 60
-# Timeouts in a row (no answer in between) after which the run stops using
-# the Claude API. A timed-out forecast waits 300 s before its OpenRouter
-# tries, so a Claude API that hangs must not do that to every batch: the
-# 40-minute job would run out of time.
+# The run stops using the Claude API after this many timeouts in a row (no
+# answer in between) when it has also not answered for QUIET_SECONDS_BEFORE_DOWN.
+# A timed-out forecast waits 300 s before its OpenRouter tries, so a Claude API
+# that hangs must not do that to every batch: the 40-minute job would run out
+# of time. The quiet time matters because a batch's calls run side by side:
+# its slowest calls finish last, so a few timeouts at the end of a batch that
+# was otherwise answered come one after another without meaning it hangs. A
+# call times out 300 s after it started, so an answer within the last 240 s
+# came while those calls were waiting.
 TIMEOUTS_BEFORE_DOWN = 3
+QUIET_SECONDS_BEFORE_DOWN = 240
 TIMED_OUT = "timed out"
 
 DOWN, BUSY, FAILED = "down", "busy", "failed"
@@ -92,6 +99,11 @@ def classify(error: Exception) -> tuple[str, str]:
         )
     if "billing_error" in text:
         return DOWN, "Claude API billing problem (HTTP 402); using OpenRouter. Check billing at platform.claude.com"
+    if "anthropic-beta" in text:
+        return DOWN, (
+            "The Claude API refused a beta header that litellm adds for this model (HTTP 400); "
+            "using OpenRouter. Delete the TOURNAMENT_FORECAST_MODEL variable to use the default model"
+        )
     if "not_found_error" in text or isinstance(error, litellm.NotFoundError):
         return DOWN, (
             "The Claude API does not offer this model to this key (HTTP 404); using OpenRouter. "
@@ -137,24 +149,38 @@ async def _pause(seconds: float) -> None:
 class ClaudeApiStatus:
     """What the Claude API did this run, shared by all its forecasts."""
 
-    def __init__(self) -> None:
+    def __init__(self, clock=time.monotonic) -> None:
         self.down_reason: str | None = None
         self.answered = 0  # forecasts written on the Claude API
         self.redone = 0  # forecasts made on OpenRouter instead
         self.causes: Counter = Counter()
         self.timeouts_in_a_row = 0
+        self._clock = clock
+        self._last_answer_at: float | None = None
 
     def note_answer(self) -> None:
         self.answered += 1
         self.timeouts_in_a_row = 0
+        self._last_answer_at = self._clock()
+
+    def _quiet_for_a_while(self) -> bool:
+        return (
+            self._last_answer_at is None
+            or self._clock() - self._last_answer_at >= QUIET_SECONDS_BEFORE_DOWN
+        )
 
     def note_failure(self, error: Exception) -> str:
         kind, why = classify(error)
         if why == TIMED_OUT:
             self.timeouts_in_a_row += 1
-            if self.timeouts_in_a_row >= TIMEOUTS_BEFORE_DOWN and self.down_reason is None:
+            if (
+                self.timeouts_in_a_row >= TIMEOUTS_BEFORE_DOWN
+                and self.down_reason is None
+                and self._quiet_for_a_while()
+            ):
                 self.down_reason = (
-                    f"The Claude API timed out {self.timeouts_in_a_row} times in a row; "
+                    f"The Claude API timed out {self.timeouts_in_a_row} times in a row and has not "
+                    f"answered for {QUIET_SECONDS_BEFORE_DOWN // 60} minutes; "
                     "using OpenRouter for the rest of this run"
                 )
         if kind == DOWN and self.down_reason is None:
@@ -168,6 +194,11 @@ class ClaudeApiStatus:
         made every forecast (or was not used). A warning, not an error: the
         forecasts were made on OpenRouter, so the run did its job.
         """
+        if self.down_reason and self.answered:
+            return (
+                f"::warning title=Claude API stopped partway through this run::{self.down_reason}. "
+                f"It made {self.answered} forecast(s); {self.redone} were made on OpenRouter instead."
+            )
         if self.down_reason:
             return (
                 f"::warning title=Claude API not used::{self.down_reason}. "
@@ -186,8 +217,9 @@ class ClaudeApiStatus:
 class ClaudeApiLlm(BudgetedLlm):
     """
     Claude on the Claude API, under the run budget like every other model.
-    A forecast it cannot make is redone on `fallback` (the same model through
-    OpenRouter); without a fallback its errors are raised as usual.
+    A forecast it cannot make is redone on `fallback` (an OpenRouter model,
+    see bot_config.openrouter_twin); without a fallback its errors are raised
+    as usual.
     """
 
     def __init__(

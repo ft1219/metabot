@@ -103,10 +103,18 @@ def servers(monkeypatch):
     return s
 
 
-def _forecaster():
+class FakeClock:
+    def __init__(self):
+        self.now = 1000.0
+
+    def __call__(self):
+        return self.now
+
+
+def _forecaster(clock=None):
     settings = load_settings({"ANTHROPIC_API_KEY": KEY})
     run_budget = RunBudget(10.0, 100)
-    status = claude_api.ClaudeApiStatus()
+    status = claude_api.ClaudeApiStatus(clock) if clock else claude_api.ClaudeApiStatus()
     llm = main.build_llms(settings, run_budget, settings.tournament_forecast_model, status)["default"]
     return llm, run_budget, status
 
@@ -270,17 +278,49 @@ def test_retry_after_is_respected_and_a_second_try_can_succeed(servers):
 
 
 def test_timeouts_in_a_row_stop_the_claude_api_for_the_run(servers):
-    llm, run_budget, status = _forecaster()
+    clock = FakeClock()
+    llm, run_budget, status = _forecaster(clock)
     timeout = httpx.ReadTimeout("no answer in 300 s")
-    # A timeout, then an answer, then timeouts: only those in a row count.
+    # A timeout, then an answer, then timeouts once the Claude API has been
+    # quiet for a while (a later batch that hangs): only those in a row count.
     servers.replies = [timeout, reply()] + [timeout] * claude_api.TIMEOUTS_BEFORE_DOWN
-    answers = [asyncio.run(llm.invoke(f"q{i}")) for i in range(claude_api.TIMEOUTS_BEFORE_DOWN + 3)]
+    answers = [asyncio.run(llm.invoke("q0")), asyncio.run(llm.invoke("q1"))]
+    clock.now += 300
+    answers += [asyncio.run(llm.invoke(f"q{i}")) for i in range(2, claude_api.TIMEOUTS_BEFORE_DOWN + 3)]
     assert answers == [OPENROUTER_ANSWER, CLAUDE_ANSWER] + [OPENROUTER_ANSWER] * (claude_api.TIMEOUTS_BEFORE_DOWN + 1)
     # The forecast after the last timeout goes straight to OpenRouter.
     assert len(servers.claude_requests) == claude_api.TIMEOUTS_BEFORE_DOWN + 2
     assert "timed out 3 times in a row" in status.down_reason
     note = status.annotation()
+    assert note.startswith("::warning title=Claude API stopped partway through this run::")
+    assert "It made 1 forecast(s); 5 were made on OpenRouter instead." in note and "\n" not in note
+
+
+def test_a_claude_api_that_never_answers_is_stopped_after_a_few_timeouts(servers):
+    clock = FakeClock()
+    llm, run_budget, status = _forecaster(clock)
+    servers.replies = [httpx.ReadTimeout("no answer in 300 s")]
+    answers = [asyncio.run(llm.invoke(f"q{i}")) for i in range(claude_api.TIMEOUTS_BEFORE_DOWN + 2)]
+    assert answers == [OPENROUTER_ANSWER] * (claude_api.TIMEOUTS_BEFORE_DOWN + 2)
+    assert len(servers.claude_requests) == claude_api.TIMEOUTS_BEFORE_DOWN
+    note = status.annotation()
     assert note.startswith("::warning title=Claude API not used::") and "\n" not in note
+
+
+def test_slow_calls_at_the_end_of_an_answered_batch_do_not_stop_the_claude_api(servers):
+    # A batch's calls run side by side, so its slowest calls time out one
+    # after another just after the others were answered.
+    clock = FakeClock()
+    llm, run_budget, status = _forecaster(clock)
+    servers.replies = [reply()] * 22 + [httpx.ReadTimeout("no answer in 300 s")] * 3 + [reply()]
+    answers = [asyncio.run(llm.invoke(f"q{i}")) for i in range(22)]
+    clock.now += 200
+    answers += [asyncio.run(llm.invoke(f"q{i}")) for i in range(22, 25)]
+    assert answers == [CLAUDE_ANSWER] * 22 + [OPENROUTER_ANSWER] * 3
+    assert status.down_reason is None
+    # The next batch still uses the Claude API.
+    assert asyncio.run(llm.invoke("next batch")) == CLAUDE_ANSWER
+    assert status.annotation().startswith("::warning title=Some forecasts used OpenRouter::")
 
 
 @pytest.mark.parametrize(
@@ -305,10 +345,31 @@ def test_failed_forecast_is_redone_on_openrouter_at_once(servers, answer, cause)
     assert cause in status.annotation()
 
 
-def test_without_an_openrouter_version_errors_are_raised_as_usual(servers):
+def test_another_claude_api_model_falls_back_to_the_default_openrouter_model(servers):
     settings = load_settings({"ANTHROPIC_API_KEY": KEY, "TOURNAMENT_FORECAST_MODEL": "anthropic/claude-opus-5-5"})
-    llm = main.build_llms(settings, RunBudget(10.0, 100), settings.tournament_forecast_model)["default"]
-    assert llm.fallback is None
+    status = claude_api.ClaudeApiStatus()
+    llm = main.build_llms(settings, RunBudget(10.0, 100), settings.tournament_forecast_model, status)["default"]
+    assert llm.fallback.model == DEFAULT_TOURNAMENT_FORECAST_MODEL
+    servers.replies = [error(400, "invalid_request_error", "Your credit balance is too low to access the Anthropic API.")]
+    assert asyncio.run(llm.invoke("q")) == OPENROUTER_ANSWER
+    assert [c["model"] for c in servers.openrouter_calls] == [DEFAULT_TOURNAMENT_FORECAST_MODEL]
+    assert "credit used up" in status.down_reason
+
+
+def test_a_refused_beta_header_stops_the_claude_api_for_the_run(servers):
+    llm, run_budget, status = _forecaster()
+    servers.replies = [error(400, "invalid_request_error", "Unexpected value(s) `effort-2025-11-24` for the `anthropic-beta` header.")]
+    assert asyncio.run(llm.invoke("q1")) == OPENROUTER_ANSWER
+    assert asyncio.run(llm.invoke("q2")) == OPENROUTER_ANSWER
+    assert len(servers.claude_requests) == 1
+    assert "beta header" in status.down_reason
+
+
+def test_without_a_fallback_errors_are_raised_as_usual(servers):
+    llm = claude_api.ClaudeApiLlm(
+        model=CLAUDE_API_MODEL, budget=RunBudget(10.0, 100), timeout=300,
+        status=claude_api.ClaudeApiStatus(), **forecaster_kwargs(load_settings({}), CLAUDE_API_MODEL),
+    )
     servers.replies = [error(400, "invalid_request_error", "Your credit balance is too low")]
     with pytest.raises(litellm.BadRequestError):
         asyncio.run(llm.invoke("q"))

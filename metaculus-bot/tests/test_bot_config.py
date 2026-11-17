@@ -124,7 +124,8 @@ def test_anthropic_key_moves_the_main_tournament_to_the_claude_api():
 
 def test_claude_api_models_fall_back_to_their_openrouter_version():
     assert openrouter_twin(CLAUDE_API_MODEL) == DEFAULT_TOURNAMENT_FORECAST_MODEL
-    assert openrouter_twin("anthropic/claude-opus-5-5") is None
+    # A Claude API model with no known OpenRouter name still has a fallback.
+    assert openrouter_twin("anthropic/claude-opus-5-5") == DEFAULT_TOURNAMENT_FORECAST_MODEL
     assert openrouter_twin(DEFAULT_TOURNAMENT_FORECAST_MODEL) is None
     assert openrouter_twin(OPENAI_FORECAST_MODEL) is None
 
