@@ -1,0 +1,296 @@
+<title>News Source Test</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one narrow reading column, phone first; status up top, then the decision chart, then the timeline. */
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --ink: #18202b;
+  --muted: #5d6877;
+  --line: #dde2e9;
+  --accent: #2f5bd3;
+  --both: #2f5bd3;
+  --asknews: #b7791f;
+  --chatgpt: #12866f;
+  --again: #7a8494;
+  --luck: rgba(122, 132, 148, 0.16);
+  --good: #1f7a4d;
+  --warn: #a15c07;
+  --font-display: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --font-data: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11151b; --surface: #181d25; --ink: #e8ecf2; --muted: #9aa5b4; --line: #2a313c;
+    --accent: #7e9cf0; --both: #7e9cf0; --asknews: #e0a64a; --chatgpt: #3fbf9f; --again: #8f99a8;
+    --luck: rgba(143, 153, 168, 0.18); --good: #5cc28f; --warn: #e5a54b;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11151b; --surface: #181d25; --ink: #e8ecf2; --muted: #9aa5b4; --line: #2a313c;
+  --accent: #7e9cf0; --both: #7e9cf0; --asknews: #e0a64a; --chatgpt: #3fbf9f; --again: #8f99a8;
+  --luck: rgba(143, 153, 168, 0.18); --good: #5cc28f; --warn: #e5a54b;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 28px 48px;
+}
+main { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; }
+h1, h2 { font-family: var(--font-display); text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(1.7rem, 5vw, 2.2rem); line-height: 1.15; font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 1.15rem; font-weight: 650; }
+p { margin: 0; }
+.eyebrow { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.muted { color: var(--muted); }
+.num { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+section { display: flex; flex-direction: column; gap: 12px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+
+.hero { display: flex; flex-direction: column; gap: 12px; }
+.status { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; padding: 4px 12px; border-radius: 999px;
+  font-size: 0.85rem; font-weight: 600; border: 1px solid var(--line); background: var(--surface); }
+.status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--warn); }
+.status.done::before { background: var(--good); }
+.meter { display: flex; flex-direction: column; gap: 6px; }
+.meter-track { height: 10px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.meter-fill { height: 100%; background: var(--accent); border-radius: 999px; min-width: 0; }
+.meter-row { display: flex; justify-content: space-between; gap: 12px; font-size: 0.9rem; flex-wrap: wrap; }
+
+.setups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 460px) { .setups { grid-template-columns: minmax(0, 1fr); } }
+.setup { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+.setup-name { display: flex; align-items: center; gap: 8px; font-weight: 650; }
+.swatch { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+.setup p { font-size: 0.9rem; color: var(--muted); }
+.tag { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; }
+
+.chart-wrap { overflow-x: auto; }
+svg text { fill: var(--ink); font-family: var(--font-body); }
+svg .axis { stroke: var(--line); }
+svg .zero { stroke: var(--ink); stroke-width: 1.2; }
+svg .tick { fill: var(--muted); font-size: 10px; font-family: var(--font-data); }
+.empty-note { font-size: 0.9rem; color: var(--muted); }
+.verdicts { display: flex; flex-direction: column; gap: 8px; }
+.verdict { display: flex; justify-content: space-between; gap: 12px; font-size: 0.92rem; border-top: 1px solid var(--line); padding-top: 8px; flex-wrap: wrap; }
+.verdict b { font-weight: 600; }
+
+.dates { display: flex; flex-direction: column; gap: 8px; }
+.date-row { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr) 2rem; align-items: center; gap: 10px; font-size: 0.92rem; }
+.date-bar { height: 12px; border-radius: 4px; background: var(--accent); opacity: 0.85; }
+.date-row .count { text-align: right; }
+
+.facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 460px) { .facts { grid-template-columns: minmax(0, 1fr); } }
+.fact { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+.fact .big { font-family: var(--font-data); font-size: 1.25rem; font-weight: 600; }
+.fact p { font-size: 0.88rem; color: var(--muted); }
+
+ol.rules, ul.how { margin: 0; padding-left: 1.25rem; display: flex; flex-direction: column; gap: 6px; font-size: 0.95rem; }
+footer { font-size: 0.82rem; color: var(--muted); }
+</style>
+
+<main>
+  <header class="hero">
+    <span class="eyebrow">Metaculus bot · news test</span>
+    <h1>Which news should the bot read?</h1>
+    <span class="status" id="status">Waiting for questions to resolve</span>
+    <p id="lede" class="muted"></p>
+    <div class="meter" aria-label="Questions scored so far">
+      <div class="meter-row"><span id="meter-label"></span><span class="num muted" id="meter-count"></span></div>
+      <div class="meter-track"><div class="meter-fill" id="meter-fill" style="width:0%"></div></div>
+    </div>
+  </header>
+
+  <section>
+    <h2>The four setups being compared</h2>
+    <div class="setups">
+      <div class="setup"><div class="setup-name"><span class="swatch" style="background:var(--both)"></span>Both <span class="tag">now</span></div><p>AskNews and ChatGPT search together, as the bot works today.</p></div>
+      <div class="setup"><div class="setup-name"><span class="swatch" style="background:var(--asknews)"></span>AskNews only</div><p>Only the AskNews articles the bot had at the time.</p></div>
+      <div class="setup"><div class="setup-name"><span class="swatch" style="background:var(--chatgpt)"></span>ChatGPT only <span class="tag">free</span></div><p>Only what ChatGPT search found at the time.</p></div>
+      <div class="setup"><div class="setup-name"><span class="swatch" style="background:var(--again)"></span>Both again</div><p>Exactly like Both, run a second time. The gap between the two shows how much luck alone moves the score.</p></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Result: points compared with Both</h2>
+    <p class="muted" style="font-size:0.9rem">Each dot is a setup's average score minus Both's, over the same questions; the line through it is its 95% range. Right of zero means better than Both. The grey band is how far luck alone reaches.</p>
+    <div class="chart-wrap"><svg id="chart" role="img" aria-label="Score difference of each setup compared with Both"></svg></div>
+    <p class="empty-note" id="chart-note"></p>
+    <div class="verdicts" id="verdicts"></div>
+  </section>
+
+  <section class="panel">
+    <h2>When answers come in</h2>
+    <p class="muted" style="font-size:0.9rem" id="dates-intro"></p>
+    <div class="dates" id="dates"></div>
+  </section>
+
+  <section>
+    <h2>Cost and coverage</h2>
+    <div class="facts">
+      <div class="fact"><span class="big">≈3¢</span><p>AskNews per question, paid from the wallet you already filled (about $9 a month). We are not topping it up.</p></div>
+      <div class="fact"><span class="big">≈8–10¢</span><p>ChatGPT search per question, paid from the free OpenAI credit.</p></div>
+      <div class="fact"><span class="big num" id="cover"></span><p id="cover-text"></p></div>
+      <div class="fact"><span class="big num" id="spent"></span><p>spent on this test so far, from the free OpenAI credit (limit $60 for the whole test).</p></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>How the pick will be made</h2>
+    <p class="muted" style="font-size:0.9rem">These rules were set before any results came in, so the numbers can't be bent to fit a favourite.</p>
+    <ol class="rules">
+      <li>No verdict until at least <span class="num" id="rule-n">30</span> questions are scored.</li>
+      <li>If Both beats a single source by more than luck explains (its whole range left of zero), keep Both.</li>
+      <li>If a single source is not clearly worse than Both, pick the cheaper one: ChatGPT only, which is free.</li>
+      <li>AskNews only can win only if it clearly beats ChatGPT only too, because it costs money once the wallet is empty.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>How the test is fair</h2>
+    <ul class="how">
+      <li>Every setup reads the news the bot actually had on the day it forecast, saved from its own logs. Searching again now would find the answers.</li>
+      <li>All four use the same AI model (GPT-6 Sol, the MiniBench model) and the bot's own instructions, so the news is the only difference.</li>
+      <li>Only questions that have already resolved are used. Nothing is posted to Metaculus.</li>
+      <li>Scores use Metaculus's own baseline scale: 0 is a know-nothing guess, higher is better.</li>
+    </ul>
+  </section>
+
+  <footer id="updated"></footer>
+</main>
+
+<script id="data" type="application/json">{"updated": "2026-11-18T03:22:32+00:00", "questions": 0, "min_n": 30, "pairs": {"asknews vs both": {"n": 0, "mean": null, "median": null, "a_better": 0, "b_better": 0, "sign_p": 1.0, "verdict": "too few questions yet"}, "chatgpt vs both": {"n": 0, "mean": null, "median": null, "a_better": 0, "b_better": 0, "sign_p": 1.0, "verdict": "too few questions yet"}, "asknews vs chatgpt": {"n": 0, "mean": null, "median": null, "a_better": 0, "b_better": 0, "sign_p": 1.0, "verdict": "too few questions yet"}, "both_again vs both": {"n": 0, "mean": null, "median": null, "a_better": 0, "b_better": 0, "sign_p": 1.0, "verdict": "too few questions yet"}}, "setups": {"both": {"mean": null, "median": null, "mean_brier_binary": null}, "asknews": {"mean": null, "median": null, "mean_brier_binary": null}, "chatgpt": {"mean": null, "median": null, "mean_brier_binary": null}, "both_again": {"mean": null, "median": null, "mean_brier_binary": null}}, "by_type": {}, "waiting": [{"scheduled": "2026-11-27T15:00:00+00:00", "type": "binary"}, {"scheduled": "2026-11-27T18:00:00+00:00", "type": "numeric"}, {"scheduled": "2026-11-27T18:00:00+00:00", "type": "binary"}, {"scheduled": "2026-11-27T18:30:00+00:00", "type": "multiple_choice"}, {"scheduled": "2026-11-27T20:00:00+00:00", "type": "multiple_choice"}, {"scheduled": "2026-11-27T23:00:00+00:00", "type": "discrete"}, {"scheduled": "2026-11-27T23:59:00+00:00", "type": "binary"}, {"scheduled": "2026-11-27T23:59:00+00:00", "type": "numeric"}, {"scheduled": "2026-11-28T00:00:00+00:00", "type": "binary"}, {"scheduled": "2026-11-28T05:00:00+00:00", "type": "numeric"}, {"scheduled": "2026-12-04T05:01:00+00:00", "type": "binary"}, {"scheduled": "2026-12-31T00:00:00+00:00", "type": "multiple_choice"}, {"scheduled": "2027-01-01T00:00:00+00:00", "type": "multiple_choice"}], "sources": {"both": 13, "asknews": 1, "chatgpt": 0}, "spent_usd": 0.55}</script>
+<script>
+(function () {
+  var D = JSON.parse(document.getElementById("data").textContent);
+  var $ = function (id) { return document.getElementById(id); };
+  var n = D.questions || 0, need = D.min_n || 30;
+  var fmtDay = function (iso) {
+    var d = new Date(iso);
+    return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "Asia/Kuala_Lumpur" });
+  };
+
+  // status and meter
+  var ready = n >= need;
+  $("status").textContent = ready ? "Enough questions for a verdict" : (n ? "Results coming in" : "Waiting for questions to resolve");
+  if (ready) $("status").classList.add("done");
+  $("meter-label").textContent = n + " of " + need + " questions scored";
+  $("meter-count").textContent = Math.min(100, Math.round(100 * n / need)) + "%";
+  $("meter-fill").style.width = Math.min(100, 100 * n / need) + "%";
+  $("rule-n").textContent = need;
+
+  // timeline of the questions still open
+  var byDay = {};
+  (D.waiting || []).forEach(function (w) {
+    if (!w.scheduled) return;
+    var k = w.scheduled.slice(0, 10);
+    byDay[k] = (byDay[k] || 0) + 1;
+  });
+  var days = Object.keys(byDay).sort();
+  var max = Math.max.apply(null, days.map(function (k) { return byDay[k]; }).concat([1]));
+  var soon = days.length ? fmtDay(days[0] + "T12:00:00Z") : null;
+  $("lede").textContent = ready
+    ? "Enough questions have resolved to compare the setups. The verdicts are below."
+    : (soon ? "No answer yet. The first test questions resolve around " + soon + ", and a fair verdict needs " + need + " of them. Roughly 10 new questions are added every day, each resolving about 10 days later, so expect a first verdict in early December." : "No answer yet.");
+  $("dates-intro").textContent = (D.waiting || []).length + " questions answered with both sources are still open. New ones are added every day.";
+  var box = $("dates");
+  days.forEach(function (k) {
+    var row = document.createElement("div");
+    row.className = "date-row";
+    row.innerHTML = '<span class="num"></span><div><div class="date-bar"></div></div><span class="num count"></span>';
+    row.children[0].textContent = fmtDay(k + "T12:00:00Z");
+    row.querySelector(".date-bar").style.width = (100 * byDay[k] / max) + "%";
+    row.children[2].textContent = byDay[k];
+    box.appendChild(row);
+  });
+
+  // coverage and spend
+  var s = D.sources || {}, total = (s.both || 0) + (s.asknews || 0) + (s.chatgpt || 0);
+  $("cover").textContent = (s.asknews || 0) + " of " + total;
+  $("cover-text").textContent = "questions where ChatGPT search couldn't be used (it only found Metaculus pages, or failed). With ChatGPT only, those would get no news at all.";
+  $("spent").textContent = "$" + (D.spent_usd || 0).toFixed(2);
+  $("updated").textContent = "Updated " + new Date(D.updated).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Kuala_Lumpur" }) + " Malaysia time.";
+
+  // the decision chart: difference from Both, with 95% ranges and the luck band
+  var rows = [
+    { key: "asknews vs both", label: "AskNews only", color: "var(--asknews)" },
+    { key: "chatgpt vs both", label: "ChatGPT only", color: "var(--chatgpt)" },
+    { key: "both_again vs both", label: "Both again (luck)", color: "var(--again)" }
+  ];
+  var P = D.pairs || {};
+  var W = 360, rowH = 40, top = 14, left = 112, right = 14, H = top + rows.length * rowH + 26;
+  var svg = $("chart");
+  svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+  svg.setAttribute("width", "100%");
+  svg.style.maxWidth = "560px";
+  var have = rows.filter(function (r) { return P[r.key] && P[r.key].n >= 2 && P[r.key].low != null; });
+  var lim = 20;
+  have.forEach(function (r) { lim = Math.max(lim, Math.abs(P[r.key].low), Math.abs(P[r.key].high)); });
+  lim = Math.ceil(lim / 10) * 10;
+  var x = function (v) { return left + (v + lim) / (2 * lim) * (W - left - right); };
+  var ns = "http://www.w3.org/2000/svg";
+  var el = function (tag, attrs, text) {
+    var e = document.createElementNS(ns, tag);
+    for (var a in attrs) e.setAttribute(a, attrs[a]);
+    if (text != null) e.textContent = text;
+    svg.appendChild(e);
+    return e;
+  };
+  var luck = P["both_again vs both"];
+  if (luck && luck.n >= 2 && luck.low != null) {
+    // the range a luck-only difference covers: Both again minus Both
+    var lo = Math.max(-lim, luck.low), hi = Math.min(lim, luck.high);
+    el("rect", { x: x(lo), y: top - 6, width: Math.max(0, x(hi) - x(lo)), height: rows.length * rowH, fill: "var(--luck)" });
+  }
+  var ticks = [-lim, -lim / 2, 0, lim / 2, lim];
+  ticks.forEach(function (t) {
+    el("line", { x1: x(t), x2: x(t), y1: top - 6, y2: top + rows.length * rowH - 6, "class": t === 0 ? "zero" : "axis" });
+    el("text", { x: x(t), y: H - 8, "text-anchor": "middle", "class": "tick" }, (t > 0 ? "+" : "") + t);
+  });
+  rows.forEach(function (r, i) {
+    var cy = top + i * rowH + rowH / 2 - 6;
+    el("text", { x: 0, y: cy + 4, "font-size": 12.5, "font-weight": 600 }, r.label);
+    var p = P[r.key];
+    if (p && p.n >= 2 && p.low != null) {
+      el("line", { x1: x(Math.max(-lim, p.low)), x2: x(Math.min(lim, p.high)), y1: cy, y2: cy, stroke: r.color, "stroke-width": 3, "stroke-linecap": "round" });
+      el("circle", { cx: x(p.mean), cy: cy, r: 5.5, fill: r.color, stroke: "var(--surface)", "stroke-width": 2 });
+    } else {
+      el("text", { x: x(0) + 8, y: cy + 4, "font-size": 11.5, fill: "var(--muted)" }, "waiting");
+    }
+  });
+
+  $("chart-note").textContent = n
+    ? (ready ? "" : "With only " + n + " questions the ranges are wide; treat this as a first look, not a verdict.")
+    : "No question has resolved yet, so there is nothing to plot. Dots appear here as answers come in.";
+
+  var words = {
+    "too few questions yet": "too few questions yet",
+    "first is better": "better than Both",
+    "second is better": "worse than Both",
+    "no clear difference": "no clear difference from Both"
+  };
+  var vbox = $("verdicts");
+  [["asknews vs both", "AskNews only"], ["chatgpt vs both", "ChatGPT only"], ["asknews vs chatgpt", "AskNews only vs ChatGPT only"]].forEach(function (pair) {
+    var p = P[pair[0]];
+    if (!p) return;
+    var v = words[p.verdict] || p.verdict;
+    if (pair[0] === "asknews vs chatgpt") {
+      v = p.verdict === "first is better" ? "AskNews only is better" : p.verdict === "second is better" ? "ChatGPT only is better" : (p.verdict === "too few questions yet" ? "too few questions yet" : "no clear difference");
+    }
+    var row = document.createElement("div");
+    row.className = "verdict";
+    row.innerHTML = "<span></span><b></b>";
+    row.children[0].textContent = pair[1];
+    row.children[1].textContent = v;
+    vbox.appendChild(row);
+  });
+})();
+</script>
