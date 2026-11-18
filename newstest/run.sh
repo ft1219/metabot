@@ -24,7 +24,10 @@ else
   exit 1
 fi
 
-read -r -a ARGS < <(grep -v '^#' "$HERE/args.txt" | tr '\n' ' '; echo)
+# grep finds nothing when every line is a comment; that must not stop the script.
+args_line="$(grep -v '^#' "$HERE/args.txt" | tr '\n' ' ' || true)"
+ARGS=()
+read -r -a ARGS <<< "$args_line" || true
 failed=0
 (cd "$HERE/../metaculus-bot" && poetry run python ../newstest/run.py --data "$DATA" "${ARGS[@]}") || failed=$?
 
