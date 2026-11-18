@@ -235,7 +235,8 @@ def build(data: Path, now: float, state: dict | None = None, current: dict | Non
         "\"Days\" counts the different days on which its trades finished. "
         + " ".join(f"{' and '.join(names)} wait{'s' if len(names) == 1 else ''} for {need} finished trades instead "
                    "(set in advance: they trade only a few times a day, and a verdict on 30 would be close to a coin "
-                   "toss)." for need, names in _bigger_minimums()),
+                   "toss). Even then a FAIL only means no big edge showed (about 10c a trade or more): a smaller one "
+                   "cannot be told from luck in that many trades." for need, names in _bigger_minimums()),
         "",
         "## Profit by day (trades that finished that day)",
         "",

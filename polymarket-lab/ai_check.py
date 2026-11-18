@@ -21,9 +21,8 @@ the most it can cost (most_a_check_can_cost) still fits, and it is then
 counted at what it really cost: its tokens at the model's price plus $0.01
 for each search or page visit. A call cut off before its answer came back (a
 timeout, a lost connection) may have been billed, so it is counted at the
-most it could have cost. The two trial checks of 18 Nov 2026 cost 10.5 and
-14 cents with 4 and 6 searches; with at most 4 searches this is about 9-10
-cents a check, so about 9-10 checks a day.
+most it could have cost. Four trial checks on 18 Nov 2026 cost 10.5-14
+cents each (12 cents with the settings below), so about 7-8 checks a day.
 
 Records, on the polymarket-lab-data branch:
 - ai_checks/YYYY-MM-DD.jsonl: every check, bought or not, with the AI's
@@ -67,7 +66,7 @@ MODEL = "gpt-6-sol"
 PRICE_PER_MILLION = (2.0, 10.0)  # input, output (reasoning included) in dollars, as metaculus-bot/budget.py
 USD_PER_SEARCH = 0.01  # each web search or page visit
 DAILY_BUDGET_USD = 1.00
-BURST_USD = 0.20  # lets the first check of the day start right after midnight
+BURST_USD = 0.25  # lets the first check of the day start right after midnight
 MAX_CHECKS_PER_RUN = 3
 REASONING_EFFORT = "medium"  # this one call does the forecasting itself, so it thinks a little longer than the bot's news search
 SEARCH_CONTEXT_SIZE = "low"  # how much of each page the search hands the model (paid as input tokens)
@@ -77,18 +76,27 @@ MAX_OUTPUT_TOKENS = 4000  # the trial checks wrote 1,000-1,400
 # trial's 6-search check read 32,800 input tokens (each step re-reads the
 # pages before it), about 5,500 per call; this leaves room above that.
 PAGE_TOKENS_PER_TOOL_CALL = 8000
+TOOL_CALL_ROOM = 2
 TIMEOUT_SECONDS = 150  # checks run side by side, so the AI step adds at most about this to a run
 SEND_TRIES = 2  # a request OpenAI turns away as busy is not billed, and is sent once more
 RULES_CHARS = 2500  # the market's rules are cut here (they are usually a paragraph)
 FORGET_DAYS = 30  # a checked market with no result this long after its end is dropped
 # OpenAI errors that every call this run would hit again: stop asking (none of these is billed).
-STOP_HTTP = (401, 403, 404)
-STOP_CODES = ("insufficient_quota", "model_not_found", "unsupported_parameter", "unknown_parameter",
-              "invalid_api_key", "unsupported_model")
-# Prediction-market and betting sites: a page from one of these can show the market's odds.
-_ODDS_SITE = re.compile(r"polymarket|kalshi|manifold\.markets|predictit|betfair|oddschecker|smarkets|"
-                        r"electionbettingodds|limitless\.exchange|myriad\.markets|sportsbook|bet365|draftkings|"
-                        r"fanduel|pinnacle", re.IGNORECASE)
+# A 400 is the request's own shape (a setting the model refuses, say), so it
+# stops the run too, unless it is about this one prompt (PROMPT_400).
+STOP_HTTP = (400, 401, 403, 404)
+STOP_CODES = ("insufficient_quota", "model_not_found", "invalid_api_key")
+PROMPT_400 = ("invalid_prompt", "context_length_exceeded", "content_filter", "content_policy_violation")
+# Prediction-market and betting sites, matched anywhere in a page's address
+# (x.com/Polymarket and a news story ".../polymarket-traders-bet..." count too).
+_ODDS_SITE = re.compile(r"polymarket|kalshi|manifold\.markets|predictit|betfair|oddschecker|oddsshark|oddsportal|"
+                        r"smarkets|electionbettingodds|limitless\.exchange|myriad\.markets|sportsbook|bet365|"
+                        r"draftkings|fanduel|pinnacle\.com|betmgm|bovada|williamhill|paddypower|ladbrokes|"
+                        r"actionnetwork|covers\.com", re.IGNORECASE)
+# Words in a search that mean it went looking for odds, and in the answer that it wrote about them
+# (the prompt itself says "prediction market", so the answer may echo that harmlessly).
+_ODDS_SEARCH = re.compile(r"betting odds|prediction market|bookmaker|implied probabilit|\bodds\b", re.IGNORECASE)
+_ODDS_TALK = re.compile(r"betting odds|bookmaker|implied probabilit", re.IGNORECASE)
 
 _JSON = re.compile(r"\{[^{}]*\}")
 
@@ -114,9 +122,14 @@ def token_cost(input_tokens: float, output_tokens: float) -> float:
 
 
 def most_a_check_can_cost(prompt: str) -> float:
-    """The prompt, the pages of every tool call allowed, those calls' fees and all the output allowed."""
-    return (token_cost(len(prompt) / 3 + MAX_TOOL_CALLS * PAGE_TOKENS_PER_TOOL_CALL, MAX_OUTPUT_TOKENS)
-            + MAX_TOOL_CALLS * USD_PER_SEARCH)
+    """
+    The prompt, the pages of every tool call it may make, those calls' fees
+    and all the output allowed. The trial checks made one more tool call than
+    MAX_TOOL_CALLS allows (a page visit, it seems), so TOOL_CALL_ROOM more
+    are counted.
+    """
+    calls = MAX_TOOL_CALLS + TOOL_CALL_ROOM
+    return token_cost(len(prompt) / 3 + calls * PAGE_TOKENS_PER_TOOL_CALL, MAX_OUTPUT_TOKENS) + calls * USD_PER_SEARCH
 
 
 def allowance(now: float) -> float:
@@ -209,7 +222,7 @@ def ask_openai(request: dict, timeout: float = TIMEOUT_SECONDS) -> dict:
             label = f"OpenAI HTTP {e.code}" + (f" ({code})" if code else "")
             if code == "insufficient_quota":
                 raise Stop("OpenAI credit used up (insufficient_quota)") from None
-            if e.code in STOP_HTTP or code in STOP_CODES:
+            if (e.code in STOP_HTTP or code in STOP_CODES) and code not in PROMPT_400:
                 raise Stop(f"{label}, so no more checks this run") from None
             if (e.code == 429 or e.code >= 500) and attempt < SEND_TRIES:
                 time.sleep(3)
@@ -254,25 +267,38 @@ def _host(url) -> str:
 
 def odds_sites(resp: dict) -> list[str]:
     """
-    Prediction-market and betting sites the model's search read, opened or
-    cited, or searched for by name: any of them can have shown it the odds.
+    Signs that the model may have seen betting odds: a prediction-market or
+    betting site anywhere in the address of a page its search read, opened
+    or cited ("polymarket.com", "x.com: polymarket"), such a site or betting
+    words in a search ("search: odds"), or in its written answer ("answer:
+    betting odds"). Strict on purpose: a mention that only says it did not
+    look still counts, since move_ai_clean must be clean.
     """
     found = set()
+
+    def page(url) -> None:
+        hit = _ODDS_SITE.search(str(url or ""))
+        if hit:
+            host = _host(url)
+            found.add(host if host and _ODDS_SITE.search(host) else f"{host or 'page'}: {hit.group(0).lower()}")
+
     for item in resp.get("output") or []:
         if item.get("type") == "web_search_call":
             action = item.get("action") or {}
             for q in [action.get("query"), *(action.get("queries") or [])]:
-                hit = _ODDS_SITE.search(str(q or ""))
+                hit = _ODDS_SITE.search(str(q or "")) or _ODDS_SEARCH.search(str(q or ""))
                 if hit:
                     found.add(f"search: {hit.group(0).lower()}")
-            urls = [action.get("url")] + [s.get("url") for s in action.get("sources") or [] if isinstance(s, dict)]
-            found |= {h for h in map(_host, urls) if h and _ODDS_SITE.search(h)}
+            for url in [action.get("url")] + [s.get("url") for s in action.get("sources") or [] if isinstance(s, dict)]:
+                page(url)
         if item.get("type") == "message":
             for c in item.get("content") or []:
                 for a in c.get("annotations") or []:
-                    h = _host(a.get("url"))
-                    if h and _ODDS_SITE.search(h):
-                        found.add(h)
+                    page(a.get("url"))
+                text = c.get("text") or ""
+                hit = _ODDS_SITE.search(text) or _ODDS_TALK.search(text)
+                if hit:
+                    found.add(f"answer: {hit.group(0).lower()}")
     return sorted(found)
 
 
@@ -309,7 +335,7 @@ def check(v: dict, prompt: str, now: float) -> dict:
     except Stop:
         raise
     except RuntimeError as e:
-        row.update(error=str(e)[:120], cost=0.0)  # refused: not billed
+        row.update(error=str(e)[:120], cost=0.0, refused=True)  # refused (busy, or this prompt): not billed
     else:
         usage = resp.get("usage") or {}
         tin, tout = usage.get("input_tokens") or 0, usage.get("output_tokens") or 0
@@ -388,6 +414,9 @@ def run_checks(views: list[dict], events_by_id: dict, state: dict, now: float, r
             continue  # never sent or refused outright: not billed, and the market can be checked another time
         if isinstance(res, Exception):  # a bug in check(): record it, count the most it could have cost
             res = {"model": MODEL, "error": f"crash: {res!r}"[:120], "cost": round(most_a_check_can_cost(prompt), 4)}
+        if res.get("refused"):
+            errors.append(res["error"])
+            continue  # not billed and nothing learned: the event can be checked another time
         b["spent"] = round(b["spent"] + res.get("cost", 0.0), 4)
         b["checks"] += 1
         checked[v["event_id"]] = int(v["ends_at"] + 86400)

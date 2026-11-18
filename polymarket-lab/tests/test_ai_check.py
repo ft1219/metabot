@@ -122,6 +122,16 @@ def test_saw_odds_is_strict():
     q["output"][1]["action"]["query"] = "Polymarket odds Trump posts"
     assert ai_check.odds_sites(q) == ["search: polymarket"]
     assert ai_check.odds_sites(answer()) == []
+    # anywhere in a page's address, in betting words in a search, and in the written answer
+    assert ai_check.odds_sites(answer(sources=("https://x.com/Polymarket/status/1",))) == ["x.com: polymarket"]
+    assert ai_check.odds_sites(answer(url="https://www.coindesk.com/markets/polymarket-traders-bet-xrp")) == [
+        "www.coindesk.com: polymarket"]
+    assert ai_check.odds_sites(answer(sources=("https://sports.betmgm.com/en/x",))) == ["sports.betmgm.com"]
+    q = answer()
+    q["output"][1]["action"]["query"] = "Trump approval betting odds"
+    assert ai_check.odds_sites(q) == ["search: betting odds"]
+    told = answer(text='Polymarket has this at 70%.\n{"chance": 0.7, "saw_odds": false, "why": "x"}')
+    assert ai_check.odds_sites(told) == ["answer: polymarket"]
 
 
 def test_prompt_never_shows_the_price_and_request_keeps_nothing():
@@ -140,7 +150,7 @@ def test_prompt_never_shows_the_price_and_request_keeps_nothing():
 
 def test_most_a_check_can_cost_bounds_a_normal_answer():
     most = ai_check.most_a_check_can_cost("x" * 4000)
-    assert 0.13 < most < 0.17
+    assert 0.18 < most < 0.22
     # the trial's priciest check (32,800 input tokens with 6 searches) fits even though only 4 are allowed now
     big = answer(searches=ai_check.MAX_TOOL_CALLS, tin=32_800, tout=ai_check.MAX_OUTPUT_TOKENS)
     real = ai_check.token_cost(32_800, ai_check.MAX_OUTPUT_TOKENS) + ai_check.tool_calls(big) * ai_check.USD_PER_SEARCH
@@ -149,8 +159,8 @@ def test_most_a_check_can_cost_bounds_a_normal_answer():
 
 def test_daily_money_is_let_out_evenly():
     midnight = NOW - NOW % 86400
-    assert ai_check.allowance(midnight) == pytest.approx(0.20)
-    assert ai_check.allowance(midnight + 43200) == pytest.approx(0.60)
+    assert ai_check.allowance(midnight) == pytest.approx(0.25)
+    assert ai_check.allowance(midnight + 43200) == pytest.approx(0.625)
     assert ai_check.allowance(midnight + 86399) == pytest.approx(1.00, abs=1e-4)
     assert ai_check.allowance(midnight + 0.9 * 86400) < 1.0  # money still comes free late in the evening
     st = {"ai_budget": {"day": "2000-01-01", "spent": 0.9, "checks": 9}}
@@ -254,6 +264,19 @@ def test_cut_off_call_counts_the_most_it_could_cost_and_buys_nothing(openai):
     assert not st.get("ai_watch") and len(st["ai_checked"]) == 3
 
 
+def test_a_refused_check_costs_nothing_and_leaves_the_event_for_later(openai):
+    openai["replies"] = [RuntimeError("OpenAI HTTP 429 (rate_limit_exceeded)"), answer(0.7)]
+    st, problems = _state(), []
+    vs = [view(cid="0xa"), view(cid="0xb")]
+    picks, rows = ai_check.run_checks(vs, {}, st, LATE, random.Random(1), problems)
+    assert len(rows) == 1 and st["ai_budget"]["checks"] == 1 and len(st["ai_checked"]) == 1
+    assert "1 of 2 check(s) failed (OpenAI HTTP 429 (rate_limit_exceeded))" in problems[0]
+    # the refused event is checked on a later run
+    openai["replies"] = []
+    _, later = ai_check.run_checks(vs, {}, st, LATE + 2400, random.Random(1), [])
+    assert len(later) == 1 and later[0]["event_id"] != rows[0]["event_id"]
+
+
 def test_lasting_openai_refusals_stop_the_run_without_using_up_markets(openai):
     for err in ("OpenAI HTTP 404 (model_not_found), so no more checks this run",
                 "OpenAI HTTP 403, so no more checks this run"):
@@ -303,6 +326,10 @@ def test_ask_openai_sorts_out_what_openai_says(monkeypatch):
         ((_http_error(403, {}),), ai_check.Stop, "HTTP 403"),
         ((_http_error(404, {"error": {"code": "model_not_found"}}),), ai_check.Stop, "model_not_found"),
         ((_http_error(400, {"error": {"code": "unsupported_parameter"}}),), ai_check.Stop, "unsupported_parameter"),
+        ((_http_error(400, {"error": {"code": "unsupported_value", "param": "reasoning.effort"}}),), ai_check.Stop,
+         "unsupported_value"),
+        ((_http_error(400, {"error": {"code": None, "type": "invalid_request_error"}}),), ai_check.Stop,
+         "invalid_request_error"),
         ((_http_error(400, {"error": {"code": "invalid_prompt"}}),), RuntimeError, "HTTP 400 (invalid_prompt)"),
         ((_http_error(500, {}), _http_error(503, {})), RuntimeError, "HTTP 503"),
         ((TimeoutError("slow"),), ai_check.CutOff, "TimeoutError"),
