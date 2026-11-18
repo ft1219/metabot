@@ -18,8 +18,8 @@ Each run (every 40 minutes, inside the "Bots - every 40 minutes" workflow):
    starts ("weather_forecast", see weather.py).
 6. On a few of the markets that moved 10c+ in a day, asks an AI model that
    reads the news for its own chance, and buys where it beats the price
-   ("follow_move_ai", "fade_move_ai", see ai_check.py; the only step that
-   uses a key, OPENAI_API_KEY, at most $1 of OpenAI credit a day).
+   ("move_ai", "move_ai_clean", see ai_check.py; the only step that uses a
+   key, OPENAI_API_KEY, at most $1 of OpenAI credit a day).
 7. Looks for multi-choice markets whose prices add up to less than $1
    ("price_gap"), and fills those against the real books too.
 8. Rewrites report.md / summary.json.
@@ -591,6 +591,7 @@ def run(data: Path, now: float | None = None, fetch=pmapi.http_json, seed: int |
                 t = make_trade(name, v, i, cap, books.get(v["tokens"][i]), now, note)
                 if t:
                     new.append(t)
+        ai_check.mark_bought(ai_rows, new)
         lap("fill")
 
         if S.STRATEGIES["price_gap"]["active"]:

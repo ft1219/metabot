@@ -23,10 +23,13 @@ def view(**kw):
     return lab.market_view(gamma(**args), NOW)
 
 
-def answer(chance=0.7, searches=2, tin=12_000, tout=1_500, text=None, status="completed", url=None):
+def answer(chance=0.7, searches=2, tin=12_000, tout=1_500, text=None, status="completed", url=None, said="false",
+           sources=("https://news.example.com/a",)):
     out = [{"type": "reasoning"}]
-    out += [{"type": "web_search_call", "action": {"type": "search", "query": f"q{i}"}} for i in range(searches)]
-    msg = text if text is not None else f'The news says so.\n{{"chance": {chance}, "why": "because"}}'
+    out += [{"type": "web_search_call", "action": {"type": "search", "query": f"q{i}",
+                                                   "sources": [{"type": "url", "url": u} for u in sources]}}
+            for i in range(searches)]
+    msg = text if text is not None else f'The news says so.\n{{"chance": {chance}, "saw_odds": {said}, "why": "because"}}'
     out.append({"type": "message", "content": [{"type": "output_text", "text": msg,
                                                 "annotations": [{"type": "url_citation", "url": url}] if url else []}]})
     return {"status": status, "output": out, "usage": {"input_tokens": tin, "output_tokens": tout}}
@@ -53,50 +56,72 @@ def openai(monkeypatch):
 
 # ---------------------------------------------------------------- rules
 
-def test_follow_and_fade_ai_buy_only_with_a_margin_over_the_price():
+def test_move_ai_buys_the_side_the_ai_rates_5c_over_its_price():
     v = view()
     assert S.ai_candidate(v)
-    assert S.follow_move_ai(v, 0.70) == (0, 0.65)  # AI 70% for the side that rose, priced 60c: buy, pay at most 65c
-    assert S.fade_move_ai(v, 0.70) is None
-    assert S.follow_move_ai(v, 0.64) is None  # 4c over the price: not enough
-    assert S.follow_move_ai(v, 0.65) == (0, 0.6)
-    assert S.fade_move_ai(v, 0.30) == (1, 0.65)  # AI 70% for No, priced 41c
-    assert S.follow_move_ai(v, 0.30) is None
-    for c in (0.01, 0.2, 0.5, 0.65, 0.8, 0.99):  # never both
-        assert not (S.follow_move_ai(v, c) and S.fade_move_ai(v, c))
-    assert S.follow_move_ai(v, 0.99) == (0, 0.85)  # never above follow_move's 85c
+    assert S.move_ai(v, 0.70, False) == (0, 0.65)  # AI 70% for Yes, priced 60c: buy, pay at most 65c
+    assert S.move_ai(v, 0.64, False) is None  # 4c over the price: not enough, and No (36% vs 41c) neither
+    assert S.move_ai(v, 0.65, False) == (0, 0.6)
+    assert S.move_ai(v, 0.30, False) == (1, 0.65)  # AI 70% for No, priced 41c
+    assert S.move_ai(v, 0.99, False) == (0, 0.85)  # never above follow_move's 85c
+    for c in [x / 100 for x in range(1, 100)]:  # at most one side, and only with the margin
+        hit = S.move_ai(v, c, False)
+        if hit:
+            chance = c if hit[0] == 0 else 1 - c
+            ask = 0.60 if hit[0] == 0 else 0.41
+            assert chance - ask >= S.AI_MARGIN - 1e-9 and hit[1] >= ask - 1e-9
 
 
-def test_ai_rules_follow_the_direction_and_price_window_of_the_jump():
-    down = view(oneDayPriceChange=-0.15)  # Yes fell: No is the side that rose
-    assert S.follow_move_ai(down, 0.20) == (1, 0.75)
-    assert S.fade_move_ai(down, 0.80) == (0, 0.75)
-    dear = view(bid=0.89, ask=0.90)  # rising side at 90c: outside 10-85c, but No at 11c is in
-    assert S.follow_move_ai(dear, 0.99) is None
-    assert S.ai_candidate(dear) and S.fade_move_ai(dear, 0.02) == (1, 0.85)
+def test_move_ai_clean_skips_checks_that_saw_odds():
+    v = view()
+    assert S.move_ai_clean(v, 0.70, False) == S.move_ai(v, 0.70, False) == (0, 0.65)
+    assert S.move_ai_clean(v, 0.70, True) is None and S.move_ai(v, 0.70, True) == (0, 0.65)
+
+
+def test_ai_rules_keep_follow_moves_price_window_and_market_filters():
+    dear = view(bid=0.89, ask=0.90)  # Yes at 90c is outside 10-85c, but No at 11c is in
+    assert S.move_ai(dear, 0.99, False) is None
+    assert S.ai_candidate(dear) and S.move_ai(dear, 0.02, False) == (1, 0.85)
+    assert S.move_ai(view(oneDayPriceChange=-0.15), 0.20, False) == (1, 0.75)
     assert not S.ai_candidate(view(oneDayPriceChange=0.05))  # no real move
+    assert S.move_ai(view(oneDayPriceChange=0.05), 0.99, False) is None
     assert not S.ai_candidate(view(sportsMarketType="moneyline"))
     assert not S.ai_candidate(view(volume24hr=0))
     assert not S.ai_candidate(view(bid=0.50, ask=0.60))  # gap too wide to trust the quote
 
 
-def test_ai_strategies_start_on_their_own_date_and_are_judged_like_bets():
-    for name in ("follow_move_ai", "fade_move_ai"):
+def test_ai_strategies_start_on_their_own_date_and_wait_for_150_trades():
+    for name in ("move_ai", "move_ai_clean"):
         cfg = S.STRATEGIES[name]
         assert cfg["active"] and cfg["rule"] is None and cfg["since"] == "2026-11-18"
-        assert cfg.get("judge", "bet") == "bet"
+        assert cfg.get("judge", "bet") == "bet" and cfg["min_settled"] == S.AI_MIN_SETTLED == 150
+    st = {"settled": 60, "wins": 60, "pnl": 100.0, "p_luck": 1e-9, "days": 12}
+    assert report.judge("move_ai", st, 20) is None  # a perfect 60 trades is still too early
+    assert report.judge("follow_move", st, 20) == "PASS"
+    assert report.judge("move_ai", dict(st, settled=150, wins=150), 30) == "PASS"
 
 
 # ---------------------------------------------------------------- answer, prompt, cost
 
-def test_parse_chance_takes_the_last_json_line():
-    assert ai_check.parse_chance('{"chance": 0.2}\nthen\n{"chance": 0.64, "why": "x"}') == (0.64, "x")
-    assert ai_check.parse_chance('{"chance": 64, "why": "pct"}') == (0.64, "pct")
-    assert ai_check.parse_chance('{"chance": 1.0}') == (0.99, "")
-    assert ai_check.parse_chance('{"chance": 0}') == (0.01, "")
-    assert ai_check.parse_chance("I think about 60%.")[0] is None
-    assert ai_check.parse_chance('{"chance": "high"}')[0] is None
-    assert ai_check.parse_chance('{"chance": 250}')[0] is None
+def test_parse_answer_takes_the_last_json_line():
+    assert ai_check.parse_answer('{"chance": 0.2}\nthen\n{"chance": 0.64, "saw_odds": false, "why": "x"}') == (
+        0.64, False, "x")
+    assert ai_check.parse_answer('{"chance": 64, "saw_odds": true, "why": "pct"}') == (0.64, True, "pct")
+    assert ai_check.parse_answer('{"chance": 1.0}') == (0.99, None, "")
+    assert ai_check.parse_answer('{"chance": 0, "saw_odds": "no"}') == (0.01, None, "")
+    assert ai_check.parse_answer("I think about 60%.")[0] is None
+    assert ai_check.parse_answer('{"chance": "high"}')[0] is None
+    assert ai_check.parse_answer('{"chance": 250}')[0] is None
+
+
+def test_saw_odds_is_strict():
+    sites = ai_check.odds_sites(answer(sources=("https://news.example.com/a", "https://polymarket.com/event/x")))
+    assert sites == ["polymarket.com"]
+    assert ai_check.odds_sites(answer(url="https://kalshi.com/markets/x")) == ["kalshi.com"]
+    q = answer()
+    q["output"][1]["action"]["query"] = "Polymarket odds Trump posts"
+    assert ai_check.odds_sites(q) == ["search: polymarket"]
+    assert ai_check.odds_sites(answer()) == []
 
 
 def test_prompt_never_shows_the_price_and_request_keeps_nothing():
@@ -109,22 +134,25 @@ def test_prompt_never_shows_the_price_and_request_keeps_nothing():
         assert price not in prompt.replace(ai_check._stamp(NOW), "").replace(ai_check._stamp(v["ends_at"]), "")
     req = ai_check.request_for(prompt)
     assert req["store"] is False and "timeout" not in req and req["tools"][0]["type"] == "web_search"
+    assert req["include"] == ["web_search_call.action.sources"] and '"saw_odds"' in prompt
     assert req["max_tool_calls"] == ai_check.MAX_TOOL_CALLS and req["max_output_tokens"] == ai_check.MAX_OUTPUT_TOKENS
 
 
 def test_most_a_check_can_cost_bounds_a_normal_answer():
     most = ai_check.most_a_check_can_cost("x" * 4000)
-    assert 0.15 < most < 0.20
-    big = answer(searches=ai_check.MAX_TOOL_CALLS, tin=25_000, tout=ai_check.MAX_OUTPUT_TOKENS)
-    real = ai_check.token_cost(25_000, ai_check.MAX_OUTPUT_TOKENS) + ai_check.tool_calls(big) * ai_check.USD_PER_SEARCH
+    assert 0.13 < most < 0.17
+    # the trial's priciest check (32,800 input tokens with 6 searches) fits even though only 4 are allowed now
+    big = answer(searches=ai_check.MAX_TOOL_CALLS, tin=32_800, tout=ai_check.MAX_OUTPUT_TOKENS)
+    real = ai_check.token_cost(32_800, ai_check.MAX_OUTPUT_TOKENS) + ai_check.tool_calls(big) * ai_check.USD_PER_SEARCH
     assert real < most
 
 
 def test_daily_money_is_let_out_evenly():
     midnight = NOW - NOW % 86400
     assert ai_check.allowance(midnight) == pytest.approx(0.20)
-    assert ai_check.allowance(midnight + 43200) == pytest.approx(0.70)
-    assert ai_check.allowance(midnight + 86399) == pytest.approx(1.00)
+    assert ai_check.allowance(midnight + 43200) == pytest.approx(0.60)
+    assert ai_check.allowance(midnight + 86399) == pytest.approx(1.00, abs=1e-4)
+    assert ai_check.allowance(midnight + 0.9 * 86400) < 1.0  # money still comes free late in the evening
     st = {"ai_budget": {"day": "2000-01-01", "spent": 0.9, "checks": 9}}
     assert ai_check.budget(st, NOW) == {"day": ai_check._day(NOW), "spent": 0.0, "checks": 0}
 
@@ -137,23 +165,31 @@ def _state():
 
 def test_run_checks_buys_where_the_ai_beats_the_price_and_records_every_check(openai):
     vs = [view(cid=f"0x{i}") for i in range(5)]
-    openai["replies"] = [answer(0.70), answer(0.61), answer(0.30)]
+    openai["replies"] = [answer(0.70), answer(0.61), answer(0.30, sources=("https://polymarket.com/e",))]
     st, problems = _state(), []
     picks, rows = ai_check.run_checks(vs, {}, st, LATE, random.Random(1), problems)
     assert len(rows) == ai_check.MAX_CHECKS_PER_RUN == 3 and not problems
-    assert [r["decision"] for r in rows] == ["follow_move_ai", None, "fade_move_ai"]
-    (v, i, cap, note), = picks["follow_move_ai"]
+    assert [r["side"] for r in rows] == [0, None, 1]
+    assert [r["saw_odds"] for r in rows] == [False, False, True] and rows[2]["odds_sites"] == ["polymarket.com"]
+    assert rows[0]["with_move"] is True and rows[2]["with_move"] is False  # Yes rose; the third bought No
+    assert [(p[1], p[2]) for p in picks["move_ai"]] == [(0, 0.65), (1, 0.65)]
+    (v, i, cap, note), = picks["move_ai_clean"]  # the check that saw Polymarket is left out
     assert (i, cap) == (0, 0.65) and note["ai_chance0"] == 0.70 and v["conditionId"] == rows[0]["condition_id"]
-    assert picks["fade_move_ai"][0][1:3] == (1, 0.65)
     cost = ai_check.token_cost(12_000, 1_500) + 2 * ai_check.USD_PER_SEARCH
     assert rows[0]["cost"] == pytest.approx(cost, abs=1e-4) and rows[0]["searches"] == 2
     assert st["ai_budget"]["spent"] == pytest.approx(3 * cost, abs=1e-3) and st["ai_budget"]["checks"] == 3
-    assert len(st["ai_watch"]) == 3 and len(st["ai_checked"]) == 3
+    assert len(st["ai_watch"]) == 3 and set(st["ai_checked"]) == {r["event_id"] for r in rows}
     assert rows[0]["ask0"] == 0.6 and rows[0]["ask1"] == pytest.approx(0.41) and rows[0]["move"] == 0.15
-    # the next run checks only markets not checked before
+    # the next run checks only events not checked before
     openai["replies"] = []
     _, rows2 = ai_check.run_checks(vs, {}, st, LATE + 3600, random.Random(2), [])
-    assert rows2 and {r["condition_id"] for r in rows2}.isdisjoint({r["condition_id"] for r in rows})
+    assert rows2 and {r["event_id"] for r in rows2}.isdisjoint({r["event_id"] for r in rows})
+
+
+def test_a_check_that_does_not_say_whether_it_saw_odds_counts_as_seen(openai):
+    openai["replies"] = [answer(0.70, said="null")]
+    picks, rows = ai_check.run_checks([view()], {}, _state(), LATE, random.Random(1), [])
+    assert rows[0]["saw_odds"] is True and picks["move_ai"] and not picks["move_ai_clean"]
 
 
 def test_run_checks_stays_inside_the_day_budget(openai):
@@ -172,9 +208,12 @@ def test_one_check_per_event_and_none_on_events_already_held(openai):
     b["event_id"] = a["event_id"]
     c = view(cid="0xc")
     st = _state()
-    st["traded_events"]["fade_move_ai"] = {c["event_id"]: NOW + 1e6}
-    _, rows = ai_check.run_checks([a, b, c], {}, st, NOW, random.Random(1), [])
+    st["traded_events"]["move_ai_clean"] = {c["event_id"]: NOW + 1e6}
+    _, rows = ai_check.run_checks([a, b, c], {}, st, LATE, random.Random(1), [])
     assert len(rows) == 1 and rows[0]["event_id"] == a["event_id"]
+    # a sister market of an event already checked is not checked on a later run either
+    _, rows = ai_check.run_checks([b], {}, st, LATE + 2400, random.Random(1), [])
+    assert rows == []
 
 
 def test_no_key_is_a_problem_only_when_there_is_something_to_check(openai, monkeypatch):
@@ -191,7 +230,7 @@ def test_no_key_is_a_problem_only_when_there_is_something_to_check(openai, monke
 def test_switched_off_makes_no_checks(openai, monkeypatch):
     monkeypatch.setenv("PM_AI_CHECK", "off")
     assert ai_check.run_checks([view()], {}, _state(), NOW, random.Random(1), []) == (
-        {"follow_move_ai": [], "fade_move_ai": []}, [])
+        {"move_ai": [], "move_ai_clean": []}, [])
     assert openai["requests"] == []
 
 
@@ -208,17 +247,20 @@ def test_cut_off_call_counts_the_most_it_could_cost_and_buys_nothing(openai):
     openai["replies"] = [ai_check.CutOff("TimeoutError"), answer(text="no idea"), answer(0.9, status="incomplete")]
     st, problems = _state(), []
     picks, rows = ai_check.run_checks([view(cid=f"0x{i}") for i in range(3)], {}, st, LATE, random.Random(1), problems)
-    assert not any(picks.values()) and len(rows) == 3 and all(r["decision"] is None for r in rows)
-    assert rows[0]["error"].startswith("cut off") and rows[0]["cost"] > 0.15
+    assert not any(picks.values()) and len(rows) == 3 and all(r["side"] is None for r in rows)
+    assert rows[0]["error"].startswith("cut off") and rows[0]["cost"] == pytest.approx(ai_check.most_a_check_can_cost(openai["requests"][0]["input"]), abs=1e-4)
     assert rows[1]["error"] == "no chance in the answer" and rows[2]["error"].startswith("answer")
     assert "3 of 3 check(s) failed" in problems[0]
     assert not st.get("ai_watch") and len(st["ai_checked"]) == 3
 
 
-def test_polymarket_peeks_are_recorded(openai):
-    openai["replies"] = [answer(0.7, url="https://polymarket.com/event/x")]
-    _, rows = ai_check.run_checks([view()], {}, _state(), NOW, random.Random(1), [])
-    assert rows[0]["saw_polymarket"] is True
+def test_lasting_openai_refusals_stop_the_run_without_using_up_markets(openai):
+    for err in ("OpenAI HTTP 404 (model_not_found), so no more checks this run",
+                "OpenAI HTTP 403, so no more checks this run"):
+        openai["replies"] = [ai_check.Stop(err)] * 3
+        st, problems = _state(), []
+        _, rows = ai_check.run_checks([view(cid=f"0x{i}") for i in range(3)], {}, st, LATE, random.Random(1), problems)
+        assert rows == [] and problems == [f"AI check: {err}"] and not st["ai_checked"]
 
 
 # ---------------------------------------------------------------- the OpenAI call itself
@@ -258,6 +300,10 @@ def test_ask_openai_sorts_out_what_openai_says(monkeypatch):
     for outcome, kind, text in [
         ((_http_error(429, quota),), ai_check.Stop, "credit used up"),
         ((_http_error(401, {"error": {"message": "Incorrect API key sk-secret-123"}}),), ai_check.Stop, "HTTP 401"),
+        ((_http_error(403, {}),), ai_check.Stop, "HTTP 403"),
+        ((_http_error(404, {"error": {"code": "model_not_found"}}),), ai_check.Stop, "model_not_found"),
+        ((_http_error(400, {"error": {"code": "unsupported_parameter"}}),), ai_check.Stop, "unsupported_parameter"),
+        ((_http_error(400, {"error": {"code": "invalid_prompt"}}),), RuntimeError, "HTTP 400 (invalid_prompt)"),
         ((_http_error(500, {}), _http_error(503, {})), RuntimeError, "HTTP 503"),
         ((TimeoutError("slow"),), ai_check.CutOff, "TimeoutError"),
     ]:
@@ -290,16 +336,20 @@ def test_settle_checks_records_results_of_ended_markets_only():
 
 
 def test_ai_summary_compares_ai_and_market_errors(tmp_path):
-    rows = [{"chance0": 0.8, "bid0": 0.59, "ask0": 0.61, "result0": 1.0, "settled_at": NOW},
-            {"chance0": 0.3, "bid0": 0.49, "ask0": 0.51, "result0": 0.0, "settled_at": NOW},
-            {"chance0": 0.3, "bid0": 0.49, "ask0": 0.51, "result0": None, "settled_at": NOW}]
+    rows = [{"chance0": 0.8, "bid0": 0.59, "ask0": 0.61, "result0": 1.0, "saw_odds": False, "settled_at": NOW},
+            {"chance0": 0.3, "bid0": 0.49, "ask0": 0.51, "result0": 0.0, "saw_odds": True, "settled_at": NOW},
+            {"chance0": 0.3, "bid0": 0.49, "ask0": 0.51, "result0": None, "saw_odds": False, "settled_at": NOW}]
     lab.append_jsonl(tmp_path / "ai_results" / "2026-11.jsonl", rows)
-    lab.append_jsonl(tmp_path / "ai_checks" / "2026-11-18.jsonl",
-                     [{"cost": 0.07, "decision": "follow_move_ai"}, {"cost": 0.05, "decision": None, "error": "x"}])
-    out = report.ai_summary(tmp_path, {"ai_budget": {"day": ai_check._day(NOW), "spent": 0.12, "checks": 2}}, NOW)
-    assert out["decided"] == 2 and out["checks"] == 2 and out["bought"] == 1 and out["failed"] == 1
-    assert out["ai_error"] == pytest.approx((0.04 + 0.09) / 2) and out["market_error"] == pytest.approx((0.16 + 0.25) / 2)
-    assert out["ai_closer"] == 2 and out["spent_today"] == 0.12 and out["spent"] == 0.12
+    lab.append_jsonl(tmp_path / "ai_checks" / "2026-11-18.jsonl", [
+        {"cost": 0.07, "chance0": 0.8, "side": 0, "bought": ["move_ai", "move_ai_clean"], "saw_odds": False},
+        {"cost": 0.06, "chance0": 0.3, "side": 1, "bought": [], "saw_odds": True},
+        {"cost": 0.05, "side": None, "error": "x"}])
+    out = report.ai_summary(tmp_path, {"ai_budget": {"day": ai_check._day(NOW), "spent": 0.18, "checks": 3}}, NOW)
+    assert out["checks"] == 3 and out["rule_said_buy"] == 2 and out["bought"] == 1 and out["failed"] == 1
+    assert out["answered"] == 2 and out["saw_odds"] == 1 and out["spent_today"] == 0.18 and out["spent"] == 0.18
+    assert out["all"] == {"n": 2, "ai_error": pytest.approx((0.04 + 0.09) / 2),
+                          "market_error": pytest.approx((0.16 + 0.25) / 2), "ai_closer": 2}
+    assert out["clean"]["n"] == 1 and out["clean"]["ai_error"] == pytest.approx(0.04)
 
 
 def test_full_run_buys_on_the_ai_check_at_the_real_book(tmp_path, openai):
@@ -319,18 +369,21 @@ def test_full_run_buys_on_the_ai_check_at_the_real_book(tmp_path, openai):
     row = lab.run(tmp_path, NOW, fetch, seed=1)
     assert not row["problems"], row["problems"]
     trades = report.read_jsonl(tmp_path / "trades")
-    ai = [t for t in trades if t["strategy"] == "follow_move_ai"]
+    ai = [t for t in trades if t["strategy"] == "move_ai"]
     assert len(ai) == 1 and ai[0]["note"]["ai_chance0"] == 0.72
+    assert [t["strategy"] for t in trades if t["strategy"].endswith("_clean")] == ["move_ai_clean"]
     assert ai[0]["legs"][0]["outcome"] == "Yes" and ai[0]["avg_price"] <= 0.67 + 0.01  # never past the 67c cap (+fee)
     assert "Resolves Yes if the thing happens." in openai["requests"][0]["input"]
     checks = report.read_jsonl(tmp_path / "ai_checks")
-    assert len(checks) == 1 and checks[0]["decision"] == "follow_move_ai"
+    assert len(checks) == 1 and checks[0]["side"] == 0 and checks[0]["bought"] == ["move_ai", "move_ai_clean"]
     text = (tmp_path / "report.md").read_text()
-    assert "## AI check" in text and "Today: 1 checks" in text and "follow_move_ai" in text
+    assert "## AI check" in text and "Today: 1 checks" in text and "move_ai_clean" in text
+    assert "move_ai and move_ai_clean wait for 150 finished trades" in text
     summary = json.loads((tmp_path / "summary.json").read_text())
-    assert summary["ai_check"]["checks"] == 1 and summary["strategies"]["follow_move_ai"]["trades"] == 1
+    assert summary["ai_check"]["checks"] == 1 and summary["ai_check"]["bought"] == 1
+    assert summary["strategies"]["move_ai"]["trades"] == 1
     # the next run neither checks nor buys the same market again
     row2 = lab.run(tmp_path, NOW + 2400, fetch, seed=2)
     assert len(openai["requests"]) == 1 and not [t for t in report.read_jsonl(tmp_path / "trades")
-                                                if t["strategy"] == "follow_move_ai" and t["opened_at"] > NOW]
+                                                if t["strategy"] == "move_ai" and t["opened_at"] > NOW]
     assert not row2["problems"]

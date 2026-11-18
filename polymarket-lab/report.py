@@ -12,7 +12,9 @@ tries (an exact binomial test against the no-edge win rate, which is the
 average of the prices paid). Before judgment day it is "too early", whatever
 the numbers say; a strategy with no trade at all after twice JUDGE_DAYS shows
 "nothing to judge" until it trades. Neither of those is stored. The
-coin_flip yardstick is shown for comparison only.
+coin_flip yardstick is shown for comparison only. A strategy may set a
+larger "min_settled" in strategies.py, fixed before it has results (the AI
+strategies, which trade only a few times a day).
 """
 from __future__ import annotations
 
@@ -97,7 +99,7 @@ def judge(name: str, st: dict, days_running: float, opened: int = 0) -> str | No
         return None
     if days_running < JUDGE_DAYS:
         return None
-    if st["settled"] < MIN_SETTLED:
+    if st["settled"] < cfg.get("min_settled", MIN_SETTLED):
         return "nothing to judge" if st["settled"] == 0 and opened == 0 and days_running >= 2 * JUDGE_DAYS else None
     if st["days"] < MIN_DAYS:
         return None
@@ -118,6 +120,24 @@ def verdict(name: str, st: dict, days_running: float, stored: dict | None = None
     return judge(name, st, days_running, opened) or "too early"
 
 
+def _bigger_minimums() -> list[tuple[int, list[str]]]:
+    """(finished trades needed, strategies) for the strategies that set their own min_settled."""
+    out: dict[int, list[str]] = {}
+    for name, cfg in S.STRATEGIES.items():
+        if cfg.get("min_settled"):
+            out.setdefault(cfg["min_settled"], []).append(name)
+    return sorted(out.items())
+
+
+def _brier(rows: list[dict]) -> dict:
+    ai = [(r["chance0"] - r["result0"]) ** 2 for r in rows]
+    mk = [((r["bid0"] + r["ask0"]) / 2 - r["result0"]) ** 2 for r in rows]
+    if not rows:
+        return {"n": 0}
+    return {"n": len(rows), "ai_error": round(sum(ai) / len(ai), 4), "market_error": round(sum(mk) / len(mk), 4),
+            "ai_closer": sum(1 for a, m in zip(ai, mk) if a < m)}
+
+
 def ai_summary(data: Path, state: dict, now: float) -> dict:
     """
     How the AI check is doing: checks and spend today and overall, and, on
@@ -125,7 +145,9 @@ def ai_summary(data: Path, state: dict, now: float) -> dict:
     chance and the market's price at the time were from what happened. The
     error is the Brier score: the squared gap between the chance given and
     the result (1 or 0), averaged; lower is better, and always saying 50%
-    scores 0.25. The market's chance is the middle of its bid and ask.
+    scores 0.25. The market's chance is the middle of its bid and ask. It is
+    given for all such markets, and separately for the checks where the AI
+    saw no betting odds ("clean"), which is the fair test of its own reading.
     """
     checks = read_jsonl(data / "ai_checks")
     results = [r for r in read_jsonl(data / "ai_results")
@@ -133,18 +155,17 @@ def ai_summary(data: Path, state: dict, now: float) -> dict:
                and r.get("bid0") is not None and r.get("ask0") is not None]
     today = _day(now)
     b = state.get("ai_budget") or {}
-    out = {"checks": len(checks), "spent": round(sum(r.get("cost") or 0 for r in checks), 2),
-           "checks_today": b.get("checks", 0) if b.get("day") == today else 0,
-           "spent_today": round(b.get("spent", 0.0), 2) if b.get("day") == today else 0.0,
-           "bought": sum(1 for r in checks if r.get("decision")),
-           "failed": sum(1 for r in checks if r.get("error")),
-           "decided": len(results), "waiting": len(state.get("ai_watch") or [])}
-    if results:
-        ai = [(r["chance0"] - r["result0"]) ** 2 for r in results]
-        mk = [((r["bid0"] + r["ask0"]) / 2 - r["result0"]) ** 2 for r in results]
-        out.update(ai_error=round(sum(ai) / len(ai), 4), market_error=round(sum(mk) / len(mk), 4),
-                   ai_closer=sum(1 for a, m in zip(ai, mk) if a < m))
-    return out
+    answered = [r for r in checks if r.get("chance0") is not None and not r.get("error")]
+    return {"checks": len(checks), "spent": round(sum(r.get("cost") or 0 for r in checks), 2),
+            "checks_today": b.get("checks", 0) if b.get("day") == today else 0,
+            "spent_today": round(b.get("spent", 0.0), 2) if b.get("day") == today else 0.0,
+            "rule_said_buy": sum(1 for r in checks if r.get("side") is not None),
+            "bought": sum(1 for r in checks if r.get("bought")),
+            "failed": sum(1 for r in checks if r.get("error")),
+            "saw_odds": sum(1 for r in answered if r.get("saw_odds") is not False),
+            "answered": len(answered),
+            "waiting": len(state.get("ai_watch") or []),
+            "all": _brier(results), "clean": _brier([r for r in results if r.get("saw_odds") is False])}
 
 
 def build(data: Path, now: float, state: dict | None = None, current: dict | None = None) -> tuple[str, dict]:
@@ -211,7 +232,10 @@ def build(data: Path, now: float, state: dict | None = None, current: dict | Non
         f"its number of wins is one that the prices alone would produce less than {P_LUCK * 100:.0f} time in 100 "
         "(so it is unlikely to be luck). The verdict is then kept, not recomputed. Before that, \"too early\"; "
         "\"nothing to judge\" means no trade at all after a month. "
-        "\"Days\" counts the different days on which its trades finished.",
+        "\"Days\" counts the different days on which its trades finished. "
+        + " ".join(f"{' and '.join(names)} wait{'s' if len(names) == 1 else ''} for {need} finished trades instead "
+                   "(set in advance: they trade only a few times a day, and a verdict on 30 would be close to a coin "
+                   "toss)." for need, names in _bigger_minimums()),
         "",
         "## Profit by day (trades that finished that day)",
         "",
@@ -248,19 +272,25 @@ def build(data: Path, now: float, state: dict | None = None, current: dict | Non
         lines.append("None yet.")
 
     ai = ai_summary(data, state, now)
-    if ai["checks"] or any(S.STRATEGIES.get(n, {}).get("active") for n in ("follow_move_ai", "fade_move_ai")):
-        lines += ["", "## AI check (follow_move_ai, fade_move_ai)", "",
+    if ai["checks"] or any(S.STRATEGIES.get(n, {}).get("active") for n in S.AI_RULES):
+        lines += ["", "## AI check (move_ai, move_ai_clean)", "",
                   f"Today: {ai['checks_today']} checks, ${ai['spent_today']:.2f} of OpenAI credit (limit $1.00 a day). "
-                  f"Since the start: {ai['checks']} checks (${ai['spent']:.2f}), {ai['bought']} led to a buy, "
-                  f"{ai['failed']} failed."]
-        if ai["decided"]:
-            lines.append(f"On the {ai['decided']} checked markets that have a result, the AI's average error was "
-                         f"{ai['ai_error']:.3f} against the market price's {ai['market_error']:.3f} (lower is better; "
-                         f"always saying 50% scores 0.250). The AI was closer on {ai['ai_closer']} of them. "
-                         f"{ai['waiting']} more are waiting for their result.")
-        else:
+                  f"Since the start: {ai['checks']} checks (${ai['spent']:.2f}); on {ai['rule_said_buy']} the AI beat "
+                  f"the price by 5c or more and {ai['bought']} were bought (the rest found no seller at that price); "
+                  f"{ai['failed']} failed. The AI saw betting odds while searching on {ai['saw_odds']} of the "
+                  f"{ai['answered']} it answered."]
+        for key, what in (("all", "all checked markets"), ("clean", "checks where it saw no betting odds")):
+            br = ai[key]
+            if br["n"]:
+                lines.append(f"- {what.capitalize()}, {br['n']} with a result: AI error {br['ai_error']:.3f}, market "
+                             f"price {br['market_error']:.3f} (lower is better; always saying 50% scores 0.250); "
+                             f"the AI was closer on {br['ai_closer']}.")
+        if not ai["all"]["n"]:
             lines.append(f"No checked market has a result yet ({ai['waiting']} waiting). The AI's chances will be "
                          "compared with the market prices on every checked market, bought or not.")
+        else:
+            lines.append(f"{ai['waiting']} more checked markets are waiting for their result. A few dozen results "
+                         "say little; read this after 100 or more.")
 
     gaps = read_jsonl(data / "gaps" / f"{today}.jsonl")
     lines += ["", "## Price gaps seen today", ""]

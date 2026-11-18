@@ -1,28 +1,34 @@
 """
-The AI check behind follow_move_ai and fade_move_ai (pretend money only).
+The AI check behind move_ai and move_ai_clean (pretend money only).
 
 Each run, a few of the markets that follow_move and fade_move react to (a
-traded move of 10 cents or more in a day) are picked at random, and an AI
-model (GPT-6 Sol, with OpenAI's web search) reads the latest news on each
-and writes its own chance that the market's first outcome happens. It is
-given the question, the market's rules and its end date, but not the price,
-so its chance is its own and not a copy of the market's. The rules in
-strategies.py then decide whether to buy (follow_move_ai, fade_move_ai).
+traded move of 10 cents or more in a day) are picked at random, at most one
+per event, and an AI model (GPT-6 Sol, with OpenAI's web search) reads the
+latest news on each and writes its own chance that the market's first
+outcome happens. It is given the question, the market's rules and its end
+date, but not the price, and is asked not to look up betting odds. Its web
+search can still show it Polymarket's page, or odds quoted elsewhere, so
+every check records whether it did (saw_odds: the model's own answer, plus
+any prediction-market or betting site among the pages its search read,
+opened or cited). The rules in strategies.py then decide whether to buy.
 
 Cost. Paid from the owner's free OpenAI credit (OPENAI_API_KEY), at most
 DAILY_BUDGET_USD a UTC day. The day's money is let out evenly, so checks are
-spread over the whole day rather than all made after midnight: by a given
-time the day's checks may have cost at most the share of the day gone by,
-plus BURST_USD. A check is only started if the most it can cost
-(most_a_check_can_cost) still fits, and it is then counted at what it really
-cost: its tokens at the model's price plus $0.01 for each search or page
-visit. A call cut off before its answer came back (a timeout, a lost
-connection) may have been billed, so it is counted at the most it could
-have cost. At about 7 cents a check this is roughly 12-15 checks a day.
+spread over the day rather than all made after midnight: by a given time the
+day's checks may have cost at most BURST_USD plus the share of the rest of
+the day's money for the part of the day gone by. A check is only started if
+the most it can cost (most_a_check_can_cost) still fits, and it is then
+counted at what it really cost: its tokens at the model's price plus $0.01
+for each search or page visit. A call cut off before its answer came back (a
+timeout, a lost connection) may have been billed, so it is counted at the
+most it could have cost. The two trial checks of 18 Nov 2026 cost 10.5 and
+14 cents with 4 and 6 searches; with at most 4 searches this is about 9-10
+cents a check, so about 9-10 checks a day.
 
 Records, on the polymarket-lab-data branch:
 - ai_checks/YYYY-MM-DD.jsonl: every check, bought or not, with the AI's
-  chance, the market's prices at that moment and the cost;
+  chance, whether it saw betting odds, the market's prices at that moment,
+  the cost and which AI strategies really bought (lab.py adds "bought");
 - ai_results/YYYY-MM.jsonl: each checked market's result once it has one,
   so the AI's chances can be compared with the market's prices on every
   checked market, not only on the ones bought (report.ai_summary).
@@ -45,6 +51,7 @@ import re
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from pathlib import Path
 
@@ -64,19 +71,34 @@ BURST_USD = 0.20  # lets the first check of the day start right after midnight
 MAX_CHECKS_PER_RUN = 3
 REASONING_EFFORT = "medium"  # this one call does the forecasting itself, so it thinks a little longer than the bot's news search
 SEARCH_CONTEXT_SIZE = "low"  # how much of each page the search hands the model (paid as input tokens)
-MAX_TOOL_CALLS = 6
-MAX_OUTPUT_TOKENS = 6000
-PAGE_TOKENS_PER_TOOL_CALL = 5000  # generous: bounds what a cut-off call is counted at
+MAX_TOOL_CALLS = 4  # searches and page visits: each costs $0.01 and brings pages in as input
+MAX_OUTPUT_TOKENS = 4000  # the trial checks wrote 1,000-1,400
+# Input per tool call, for bounding what a cut-off call is counted at. The
+# trial's 6-search check read 32,800 input tokens (each step re-reads the
+# pages before it), about 5,500 per call; this leaves room above that.
+PAGE_TOKENS_PER_TOOL_CALL = 8000
 TIMEOUT_SECONDS = 150  # checks run side by side, so the AI step adds at most about this to a run
 SEND_TRIES = 2  # a request OpenAI turns away as busy is not billed, and is sent once more
 RULES_CHARS = 2500  # the market's rules are cut here (they are usually a paragraph)
 FORGET_DAYS = 30  # a checked market with no result this long after its end is dropped
+# OpenAI errors that every call this run would hit again: stop asking (none of these is billed).
+STOP_HTTP = (401, 403, 404)
+STOP_CODES = ("insufficient_quota", "model_not_found", "unsupported_parameter", "unknown_parameter",
+              "invalid_api_key", "unsupported_model")
+# Prediction-market and betting sites: a page from one of these can show the market's odds.
+_ODDS_SITE = re.compile(r"polymarket|kalshi|manifold\.markets|predictit|betfair|oddschecker|smarkets|"
+                        r"electionbettingodds|limitless\.exchange|myriad\.markets|sportsbook|bet365|draftkings|"
+                        r"fanduel|pinnacle", re.IGNORECASE)
 
 _JSON = re.compile(r"\{[^{}]*\}")
 
 
 class Stop(RuntimeError):
     """An OpenAI problem that stops the checks for the rest of the run (no credit, key refused)."""
+
+
+class CutOff(RuntimeError):
+    """The call may have been answered, and billed, without the answer arriving."""
 
 
 def _day(ts: float) -> str:
@@ -98,9 +120,9 @@ def most_a_check_can_cost(prompt: str) -> float:
 
 
 def allowance(now: float) -> float:
-    """What the day's checks may have cost by `now`: the share of the UTC day gone by, plus BURST_USD."""
+    """What the day's checks may have cost by `now`: BURST_USD, plus the rest of the day's money as the UTC day goes by."""
     gone = (now % 86400) / 86400
-    return min(DAILY_BUDGET_USD, DAILY_BUDGET_USD * gone + BURST_USD)
+    return min(DAILY_BUDGET_USD, BURST_USD + gone * (DAILY_BUDGET_USD - BURST_USD))
 
 
 def budget(state: dict, now: float) -> dict:
@@ -140,13 +162,16 @@ The market's rules:
 {rules}
 
 Search the web for the latest facts that decide this question, then estimate the chance that the result \
-is "{yes}". Do not look up this market's own price or odds on Polymarket: the point is your own estimate \
-from the facts. Weigh how much time is left and how such situations usually turn out, and do not be more \
-certain than the evidence allows.
+is "{yes}". Do not look up the price or odds for this question on Polymarket, Kalshi or any other \
+prediction-market or betting site, and ignore any such odds you happen to see: the point is your own \
+estimate from the facts. (Data that the rules name as the resolution source is fine to use.) Weigh how \
+much time is left and how such situations usually turn out, and do not be more certain than the evidence \
+allows.
 
 End your answer with one line of JSON and nothing after it, like this:
-{{"chance": 0.37, "why": "one short sentence"}}
-where "chance" is your probability (0 to 1) that the result is "{yes}"."""
+{{"chance": 0.37, "saw_odds": false, "why": "one short sentence"}}
+where "chance" is your probability (0 to 1) that the result is "{yes}", and "saw_odds" says whether you \
+saw any betting or prediction-market price or odds for this question."""
 
 
 def request_for(prompt: str) -> dict:
@@ -154,15 +179,13 @@ def request_for(prompt: str) -> dict:
         "model": MODEL,
         "input": prompt,
         "tools": [{"type": "web_search", "search_context_size": SEARCH_CONTEXT_SIZE}],
+        # the pages each search read, so a betting site among them is seen (saw_odds)
+        "include": ["web_search_call.action.sources"],
         "reasoning": {"effort": REASONING_EFFORT},
         "max_output_tokens": MAX_OUTPUT_TOKENS,
         "max_tool_calls": MAX_TOOL_CALLS,
         "store": False,  # nothing to keep on OpenAI's side once the answer is here
     }
-
-
-class CutOff(RuntimeError):
-    """The call may have been answered, and billed, without the answer arriving."""
 
 
 def ask_openai(request: dict, timeout: float = TIMEOUT_SECONDS) -> dict:
@@ -183,14 +206,15 @@ def ask_openai(request: dict, timeout: float = TIMEOUT_SECONDS) -> dict:
                 return json.loads(response.read())
         except urllib.error.HTTPError as e:
             code = _error_code(e)
-            if e.code == 401:
-                raise Stop("OpenAI refused the key (HTTP 401)") from None
+            label = f"OpenAI HTTP {e.code}" + (f" ({code})" if code else "")
             if code == "insufficient_quota":
                 raise Stop("OpenAI credit used up (insufficient_quota)") from None
+            if e.code in STOP_HTTP or code in STOP_CODES:
+                raise Stop(f"{label}, so no more checks this run") from None
             if (e.code == 429 or e.code >= 500) and attempt < SEND_TRIES:
                 time.sleep(3)
                 continue
-            raise RuntimeError(f"OpenAI HTTP {e.code}" + (f" ({code})" if code else "")) from None
+            raise RuntimeError(label) from None
         except (urllib.error.URLError, TimeoutError, OSError, ValueError) as e:
             raise CutOff(type(e).__name__) from None
     raise RuntimeError("OpenAI busy")  # not reached: the last try raises above
@@ -221,25 +245,39 @@ def tool_calls(resp: dict) -> int:
     return sum(1 for item in resp.get("output") or [] if item.get("type") == "web_search_call")
 
 
-def saw_polymarket(resp: dict) -> bool:
-    """Whether the model searched for, opened or cited Polymarket anyway (it can then copy the price)."""
+def _host(url) -> str:
+    try:
+        return (urllib.parse.urlparse(str(url or "")).hostname or "").lower()
+    except ValueError:
+        return ""
+
+
+def odds_sites(resp: dict) -> list[str]:
+    """
+    Prediction-market and betting sites the model's search read, opened or
+    cited, or searched for by name: any of them can have shown it the odds.
+    """
+    found = set()
     for item in resp.get("output") or []:
         if item.get("type") == "web_search_call":
             action = item.get("action") or {}
-            seen = [action.get("query"), action.get("url"), *(action.get("queries") or [])]
-            seen += [s.get("url") for s in action.get("sources") or [] if isinstance(s, dict)]
-            if any("polymarket" in str(x or "").lower() for x in seen):
-                return True
+            for q in [action.get("query"), *(action.get("queries") or [])]:
+                hit = _ODDS_SITE.search(str(q or ""))
+                if hit:
+                    found.add(f"search: {hit.group(0).lower()}")
+            urls = [action.get("url")] + [s.get("url") for s in action.get("sources") or [] if isinstance(s, dict)]
+            found |= {h for h in map(_host, urls) if h and _ODDS_SITE.search(h)}
         if item.get("type") == "message":
             for c in item.get("content") or []:
                 for a in c.get("annotations") or []:
-                    if "polymarket" in str(a.get("url") or "").lower():
-                        return True
-    return False
+                    h = _host(a.get("url"))
+                    if h and _ODDS_SITE.search(h):
+                        found.add(h)
+    return sorted(found)
 
 
-def parse_chance(text: str) -> tuple[float | None, str]:
-    """(chance from the answer's last JSON line, its "why"), or (None, "") when there is none."""
+def parse_answer(text: str) -> tuple[float | None, bool | None, str]:
+    """(chance, the model's own saw_odds, its "why") from the answer's last JSON line; chance None when there is none."""
     for found in reversed(_JSON.findall(text or "")):
         try:
             obj = json.loads(found)
@@ -255,8 +293,9 @@ def parse_chance(text: str) -> tuple[float | None, str]:
             p /= 100
         if not 0 <= p <= 1:
             continue
-        return min(0.99, max(0.01, p)), str(obj.get("why") or "")[:300]
-    return None, ""
+        said = obj.get("saw_odds")
+        return min(0.99, max(0.01, p)), (said if isinstance(said, bool) else None), str(obj.get("why") or "")[:300]
+    return None, None, ""
 
 
 def check(v: dict, prompt: str, now: float) -> dict:
@@ -267,18 +306,21 @@ def check(v: dict, prompt: str, now: float) -> dict:
         resp = ask_openai(request_for(prompt))
     except CutOff as e:
         row.update(error=f"cut off ({e})", cost=round(most_a_check_can_cost(prompt), 4))
+    except Stop:
+        raise
     except RuntimeError as e:
-        if isinstance(e, Stop):
-            raise
         row.update(error=str(e)[:120], cost=0.0)  # refused: not billed
     else:
         usage = resp.get("usage") or {}
         tin, tout = usage.get("input_tokens") or 0, usage.get("output_tokens") or 0
         calls = tool_calls(resp)
-        chance, why = parse_chance(answer_text(resp))
+        chance, said, why = parse_answer(answer_text(resp))
+        sites = odds_sites(resp)
         row.update(input_tokens=tin, output_tokens=tout, searches=calls,
                    cost=round(token_cost(tin, tout) + calls * USD_PER_SEARCH, 4),
-                   saw_polymarket=saw_polymarket(resp), chance0=chance, why=why)
+                   chance0=chance, why=why, said_saw_odds=said, odds_sites=sites,
+                   # strict: odds on any page it read, or it said so, or it did not say
+                   saw_odds=bool(sites) or said is not False)
         if resp.get("status") not in (None, "completed"):
             reason = (resp.get("incomplete_details") or {}).get("reason") or resp.get("status")
             row["error"] = f"answer {reason}"[:120]
@@ -294,23 +336,24 @@ def run_checks(views: list[dict], events_by_id: dict, state: dict, now: float, r
     This run's checks. Returns (picks per AI strategy, in pick_entries'
     (view, outcome index, price cap, note) form; a row per check for
     ai_checks/). Records each checked market in state["ai_watch"] so its
-    result can be recorded when it has one.
+    result can be recorded when it has one. An event is checked once (its
+    sister markets, such as the other price levels of one stock, are left
+    out), until a day after the checked market ends.
     """
     picks: dict[str, list] = {name: [] for name in S.AI_RULES}
     if not any(S.STRATEGIES[name].get("active") for name in S.AI_RULES):
         return picks, []
     if (os.environ.get("PM_AI_CHECK") or "").strip().lower() == "off":
         return picks, []
-    checked = state.setdefault("ai_checked", {})
-    for cid in [c for c, until in checked.items() if until < now]:
-        del checked[cid]
+    checked = state.setdefault("ai_checked", {})  # event id -> forget after
+    for eid in [e for e, until in checked.items() if until < now]:
+        del checked[eid]
     held = set()
     for name in S.AI_RULES:
-        cur = state.get("traded_events", {}).get(name)
-        held |= set(cur or {})
+        held |= set(state.get("traded_events", {}).get(name) or {})
     cands, events = [], set()
     for v in views:
-        if v["conditionId"] in checked or v["event_id"] in held or v["event_id"] in events:
+        if v["event_id"] in checked or v["event_id"] in held or v["event_id"] in events:
             continue
         if S.ai_candidate(v):
             cands.append(v)
@@ -331,7 +374,7 @@ def run_checks(views: list[dict], events_by_id: dict, state: dict, now: float, r
     if not chosen:
         return picks, []
     if not os.environ.get("OPENAI_API_KEY", "").strip():
-        problems.append("AI check: no OPENAI_API_KEY, so follow_move_ai and fade_move_ai made no checks")
+        problems.append("AI check: no OPENAI_API_KEY, so move_ai and move_ai_clean made no checks")
         return picks, []
     results = pmapi.parallel({str(i): (lambda v=v, p=prompt: check(v, p, now)) for i, (v, p) in enumerate(chosen)},
                              workers=MAX_CHECKS_PER_RUN)
@@ -347,32 +390,41 @@ def run_checks(views: list[dict], events_by_id: dict, state: dict, now: float, r
             res = {"model": MODEL, "error": f"crash: {res!r}"[:120], "cost": round(most_a_check_can_cost(prompt), 4)}
         b["spent"] = round(b["spent"] + res.get("cost", 0.0), 4)
         b["checks"] += 1
-        checked[v["conditionId"]] = int(v["ends_at"] + 86400)
+        checked[v["event_id"]] = int(v["ends_at"] + 86400)
         sides = dict(S._sides(v))
-        bid0 = float(v["bestBid"]) if v.get("bestBid") is not None else None
+        up = 0 if float(v["oneDayPriceChange"]) > 0 else 1
         row = {"at": int(now), "condition_id": v["conditionId"], "event_id": v["event_id"],
                "question": (v.get("question") or "")[:200], "event": (v.get("event_title") or "")[:200],
                "outcomes": v["outcomes"][:2], "ends_at": v["ends_at"], "hours_left": round(v["hours_left"], 1),
-               "move": float(v["oneDayPriceChange"]), "bid0": bid0, "ask0": sides.get(0), "ask1": sides.get(1),
-               "decision": None, **res}
+               "move": float(v["oneDayPriceChange"]), "rose": up,
+               "bid0": float(v["bestBid"]) if v.get("bestBid") is not None else None,
+               "ask0": sides.get(0), "ask1": sides.get(1), "side": None, **res}
         if res.get("error"):
             errors.append(res["error"])
         chance = res.get("chance0")
         if chance is not None and not res.get("error"):
             for name, rule in S.AI_RULES.items():
-                hit = rule(v, chance) if S.STRATEGIES[name].get("active") else None
+                hit = rule(v, chance, res["saw_odds"]) if S.STRATEGIES[name].get("active") else None
                 if hit:
-                    row.update(decision=name, side=hit[0], cap=hit[1])
-                    picks[name].append((v, hit[0], hit[1], {"ai_chance0": chance, "ai_why": res.get("why", "")[:200]}))
+                    row.update(side=hit[0], cap=hit[1], with_move=hit[0] == up)
+                    picks[name].append((v, hit[0], hit[1], {"ai_chance0": chance, "ai_saw_odds": res["saw_odds"],
+                                                            "ai_why": res.get("why", "")[:200]}))
             state.setdefault("ai_watch", []).append(
                 {k: row.get(k) for k in ("at", "condition_id", "question", "outcomes", "ends_at", "bid0", "ask0",
-                                         "ask1", "chance0", "decision", "saw_polymarket")})
+                                         "ask1", "move", "rose", "chance0", "saw_odds", "side")})
         rows.append(row)
     for s in sorted(stops):
         problems.append(f"AI check: {s}")
     if errors:
         problems.append(f"AI check: {len(errors)} of {len(chosen)} check(s) failed ({errors[0]})")
     return picks, rows
+
+
+def mark_bought(rows: list[dict], new_trades: list[dict]) -> None:
+    """Add to each check row the AI strategies that really bought (a fill can fail: no seller at the cap)."""
+    got = {(t["strategy"], t["legs"][0]["condition_id"]) for t in new_trades if t["strategy"] in S.AI_RULES}
+    for r in rows:
+        r["bought"] = [name for name in S.AI_RULES if (name, r["condition_id"]) in got]
 
 
 def settle_checks(state: dict, now: float, closed_markets, final_prices) -> list[dict]:
@@ -425,7 +477,8 @@ def main() -> None:
         res = check(v, prompt, now)
         total += res.get("cost", 0.0)
         sides = dict(S._sides(v))
-        hits = {name: rule(v, res["chance0"]) for name, rule in S.AI_RULES.items()} if res.get("chance0") is not None else {}
+        hits = ({name: rule(v, res["chance0"], res["saw_odds"]) for name, rule in S.AI_RULES.items()}
+                if res.get("chance0") is not None else {})
         print(json.dumps({"question": v.get("question"), "outcomes": v["outcomes"], "move": v["oneDayPriceChange"],
                           "ask0": sides.get(0), "ask1": sides.get(1), "most_cost": round(most_a_check_can_cost(prompt), 3),
                           **res, "would_buy": {k: h for k, h in hits.items() if h}}, indent=1))
