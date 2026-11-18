@@ -1,23 +1,23 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-17 23:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-18 00:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move_2 | 18 | 17/18 | +32.7% | +$29.40 | 1 | 92 | too early |
-| 2 | follow_move_big | 14 | 11/14 | +7.0% | +$4.87 | 1 | 56 | too early |
-| 3 | follow_move | 426 | 273/426 | +4.8% | +$102.11 | 12 | 137 | too early |
-| 4 | sure_thing | 1915 | 1780/1915 | -0.5% | -$43.25 | 11 | 161 | too early |
-| 5 | safe_no_week | 733 | 674/733 | -4.0% | -$148.09 | 12 | 297 | too early |
-| 6 | sports_underdog | 1388 | 327/1388 | -12.6% | -$866.21 | 10 | 75 | too early |
-| 7 | fade_move | 467 | 140/467 | -15.3% | -$356.69 | 12 | 143 | too early |
-| 8 | weather_forecast | 534 | 272/534 | -19.7% | -$520.57 | 10 | 132 | too early |
+| 1 | follow_move_2 | 18 | 17/18 | +32.7% | +$29.40 | 1 | 93 | too early |
+| 2 | follow_move_big | 15 | 12/15 | +8.3% | +$6.22 | 2 | 55 | too early |
+| 3 | follow_move | 429 | 274/429 | +4.4% | +$93.47 | 13 | 135 | too early |
+| 4 | sure_thing | 1940 | 1803/1940 | -0.5% | -$44.72 | 12 | 143 | too early |
+| 5 | safe_no_week | 735 | 676/735 | -4.0% | -$147.56 | 13 | 296 | too early |
+| 6 | sports_underdog | 1404 | 332/1404 | -12.3% | -$857.43 | 11 | 67 | too early |
+| 7 | fade_move | 470 | 142/470 | -14.5% | -$340.16 | 13 | 141 | too early |
+| 8 | weather_forecast | 537 | 272/537 | -20.2% | -$535.57 | 11 | 130 | too early |
 | 9 | follow_move_crypto | 7 | 6/7 | +24.7% | +$8.64 | 1 | 41 | too early |
-| 10 | follow_move_cheap | 3 | 1/3 | +11.8% | +$1.77 | 1 | 65 | too early |
+| 10 | follow_move_cheap | 3 | 1/3 | +11.8% | +$1.77 | 1 | 66 | too early |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 12 | coin_flip | 2098 | 1028/2098 | -5.7% | -$591.91 | 12 | 193 | yardstick |
+| 12 | coin_flip | 2107 | 1033/2107 | -5.6% | -$591.55 | 13 | 192 | yardstick |
 
 What each one does:
 
@@ -40,6 +40,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_2 | follow_move_big | follow_move | sure_thing | safe_no_week | sports_underdog | fade_move | weather_forecast | follow_move_crypto | follow_move_cheap | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2026-11-18 |  | +$1.35 | -$8.65 | -$1.47 | +$0.52 | +$8.78 | +$16.53 | -$15.00 |  |  |  | +$0.36 |
 | 2026-11-17 | +$29.40 | +$4.87 | -$26.56 | +$4.02 | -$6.81 | -$26.19 | -$62.15 | -$31.10 | +$8.64 | +$1.77 |  | -$62.47 |
 | 2026-11-16 |  |  | +$11.58 | -$6.40 | -$11.02 | +$21.94 | -$17.46 |  |  |  | +$0.08 | -$21.29 |
 | 2026-11-15 |  |  | +$17.97 | +$0.34 | -$26.64 |  | +$30.37 | -$0.94 |  |  |  | -$47.97 |
@@ -49,26 +50,25 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 | 2026-11-11 |  |  | +$9.69 | +$59.21 | -$18.78 | -$173.41 | -$50.06 | -$77.92 |  |  |  | -$29.87 |
 | 2026-11-10 |  |  | +$55.84 | -$15.92 | -$2.64 | +$61.94 | +$1.13 | -$101.16 |  |  |  | -$214.60 |
 | 2026-11-09 |  |  | +$11.06 | +$1.64 | -$5.28 | -$181.99 | -$67.00 | -$76.41 |  |  |  | +$26.49 |
-| 2026-11-08 |  |  | +$16.06 | -$52.70 | -$19.92 | -$262.85 | -$16.21 | -$34.20 |  |  |  | -$209.00 |
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-17 follow_move_2: Will the price of XRP be above $1.00 on November 23? -> Yes at 0.477 ($5.00)
+- 2026-11-18 follow_move_2: Will Trump say "Nuclear" or "Nuke" during his trilateral meeting with Xi and Putin? -> No at 0.679 ($5.00)
 - 2026-11-17 follow_move_big: Will the price of Solana be above $75 on November 22? -> Yes at 0.537 ($5.00)
-- 2026-11-17 follow_move: Will the price of Solana be above $80 on November 23? -> Yes at 0.242 ($5.00)
-- 2026-11-17 sure_thing: Exact Score: Clube do Remo 0 - 0 Associação Chapecoense de Futebol? -> No at 0.963 ($5.00)
-- 2026-11-17 safe_no_week: Will the highest temperature in Panama City be 34°C or higher on November 19? -> No at 0.952 ($5.00)
-- 2026-11-17 sports_underdog: Trail Blazers vs. Timberwolves: O/U 233.5 -> Over at 0.351 ($5.00)
-- 2026-11-17 fade_move: Will the price of XRP be above $1.00 on November 23? -> No at 0.607 ($5.00)
-- 2026-11-17 weather_forecast: Will the highest temperature in San Francisco be between 56-57°F on November 19? -> No at 0.552 ($5.00)
+- 2026-11-18 follow_move: Will Trump say "Nuclear" or "Nuke" during his trilateral meeting with Xi and Putin? -> No at 0.679 ($5.00)
+- 2026-11-18 sure_thing: Spread: Cruzeiro EC (-2.5) -> SE Palmeiras at 0.952 ($5.00)
+- 2026-11-18 safe_no_week: Will "Boston - Stella Lefty" be the Billboard Hot 100 #2 song for the week of November 28? -> Yes at 0.951 ($5.00)
+- 2026-11-18 sports_underdog: Pistons vs. Spurs -> Pistons at 0.229 ($5.00)
+- 2026-11-18 fade_move: Will Trump say "China" or "Russia" 15+ times during his trilateral meeting with Xi and Putin? -> Yes at 0.155 ($5.00)
+- 2026-11-18 weather_forecast: Will the lowest temperature in Shanghai be 7°C on November 19? -> No at 0.706 ($5.00)
 - 2026-11-17 follow_move_crypto: Will the price of XRP be above $1.00 on November 18? -> Yes at 0.356 ($5.00)
-- 2026-11-17 follow_move_cheap: Will the price of Solana be above $80 on November 23? -> Yes at 0.242 ($5.00)
+- 2026-11-18 follow_move_cheap: Will Silver (XAGUSD) hit (LOW) $46 Week of November 16 2026? -> No at 0.490 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-17 coin_flip: Solana Up or Down - November 18, 4:25AM-4:30AM ET -> Down at 0.527 ($5.00)
+- 2026-11-18 coin_flip: Solana Up or Down - November 18, 3:45AM-4:00AM ET -> Up at 0.527 ($5.00)
 
 ## Price gaps seen today
 
-1 near-gaps recorded (full sets within a few cents of their payout). Cheapest: ATEEZ 'Golden Hour: Part.6' First Week Album Sales? (no), 4.029 for a $4 payout.
+No near-gaps today.
 
-Runs in the last 24 hours: 36 (36 with a problem).
+Runs in the last 24 hours: 35 (35 with a problem).
 Latest problem: 42 position(s) still open more than 3 days after their market ended
