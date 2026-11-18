@@ -42,12 +42,18 @@ import json
 import os
 import random
 import re
+import sys
 import time
 import urllib.error
 import urllib.request
+from pathlib import Path
 
-import pmapi
-import strategies as S
+_HERE = Path(__file__).resolve().parent
+for _path in (str(_HERE), str(_HERE.parent / "polymarket-shadow")):
+    if _path not in sys.path:  # run on its own (python3 ai_check.py --try 2) rather than from lab.py
+        sys.path.append(_path)
+import pmapi  # noqa: E402  (shared read-only API helpers)
+import strategies as S  # noqa: E402
 
 API_URL = "https://api.openai.com/v1/responses"
 MODEL = "gpt-6-sol"
