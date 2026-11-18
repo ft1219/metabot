@@ -1,23 +1,23 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-18 14:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-18 15:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move_2 | 20 | 19/20 | +34.7% | +$34.73 | 2 | 122 | too early |
-| 2 | follow_move | 434 | 276/434 | +3.8% | +$81.84 | 13 | 154 | too early |
+| 1 | follow_move_2 | 21 | 20/21 | +34.5% | +$36.24 | 2 | 122 | too early |
+| 2 | follow_move | 435 | 276/435 | +3.5% | +$76.84 | 13 | 154 | too early |
 | 3 | follow_move_big | 16 | 12/16 | +1.5% | +$1.22 | 2 | 81 | too early |
-| 4 | sure_thing | 2065 | 1917/2065 | -0.5% | -$52.09 | 12 | 156 | too early |
-| 5 | safe_no_week | 749 | 688/749 | -4.1% | -$155.10 | 13 | 355 | too early |
-| 6 | sports_underdog | 1489 | 356/1489 | -11.6% | -$860.05 | 11 | 29 | too early |
-| 7 | fade_move | 476 | 145/476 | -14.3% | -$341.08 | 13 | 161 | too early |
-| 8 | weather_forecast | 558 | 282/558 | -20.2% | -$556.47 | 11 | 169 | too early |
+| 4 | sure_thing | 2068 | 1920/2068 | -0.5% | -$51.12 | 12 | 161 | too early |
+| 5 | safe_no_week | 753 | 691/753 | -4.2% | -$159.56 | 13 | 353 | too early |
+| 6 | sports_underdog | 1491 | 356/1491 | -11.7% | -$870.05 | 11 | 35 | too early |
+| 7 | fade_move | 476 | 145/476 | -14.3% | -$341.08 | 13 | 162 | too early |
+| 8 | weather_forecast | 563 | 284/563 | -20.3% | -$562.85 | 11 | 165 | too early |
 | 9 | follow_move_crypto | 7 | 6/7 | +24.7% | +$8.64 | 1 | 43 | too early |
-| 10 | follow_move_cheap | 5 | 1/5 | -32.9% | -$8.23 | 2 | 80 | too early |
+| 10 | follow_move_cheap | 6 | 1/6 | -44.1% | -$13.23 | 2 | 80 | too early |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 12 | coin_flip | 2259 | 1111/2259 | -5.4% | -$611.58 | 13 | 214 | yardstick |
+| 12 | coin_flip | 2265 | 1113/2265 | -5.5% | -$622.63 | 13 | 216 | yardstick |
 
 What each one does:
 
@@ -40,7 +40,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_2 | follow_move | follow_move_big | sure_thing | safe_no_week | sports_underdog | fade_move | weather_forecast | follow_move_crypto | follow_move_cheap | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-18 | +$5.32 | -$20.28 | -$3.65 | -$8.84 | -$7.02 | +$6.16 | +$15.62 | -$35.90 |  | -$10.00 |  | -$19.68 |
+| 2026-11-18 | +$6.84 | -$25.28 | -$3.65 | -$7.87 | -$11.47 | -$3.84 | +$15.62 | -$42.28 |  | -$15.00 |  | -$30.72 |
 | 2026-11-17 | +$29.40 | -$26.56 | +$4.87 | +$4.02 | -$6.81 | -$26.19 | -$62.15 | -$31.10 | +$8.64 | +$1.77 |  | -$62.47 |
 | 2026-11-16 |  | +$11.58 |  | -$6.40 | -$11.02 | +$21.94 | -$17.46 |  |  |  | +$0.08 | -$21.29 |
 | 2026-11-15 |  | +$17.97 |  | +$0.34 | -$26.64 |  | +$30.37 | -$0.94 |  |  |  | -$47.97 |
@@ -53,18 +53,18 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-18 follow_move_2: Palantir (PLTR) Up or Down on November 18? -> Down at 0.639 ($5.00)
-- 2026-11-18 follow_move: Russell 2000 (RUT) Up or Down on November 18? -> Up at 0.629 ($5.00)
+- 2026-11-18 follow_move_2: Will Amazon (AMZN) finish week of November 16 above $270? -> Yes at 0.349 ($5.00)
+- 2026-11-18 follow_move: Will Amazon (AMZN) finish week of November 16 above $270? -> Yes at 0.349 ($5.00)
 - 2026-11-18 follow_move_big: Will the price of Bitcoin be above $64,000 on November 20? -> No at 0.636 ($5.00)
-- 2026-11-18 sure_thing: Oregon State Beavers vs. UC Riverside Highlanders (W) -> Oregon State Beavers at 0.971 ($5.00)
-- 2026-11-18 safe_no_week: S&P 500 (SPY) closes above $710 on November 19? -> Yes at 0.981 ($5.00)
-- 2026-11-18 sports_underdog: Spread: Real Madrid CF Femenino (-3.5) -> Real Madrid CF Femenino at 0.249 ($5.00)
-- 2026-11-18 fade_move: Will Amazon (AMZN) close above $260 on November 18? -> No at 0.351 ($5.00)
-- 2026-11-18 weather_forecast: Will the highest temperature in Los Angeles be between 66-67°F on November 20? -> No at 0.642 ($5.00)
+- 2026-11-18 sure_thing: Spread: UCLA Bruins (-12.5) -> UCLA Bruins at 0.971 ($5.00)
+- 2026-11-18 safe_no_week: Will the highest temperature in Sao Paulo be 35°C on November 20? -> No at 0.983 ($5.00)
+- 2026-11-18 sports_underdog: Counter-Strike: OldBoys vs Rcave (BO1) - ESEA Advanced Europe Regular Season -> Rcave at 0.249 ($5.00)
+- 2026-11-18 fade_move: Will Amazon (AMZN) finish week of November 16 above $270? -> No at 0.718 ($5.00)
+- 2026-11-18 weather_forecast: Will the lowest temperature in Beijing be -4°C on November 19? -> No at 0.885 ($5.00)
 - 2026-11-18 follow_move_crypto: Will the price of Bitcoin be between $60,000 and $62,000 on November 21? -> Yes at 0.232 ($5.00)
-- 2026-11-18 follow_move_cheap: Will the price of Ethereum be above $1,700 on November 23? -> No at 0.335 ($5.00)
+- 2026-11-18 follow_move_cheap: Will Amazon (AMZN) finish week of November 16 above $270? -> Yes at 0.349 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-18 coin_flip: Counter-Strike: BBL vs Envy - Map 1 Winner -> BBL at 0.467 ($5.00)
+- 2026-11-18 coin_flip: Rayo Vallecano de Madrid vs. Valencia CF: O/U 10.5 Total Corners -> Over at 0.472 ($5.00)
 
 ## Price gaps seen today
 
