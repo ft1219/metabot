@@ -118,6 +118,35 @@ def verdict(name: str, st: dict, days_running: float, stored: dict | None = None
     return judge(name, st, days_running, opened) or "too early"
 
 
+def ai_summary(data: Path, state: dict, now: float) -> dict:
+    """
+    How the AI check is doing: checks and spend today and overall, and, on
+    every checked market that has a result (bought or not), how far the AI's
+    chance and the market's price at the time were from what happened. The
+    error is the Brier score: the squared gap between the chance given and
+    the result (1 or 0), averaged; lower is better, and always saying 50%
+    scores 0.25. The market's chance is the middle of its bid and ask.
+    """
+    checks = read_jsonl(data / "ai_checks")
+    results = [r for r in read_jsonl(data / "ai_results")
+               if r.get("result0") in (0, 1, 0.0, 1.0) and r.get("chance0") is not None
+               and r.get("bid0") is not None and r.get("ask0") is not None]
+    today = _day(now)
+    b = state.get("ai_budget") or {}
+    out = {"checks": len(checks), "spent": round(sum(r.get("cost") or 0 for r in checks), 2),
+           "checks_today": b.get("checks", 0) if b.get("day") == today else 0,
+           "spent_today": round(b.get("spent", 0.0), 2) if b.get("day") == today else 0.0,
+           "bought": sum(1 for r in checks if r.get("decision")),
+           "failed": sum(1 for r in checks if r.get("error")),
+           "decided": len(results), "waiting": len(state.get("ai_watch") or [])}
+    if results:
+        ai = [(r["chance0"] - r["result0"]) ** 2 for r in results]
+        mk = [((r["bid0"] + r["ask0"]) / 2 - r["result0"]) ** 2 for r in results]
+        out.update(ai_error=round(sum(ai) / len(ai), 4), market_error=round(sum(mk) / len(mk), 4),
+                   ai_closer=sum(1 for a, m in zip(ai, mk) if a < m))
+    return out
+
+
 def build(data: Path, now: float, state: dict | None = None, current: dict | None = None) -> tuple[str, dict]:
     """report.md text and summary.json data. `current` is the running run's row, not yet in runs.jsonl."""
     trades = read_jsonl(data / "trades")
@@ -218,6 +247,21 @@ def build(data: Path, now: float, state: dict | None = None, current: dict | Non
     if not recent:
         lines.append("None yet.")
 
+    ai = ai_summary(data, state, now)
+    if ai["checks"] or any(S.STRATEGIES.get(n, {}).get("active") for n in ("follow_move_ai", "fade_move_ai")):
+        lines += ["", "## AI check (follow_move_ai, fade_move_ai)", "",
+                  f"Today: {ai['checks_today']} checks, ${ai['spent_today']:.2f} of OpenAI credit (limit $1.00 a day). "
+                  f"Since the start: {ai['checks']} checks (${ai['spent']:.2f}), {ai['bought']} led to a buy, "
+                  f"{ai['failed']} failed."]
+        if ai["decided"]:
+            lines.append(f"On the {ai['decided']} checked markets that have a result, the AI's average error was "
+                         f"{ai['ai_error']:.3f} against the market price's {ai['market_error']:.3f} (lower is better; "
+                         f"always saying 50% scores 0.250). The AI was closer on {ai['ai_closer']} of them. "
+                         f"{ai['waiting']} more are waiting for their result.")
+        else:
+            lines.append(f"No checked market has a result yet ({ai['waiting']} waiting). The AI's chances will be "
+                         "compared with the market prices on every checked market, bought or not.")
+
     gaps = read_jsonl(data / "gaps" / f"{today}.jsonl")
     lines += ["", "## Price gaps seen today", ""]
     if gaps:
@@ -236,5 +280,5 @@ def build(data: Path, now: float, state: dict | None = None, current: dict | Non
 
     summary = {"updated": int(now), "strategies": {k: {kk: (None if isinstance(vv, float) and math.isinf(vv) else vv)
                                                         for kk, vv in v.items()} for k, v in by_s.items()},
-               "runs_24h": len(last_day), "runs_with_problems_24h": len(bad)}
+               "runs_24h": len(last_day), "runs_with_problems_24h": len(bad), "ai_check": ai}
     return "\n".join(lines) + "\n", summary

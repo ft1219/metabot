@@ -167,6 +167,52 @@ def follow_move_big(m: dict, rng: random.Random):
     return follow_move(m, rng)
 
 
+# AI-checked jump strategies, added 2026-11-18 (ai_check.py does the asking).
+# The owner asked whether a "machine" could check each prediction and buy
+# only the ones with a better chance. On a random sample of the markets
+# follow_move and fade_move react to, an AI model reads the latest news and
+# gives its own chance for the market's first outcome, without being told
+# the price. follow_move_ai buys the side that went up, and fade_move_ai the
+# side that went down, only when the AI's chance for that side beats its
+# asking price by AI_MARGIN; the fill never pays more than the AI's chance
+# minus AI_MARGIN (and never more than follow_move's 85 cents).
+AI_MARGIN = 0.05
+
+
+def ai_candidate(m: dict) -> bool:
+    """A market the AI may be asked about: a follow_move/fade_move move with a side priced 10-85c."""
+    if _moved(m) is None:
+        return False
+    return any(0.10 <= ask <= 0.85 for _, ask in _sides(m))
+
+
+def _ai_buy(m: dict, chance0: float, follow: bool):
+    ch = _moved(m)
+    if ch is None:
+        return None
+    up = 0 if ch > 0 else 1
+    i = up if follow else 1 - up
+    ask = dict(_sides(m)).get(i)
+    if ask is None or not (0.10 <= ask <= 0.85):
+        return None
+    chance = chance0 if i == 0 else 1 - chance0
+    cap = round(min(0.85, chance - AI_MARGIN), 4)
+    return (i, cap) if ask <= cap + 1e-9 else None
+
+
+def follow_move_ai(m: dict, chance0: float):
+    """follow_move's side, only when the AI's chance for it is at least AI_MARGIN above its price."""
+    return _ai_buy(m, chance0, follow=True)
+
+
+def fade_move_ai(m: dict, chance0: float):
+    """fade_move's side, only when the AI's chance for it is at least AI_MARGIN above its price."""
+    return _ai_buy(m, chance0, follow=False)
+
+
+AI_RULES = {"follow_move_ai": follow_move_ai, "fade_move_ai": fade_move_ai}
+
+
 def coin_flip(m: dict, rng: random.Random):
     """
     Yardstick, not a strategy: a random side of a random market ending within
@@ -208,6 +254,12 @@ STRATEGIES: dict[str, dict] = {
                         "plain": "follow_move, only after a 20c+ move in a day (from 17 Nov)"},
     "fade_move": {"rule": fade_move, "active": True, "since": "2026-11-05",
                   "plain": "After a traded 10c+ move in a day, buy the side that went down"},
+    "follow_move_ai": {"rule": None, "active": True, "since": "2026-11-18",
+                       "plain": "follow_move's side, only when an AI model that read the news (without seeing "
+                                "the price) gives it at least 5c more chance than the price (from 18 Nov)"},
+    "fade_move_ai": {"rule": None, "active": True, "since": "2026-11-18",
+                     "plain": "fade_move's side, only when an AI model that read the news (without seeing "
+                              "the price) gives it at least 5c more chance than the price (from 18 Nov)"},
     "weather_forecast": {"rule": None, "active": True, "since": "2026-11-05",
                          "plain": "Daily temperature markets, before the day starts: buy No on a range when "
                                   "82 weather-model runs give it 10c+ less chance than the market (or Yes when "
