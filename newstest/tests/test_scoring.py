@@ -59,3 +59,23 @@ def test_numeric_dates_compare_as_timestamps():
     values, cdf = _flat(lo=lo, hi=lo + 200 * 86400)
     day = datetime(2026, 11, 20, 12, tzinfo=timezone.utc)
     assert scoring.numeric(values, cdf, day, False, False) == pytest.approx(0)
+
+
+def test_numeric_uses_natural_log_halved_like_metaculus():
+    values, _ = _flat()
+    # Bin (100, 101] holds twice the flat 1/200, the rest shares what is left.
+    cdf = [0.0]
+    for i in range(200):
+        cdf.append(cdf[-1] + (2 / 200 if i == 100 else (1 - 2 / 200) / 199))
+    assert scoring.numeric(values, cdf, 100.5, False, False) == pytest.approx(50 * math.log(2), rel=1e-6)
+
+
+def test_outcome_on_a_bin_line_counts_in_the_lower_bin():
+    values, _ = _flat()
+    cdf = [0.0]
+    for i in range(200):
+        # all mass in bin (99, 100], none in (100, 101]
+        cdf.append(cdf[-1] + (1.0 if i == 99 else 0.0))
+    assert scoring.numeric(values, cdf, 100.0, False, False) > 200
+    assert scoring.numeric(values, cdf, 100.0 + 1e-13, False, False) > 200  # float noise stays put
+    assert scoring.numeric(values, cdf, 100.5, False, False) < 0

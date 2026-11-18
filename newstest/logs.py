@@ -76,7 +76,9 @@ def _seconds(ts: str) -> float:
 def parse_log(log: str, run_id: int) -> list[Research]:
     """Every research text in one forecast job's log, in log order."""
     out: list[Research] = []
-    lines = log.splitlines()
+    # Split on newlines only: splitlines() would also break the news at
+    # characters such as U+2028 that can appear inside articles.
+    lines = [line[:-1] if line.endswith("\r") else line for line in log.split("\n")]
     i = 0
     while i < len(lines):
         m = GH_LINE.match(lines[i])

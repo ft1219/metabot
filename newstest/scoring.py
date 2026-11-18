@@ -4,14 +4,15 @@ Metaculus's baseline score: 0 is what a know-nothing forecast gets (50% on a
 yes/no question, equal odds on every option, a flat spread on a number
 question), higher is better, and a confident wrong answer costs a lot.
 
-    yes/no      100 * log2(p(outcome) / 0.5)
-    options     100 * log_N(p(outcome) * N)                 (N options)
-    numbers     50 * log2(p(bin of outcome) / flat p(bin))  (Metaculus halves it)
+    yes/no      100 * ln(p(outcome) / 0.5) / ln 2
+    options     100 * ln(p(outcome) * N) / ln N             (N options)
+    numbers     100 * ln(p(bin of outcome) / flat p(bin)) / 2
 
-The number-question version follows Metaculus's recipe closely but not
-exactly (their flat forecast and floors differ a little); every news setup
-is scored the same way, so it is fair for comparing them. Each probability
-is floored so one forecast cannot score minus infinity.
+as in Metaculus's scoring code (score_math.evaluate_forecasts_baseline_accuracy).
+An outcome on the line between two bins counts in the lower bin, as on
+Metaculus. The flat forecast and the floors differ a little from theirs;
+every news setup is scored the same way, so it is fair for comparing them.
+Each probability is floored so one forecast cannot score minus infinity.
 """
 from __future__ import annotations
 
@@ -72,11 +73,13 @@ def numeric(
         p, flat = 1.0 - cdf[-1], OUT_OF_BOUNDS_FLAT
     else:
         x = _x(resolved)
-        if x < xs[0]:
+        eps = 1e-9 * max(abs(xs[-1] - xs[0]), 1e-12)  # float noise in the CDF's x-values
+        if x < xs[0] - eps:
             p, flat = cdf[0], OUT_OF_BOUNDS_FLAT
-        elif x > xs[-1]:
+        elif x > xs[-1] + eps:
             p, flat = 1.0 - cdf[-1], OUT_OF_BOUNDS_FLAT
         else:
-            i = min(bisect.bisect_right(xs, x) - 1, bins - 1)
-            p, flat = cdf[i + 1] - cdf[i], inside_flat
-    return 50.0 * math.log2(max(p, BIN_FLOOR) / flat)
+            # Bin k covers (xs[k-1], xs[k]]; the lower bound itself is in bin 1.
+            k = min(max(bisect.bisect_left(xs, x - eps), 1), bins)
+            p, flat = cdf[k] - cdf[k - 1], inside_flat
+    return 100.0 * math.log(max(p, BIN_FLOOR) / flat) / 2.0

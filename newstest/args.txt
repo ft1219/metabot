@@ -1,2 +1,2 @@
 # Options for the next run (lines starting with # are ignored). Pushing a change here starts a run.
---check 4
+--check 6 --check-runs 2026-10-18T00:00:00Z..2026-10-27T00:00:00Z
