@@ -1,23 +1,23 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-18 21:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-18 22:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move | 466 | 294/466 | +2.6% | +$59.98 | 13 | 132 | too early |
-| 2 | sure_thing | 2119 | 1970/2119 | -0.4% | -$37.68 | 12 | 179 | too early |
-| 3 | safe_no_week | 786 | 721/786 | -4.3% | -$168.31 | 13 | 335 | too early |
-| 4 | follow_move_2 | 52 | 35/52 | -7.2% | -$18.71 | 2 | 104 | too early |
+| 1 | follow_move | 466 | 294/466 | +2.6% | +$59.98 | 13 | 133 | too early |
+| 2 | sure_thing | 2130 | 1980/2130 | -0.4% | -$39.00 | 12 | 176 | too early |
+| 3 | safe_no_week | 788 | 723/788 | -4.3% | -$167.97 | 13 | 333 | too early |
+| 4 | follow_move_2 | 52 | 35/52 | -7.2% | -$18.71 | 2 | 106 | too early |
 | 5 | follow_move_big | 37 | 24/37 | -8.0% | -$14.80 | 2 | 69 | too early |
-| 6 | follow_move_crypto | 20 | 13/20 | -10.1% | -$10.09 | 2 | 41 | too early |
-| 7 | sports_underdog | 1513 | 362/1513 | -11.6% | -$874.11 | 11 | 64 | too early |
-| 8 | fade_move | 509 | 157/509 | -13.8% | -$351.49 | 13 | 139 | too early |
-| 9 | follow_move_cheap | 15 | 5/15 | -15.8% | -$11.85 | 2 | 78 | too early |
-| 10 | weather_forecast | 581 | 294/581 | -20.1% | -$578.15 | 11 | 156 | too early |
+| 6 | follow_move_crypto | 20 | 13/20 | -10.1% | -$10.09 | 2 | 42 | too early |
+| 7 | sports_underdog | 1519 | 363/1519 | -11.6% | -$878.82 | 11 | 66 | too early |
+| 8 | fade_move | 509 | 157/509 | -13.8% | -$351.49 | 13 | 140 | too early |
+| 9 | follow_move_cheap | 15 | 5/15 | -15.8% | -$11.85 | 2 | 80 | too early |
+| 10 | weather_forecast | 582 | 294/582 | -20.3% | -$583.15 | 11 | 155 | too early |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 12 | coin_flip | 2319 | 1142/2319 | -5.4% | -$625.07 | 13 | 233 | yardstick |
+| 12 | coin_flip | 2326 | 1146/2326 | -5.3% | -$618.68 | 13 | 234 | yardstick |
 
 What each one does:
 
@@ -40,7 +40,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move | sure_thing | safe_no_week | follow_move_2 | follow_move_big | follow_move_crypto | sports_underdog | fade_move | follow_move_cheap | weather_forecast | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-18 | -$42.13 | +$5.57 | -$20.23 | -$48.11 | -$19.67 | -$18.73 | -$7.90 | +$5.20 | -$13.61 | -$57.58 |  | -$33.16 |
+| 2026-11-18 | -$42.13 | +$4.25 | -$19.88 | -$48.11 | -$19.67 | -$18.73 | -$12.61 | +$5.20 | -$13.61 | -$62.58 |  | -$26.78 |
 | 2026-11-17 | -$26.56 | +$4.02 | -$6.81 | +$29.40 | +$4.87 | +$8.64 | -$26.19 | -$62.15 | +$1.77 | -$31.10 |  | -$62.47 |
 | 2026-11-16 | +$11.58 | -$6.40 | -$11.02 |  |  |  | +$21.94 | -$17.46 |  |  | +$0.08 | -$21.29 |
 | 2026-11-15 | +$17.97 | +$0.34 | -$26.64 |  |  |  |  | +$30.37 |  | -$0.94 |  | -$47.97 |
@@ -53,18 +53,18 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-18 follow_move: Will the price of Bitcoin be above $64,000 on November 24? -> No at 0.656 ($5.00)
-- 2026-11-18 sure_thing: Will Ella Langley win Entertainer of the Year at the 2026 CMA Awards? -> Yes at 0.933 ($5.00)
+- 2026-11-18 follow_move: Will Venezuela win Miss Universe 2026? -> Yes at 0.306 ($5.00)
+- 2026-11-18 sure_thing: Bitcoin above 62,800 on November 18, 6PM ET? -> No at 0.953 ($5.00)
 - 2026-11-18 safe_no_week: Will there be 3 earthquakes of 6.5 or above magnitude worldwide? -> No at 0.943 ($5.00)
-- 2026-11-18 follow_move_2: Will the price of Bitcoin be between $60,000 and $62,000 on November 20? -> Yes at 0.266 ($5.00)
+- 2026-11-18 follow_move_2: Will the price of Bitcoin be between $60,000 and $62,000 on November 22? -> Yes at 0.253 ($5.00)
 - 2026-11-18 follow_move_big: Will the price of Bitcoin be above $64,000 on November 22? -> No at 0.724 ($5.00)
-- 2026-11-18 follow_move_crypto: Will the price of Bitcoin be between $60,000 and $62,000 on November 20? -> Yes at 0.266 ($5.00)
-- 2026-11-18 sports_underdog: Spread: NJIT Highlanders (-2.5) -> NJIT Highlanders at 0.321 ($5.00)
-- 2026-11-18 fade_move: Will the price of Bitcoin be above $64,000 on November 24? -> Yes at 0.396 ($5.00)
-- 2026-11-18 follow_move_cheap: Will the price of Bitcoin be between $60,000 and $62,000 on November 20? -> Yes at 0.266 ($5.00)
+- 2026-11-18 follow_move_crypto: Will the price of Bitcoin be between $60,000 and $62,000 on November 22? -> Yes at 0.253 ($5.00)
+- 2026-11-18 sports_underdog: St. John's Red Storm vs. Oklahoma State Cowboys (W) -> St. John's Red Storm at 0.280 ($5.00)
+- 2026-11-18 fade_move: Will Venezuela win Miss Universe 2026? -> No at 0.768 ($5.00)
+- 2026-11-18 follow_move_cheap: Will the price of Bitcoin be between $60,000 and $62,000 on November 22? -> Yes at 0.253 ($5.00)
 - 2026-11-18 weather_forecast: Will the lowest temperature in Houston be between 58-59°F on November 19? -> No at 0.691 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-18 coin_flip: Solana Up or Down - November 18, 9:45PM-10:00PM ET -> Down at 0.527 ($5.00)
+- 2026-11-18 coin_flip: Eintracht Frankfurt vs. TSG 1899 Hoffenheim: Eintracht Frankfurt O/U 2.5 -> Over at 0.334 ($5.00)
 
 ## Price gaps seen today
 
