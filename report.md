@@ -1,23 +1,23 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-18 01:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-18 02:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move_2 | 18 | 17/18 | +32.7% | +$29.40 | 1 | 94 | too early |
-| 2 | follow_move_big | 15 | 12/15 | +8.3% | +$6.22 | 2 | 57 | too early |
+| 1 | follow_move_2 | 18 | 17/18 | +32.7% | +$29.40 | 1 | 95 | too early |
+| 2 | follow_move_big | 15 | 12/15 | +8.3% | +$6.22 | 2 | 58 | too early |
 | 3 | follow_move | 429 | 274/429 | +4.4% | +$93.47 | 13 | 136 | too early |
-| 4 | sure_thing | 1949 | 1811/1949 | -0.5% | -$46.42 | 12 | 148 | too early |
-| 5 | safe_no_week | 736 | 677/736 | -4.0% | -$147.41 | 13 | 298 | too early |
-| 6 | sports_underdog | 1413 | 335/1413 | -12.1% | -$846.58 | 11 | 68 | too early |
+| 4 | sure_thing | 1952 | 1814/1952 | -0.4% | -$38.12 | 12 | 153 | too early |
+| 5 | safe_no_week | 736 | 677/736 | -4.0% | -$147.41 | 13 | 299 | too early |
+| 6 | sports_underdog | 1413 | 335/1413 | -12.1% | -$846.58 | 11 | 69 | too early |
 | 7 | fade_move | 470 | 142/470 | -14.5% | -$340.16 | 13 | 143 | too early |
-| 8 | weather_forecast | 539 | 273/539 | -20.1% | -$536.68 | 11 | 129 | too early |
+| 8 | weather_forecast | 539 | 273/539 | -20.1% | -$536.68 | 11 | 130 | too early |
 | 9 | follow_move_crypto | 7 | 6/7 | +24.7% | +$8.64 | 1 | 41 | too early |
 | 10 | follow_move_cheap | 3 | 1/3 | +11.8% | +$1.77 | 1 | 67 | too early |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 12 | coin_flip | 2115 | 1037/2115 | -5.6% | -$593.45 | 13 | 200 | yardstick |
+| 12 | coin_flip | 2121 | 1040/2121 | -5.6% | -$594.88 | 13 | 202 | yardstick |
 
 What each one does:
 
@@ -40,7 +40,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_2 | follow_move_big | follow_move | sure_thing | safe_no_week | sports_underdog | fade_move | weather_forecast | follow_move_crypto | follow_move_cheap | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-18 |  | +$1.35 | -$8.65 | -$3.17 | +$0.68 | +$19.63 | +$16.53 | -$16.11 |  |  |  | -$1.54 |
+| 2026-11-18 |  | +$1.35 | -$8.65 | +$5.13 | +$0.68 | +$19.63 | +$16.53 | -$16.11 |  |  |  | -$2.97 |
 | 2026-11-17 | +$29.40 | +$4.87 | -$26.56 | +$4.02 | -$6.81 | -$26.19 | -$62.15 | -$31.10 | +$8.64 | +$1.77 |  | -$62.47 |
 | 2026-11-16 |  |  | +$11.58 | -$6.40 | -$11.02 | +$21.94 | -$17.46 |  |  |  | +$0.08 | -$21.29 |
 | 2026-11-15 |  |  | +$17.97 | +$0.34 | -$26.64 |  | +$30.37 | -$0.94 |  |  |  | -$47.97 |
@@ -53,18 +53,18 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-18 follow_move_2: Will OpenAI have the second highest OpenRouter market share the week of November 16? -> Yes at 0.450 ($5.00)
-- 2026-11-18 follow_move_big: Will Gold (XAUUSD) hit (HIGH) $3,900 Week of November 16 2026? -> No at 0.669 ($5.00)
+- 2026-11-18 follow_move_2: Will Target say "Inflation" during earnings call? -> No at 0.855 ($5.00)
+- 2026-11-18 follow_move_big: Will there be ≤6 earthquakes of 5.5 or above magnitude worldwide? -> Yes at 0.482 ($5.00)
 - 2026-11-18 follow_move: Will OpenAI have the second highest OpenRouter market share the week of November 16? -> Yes at 0.450 ($5.00)
-- 2026-11-18 sure_thing: Canadiens vs. Devils: O/U 2.5 -> Over at 0.971 ($5.00)
-- 2026-11-18 safe_no_week: Will the Bank of Israel decrease the Bank of Israel Interest Rate by 25 bps at the November meeting? -> No at 0.951 ($5.00)
-- 2026-11-18 sports_underdog: Jazz vs. Clippers -> Jazz at 0.341 ($5.00)
+- 2026-11-18 sure_thing: Bruins vs. Red Wings: O/U 2.5 -> Over at 0.971 ($5.00)
+- 2026-11-18 safe_no_week: Will the White House call a full lid by 6:30 PM on November 20? -> No at 0.952 ($5.00)
+- 2026-11-18 sports_underdog: Kobe: Maximus Jones vs Liam Broady -> Maximus Jones at 0.280 ($5.00)
 - 2026-11-18 fade_move: Will OpenAI have the second highest OpenRouter market share the week of November 16? -> No at 0.610 ($5.00)
-- 2026-11-18 weather_forecast: Will the highest temperature in Miami be between 78-79°F on November 18? -> No at 0.529 ($5.00)
+- 2026-11-18 weather_forecast: Will the highest temperature in Ankara be 16°C on November 19? -> No at 0.652 ($5.00)
 - 2026-11-17 follow_move_crypto: Will the price of XRP be above $1.00 on November 18? -> Yes at 0.356 ($5.00)
 - 2026-11-18 follow_move_cheap: Will OpenAI have the second highest OpenRouter market share the week of November 16? -> Yes at 0.450 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-18 coin_flip: Mexico vs. Jamaica: Draw at halftime? -> No at 0.759 ($5.00)
+- 2026-11-18 coin_flip: Dogecoin Up or Down - November 18, 10:40AM-10:45AM ET -> Down at 0.527 ($5.00)
 
 ## Price gaps seen today
 
