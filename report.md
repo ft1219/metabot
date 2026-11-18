@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-18 11:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-18 12:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -9,15 +9,15 @@ Updated 2026-11-18 11:27 UTC. Each pretend trade is $5, bought at the real askin
 | 1 | follow_move_2 | 20 | 19/20 | +34.7% | +$34.73 | 2 | 102 | too early |
 | 2 | follow_move_big | 15 | 12/15 | +8.3% | +$6.22 | 2 | 68 | too early |
 | 3 | follow_move | 432 | 276/432 | +4.3% | +$91.84 | 13 | 137 | too early |
-| 4 | sure_thing | 2052 | 1904/2052 | -0.6% | -$57.17 | 12 | 139 | too early |
-| 5 | safe_no_week | 744 | 683/744 | -4.2% | -$155.81 | 13 | 348 | too early |
-| 6 | sports_underdog | 1480 | 352/1480 | -11.8% | -$866.29 | 11 | 24 | too early |
+| 4 | sure_thing | 2053 | 1905/2053 | -0.6% | -$56.47 | 12 | 144 | too early |
+| 5 | safe_no_week | 744 | 683/744 | -4.2% | -$155.81 | 13 | 350 | too early |
+| 6 | sports_underdog | 1481 | 353/1481 | -11.7% | -$863.24 | 11 | 24 | too early |
 | 7 | fade_move | 473 | 143/473 | -14.5% | -$342.06 | 13 | 144 | too early |
-| 8 | weather_forecast | 558 | 282/558 | -20.2% | -$556.47 | 11 | 163 | too early |
+| 8 | weather_forecast | 558 | 282/558 | -20.2% | -$556.47 | 11 | 164 | too early |
 | 9 | follow_move_crypto | 7 | 6/7 | +24.7% | +$8.64 | 1 | 42 | too early |
 | 10 | follow_move_cheap | 4 | 1/4 | -16.2% | -$3.23 | 2 | 74 | too early |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 12 | coin_flip | 2228 | 1096/2228 | -5.4% | -$600.27 | 13 | 207 | yardstick |
+| 12 | coin_flip | 2236 | 1100/2236 | -5.4% | -$602.17 | 13 | 207 | yardstick |
 
 What each one does:
 
@@ -40,7 +40,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_2 | follow_move_big | follow_move | sure_thing | safe_no_week | sports_underdog | fade_move | weather_forecast | follow_move_crypto | follow_move_cheap | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-18 | +$5.32 | +$1.35 | -$10.28 | -$13.92 | -$7.73 | -$0.08 | +$14.63 | -$35.90 |  | -$5.00 |  | -$8.37 |
+| 2026-11-18 | +$5.32 | +$1.35 | -$10.28 | -$13.22 | -$7.73 | +$2.98 | +$14.63 | -$35.90 |  | -$5.00 |  | -$10.27 |
 | 2026-11-17 | +$29.40 | +$4.87 | -$26.56 | +$4.02 | -$6.81 | -$26.19 | -$62.15 | -$31.10 | +$8.64 | +$1.77 |  | -$62.47 |
 | 2026-11-16 |  |  | +$11.58 | -$6.40 | -$11.02 | +$21.94 | -$17.46 |  |  |  | +$0.08 | -$21.29 |
 | 2026-11-15 |  |  | +$17.97 | +$0.34 | -$26.64 |  | +$30.37 | -$0.94 |  |  |  | -$47.97 |
@@ -56,15 +56,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 - 2026-11-18 follow_move_2: Walmart (WMT) Q3 US comp sales (ex-fuel) growth 2.5% to 4%? -> Yes at 0.855 ($5.00)
 - 2026-11-18 follow_move_big: Will Paul Cézanne's “Arlequin” sell for between $130m and $140m at auction? -> Yes at 0.671 ($5.00)
 - 2026-11-18 follow_move: Will XRP reach $1.10 November 16-22? -> Yes at 0.222 ($5.00)
-- 2026-11-18 sure_thing: Ethereum above 1,790 on November 18, 7AM ET? -> Yes at 0.972 ($5.00)
-- 2026-11-18 safe_no_week: Will the lowest temperature in Hong Kong be 16°C on November 19? -> No at 0.971 ($5.00)
-- 2026-11-18 sports_underdog: Helsinki: Andrea Guerrieri vs Toby Samuel -> Andrea Guerrieri at 0.331 ($5.00)
+- 2026-11-18 sure_thing: Ethereum above 1,810 on November 18, 8AM ET? -> No at 0.925 ($5.00)
+- 2026-11-18 safe_no_week: Will the lowest temperature in Paris be 8°C on November 20? -> No at 0.934 ($5.00)
+- 2026-11-18 sports_underdog: Counter-Strike: BakS eSports vs The Last Resort (BO3) - CCT Europe Group Stage -> The Last Resort at 0.156 ($5.00)
 - 2026-11-18 fade_move: Will Opendoor Technologies Inc. (OPEN) hit (HIGH) $1.25 Week of November 16 2026? -> No at 0.154 ($5.00)
-- 2026-11-18 weather_forecast: Will the highest temperature in Toronto be 14°C on November 20? -> Yes at 0.183 ($5.00)
+- 2026-11-18 weather_forecast: Will the highest temperature in Austin be between 72-73°F on November 20? -> Yes at 0.173 ($5.00)
 - 2026-11-18 follow_move_crypto: Will XRP reach $1.10 November 16-22? -> Yes at 0.222 ($5.00)
 - 2026-11-18 follow_move_cheap: Will Woodward (WWD) beat quarterly earnings? -> Yes at 0.412 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-18 coin_flip: Dogecoin Up or Down - November 18, 12:30PM-12:45PM ET -> Up at 0.527 ($5.00)
+- 2026-11-18 coin_flip: TOP Oss vs. Roda JC Kerkrade: O/U 3.5 -> Over at 0.382 ($5.00)
 
 ## Price gaps seen today
 
