@@ -1,23 +1,23 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-18 00:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-18 00:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move_2 | 18 | 17/18 | +32.7% | +$29.40 | 1 | 93 | too early |
-| 2 | follow_move_big | 15 | 12/15 | +8.3% | +$6.22 | 2 | 55 | too early |
-| 3 | follow_move | 429 | 274/429 | +4.4% | +$93.47 | 13 | 135 | too early |
-| 4 | sure_thing | 1940 | 1803/1940 | -0.5% | -$44.72 | 12 | 143 | too early |
-| 5 | safe_no_week | 735 | 676/735 | -4.0% | -$147.56 | 13 | 296 | too early |
-| 6 | sports_underdog | 1404 | 332/1404 | -12.3% | -$857.43 | 11 | 67 | too early |
-| 7 | fade_move | 470 | 142/470 | -14.5% | -$340.16 | 13 | 141 | too early |
-| 8 | weather_forecast | 537 | 272/537 | -20.2% | -$535.57 | 11 | 130 | too early |
+| 1 | follow_move_2 | 18 | 17/18 | +32.7% | +$29.40 | 1 | 94 | too early |
+| 2 | follow_move_big | 15 | 12/15 | +8.3% | +$6.22 | 2 | 56 | too early |
+| 3 | follow_move | 429 | 274/429 | +4.4% | +$93.47 | 13 | 136 | too early |
+| 4 | sure_thing | 1943 | 1805/1943 | -0.5% | -$49.12 | 12 | 148 | too early |
+| 5 | safe_no_week | 736 | 677/736 | -4.0% | -$147.41 | 13 | 296 | too early |
+| 6 | sports_underdog | 1411 | 335/1411 | -11.9% | -$836.58 | 11 | 68 | too early |
+| 7 | fade_move | 470 | 142/470 | -14.5% | -$340.16 | 13 | 143 | too early |
+| 8 | weather_forecast | 539 | 273/539 | -20.1% | -$536.68 | 11 | 128 | too early |
 | 9 | follow_move_crypto | 7 | 6/7 | +24.7% | +$8.64 | 1 | 41 | too early |
-| 10 | follow_move_cheap | 3 | 1/3 | +11.8% | +$1.77 | 1 | 66 | too early |
+| 10 | follow_move_cheap | 3 | 1/3 | +11.8% | +$1.77 | 1 | 67 | too early |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 12 | coin_flip | 2107 | 1033/2107 | -5.6% | -$591.55 | 13 | 192 | yardstick |
+| 12 | coin_flip | 2113 | 1036/2113 | -5.6% | -$592.93 | 13 | 194 | yardstick |
 
 What each one does:
 
@@ -40,7 +40,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_2 | follow_move_big | follow_move | sure_thing | safe_no_week | sports_underdog | fade_move | weather_forecast | follow_move_crypto | follow_move_cheap | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-18 |  | +$1.35 | -$8.65 | -$1.47 | +$0.52 | +$8.78 | +$16.53 | -$15.00 |  |  |  | +$0.36 |
+| 2026-11-18 |  | +$1.35 | -$8.65 | -$5.87 | +$0.68 | +$29.63 | +$16.53 | -$16.11 |  |  |  | -$1.02 |
 | 2026-11-17 | +$29.40 | +$4.87 | -$26.56 | +$4.02 | -$6.81 | -$26.19 | -$62.15 | -$31.10 | +$8.64 | +$1.77 |  | -$62.47 |
 | 2026-11-16 |  |  | +$11.58 | -$6.40 | -$11.02 | +$21.94 | -$17.46 |  |  |  | +$0.08 | -$21.29 |
 | 2026-11-15 |  |  | +$17.97 | +$0.34 | -$26.64 |  | +$30.37 | -$0.94 |  |  |  | -$47.97 |
@@ -53,18 +53,18 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-18 follow_move_2: Will Trump say "Nuclear" or "Nuke" during his trilateral meeting with Xi and Putin? -> No at 0.679 ($5.00)
-- 2026-11-17 follow_move_big: Will the price of Solana be above $75 on November 22? -> Yes at 0.537 ($5.00)
-- 2026-11-18 follow_move: Will Trump say "Nuclear" or "Nuke" during his trilateral meeting with Xi and Putin? -> No at 0.679 ($5.00)
-- 2026-11-18 sure_thing: Spread: Cruzeiro EC (-2.5) -> SE Palmeiras at 0.952 ($5.00)
-- 2026-11-18 safe_no_week: Will "Boston - Stella Lefty" be the Billboard Hot 100 #2 song for the week of November 28? -> Yes at 0.951 ($5.00)
-- 2026-11-18 sports_underdog: Pistons vs. Spurs -> Pistons at 0.229 ($5.00)
-- 2026-11-18 fade_move: Will Trump say "China" or "Russia" 15+ times during his trilateral meeting with Xi and Putin? -> Yes at 0.155 ($5.00)
+- 2026-11-18 follow_move_2: Will OpenAI have the second highest OpenRouter market share the week of November 16? -> Yes at 0.450 ($5.00)
+- 2026-11-18 follow_move_big: Will Trump say "Nuclear" or "Nuke" during his trilateral meeting with Xi and Putin? -> No at 0.689 ($5.00)
+- 2026-11-18 follow_move: Will OpenAI have the second highest OpenRouter market share the week of November 16? -> Yes at 0.450 ($5.00)
+- 2026-11-18 sure_thing: Bitcoin Up or Down - November 17, 7:45PM-7:50PM ET -> Up at 0.830 ($5.00)
+- 2026-11-18 safe_no_week: Will the highest temperature in Seattle be between 52-53°F on November 19? -> No at 0.933 ($5.00)
+- 2026-11-18 sports_underdog: Sydney: Dhakshineswar Suresh vs Hiroki Moriya -> Hiroki Moriya at 0.321 ($5.00)
+- 2026-11-18 fade_move: Will OpenAI have the second highest OpenRouter market share the week of November 16? -> No at 0.610 ($5.00)
 - 2026-11-18 weather_forecast: Will the lowest temperature in Shanghai be 7°C on November 19? -> No at 0.706 ($5.00)
 - 2026-11-17 follow_move_crypto: Will the price of XRP be above $1.00 on November 18? -> Yes at 0.356 ($5.00)
-- 2026-11-18 follow_move_cheap: Will Silver (XAGUSD) hit (LOW) $46 Week of November 16 2026? -> No at 0.490 ($5.00)
+- 2026-11-18 follow_move_cheap: Will OpenAI have the second highest OpenRouter market share the week of November 16? -> Yes at 0.450 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-18 coin_flip: Solana Up or Down - November 18, 3:45AM-4:00AM ET -> Up at 0.527 ($5.00)
+- 2026-11-18 coin_flip: ZCash Up or Down - November 18, 12:40AM-12:45AM ET -> Down at 0.527 ($5.00)
 
 ## Price gaps seen today
 
