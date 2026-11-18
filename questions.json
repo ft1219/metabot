@@ -1,0 +1,93 @@
+{
+ "46608": {
+  "status": "open",
+  "checked": "2026-11-18T03:21:33+00:00",
+  "scheduled": "2026-11-28T00:00:00+00:00",
+  "title": "Will at least one of the two Ir-192 sources stolen from the Rivers State radiography facility be publicly confirmed recovered by 28 November 2026?",
+  "type": "binary"
+ },
+ "46609": {
+  "status": "open",
+  "checked": "2026-11-18T03:21:33+00:00",
+  "scheduled": "2026-11-27T18:00:00+00:00",
+  "title": "How many confirmed U.S. measles cases for 2026 will CDC report in its November 27, 2026 update?",
+  "type": "numeric"
+ },
+ "46610": {
+  "status": "open",
+  "checked": "2026-11-18T03:21:33+00:00",
+  "scheduled": "2026-11-27T15:00:00+00:00",
+  "title": "Will the CBRT's November 2026 Financial Stability Report devote a dedicated box to the 2026 fund liquidations?",
+  "type": "binary"
+ },
+ "46611": {
+  "status": "open",
+  "checked": "2026-11-18T03:21:33+00:00",
+  "scheduled": "2026-11-27T18:00:00+00:00",
+  "title": "Will Ituri province report at least 10 more new confirmed Ebola cases than Nord-Kivu province for 26 November 2026?",
+  "type": "binary"
+ },
+ "46612": {
+  "status": "open",
+  "checked": "2026-11-18T03:21:33+00:00",
+  "scheduled": "2026-11-27T23:59:00+00:00",
+  "title": "Will Dan S. Sullivan publicly concede Alaska's 2026 U.S. Senate race by November 27, 2026?",
+  "type": "binary"
+ },
+ "46552": {
+  "status": "open",
+  "checked": "2026-11-18T03:21:33+00:00",
+  "scheduled": "2026-12-04T05:01:00+00:00",
+  "title": "Will Jensen Huang deliver the keynote at Nvidia GTC Washington, D.C. before December 4, 2026?",
+  "type": "binary"
+ },
+ "46613": {
+  "status": "open",
+  "checked": "2026-11-18T03:21:33+00:00",
+  "scheduled": "2026-11-27T20:00:00+00:00",
+  "title": "Which party's member will GPS name as its candidate for Sarawak's Bawang Assan seat before nomination day on 28 November 2026?",
+  "type": "multiple_choice"
+ },
+ "46614": {
+  "status": "open",
+  "checked": "2026-11-18T03:21:33+00:00",
+  "scheduled": "2026-11-27T18:30:00+00:00",
+  "title": "What will be the last date for filing claims and objections in Delhi's SIR, as of November 27, 2026?",
+  "type": "multiple_choice"
+ },
+ "46615": {
+  "status": "open",
+  "checked": "2026-11-18T03:21:33+00:00",
+  "scheduled": "2026-11-27T23:00:00+00:00",
+  "title": "On Black Friday (November 27, 2026), what will be the deepest percentage-off discount advertised on the childrensplace.com homepage?",
+  "type": "discrete"
+ },
+ "46616": {
+  "status": "open",
+  "checked": "2026-11-18T03:21:33+00:00",
+  "scheduled": "2026-11-27T23:59:00+00:00",
+  "title": "How many confirmed measles cases will Wisconsin DHS report for 2026 as of November 27, 2026?",
+  "type": "numeric"
+ },
+ "46479": {
+  "status": "open",
+  "checked": "2026-11-18T03:21:33+00:00",
+  "scheduled": "2026-12-31T00:00:00+00:00",
+  "title": "Which of these western US cities will have Tesla Robotaxi service on December 31, 2026?",
+  "type": "multiple_choice"
+ },
+ "46480": {
+  "status": "open",
+  "checked": "2026-11-18T03:21:33+00:00",
+  "scheduled": "2027-01-01T00:00:00+00:00",
+  "title": "How many mass shootings will the U.S. experience in December 2026?",
+  "type": "multiple_choice"
+ },
+ "46617": {
+  "status": "open",
+  "checked": "2026-11-18T03:21:33+00:00",
+  "scheduled": "2026-11-28T05:00:00+00:00",
+  "title": "What 2026 cumulative dengue case count will Colombia's INS report in the latest weekly epidemiological bulletin published on or before 27 November 2026?",
+  "type": "numeric"
+ }
+}

@@ -1,0 +1,167 @@
+{
+  "questions": 0,
+  "min_questions_for_a_verdict": 30,
+  "model": "openai/gpt-6-sol",
+  "predictions_per_setup": 3,
+  "note": "Covers only questions where both news sources worked, forecast again with openai/gpt-6-sol; questions that resolved soon after their forecast come first.",
+  "setups": {
+    "both": {
+      "mean": null,
+      "median": null,
+      "mean_brier_binary": null
+    },
+    "asknews": {
+      "mean": null,
+      "median": null,
+      "mean_brier_binary": null
+    },
+    "chatgpt": {
+      "mean": null,
+      "median": null,
+      "mean_brier_binary": null
+    },
+    "both_again": {
+      "mean": null,
+      "median": null,
+      "mean_brier_binary": null
+    }
+  },
+  "pairs": {
+    "asknews vs both": {
+      "n": 0,
+      "mean": null,
+      "median": null,
+      "a_better": 0,
+      "b_better": 0,
+      "sign_p": 1.0,
+      "verdict": "too few questions yet"
+    },
+    "chatgpt vs both": {
+      "n": 0,
+      "mean": null,
+      "median": null,
+      "a_better": 0,
+      "b_better": 0,
+      "sign_p": 1.0,
+      "verdict": "too few questions yet"
+    },
+    "asknews vs chatgpt": {
+      "n": 0,
+      "mean": null,
+      "median": null,
+      "a_better": 0,
+      "b_better": 0,
+      "sign_p": 1.0,
+      "verdict": "too few questions yet"
+    },
+    "both_again vs both": {
+      "n": 0,
+      "mean": null,
+      "median": null,
+      "a_better": 0,
+      "b_better": 0,
+      "sign_p": 1.0,
+      "verdict": "too few questions yet"
+    }
+  },
+  "by_type": {},
+  "news_sources_seen": {
+    "both": 13,
+    "asknews": 1,
+    "chatgpt": 0
+  },
+  "no_news_share": {
+    "asknews only": 0.0,
+    "chatgpt only": 0.07142857142857142
+  },
+  "failed_tries_by_setup": {
+    "both": 0,
+    "asknews": 0,
+    "chatgpt": 0,
+    "both_again": 0
+  },
+  "edited_after_forecast": 0,
+  "waiting": [
+    {
+      "post_id": 46610,
+      "title": "Will the CBRT's November 2026 Financial Stability Report devote a dedicated box to the 2026 fund liquidations?",
+      "type": "binary",
+      "scheduled": "2026-11-27T15:00:00+00:00"
+    },
+    {
+      "post_id": 46609,
+      "title": "How many confirmed U.S. measles cases for 2026 will CDC report in its November 27, 2026 update?",
+      "type": "numeric",
+      "scheduled": "2026-11-27T18:00:00+00:00"
+    },
+    {
+      "post_id": 46611,
+      "title": "Will Ituri province report at least 10 more new confirmed Ebola cases than Nord-Kivu province for 26 November 2026?",
+      "type": "binary",
+      "scheduled": "2026-11-27T18:00:00+00:00"
+    },
+    {
+      "post_id": 46614,
+      "title": "What will be the last date for filing claims and objections in Delhi's SIR, as of November 27, 2026?",
+      "type": "multiple_choice",
+      "scheduled": "2026-11-27T18:30:00+00:00"
+    },
+    {
+      "post_id": 46613,
+      "title": "Which party's member will GPS name as its candidate for Sarawak's Bawang Assan seat before nomination day on 28 November 2026?",
+      "type": "multiple_choice",
+      "scheduled": "2026-11-27T20:00:00+00:00"
+    },
+    {
+      "post_id": 46615,
+      "title": "On Black Friday (November 27, 2026), what will be the deepest percentage-off discount advertised on the childrensplace.com homepage?",
+      "type": "discrete",
+      "scheduled": "2026-11-27T23:00:00+00:00"
+    },
+    {
+      "post_id": 46612,
+      "title": "Will Dan S. Sullivan publicly concede Alaska's 2026 U.S. Senate race by November 27, 2026?",
+      "type": "binary",
+      "scheduled": "2026-11-27T23:59:00+00:00"
+    },
+    {
+      "post_id": 46616,
+      "title": "How many confirmed measles cases will Wisconsin DHS report for 2026 as of November 27, 2026?",
+      "type": "numeric",
+      "scheduled": "2026-11-27T23:59:00+00:00"
+    },
+    {
+      "post_id": 46608,
+      "title": "Will at least one of the two Ir-192 sources stolen from the Rivers State radiography facility be publicly confirmed recovered by 28 November 2026?",
+      "type": "binary",
+      "scheduled": "2026-11-28T00:00:00+00:00"
+    },
+    {
+      "post_id": 46617,
+      "title": "What 2026 cumulative dengue case count will Colombia's INS report in the latest weekly epidemiological bulletin published on or before 27 November 2026?",
+      "type": "numeric",
+      "scheduled": "2026-11-28T05:00:00+00:00"
+    },
+    {
+      "post_id": 46552,
+      "title": "Will Jensen Huang deliver the keynote at Nvidia GTC Washington, D.C. before December 4, 2026?",
+      "type": "binary",
+      "scheduled": "2026-12-04T05:01:00+00:00"
+    },
+    {
+      "post_id": 46479,
+      "title": "Which of these western US cities will have Tesla Robotaxi service on December 31, 2026?",
+      "type": "multiple_choice",
+      "scheduled": "2026-12-31T00:00:00+00:00"
+    },
+    {
+      "post_id": 46480,
+      "title": "How many mass shootings will the U.S. experience in December 2026?",
+      "type": "multiple_choice",
+      "scheduled": "2027-01-01T00:00:00+00:00"
+    }
+  ],
+  "updated": "2026-11-18T03:22:32+00:00",
+  "cost_this_run": "AI cost this run: $0.0000 over 0 call(s) (limit $10.00)",
+  "spent_in_total_usd": 0.0
+}
