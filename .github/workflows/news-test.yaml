@@ -1,0 +1,49 @@
+# Throwaway: news source test (see newstest/run.py). Runs on each push to the
+# news-test branch; results go to the news-test-data branch. Only resolved
+# questions are forecast, nothing is posted to Metaculus.
+name: News source test (throwaway)
+
+on:
+  push:
+    branches: [news-test]
+
+concurrency:
+  group: news-test
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: write  # for the news-test-data branch only
+      actions: read  # to read the bot's run logs
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        id: setup-python
+        with:
+          python-version: "3.11"
+      - name: Install poetry
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+          virtualenvs-in-project: true
+          installer-parallel: true
+      - name: Load cached dependencies
+        uses: actions/cache@v4
+        with:
+          path: metaculus-bot/.venv
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('metaculus-bot/poetry.lock') }}
+      - name: Install dependencies
+        working-directory: metaculus-bot
+        run: poetry install --no-interaction --no-root
+      - name: Run the test
+        run: bash newstest/run.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          METACULUS_TOKEN: ${{ secrets.METACULUS_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
