@@ -1,23 +1,23 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-18 10:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-18 10:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
 | 1 | follow_move_2 | 20 | 19/20 | +34.7% | +$34.73 | 2 | 101 | too early |
-| 2 | follow_move_big | 15 | 12/15 | +8.3% | +$6.22 | 2 | 67 | too early |
+| 2 | follow_move_big | 15 | 12/15 | +8.3% | +$6.22 | 2 | 68 | too early |
 | 3 | follow_move | 432 | 276/432 | +4.3% | +$91.84 | 13 | 137 | too early |
-| 4 | sure_thing | 2046 | 1898/2046 | -0.6% | -$59.71 | 12 | 134 | too early |
-| 5 | safe_no_week | 743 | 683/743 | -4.1% | -$150.81 | 13 | 337 | too early |
-| 6 | sports_underdog | 1480 | 352/1480 | -11.8% | -$866.29 | 11 | 18 | too early |
+| 4 | sure_thing | 2050 | 1902/2050 | -0.6% | -$57.92 | 12 | 135 | too early |
+| 5 | safe_no_week | 743 | 683/743 | -4.1% | -$150.81 | 13 | 345 | too early |
+| 6 | sports_underdog | 1480 | 352/1480 | -11.8% | -$866.29 | 11 | 23 | too early |
 | 7 | fade_move | 473 | 143/473 | -14.5% | -$342.06 | 13 | 144 | too early |
-| 8 | weather_forecast | 556 | 281/556 | -20.3% | -$558.96 | 11 | 154 | too early |
+| 8 | weather_forecast | 556 | 281/556 | -20.3% | -$558.96 | 11 | 159 | too early |
 | 9 | follow_move_crypto | 7 | 6/7 | +24.7% | +$8.64 | 1 | 42 | too early |
 | 10 | follow_move_cheap | 4 | 1/4 | -16.2% | -$3.23 | 2 | 74 | too early |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 12 | coin_flip | 2222 | 1092/2222 | -5.5% | -$608.19 | 13 | 197 | yardstick |
+| 12 | coin_flip | 2223 | 1093/2223 | -5.4% | -$603.71 | 13 | 204 | yardstick |
 
 What each one does:
 
@@ -40,7 +40,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_2 | follow_move_big | follow_move | sure_thing | safe_no_week | sports_underdog | fade_move | weather_forecast | follow_move_crypto | follow_move_cheap | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-18 | +$5.32 | +$1.35 | -$10.28 | -$16.46 | -$2.73 | -$0.08 | +$14.63 | -$38.38 |  | -$5.00 |  | -$16.28 |
+| 2026-11-18 | +$5.32 | +$1.35 | -$10.28 | -$14.67 | -$2.73 | -$0.08 | +$14.63 | -$38.38 |  | -$5.00 |  | -$11.80 |
 | 2026-11-17 | +$29.40 | +$4.87 | -$26.56 | +$4.02 | -$6.81 | -$26.19 | -$62.15 | -$31.10 | +$8.64 | +$1.77 |  | -$62.47 |
 | 2026-11-16 |  |  | +$11.58 | -$6.40 | -$11.02 | +$21.94 | -$17.46 |  |  |  | +$0.08 | -$21.29 |
 | 2026-11-15 |  |  | +$17.97 | +$0.34 | -$26.64 |  | +$30.37 | -$0.94 |  |  |  | -$47.97 |
@@ -54,17 +54,17 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 ## Latest pretend buys (newest of each strategy first)
 
 - 2026-11-18 follow_move_2: Will Woodward (WWD) beat quarterly earnings? -> Yes at 0.412 ($5.00)
-- 2026-11-18 follow_move_big: Will the price of XRP be above $1.00 on November 18? -> Yes at 0.597 ($5.00)
+- 2026-11-18 follow_move_big: Will Paul Cézanne's “Arlequin” sell for between $130m and $140m at auction? -> Yes at 0.671 ($5.00)
 - 2026-11-18 follow_move: Will XRP reach $1.10 November 16-22? -> Yes at 0.222 ($5.00)
-- 2026-11-18 sure_thing: Ethereum above 1,820 on November 18, 6AM ET? -> No at 0.925 ($5.00)
-- 2026-11-18 safe_no_week: Will the highest temperature in Lucknow be 29°C on November 20? -> No at 0.962 ($5.00)
-- 2026-11-18 sports_underdog: ATP World Tour Finals, Ivan Lendl Group: Carlos Alcaraz vs Daniil Medvedev -> Daniil Medvedev at 0.229 ($5.00)
+- 2026-11-18 sure_thing: Oakland Golden Grizzlies vs. Arizona State Sun Devils -> Arizona State Sun Devils at 0.969 ($5.00)
+- 2026-11-18 safe_no_week: Will the highest temperature in Houston be between 70-71°F on November 20? -> No at 0.952 ($5.00)
+- 2026-11-18 sports_underdog: Counter-Strike: 33 vs Spirit Academy (BO3) - NODWIN Clutch Series Group Stage -> Spirit Academy at 0.361 ($5.00)
 - 2026-11-18 fade_move: Will Opendoor Technologies Inc. (OPEN) hit (HIGH) $1.25 Week of November 16 2026? -> No at 0.154 ($5.00)
-- 2026-11-18 weather_forecast: Will the highest temperature in Dallas be between 74-75°F on November 20? -> No at 0.729 ($5.00)
+- 2026-11-18 weather_forecast: Will the highest temperature in Miami be between 82-83°F on November 20? -> No at 0.522 ($5.00)
 - 2026-11-18 follow_move_crypto: Will XRP reach $1.10 November 16-22? -> Yes at 0.222 ($5.00)
 - 2026-11-18 follow_move_cheap: Will Woodward (WWD) beat quarterly earnings? -> Yes at 0.412 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-18 coin_flip: Solana Up or Down - November 18, 10:45AM-10:50AM ET -> Down at 0.527 ($5.00)
+- 2026-11-18 coin_flip: Bulls vs. Nets: O/U 242.5 -> Under at 0.602 ($5.00)
 
 ## Price gaps seen today
 
