@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-19 11:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-19 12:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move | 474 | 298/474 | +2.3% | +$53.92 | 14 | 143 | FAIL |
+| 1 | follow_move | 474 | 298/474 | +2.3% | +$53.92 | 14 | 144 | FAIL |
 | 2 | follow_move_cheap | 20 | 8/20 | +1.3% | +$1.26 | 3 | 84 | too early |
-| 3 | sure_thing | 2299 | 2137/2299 | -0.4% | -$47.62 | 13 | 149 | FAIL |
-| 4 | follow_move_2 | 59 | 40/59 | -2.4% | -$7.00 | 3 | 120 | too early |
-| 5 | safe_no_week | 835 | 766/835 | -4.3% | -$177.79 | 14 | 337 | FAIL |
-| 6 | follow_move_big | 40 | 25/40 | -9.9% | -$19.85 | 3 | 83 | too early |
+| 3 | sure_thing | 2300 | 2138/2300 | -0.4% | -$46.73 | 13 | 156 | FAIL |
+| 4 | follow_move_2 | 59 | 40/59 | -2.4% | -$7.00 | 3 | 121 | too early |
+| 5 | safe_no_week | 835 | 766/835 | -4.3% | -$177.79 | 14 | 340 | FAIL |
+| 6 | follow_move_big | 40 | 25/40 | -9.9% | -$19.85 | 3 | 85 | too early |
 | 7 | follow_move_crypto | 20 | 13/20 | -10.1% | -$10.09 | 2 | 49 | too early |
-| 8 | sports_underdog | 1628 | 382/1628 | -13.5% | -$1088.34 | 12 | 51 | FAIL |
-| 9 | fade_move | 516 | 159/516 | -13.8% | -$355.78 | 14 | 150 | FAIL |
+| 8 | sports_underdog | 1628 | 382/1628 | -13.5% | -$1088.34 | 12 | 55 | FAIL |
+| 9 | fade_move | 516 | 159/516 | -13.8% | -$355.78 | 14 | 151 | FAIL |
 | 10 | weather_forecast | 615 | 310/615 | -20.3% | -$615.41 | 12 | 167 | FAIL |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
 | 12 | move_ai | 0 | - | - | +$0.00 | 0 | 1 | too early |
 | 13 | move_ai_clean | 0 | - | - | +$0.00 | 0 | 1 | too early |
-| 14 | coin_flip | 2462 | 1211/2462 | -5.4% | -$665.84 | 14 | 257 | yardstick |
+| 14 | coin_flip | 2467 | 1215/2467 | -5.3% | -$652.75 | 14 | 260 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move | follow_move_cheap | sure_thing | follow_move_2 | safe_no_week | follow_move_big | follow_move_crypto | sports_underdog | fade_move | weather_forecast | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-19 | -$9.52 | -$2.48 | -$6.04 | -$3.89 | -$11.53 | -$10.00 |  | -$178.17 | -$12.16 | -$34.27 |  | -$48.47 |
+| 2026-11-19 | -$9.52 | -$2.48 | -$5.15 | -$3.89 | -$11.53 | -$10.00 |  | -$178.17 | -$12.16 | -$34.27 |  | -$35.37 |
 | 2026-11-18 | -$38.68 | +$1.98 | +$1.67 | -$32.52 | -$18.18 | -$14.72 | -$18.73 | -$43.96 | +$13.07 | -$60.57 |  | -$25.46 |
 | 2026-11-17 | -$26.56 | +$1.77 | +$4.02 | +$29.40 | -$6.81 | +$4.87 | +$8.64 | -$26.19 | -$62.15 | -$31.10 |  | -$62.47 |
 | 2026-11-16 | +$11.58 |  | -$6.40 |  | -$11.02 |  |  | +$21.94 | -$17.46 |  | +$0.08 | -$21.29 |
@@ -57,15 +57,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-19 follow_move: Will "Black Doves: Season 2" be the #2 global Netflix show this week? -> No at 0.750 ($5.00)
+- 2026-11-19 follow_move: Will "Taken: Natalee Holloway: Season 1" be the #2 US Netflix show this week? -> No at 0.827 ($5.00)
 - 2026-11-19 follow_move_cheap: Will the White House call a full lid by 6:30 PM on November 21? -> No at 0.430 ($5.00)
-- 2026-11-19 sure_thing: Spread: IFK Norrkoping (-2.5) -> KuPS at 0.943 ($5.00)
-- 2026-11-19 follow_move_2: Will "Black Doves: Season 2" be the #2 global Netflix show this week? -> No at 0.750 ($5.00)
-- 2026-11-19 safe_no_week: Will the highest temperature in New York City be between 60-61°F on November 21? -> No at 0.933 ($5.00)
-- 2026-11-19 follow_move_big: XRP Up or Down on November 19? -> Up at 0.859 ($5.00)
+- 2026-11-19 sure_thing: Exact Score: Dewa United 0 - 0 Persita Tangerang? -> No at 0.952 ($5.00)
+- 2026-11-19 follow_move_2: Will "Taken: Natalee Holloway: Season 1" be the #2 US Netflix show this week? -> No at 0.827 ($5.00)
+- 2026-11-19 safe_no_week: Will the highest temperature in Austin be between 68-69°F on November 21? -> No at 0.962 ($5.00)
+- 2026-11-19 follow_move_big: Will "Taken: Natalee Holloway: Season 1" be the #2 US Netflix show this week? -> No at 0.827 ($5.00)
 - 2026-11-19 follow_move_crypto: XRP Up or Down on November 19? -> Up at 0.859 ($5.00)
-- 2026-11-19 sports_underdog: Spread: IFK Norrkoping (-1.5) -> IFK Norrkoping at 0.198 ($5.00)
-- 2026-11-19 fade_move: Will "Black Doves: Season 2" be the #2 global Netflix show this week? -> Yes at 0.300 ($5.00)
+- 2026-11-19 sports_underdog: M15 Orlando: Jacob Brumm vs Gavin Goode -> Jacob Brumm at 0.259 ($5.00)
+- 2026-11-19 fade_move: Will it rain in New Orleans, LA on November 19? -> Yes at 0.110 ($5.00)
 - 2026-11-19 weather_forecast: Will the highest temperature in Singapore be 31°C on November 21? -> No at 0.754 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
 - 2026-11-19 move_ai: Will NVIDIA (NVDA) finish week of November 16 above $145? -> No at 0.206 ($5.00)
