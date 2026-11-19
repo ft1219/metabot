@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-19 18:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-19 18:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move | 492 | 311/492 | +3.1% | +$77.27 | 14 | 154 | FAIL |
-| 2 | sure_thing | 2344 | 2177/2344 | -0.5% | -$56.41 | 13 | 175 | FAIL |
-| 3 | follow_move_2 | 78 | 52/78 | -2.4% | -$9.55 | 3 | 133 | too early |
+| 1 | follow_move | 492 | 311/492 | +3.1% | +$77.27 | 14 | 155 | FAIL |
+| 2 | sure_thing | 2345 | 2178/2345 | -0.5% | -$55.65 | 13 | 182 | FAIL |
+| 3 | follow_move_2 | 78 | 52/78 | -2.4% | -$9.55 | 3 | 134 | too early |
 | 4 | follow_move_big | 58 | 39/58 | -3.9% | -$11.18 | 3 | 92 | too early |
-| 5 | safe_no_week | 867 | 798/867 | -3.9% | -$170.65 | 14 | 328 | FAIL |
-| 6 | follow_move_cheap | 31 | 12/31 | -6.6% | -$10.17 | 3 | 81 | too early |
-| 7 | sports_underdog | 1665 | 390/1665 | -13.8% | -$1142.43 | 12 | 76 | FAIL |
-| 8 | fade_move | 535 | 162/535 | -15.0% | -$401.53 | 14 | 159 | FAIL |
-| 9 | follow_move_crypto | 32 | 19/32 | -16.5% | -$26.39 | 3 | 45 | too early |
+| 5 | safe_no_week | 867 | 798/867 | -3.9% | -$170.65 | 14 | 329 | FAIL |
+| 6 | follow_move_cheap | 31 | 12/31 | -6.6% | -$10.17 | 3 | 82 | too early |
+| 7 | sports_underdog | 1667 | 390/1667 | -13.9% | -$1152.43 | 12 | 74 | FAIL |
+| 8 | fade_move | 535 | 162/535 | -15.0% | -$401.53 | 14 | 160 | FAIL |
+| 9 | follow_move_crypto | 32 | 19/32 | -16.5% | -$26.39 | 3 | 46 | too early |
 | 10 | weather_forecast | 634 | 321/634 | -20.3% | -$633.46 | 12 | 162 | FAIL |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
 | 12 | move_ai | 0 | - | - | +$0.00 | 0 | 2 | too early |
 | 13 | move_ai_clean | 0 | - | - | +$0.00 | 0 | 1 | too early |
-| 14 | coin_flip | 2508 | 1237/2508 | -5.1% | -$642.00 | 14 | 291 | yardstick |
+| 14 | coin_flip | 2512 | 1239/2512 | -5.1% | -$643.04 | 14 | 295 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move | sure_thing | follow_move_2 | follow_move_big | safe_no_week | follow_move_cheap | sports_underdog | fade_move | follow_move_crypto | weather_forecast | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-19 | +$13.83 | -$14.83 | -$6.44 | -$1.32 | -$4.38 | -$13.92 | -$232.26 | -$57.91 | -$16.30 | -$52.31 |  | -$24.63 |
+| 2026-11-19 | +$13.83 | -$14.07 | -$6.44 | -$1.32 | -$4.38 | -$13.92 | -$242.26 | -$57.91 | -$16.30 | -$52.31 |  | -$25.67 |
 | 2026-11-18 | -$38.68 | +$1.67 | -$32.52 | -$14.72 | -$18.18 | +$1.98 | -$43.96 | +$13.07 | -$18.73 | -$60.57 |  | -$25.46 |
 | 2026-11-17 | -$26.56 | +$4.02 | +$29.40 | +$4.87 | -$6.81 | +$1.77 | -$26.19 | -$62.15 | +$8.64 | -$31.10 |  | -$62.47 |
 | 2026-11-16 | +$11.58 | -$6.40 |  |  | -$11.02 |  | +$21.94 | -$17.46 |  |  | +$0.08 | -$21.29 |
@@ -57,15 +57,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-19 follow_move: Will the price of XRP be above $1.00 on November 25? -> No at 0.666 ($5.00)
-- 2026-11-19 sure_thing: Will the price of Bitcoin be above $60,000 on November 20? -> Yes at 0.919 ($5.00)
-- 2026-11-19 follow_move_2: Will the price of Bitcoin be above $60,000 on November 25? -> Yes at 0.811 ($5.00)
+- 2026-11-19 follow_move: Ethereum Up or Down on November 20? -> Up at 0.627 ($5.00)
+- 2026-11-19 sure_thing: Spread: Al Gharafa SC (-2.5) -> Al Arabi Doha SC at 0.943 ($5.00)
+- 2026-11-19 follow_move_2: Ethereum Up or Down on November 20? -> Up at 0.627 ($5.00)
 - 2026-11-19 follow_move_big: Will the price of Bitcoin be above $60,000 on November 25? -> Yes at 0.811 ($5.00)
-- 2026-11-19 safe_no_week: Will the highest temperature in Houston be between 80-81°F on November 21? -> No at 0.952 ($5.00)
-- 2026-11-19 follow_move_cheap: Will UMich Consumer Sentiment be between 52.0 and 54.9 in November? -> Yes at 0.333 ($5.00)
+- 2026-11-19 safe_no_week: Will Microsoft (MSFT) close above $520 on November 20? -> No at 0.933 ($5.00)
+- 2026-11-19 follow_move_cheap: Will "The Body: Season 1" be the top global Netflix show this week? -> No at 0.382 ($5.00)
 - 2026-11-19 sports_underdog: Will Sport Lisboa e Benfica vs. AS Roma end in a draw? -> Yes at 0.249 ($5.00)
-- 2026-11-19 fade_move: Will the price of Bitcoin be between $58,000 and $60,000 on November 25? -> Yes at 0.151 ($5.00)
-- 2026-11-19 follow_move_crypto: Will the price of XRP be above $1.00 on November 25? -> No at 0.666 ($5.00)
+- 2026-11-19 fade_move: Ethereum Up or Down on November 20? -> Down at 0.417 ($5.00)
+- 2026-11-19 follow_move_crypto: Ethereum Up or Down on November 20? -> Up at 0.627 ($5.00)
 - 2026-11-19 weather_forecast: Will the lowest temperature in Houston be between 60-61°F on November 21? -> No at 0.720 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
 - 2026-11-19 move_ai: Will the price of Solana be between $70 and $80 on November 20? -> No at 0.106 ($5.00)
@@ -79,5 +79,5 @@ No checked market has a result yet (5 waiting). The AI's chances will be compare
 
 No near-gaps today.
 
-Runs in the last 24 hours: 37 (37 with a problem).
+Runs in the last 24 hours: 36 (36 with a problem).
 Latest problem: 42 position(s) still open more than 3 days after their market ended
