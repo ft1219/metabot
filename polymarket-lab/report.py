@@ -165,10 +165,10 @@ def ai_summary(data: Path, state: dict, now: float) -> dict:
             "rule_said_buy": sum(1 for r in checks if r.get("side") is not None),
             "bought": sum(1 for r in checks if r.get("bought")),
             "failed": sum(1 for r in checks if r.get("error")),
-            "off_subject": sum(1 for r in checks if r.get("off_subject")),
+            "wrong_question": sum(1 for r in checks if r.get("wrong_question")),
             "saw_odds": sum(1 for r in answered if r.get("saw_odds") is not False),
             "answered": len(answered),
-            "waiting": len(state.get("ai_watch") or []),
+            "waiting": sum(1 for w in state.get("ai_watch") or [] if (w.get("ai_version") or 1) >= S.AI_VERSION),
             "all": _brier(results), "clean": _brier([r for r in results if r.get("saw_odds") is False])}
 
 
@@ -284,8 +284,8 @@ def build(data: Path, now: float, state: dict | None = None, current: dict | Non
                   f"Since the start: {ai['checks']} checks (${ai['spent']:.2f} spent in all); on {ai['rule_said_buy']} the AI beat "
                   f"the price by 5c or more and {ai['bought']} were bought (the rest found no seller at that price); "
                   f"{ai['failed']} failed"
-                  + (f" ({ai['off_subject']} answered about something else, so nothing was bought on them)"
-                     if ai.get("off_subject") else "")
+                  + (f" ({ai['wrong_question']} answered another question, so nothing was bought on them)"
+                     if ai.get("wrong_question") else "")
                   + f". The AI saw betting odds while searching on {ai['saw_odds']} of the "
                   f"{ai['answered']} it answered."
                   + (f" {ai['left_out']} checks from the first version (19 Nov) are left out here and in the AI "
