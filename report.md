@@ -1,30 +1,30 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-19 10:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-19 11:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move_cheap | 19 | 8/19 | +6.6% | +$6.26 | 3 | 85 | too early |
-| 2 | follow_move | 473 | 298/473 | +2.5% | +$58.92 | 14 | 143 | FAIL |
-| 3 | sure_thing | 2298 | 2136/2298 | -0.4% | -$47.91 | 13 | 143 | FAIL |
-| 4 | follow_move_2 | 58 | 40/58 | -0.7% | -$2.00 | 3 | 120 | too early |
-| 5 | safe_no_week | 834 | 765/834 | -4.3% | -$178.10 | 14 | 337 | FAIL |
-| 6 | follow_move_big | 39 | 25/39 | -7.6% | -$14.85 | 3 | 84 | too early |
+| 1 | follow_move | 474 | 298/474 | +2.3% | +$53.92 | 14 | 143 | FAIL |
+| 2 | follow_move_cheap | 20 | 8/20 | +1.3% | +$1.26 | 3 | 84 | too early |
+| 3 | sure_thing | 2299 | 2137/2299 | -0.4% | -$47.62 | 13 | 149 | FAIL |
+| 4 | follow_move_2 | 59 | 40/59 | -2.4% | -$7.00 | 3 | 120 | too early |
+| 5 | safe_no_week | 835 | 766/835 | -4.3% | -$177.79 | 14 | 337 | FAIL |
+| 6 | follow_move_big | 40 | 25/40 | -9.9% | -$19.85 | 3 | 83 | too early |
 | 7 | follow_move_crypto | 20 | 13/20 | -10.1% | -$10.09 | 2 | 49 | too early |
-| 8 | sports_underdog | 1627 | 382/1627 | -13.4% | -$1083.34 | 12 | 45 | FAIL |
-| 9 | fade_move | 516 | 159/516 | -13.8% | -$355.78 | 14 | 149 | FAIL |
-| 10 | weather_forecast | 614 | 309/614 | -20.5% | -$620.00 | 12 | 168 | FAIL |
+| 8 | sports_underdog | 1628 | 382/1628 | -13.5% | -$1088.34 | 12 | 51 | FAIL |
+| 9 | fade_move | 516 | 159/516 | -13.8% | -$355.78 | 14 | 150 | FAIL |
+| 10 | weather_forecast | 615 | 310/615 | -20.3% | -$615.41 | 12 | 167 | FAIL |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
 | 12 | move_ai | 0 | - | - | +$0.00 | 0 | 1 | too early |
 | 13 | move_ai_clean | 0 | - | - | +$0.00 | 0 | 1 | too early |
-| 14 | coin_flip | 2458 | 1210/2458 | -5.3% | -$655.32 | 14 | 253 | yardstick |
+| 14 | coin_flip | 2462 | 1211/2462 | -5.4% | -$665.84 | 14 | 257 | yardstick |
 
 What each one does:
 
-- **follow_move_cheap**: follow_move, only when the side that went up costs 50c or less (from 17 Nov).
 - **follow_move**: After a traded 10c+ move in a day, buy the side that went up.
+- **follow_move_cheap**: follow_move, only when the side that went up costs 50c or less (from 17 Nov).
 - **sure_thing**: Buy the almost-sure side (90-97c) in the last 24 hours (sports and other markets).
 - **follow_move_2**: Same as follow_move, restarted on 17 Nov so it is judged on new trades only.
 - **safe_no_week**: Buy the almost-sure side (92-98.5c), 1-7 days before the end, no sports.
@@ -42,30 +42,30 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Profit by day (trades that finished that day)
 
-| Day | follow_move_cheap | follow_move | sure_thing | follow_move_2 | safe_no_week | follow_move_big | follow_move_crypto | sports_underdog | fade_move | weather_forecast | price_gap | coin_flip |
+| Day | follow_move | follow_move_cheap | sure_thing | follow_move_2 | safe_no_week | follow_move_big | follow_move_crypto | sports_underdog | fade_move | weather_forecast | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-19 | +$2.52 | -$4.52 | -$6.33 | +$1.11 | -$11.83 | -$5.00 |  | -$173.17 | -$12.16 | -$38.86 |  | -$37.95 |
-| 2026-11-18 | +$1.98 | -$38.68 | +$1.67 | -$32.52 | -$18.18 | -$14.72 | -$18.73 | -$43.96 | +$13.07 | -$60.57 |  | -$25.46 |
-| 2026-11-17 | +$1.77 | -$26.56 | +$4.02 | +$29.40 | -$6.81 | +$4.87 | +$8.64 | -$26.19 | -$62.15 | -$31.10 |  | -$62.47 |
-| 2026-11-16 |  | +$11.58 | -$6.40 |  | -$11.02 |  |  | +$21.94 | -$17.46 |  | +$0.08 | -$21.29 |
-| 2026-11-15 |  | +$17.97 | +$0.34 |  | -$26.64 |  |  |  | +$30.37 | -$0.94 |  | -$47.97 |
-| 2026-11-14 |  | -$7.86 |  |  | -$37.34 |  |  |  | +$18.94 | -$4.48 |  | -$13.50 |
-| 2026-11-13 |  | +$81.98 | -$14.31 |  | -$18.10 |  |  | +$3.98 | -$172.42 | -$35.87 |  | -$19.82 |
-| 2026-11-12 |  | +$5.13 | -$7.41 |  | -$2.81 |  |  | -$67.52 | +$145.43 | -$51.23 |  | -$60.24 |
-| 2026-11-11 |  | +$9.69 | +$59.21 |  | -$18.78 |  |  | -$173.41 | -$50.06 | -$77.92 |  | -$29.87 |
-| 2026-11-10 |  | +$55.84 | -$15.92 |  | -$2.64 |  |  | +$61.94 | +$1.13 | -$101.16 |  | -$214.60 |
+| 2026-11-19 | -$9.52 | -$2.48 | -$6.04 | -$3.89 | -$11.53 | -$10.00 |  | -$178.17 | -$12.16 | -$34.27 |  | -$48.47 |
+| 2026-11-18 | -$38.68 | +$1.98 | +$1.67 | -$32.52 | -$18.18 | -$14.72 | -$18.73 | -$43.96 | +$13.07 | -$60.57 |  | -$25.46 |
+| 2026-11-17 | -$26.56 | +$1.77 | +$4.02 | +$29.40 | -$6.81 | +$4.87 | +$8.64 | -$26.19 | -$62.15 | -$31.10 |  | -$62.47 |
+| 2026-11-16 | +$11.58 |  | -$6.40 |  | -$11.02 |  |  | +$21.94 | -$17.46 |  | +$0.08 | -$21.29 |
+| 2026-11-15 | +$17.97 |  | +$0.34 |  | -$26.64 |  |  |  | +$30.37 | -$0.94 |  | -$47.97 |
+| 2026-11-14 | -$7.86 |  |  |  | -$37.34 |  |  |  | +$18.94 | -$4.48 |  | -$13.50 |
+| 2026-11-13 | +$81.98 |  | -$14.31 |  | -$18.10 |  |  | +$3.98 | -$172.42 | -$35.87 |  | -$19.82 |
+| 2026-11-12 | +$5.13 |  | -$7.41 |  | -$2.81 |  |  | -$67.52 | +$145.43 | -$51.23 |  | -$60.24 |
+| 2026-11-11 | +$9.69 |  | +$59.21 |  | -$18.78 |  |  | -$173.41 | -$50.06 | -$77.92 |  | -$29.87 |
+| 2026-11-10 | +$55.84 |  | -$15.92 |  | -$2.64 |  |  | +$61.94 | +$1.13 | -$101.16 |  | -$214.60 |
 
 ## Latest pretend buys (newest of each strategy first)
 
+- 2026-11-19 follow_move: Will "Black Doves: Season 2" be the #2 global Netflix show this week? -> No at 0.750 ($5.00)
 - 2026-11-19 follow_move_cheap: Will the White House call a full lid by 6:30 PM on November 21? -> No at 0.430 ($5.00)
-- 2026-11-19 follow_move: XRP Up or Down on November 19? -> Up at 0.859 ($5.00)
-- 2026-11-19 sure_thing: Bitcoin above 64,000 on November 19, 6AM ET? -> No at 0.944 ($5.00)
-- 2026-11-19 follow_move_2: XRP Up or Down on November 19? -> Up at 0.859 ($5.00)
-- 2026-11-19 safe_no_week: Will the highest temperature in Chicago be between 64-65°F on November 21? -> No at 0.952 ($5.00)
+- 2026-11-19 sure_thing: Spread: IFK Norrkoping (-2.5) -> KuPS at 0.943 ($5.00)
+- 2026-11-19 follow_move_2: Will "Black Doves: Season 2" be the #2 global Netflix show this week? -> No at 0.750 ($5.00)
+- 2026-11-19 safe_no_week: Will the highest temperature in New York City be between 60-61°F on November 21? -> No at 0.933 ($5.00)
 - 2026-11-19 follow_move_big: XRP Up or Down on November 19? -> Up at 0.859 ($5.00)
 - 2026-11-19 follow_move_crypto: XRP Up or Down on November 19? -> Up at 0.859 ($5.00)
-- 2026-11-19 sports_underdog: ATP World Tour Finals, John McEnroe Group: Ben Shelton vs Rafael Jodar -> Rafael Jodar at 0.290 ($5.00)
-- 2026-11-19 fade_move: XRP Up or Down on November 19? -> Down at 0.222 ($5.00)
+- 2026-11-19 sports_underdog: Spread: IFK Norrkoping (-1.5) -> IFK Norrkoping at 0.198 ($5.00)
+- 2026-11-19 fade_move: Will "Black Doves: Season 2" be the #2 global Netflix show this week? -> Yes at 0.300 ($5.00)
 - 2026-11-19 weather_forecast: Will the highest temperature in Singapore be 31°C on November 21? -> No at 0.754 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
 - 2026-11-19 move_ai: Will NVIDIA (NVDA) finish week of November 16 above $145? -> No at 0.206 ($5.00)
