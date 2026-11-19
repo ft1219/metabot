@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-19 09:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-19 10:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move_cheap | 19 | 8/19 | +6.6% | +$6.26 | 3 | 84 | too early |
-| 2 | follow_move | 473 | 298/473 | +2.5% | +$58.92 | 14 | 142 | FAIL |
-| 3 | sure_thing | 2294 | 2133/2294 | -0.4% | -$43.44 | 13 | 131 | FAIL |
-| 4 | follow_move_2 | 58 | 40/58 | -0.7% | -$2.00 | 3 | 119 | too early |
-| 5 | safe_no_week | 834 | 765/834 | -4.3% | -$178.10 | 14 | 330 | FAIL |
-| 6 | follow_move_big | 39 | 25/39 | -7.6% | -$14.85 | 3 | 83 | too early |
-| 7 | follow_move_crypto | 20 | 13/20 | -10.1% | -$10.09 | 2 | 48 | too early |
-| 8 | sports_underdog | 1625 | 382/1625 | -13.3% | -$1073.34 | 12 | 32 | FAIL |
-| 9 | fade_move | 516 | 159/516 | -13.8% | -$355.78 | 14 | 148 | FAIL |
-| 10 | weather_forecast | 614 | 309/614 | -20.5% | -$620.00 | 12 | 163 | FAIL |
+| 1 | follow_move_cheap | 19 | 8/19 | +6.6% | +$6.26 | 3 | 85 | too early |
+| 2 | follow_move | 473 | 298/473 | +2.5% | +$58.92 | 14 | 143 | FAIL |
+| 3 | sure_thing | 2295 | 2134/2295 | -0.4% | -$43.25 | 13 | 138 | FAIL |
+| 4 | follow_move_2 | 58 | 40/58 | -0.7% | -$2.00 | 3 | 120 | too early |
+| 5 | safe_no_week | 834 | 765/834 | -4.3% | -$178.10 | 14 | 332 | FAIL |
+| 6 | follow_move_big | 39 | 25/39 | -7.6% | -$14.85 | 3 | 84 | too early |
+| 7 | follow_move_crypto | 20 | 13/20 | -10.1% | -$10.09 | 2 | 49 | too early |
+| 8 | sports_underdog | 1627 | 382/1627 | -13.4% | -$1083.34 | 12 | 38 | FAIL |
+| 9 | fade_move | 516 | 159/516 | -13.8% | -$355.78 | 14 | 149 | FAIL |
+| 10 | weather_forecast | 614 | 309/614 | -20.5% | -$620.00 | 12 | 166 | FAIL |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 12 | move_ai | 0 | - | - | +$0.00 | 0 | 0 | too early |
-| 13 | move_ai_clean | 0 | - | - | +$0.00 | 0 | 0 | too early |
-| 14 | coin_flip | 2448 | 1206/2448 | -5.3% | -$643.24 | 14 | 247 | yardstick |
+| 12 | move_ai | 0 | - | - | +$0.00 | 0 | 1 | too early |
+| 13 | move_ai_clean | 0 | - | - | +$0.00 | 0 | 1 | too early |
+| 14 | coin_flip | 2452 | 1208/2452 | -5.3% | -$644.28 | 14 | 251 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | follow_move_2 | safe_no_week | follow_move_big | follow_move_crypto | sports_underdog | fade_move | weather_forecast | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-19 | +$2.52 | -$4.52 | -$1.86 | +$1.11 | -$11.83 | -$5.00 |  | -$163.17 | -$12.16 | -$38.86 |  | -$25.87 |
+| 2026-11-19 | +$2.52 | -$4.52 | -$1.67 | +$1.11 | -$11.83 | -$5.00 |  | -$173.17 | -$12.16 | -$38.86 |  | -$26.91 |
 | 2026-11-18 | +$1.98 | -$38.68 | +$1.67 | -$32.52 | -$18.18 | -$14.72 | -$18.73 | -$43.96 | +$13.07 | -$60.57 |  | -$25.46 |
 | 2026-11-17 | +$1.77 | -$26.56 | +$4.02 | +$29.40 | -$6.81 | +$4.87 | +$8.64 | -$26.19 | -$62.15 | -$31.10 |  | -$62.47 |
 | 2026-11-16 |  | +$11.58 | -$6.40 |  | -$11.02 |  |  | +$21.94 | -$17.46 |  | +$0.08 | -$21.29 |
@@ -57,23 +57,23 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-19 follow_move_cheap: Will Atletico Mineiro win the 2026 Copa Sudamericana? -> Yes at 0.460 ($5.00)
-- 2026-11-19 follow_move: Will Atletico Mineiro win the 2026 Copa Sudamericana? -> Yes at 0.460 ($5.00)
-- 2026-11-19 sure_thing: Ethereum above 1,810 on November 19, 5AM ET? -> No at 0.963 ($5.00)
-- 2026-11-19 follow_move_2: Will Atletico Mineiro win the 2026 Copa Sudamericana? -> Yes at 0.460 ($5.00)
-- 2026-11-19 safe_no_week: Will the highest temperature in Qingdao be 5°C on November 21? -> No at 0.971 ($5.00)
-- 2026-11-19 follow_move_big: Will Elon Musk post 380-399 tweets from November 13 to November 20, 2026? -> Yes at 0.371 ($5.00)
-- 2026-11-19 follow_move_crypto: Will the price of XRP be between $0.90 and $1.00 on November 21? -> Yes at 0.611 ($5.00)
-- 2026-11-19 sports_underdog: Spread: PKR Svay Rieng (-1.5) -> PKR Svay Rieng at 0.259 ($5.00)
-- 2026-11-19 fade_move: Will Atletico Mineiro win the 2026 Copa Sudamericana? -> No at 0.613 ($5.00)
-- 2026-11-19 weather_forecast: Will the highest temperature in Busan be 8°C on November 21? -> No at 0.506 ($5.00)
+- 2026-11-19 follow_move_cheap: Will the White House call a full lid by 6:30 PM on November 21? -> No at 0.430 ($5.00)
+- 2026-11-19 follow_move: XRP Up or Down on November 19? -> Up at 0.859 ($5.00)
+- 2026-11-19 sure_thing: Spread: Shimizu S-Pulse (-1.5) -> Kashima Antlers at 0.967 ($5.00)
+- 2026-11-19 follow_move_2: XRP Up or Down on November 19? -> Up at 0.859 ($5.00)
+- 2026-11-19 safe_no_week: Will the highest temperature in Milan be 14°C on November 21? -> No at 0.971 ($5.00)
+- 2026-11-19 follow_move_big: XRP Up or Down on November 19? -> Up at 0.859 ($5.00)
+- 2026-11-19 follow_move_crypto: XRP Up or Down on November 19? -> Up at 0.859 ($5.00)
+- 2026-11-19 sports_underdog: M25 Bhubaneswar: Aryan Lakshmanan vs Dev Javia -> Aryan Lakshmanan at 0.156 ($5.00)
+- 2026-11-19 fade_move: XRP Up or Down on November 19? -> Down at 0.222 ($5.00)
+- 2026-11-19 weather_forecast: Will the lowest temperature in Miami be between 70-71°F on November 21? -> No at 0.562 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-19 coin_flip: Dogecoin Up or Down - November 19, 11:45AM-12:00PM ET -> Down at 0.527 ($5.00)
+- 2026-11-19 move_ai: Will NVIDIA (NVDA) finish week of November 16 above $145? -> No at 0.206 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
 
-Today: 4 checks, $0.36 of OpenAI credit (limit $1.00 a day). Since the start: 1 checks ($0.36 spent in all); on 0 the AI beat the price by 5c or more and 0 were bought (the rest found no seller at that price); 0 failed. The AI saw betting odds while searching on 0 of the 1 it answered. 3 checks from the first version (19 Nov) are left out here and in the AI strategies' results: a bug sent each of them another market's question.
-No checked market has a result yet (1 waiting). The AI's chances will be compared with the market prices on every checked market, bought or not.
+Today: 5 checks, $0.45 of OpenAI credit (limit $1.00 a day). Since the start: 2 checks ($0.45 spent in all); on 1 the AI beat the price by 5c or more and 1 were bought (the rest found no seller at that price); 0 failed. The AI saw betting odds while searching on 0 of the 2 it answered. 3 checks from the first version (19 Nov) are left out here and in the AI strategies' results: a bug sent each of them another market's question.
+No checked market has a result yet (2 waiting). The AI's chances will be compared with the market prices on every checked market, bought or not.
 
 ## Price gaps seen today
 
