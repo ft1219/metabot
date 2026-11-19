@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-19 02:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-19 03:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
 | 1 | follow_move | 472 | 297/472 | +2.4% | +$57.25 | 14 | 134 | FAIL |
-| 2 | sure_thing | 2182 | 2031/2182 | -0.3% | -$27.43 | 13 | 175 | FAIL |
+| 2 | sure_thing | 2194 | 2043/2194 | -0.2% | -$23.86 | 13 | 171 | FAIL |
 | 3 | follow_move_2 | 57 | 39/57 | -1.3% | -$3.67 | 3 | 108 | too early |
 | 4 | follow_move_cheap | 18 | 7/18 | -1.4% | -$1.25 | 3 | 80 | too early |
-| 5 | safe_no_week | 805 | 739/805 | -4.2% | -$169.22 | 14 | 320 | FAIL |
-| 6 | follow_move_big | 39 | 25/39 | -7.6% | -$14.85 | 3 | 73 | too early |
+| 5 | safe_no_week | 810 | 744/810 | -4.1% | -$168.04 | 14 | 317 | FAIL |
+| 6 | follow_move_big | 39 | 25/39 | -7.6% | -$14.85 | 3 | 74 | too early |
 | 7 | follow_move_crypto | 20 | 13/20 | -10.1% | -$10.09 | 2 | 44 | too early |
-| 8 | sports_underdog | 1552 | 368/1552 | -12.3% | -$946.57 | 12 | 80 | FAIL |
+| 8 | sports_underdog | 1562 | 368/1562 | -12.8% | -$995.19 | 12 | 72 | FAIL |
 | 9 | fade_move | 515 | 159/515 | -13.6% | -$350.78 | 14 | 144 | FAIL |
-| 10 | weather_forecast | 594 | 300/594 | -20.2% | -$590.94 | 12 | 147 | FAIL |
+| 10 | weather_forecast | 596 | 301/596 | -20.2% | -$593.91 | 12 | 145 | FAIL |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 12 | move_ai | 0 | - | - | +$0.00 | 0 | 1 | too early |
+| 12 | move_ai | 0 | - | - | +$0.00 | 0 | 2 | too early |
 | 13 | move_ai_clean | 0 | - | - | +$0.00 | 0 | 1 | too early |
-| 14 | coin_flip | 2375 | 1169/2375 | -5.4% | -$645.00 | 14 | 241 | yardstick |
+| 14 | coin_flip | 2386 | 1177/2386 | -5.2% | -$621.04 | 14 | 238 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move | sure_thing | follow_move_2 | follow_move_cheap | safe_no_week | follow_move_big | follow_move_crypto | sports_underdog | fade_move | weather_forecast | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-19 | -$6.19 | +$14.15 | -$0.56 | -$5.00 | -$2.96 | -$5.00 |  | -$36.40 | -$7.16 | -$9.80 |  | -$27.63 |
+| 2026-11-19 | -$6.19 | +$17.72 | -$0.56 | -$5.00 | -$1.78 | -$5.00 |  | -$85.02 | -$7.16 | -$12.76 |  | -$3.67 |
 | 2026-11-18 | -$38.68 | +$1.67 | -$32.52 | +$1.98 | -$18.18 | -$14.72 | -$18.73 | -$43.96 | +$13.07 | -$60.57 |  | -$25.46 |
 | 2026-11-17 | -$26.56 | +$4.02 | +$29.40 | +$1.77 | -$6.81 | +$4.87 | +$8.64 | -$26.19 | -$62.15 | -$31.10 |  | -$62.47 |
 | 2026-11-16 | +$11.58 | -$6.40 |  |  | -$11.02 |  |  | +$21.94 | -$17.46 |  | +$0.08 | -$21.29 |
@@ -58,22 +58,22 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 ## Latest pretend buys (newest of each strategy first)
 
 - 2026-11-19 follow_move: Will "Obsession" be the top US Netflix movie this week? -> Yes at 0.592 ($5.00)
-- 2026-11-19 sure_thing: Will MrBeast's next video get between 82 and 83 million views on day 5? -> No at 0.933 ($5.00)
+- 2026-11-19 sure_thing: Dogecoin Up or Down - November 18, 8:00PM-12:00AM ET -> Down at 0.906 ($5.00)
 - 2026-11-19 follow_move_2: Will "Obsession" be the top US Netflix movie this week? -> Yes at 0.592 ($5.00)
 - 2026-11-19 follow_move_cheap: Will Shadowrocket be #1 Paid App in the US Apple App Store on November 20? -> No at 0.166 ($5.00)
-- 2026-11-19 safe_no_week: Will "Heartland" be the top US Netflix movie this week? -> No at 0.971 ($5.00)
-- 2026-11-19 follow_move_big: Will Muse from Meta be #2 Free App in the US Apple App Store on November 20? -> Yes at 0.818 ($5.00)
+- 2026-11-19 safe_no_week: Will 28+ ships transit the Bab el-Mandeb Strait on any day week of November 16? -> Yes at 0.978 ($5.00)
+- 2026-11-19 follow_move_big: Will "Guarding Stars" be the top US Netflix movie this week? -> No at 0.856 ($5.00)
 - 2026-11-18 follow_move_crypto: Will the price of Bitcoin be between $60,000 and $62,000 on November 23? -> Yes at 0.242 ($5.00)
-- 2026-11-19 sports_underdog: M15 Kuala Lumpur: Geun Jun Kim vs Shaheed Alam -> Shaheed Alam at 0.266 ($5.00)
+- 2026-11-19 sports_underdog: Valorant: XJG vs FunPlus Phoenix (BO3) - China National Tournament Split Omega: Pro Division Group B -> XJG at 0.177 ($5.00)
 - 2026-11-19 fade_move: Will "Obsession" be the top US Netflix movie this week? -> No at 0.462 ($5.00)
 - 2026-11-19 weather_forecast: Will the lowest temperature in New York City be between 46-47°F on November 20? -> No at 0.845 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-19 move_ai: Will the price of Ethereum be above $1,800 on November 19? -> No at 0.744 ($5.00)
+- 2026-11-19 move_ai: Will Alphabet Inc. (GOOGL) hit (LOW) $275 Week of November 16 2026? -> No at 0.699 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
 
-Today: 1 checks, $0.08 of OpenAI credit (limit $1.00 a day). Since the start: 1 checks ($0.08); on 1 the AI beat the price by 5c or more and 1 were bought (the rest found no seller at that price); 0 failed. The AI saw betting odds while searching on 0 of the 1 it answered.
-No checked market has a result yet (1 waiting). The AI's chances will be compared with the market prices on every checked market, bought or not.
+Today: 2 checks, $0.17 of OpenAI credit (limit $1.00 a day). Since the start: 2 checks ($0.17); on 2 the AI beat the price by 5c or more and 2 were bought (the rest found no seller at that price); 0 failed. The AI saw betting odds while searching on 1 of the 2 it answered.
+No checked market has a result yet (2 waiting). The AI's chances will be compared with the market prices on every checked market, bought or not.
 
 ## Price gaps seen today
 
