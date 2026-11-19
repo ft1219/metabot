@@ -93,7 +93,7 @@ def test_ai_rules_keep_follow_moves_price_window_and_market_filters():
 def test_ai_strategies_start_on_their_own_date_and_wait_for_150_trades():
     for name in ("move_ai", "move_ai_clean"):
         cfg = S.STRATEGIES[name]
-        assert cfg["active"] and cfg["rule"] is None and cfg["since"] == "2026-11-18"
+        assert cfg["active"] and cfg["rule"] is None and cfg["since"] == "2026-11-19"
         assert cfg.get("judge", "bet") == "bet" and cfg["min_settled"] == S.AI_MIN_SETTLED == 150
     st = {"settled": 60, "wins": 60, "pnl": 100.0, "p_luck": 1e-9, "days": 12}
     assert report.judge("move_ai", st, 20) is None  # a perfect 60 trades is still too early

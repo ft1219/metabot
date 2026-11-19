@@ -264,11 +264,11 @@ STRATEGIES: dict[str, dict] = {
                         "plain": "follow_move, only after a 20c+ move in a day (from 17 Nov)"},
     "fade_move": {"rule": fade_move, "active": True, "since": "2026-11-05",
                   "plain": "After a traded 10c+ move in a day, buy the side that went down"},
-    "move_ai": {"rule": None, "active": True, "since": "2026-11-18", "min_settled": AI_MIN_SETTLED,
+    "move_ai": {"rule": None, "active": True, "since": "2026-11-19", "min_settled": AI_MIN_SETTLED,
                 "plain": "After a traded 10c+ move in a day, an AI model reads the news and gives its own chance "
                          "(it is not told the price); buy whichever side it rates at least 5c above the price "
                          "(a random sample of moves, about $1 of AI a day; judged at 150 finished trades)"},
-    "move_ai_clean": {"rule": None, "active": True, "since": "2026-11-18", "min_settled": AI_MIN_SETTLED,
+    "move_ai_clean": {"rule": None, "active": True, "since": "2026-11-19", "min_settled": AI_MIN_SETTLED,
                       "plain": "Same buys as move_ai, but only when the AI saw no betting or prediction-market odds "
                                "while searching, so the record is its own reading (judged at 150 finished trades)"},
     "weather_forecast": {"rule": None, "active": True, "since": "2026-11-05",
