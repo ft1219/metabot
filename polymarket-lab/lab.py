@@ -1,7 +1,8 @@
 """
 Polymarket strategy lab: one run.
 
-Pretend money only. Public data, no account, no keys, no orders.
+Pretend money only. Public data, no account, no orders. The only key is
+OpenAI's, for the AI check (ai_check.py).
 
 Each run (every 40 minutes, inside the "Bots - every 40 minutes" workflow):
 1. Settles pretend positions whose markets have resolved ($1 or $0 a share).
@@ -15,9 +16,13 @@ Each run (every 40 minutes, inside the "Bots - every 40 minutes" workflow):
    two weather-model ensembles give it, and buys where the forecast gives
    at least 10 cents more than the price, before the station's local day
    starts ("weather_forecast", see weather.py).
-6. Looks for multi-choice markets whose prices add up to less than $1
+6. On a few of the markets that moved 10c+ in a day, asks an AI model that
+   reads the news for its own chance, and buys where it beats the price
+   ("move_ai", "move_ai_clean", see ai_check.py; the only step that uses a
+   key, OPENAI_API_KEY, at most $1 of OpenAI credit a day).
+7. Looks for multi-choice markets whose prices add up to less than $1
    ("price_gap"), and fills those against the real books too.
-7. Rewrites report.md / summary.json.
+8. Rewrites report.md / summary.json.
 
 Data layout (the polymarket-lab-data branch):
 - state.json: open positions, which events each strategy already traded,
@@ -30,6 +35,8 @@ Data layout (the polymarket-lab-data branch):
 - weather/YYYY-MM-DD.jsonl: each forecast-versus-price disagreement found
 - forecasts/YYYY-MM-DD.jsonl: one full forecast-versus-price snapshot per
   temperature event per day, for checking calibration later
+- ai_checks/YYYY-MM-DD.jsonl: every AI check, bought or not (ai_check.py)
+- ai_results/YYYY-MM.jsonl: each AI-checked market's result, once decided
 """
 from __future__ import annotations
 
@@ -48,6 +55,7 @@ sys.path.insert(0, str(HERE))
 sys.path.append(str(HERE.parent / "polymarket-shadow"))
 import pmapi  # noqa: E402  (shared read-only API helpers)
 
+import ai_check  # noqa: E402
 import report  # noqa: E402
 import strategies as S  # noqa: E402
 import weather  # noqa: E402
@@ -514,6 +522,8 @@ def run(data: Path, now: float | None = None, fetch=pmapi.http_json, seed: int |
     sightings: list[dict] = []
     weather_notes: list[dict] = []
     weather_rows: list[dict] = []
+    ai_rows: list[dict] = []
+    ai_results: list[dict] = []
     views: list[dict] = []
     timing: dict[str, float] = {}
     crash: BaseException | None = None
@@ -526,6 +536,10 @@ def run(data: Path, now: float | None = None, fetch=pmapi.http_json, seed: int |
             settled = settle(state, now, fetch)
         except pmapi.ApiError as e:
             problems.append(f"settle: {e}")
+        try:
+            ai_results = ai_check.settle_checks(state, now, lambda ids: closed_markets(ids, fetch), final_prices)
+        except pmapi.ApiError as e:
+            problems.append(f"AI check results: {e}")
         lap("settle")
         stale = [p for p in state["positions"] if now - p.get("ends_at", now) > STALE_DAYS * 86400]
         if stale:
@@ -561,6 +575,11 @@ def run(data: Path, now: float | None = None, fetch=pmapi.http_json, seed: int |
             rng.shuffle(wp)
             picks["weather_forecast"] = wp[: S.MAX_NEW_PER_RUN]
         lap("weather")
+        ai_picks, ai_rows = ai_check.run_checks(views, events_by_id, state, now, rng, problems)
+        for name, cands in ai_picks.items():
+            if cands:
+                picks[name] = cands
+        lap("ai_check")
         wanted = {v["tokens"][i] for c in picks.values() for v, i, _, _ in c}
         books: dict = {}
         try:
@@ -572,6 +591,7 @@ def run(data: Path, now: float | None = None, fetch=pmapi.http_json, seed: int |
                 t = make_trade(name, v, i, cap, books.get(v["tokens"][i]), now, note)
                 if t:
                     new.append(t)
+        ai_check.mark_bought(ai_rows, new)
         lap("fill")
 
         if S.STRATEGIES["price_gap"]["active"]:
@@ -600,6 +620,9 @@ def run(data: Path, now: float | None = None, fetch=pmapi.http_json, seed: int |
     append_jsonl(data / "gaps" / f"{day}.jsonl", sightings)
     append_jsonl(data / "weather" / f"{day}.jsonl", [dict(w, at=int(now)) for w in weather_notes])
     append_jsonl(data / "forecasts" / f"{day}.jsonl", [dict(w, at=int(now)) for w in weather_rows])
+    append_jsonl(data / "ai_checks" / f"{day}.jsonl", ai_rows)
+    for month in sorted({_month(r["settled_at"]) for r in ai_results}):
+        append_jsonl(data / "ai_results" / f"{month}.jsonl", [r for r in ai_results if _month(r["settled_at"]) == month])
 
     run_row = {"at": int(now), "seconds": round(time.time() - t0, 1), "timing": timing, "markets": len(views),
                "new_trades": len(new), "settled": len(settled), "open": len(state["positions"]),

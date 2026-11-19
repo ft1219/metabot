@@ -167,6 +167,62 @@ def follow_move_big(m: dict, rng: random.Random):
     return follow_move(m, rng)
 
 
+# AI-checked jump strategies, added 2026-11-18 (ai_check.py does the asking).
+# The owner asked whether a "machine" could check each prediction and buy
+# only the side with the better chance. On a random sample of the markets
+# follow_move and fade_move react to, an AI model reads the latest news and
+# gives its own chance for the market's first outcome. It is not told the
+# price and is asked not to look up betting odds, but its web search can
+# still show it Polymarket's page or odds quoted elsewhere, so each check
+# records whether it saw any (ai_check.saw_odds).
+# move_ai buys whichever side the AI rates at least AI_MARGIN above that
+# side's asking price (both sides cannot qualify at once), paying at most the
+# AI's chance minus AI_MARGIN and never more than follow_move's 85 cents.
+# move_ai_clean makes the same buys, but only on checks where the AI saw no
+# betting or prediction-market odds, so its record is the AI's own reading.
+# The AI runs on about $1 a day, so these trade far less often than
+# follow_move; a verdict on 30 trades would be close to a coin toss, so they
+# are judged only at AI_MIN_SETTLED finished trades (fixed now, before any
+# results). The AI's chances are also compared with the market prices on
+# every checked market, bought or not (report.ai_summary).
+AI_MARGIN = 0.05
+AI_MIN_SETTLED = 150
+
+
+def ai_candidate(m: dict) -> bool:
+    """A market the AI may be asked about: a follow_move/fade_move move with a side priced 10-85c."""
+    if _moved(m) is None:
+        return False
+    return any(0.10 <= ask <= 0.85 for _, ask in _sides(m))
+
+
+def _ai_buy(m: dict, chance0: float):
+    """(side, price cap) for the side the AI rates at least AI_MARGIN above its ask, or None."""
+    if _moved(m) is None:
+        return None
+    for i, ask in _sides(m):
+        if not (0.10 <= ask <= 0.85):
+            continue
+        chance = chance0 if i == 0 else 1 - chance0
+        cap = round(min(0.85, chance - AI_MARGIN), 4)
+        if ask <= cap + 1e-9:
+            return i, cap
+    return None
+
+
+def move_ai(m: dict, chance0: float, saw_odds: bool):
+    """Buy the side the AI rates at least AI_MARGIN above its price."""
+    return _ai_buy(m, chance0)
+
+
+def move_ai_clean(m: dict, chance0: float, saw_odds: bool):
+    """move_ai, only when the AI saw no betting or prediction-market odds while searching."""
+    return None if saw_odds else _ai_buy(m, chance0)
+
+
+AI_RULES = {"move_ai": move_ai, "move_ai_clean": move_ai_clean}
+
+
 def coin_flip(m: dict, rng: random.Random):
     """
     Yardstick, not a strategy: a random side of a random market ending within
@@ -208,6 +264,13 @@ STRATEGIES: dict[str, dict] = {
                         "plain": "follow_move, only after a 20c+ move in a day (from 17 Nov)"},
     "fade_move": {"rule": fade_move, "active": True, "since": "2026-11-05",
                   "plain": "After a traded 10c+ move in a day, buy the side that went down"},
+    "move_ai": {"rule": None, "active": True, "since": "2026-11-19", "min_settled": AI_MIN_SETTLED,
+                "plain": "After a traded 10c+ move in a day, an AI model reads the news and gives its own chance "
+                         "(it is not told the price); buy whichever side it rates at least 5c above the price "
+                         "(a random sample of moves, about $1 of AI a day; judged at 150 finished trades)"},
+    "move_ai_clean": {"rule": None, "active": True, "since": "2026-11-19", "min_settled": AI_MIN_SETTLED,
+                      "plain": "Same buys as move_ai, but only when the AI saw no betting or prediction-market odds "
+                               "while searching, so the record is its own reading (judged at 150 finished trades)"},
     "weather_forecast": {"rule": None, "active": True, "since": "2026-11-05",
                          "plain": "Daily temperature markets, before the day starts: buy No on a range when "
                                   "82 weather-model runs give it 10c+ less chance than the market (or Yes when "
