@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-19 16:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-19 16:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
 | 1 | follow_move | 479 | 301/479 | +2.0% | +$48.62 | 14 | 162 | FAIL |
-| 2 | sure_thing | 2321 | 2155/2321 | -0.5% | -$59.04 | 13 | 176 | FAIL |
-| 3 | safe_no_week | 846 | 777/846 | -4.1% | -$174.84 | 14 | 337 | FAIL |
+| 2 | sure_thing | 2331 | 2165/2331 | -0.5% | -$55.97 | 13 | 174 | FAIL |
+| 3 | safe_no_week | 859 | 790/859 | -4.0% | -$171.93 | 14 | 332 | FAIL |
 | 4 | follow_move_2 | 65 | 43/65 | -4.4% | -$14.19 | 3 | 141 | too early |
 | 5 | follow_move_cheap | 25 | 9/25 | -9.2% | -$11.53 | 3 | 86 | too early |
 | 6 | follow_move_big | 45 | 28/45 | -9.4% | -$21.20 | 3 | 102 | too early |
 | 7 | follow_move_crypto | 20 | 13/20 | -10.1% | -$10.09 | 2 | 53 | too early |
-| 8 | sports_underdog | 1649 | 387/1649 | -13.5% | -$1106.31 | 12 | 71 | FAIL |
-| 9 | fade_move | 522 | 159/522 | -14.8% | -$385.78 | 14 | 165 | FAIL |
-| 10 | weather_forecast | 620 | 311/620 | -20.7% | -$631.70 | 12 | 175 | FAIL |
+| 8 | sports_underdog | 1654 | 389/1654 | -13.4% | -$1101.26 | 12 | 74 | FAIL |
+| 9 | fade_move | 522 | 159/522 | -14.8% | -$385.78 | 14 | 166 | FAIL |
+| 10 | weather_forecast | 634 | 321/634 | -20.3% | -$633.46 | 12 | 162 | FAIL |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
 | 12 | move_ai | 0 | - | - | +$0.00 | 0 | 1 | too early |
 | 13 | move_ai_clean | 0 | - | - | +$0.00 | 0 | 1 | too early |
-| 14 | coin_flip | 2492 | 1228/2492 | -5.3% | -$653.68 | 14 | 283 | yardstick |
+| 14 | coin_flip | 2497 | 1231/2497 | -5.2% | -$645.48 | 14 | 286 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move | sure_thing | safe_no_week | follow_move_2 | follow_move_cheap | follow_move_big | follow_move_crypto | sports_underdog | fade_move | weather_forecast | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-19 | -$14.82 | -$17.46 | -$8.57 | -$11.08 | -$15.28 | -$11.35 |  | -$196.14 | -$42.16 | -$50.56 |  | -$36.30 |
+| 2026-11-19 | -$14.82 | -$14.39 | -$5.66 | -$11.08 | -$15.28 | -$11.35 |  | -$191.09 | -$42.16 | -$52.31 |  | -$28.11 |
 | 2026-11-18 | -$38.68 | +$1.67 | -$18.18 | -$32.52 | +$1.98 | -$14.72 | -$18.73 | -$43.96 | +$13.07 | -$60.57 |  | -$25.46 |
 | 2026-11-17 | -$26.56 | +$4.02 | -$6.81 | +$29.40 | +$1.77 | +$4.87 | +$8.64 | -$26.19 | -$62.15 | -$31.10 |  | -$62.47 |
 | 2026-11-16 | +$11.58 | -$6.40 | -$11.02 |  |  |  |  | +$21.94 | -$17.46 |  | +$0.08 | -$21.29 |
@@ -58,15 +58,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 ## Latest pretend buys (newest of each strategy first)
 
 - 2026-11-19 follow_move: Silver (XAGUSD) Up or Down on November 19? -> Down at 0.659 ($5.00)
-- 2026-11-19 sure_thing: Stetson Hatters vs. UCF Knights (W) -> UCF Knights at 0.971 ($5.00)
-- 2026-11-19 safe_no_week: Will "The Cat in the Hat" 3rd Weekend Box Office be between 4m and 5m? -> No at 0.971 ($4.86)
+- 2026-11-19 sure_thing: Tarleton State Texans vs. USC Trojans: O/U 138.5 -> Over at 0.924 ($5.00)
+- 2026-11-19 safe_no_week: S&P 500 (SPY) closes above $750 on November 20? -> No at 0.971 ($5.00)
 - 2026-11-19 follow_move_2: Will the price of Solana be between $70 and $80 on November 22? -> Yes at 0.811 ($5.00)
 - 2026-11-19 follow_move_cheap: Will Airbnb, Inc. (ABNB) hit (LOW) $174 Week of November 16 2026? -> Yes at 0.441 ($5.00)
 - 2026-11-19 follow_move_big: Will Airbnb, Inc. (ABNB) hit (LOW) $176 Week of November 16 2026? -> Yes at 0.738 ($5.00)
 - 2026-11-19 follow_move_crypto: Will the price of Solana be between $70 and $80 on November 22? -> Yes at 0.811 ($5.00)
-- 2026-11-19 sports_underdog: NL: Lausanne vs. ZSC Lions -> Lausanne at 0.346 ($5.00)
-- 2026-11-19 fade_move: Will the price of Solana be between $70 and $80 on November 23? -> No at 0.345 ($5.00)
-- 2026-11-19 weather_forecast: Will the lowest temperature in Mexico City be 9°C on November 21? -> No at 0.827 ($5.00)
+- 2026-11-19 sports_underdog: Spread: CA Penarol Montevideo (-2.5) -> CA Penarol Montevideo at 0.208 ($5.00)
+- 2026-11-19 fade_move: Will the Bank of Israel decrease the Bank of Israel Interest Rate by 25 bps at the November meeting? -> No at 0.843 ($5.00)
+- 2026-11-19 weather_forecast: Will the lowest temperature in Houston be between 60-61°F on November 21? -> No at 0.720 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
 - 2026-11-19 move_ai: Will NVIDIA (NVDA) finish week of November 16 above $145? -> No at 0.206 ($5.00)
 
@@ -79,5 +79,5 @@ No checked market has a result yet (4 waiting). The AI's chances will be compare
 
 No near-gaps today.
 
-Runs in the last 24 hours: 36 (36 with a problem).
+Runs in the last 24 hours: 37 (37 with a problem).
 Latest problem: 42 position(s) still open more than 3 days after their market ended
