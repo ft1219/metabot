@@ -14,7 +14,7 @@ from .test_lab import NOW, gamma, serial
 
 LATE = NOW - NOW % 86400 + 20 * 3600  # late in the UTC day: most of the day's money is free
 # a market that rose 15c in a day: outcome 0 ("Yes") went up, Yes costs 60c, No costs 41c
-MOVED = dict(bid=0.59, ask=0.60, oneDayPriceChange=0.15)
+MOVED = dict(bid=0.59, ask=0.60, oneDayPriceChange=0.15, question="Will the price of Ethereum be above $1,800 on Friday?")
 
 
 def view(**kw):
@@ -24,12 +24,13 @@ def view(**kw):
 
 
 def answer(chance=0.7, searches=2, tin=12_000, tout=1_500, text=None, status="completed", url=None, said="false",
-           sources=("https://news.example.com/a",)):
+           sources=("https://news.example.com/a",), about="Ethereum price"):
     out = [{"type": "reasoning"}]
     out += [{"type": "web_search_call", "action": {"type": "search", "query": f"q{i}",
                                                    "sources": [{"type": "url", "url": u} for u in sources]}}
             for i in range(searches)]
-    msg = text if text is not None else f'The news says so.\n{{"chance": {chance}, "saw_odds": {said}, "why": "because"}}'
+    msg = text if text is not None else (f'The news says so.\n{{"about": "{about}", "chance": {chance}, '
+                                         f'"saw_odds": {said}, "why": "because"}}')
     out.append({"type": "message", "content": [{"type": "output_text", "text": msg,
                                                 "annotations": [{"type": "url_citation", "url": url}] if url else []}]})
     return {"status": status, "output": out, "usage": {"input_tokens": tin, "output_tokens": tout}}
@@ -104,14 +105,38 @@ def test_ai_strategies_start_on_their_own_date_and_wait_for_150_trades():
 # ---------------------------------------------------------------- answer, prompt, cost
 
 def test_parse_answer_takes_the_last_json_line():
-    assert ai_check.parse_answer('{"chance": 0.2}\nthen\n{"chance": 0.64, "saw_odds": false, "why": "x"}') == (
-        0.64, False, "x")
-    assert ai_check.parse_answer('{"chance": 64, "saw_odds": true, "why": "pct"}') == (0.64, True, "pct")
-    assert ai_check.parse_answer('{"chance": 1.0}') == (0.99, None, "")
-    assert ai_check.parse_answer('{"chance": 0, "saw_odds": "no"}') == (0.01, None, "")
+    assert ai_check.parse_answer('{"chance": 0.2}\nthen\n{"about": " ETH ", "chance": 0.64, "saw_odds": false, '
+                                 '"why": "x"}') == (0.64, False, "x", "ETH")
+    assert ai_check.parse_answer('{"chance": 64, "saw_odds": true, "why": "pct"}') == (0.64, True, "pct", "")
+    assert ai_check.parse_answer('{"chance": 1.0, "about": 7}') == (0.99, None, "", "")
+    assert ai_check.parse_answer('{"chance": 0, "saw_odds": "no"}') == (0.01, None, "", "")
     assert ai_check.parse_answer("I think about 60%.")[0] is None
     assert ai_check.parse_answer('{"chance": "high"}')[0] is None
     assert ai_check.parse_answer('{"chance": 250}')[0] is None
+
+
+def test_an_answer_about_something_else_is_caught():
+    v = view(question="Will the price of Ethereum be above $1,800 on November 19?")
+    v["event_title"] = "Ethereum above ___ on November 19?"
+    rules = "Resolves Yes if the Binance ETH/USDT 1 minute candle closes above the price in the title."
+    for about in ("Ethereum price", "ETH", "ETH/USDT on Binance", "ethereum's price", "the price"):
+        assert not ai_check.off_subject(about, v, rules), about
+    for about in ("XRP price", "XRP above $1", "Bitcoin", "", "  "):  # 19 Nov: an Ethereum question answered about XRP
+        assert ai_check.off_subject(about, v, rules), about
+    ships = view(question="Will 1700+ ships transit the Malacca Strait week of November 16?")
+    assert not ai_check.off_subject("Malacca Strait transits", ships, "")
+    assert not ai_check.off_subject("Strait of Malacca ship transits", ships, "")
+    assert ai_check.off_subject("Suez Canal transits", ships, "")  # one shared word is not enough
+    fed = view(question="Will the Fed cut interest rates in December?")
+    assert not ai_check.off_subject("Fed rate decision", fed, "")  # half the telling words is enough
+
+
+def test_the_record_keeps_what_was_searched_and_read():
+    r = answer(searches=2, sources=("https://www.reuters.com/a", "https://coindesk.com/b"), url="https://cnbc.com/c")
+    assert ai_check.searched(r) == (["q0", "q1"], ["cnbc.com", "coindesk.com", "www.reuters.com"])
+    r["output"][1]["action"] = {"type": "open_page", "url": "https://example.org/p"}
+    assert ai_check.searched(r)[1] == ["cnbc.com", "coindesk.com", "example.org", "www.reuters.com"]
+    assert ai_check.searched({"output": []}) == ([], [])
 
 
 def test_saw_odds_is_strict():
@@ -144,7 +169,8 @@ def test_prompt_never_shows_the_price_and_request_keeps_nothing():
         assert price not in prompt.replace(ai_check._stamp(NOW), "").replace(ai_check._stamp(v["ends_at"]), "")
     req = ai_check.request_for(prompt)
     assert req["store"] is False and "timeout" not in req and req["tools"][0]["type"] == "web_search"
-    assert req["include"] == ["web_search_call.action.sources"] and '"saw_odds"' in prompt
+    assert req["include"] == ["web_search_call.action.sources"] and '"saw_odds"' in prompt and '"about"' in prompt
+    assert prompt.count("Will X happen by Friday?") == 2  # asked again right before the answer
     assert req["max_tool_calls"] == ai_check.MAX_TOOL_CALLS and req["max_output_tokens"] == ai_check.MAX_OUTPUT_TOKENS
 
 
@@ -194,6 +220,21 @@ def test_run_checks_buys_where_the_ai_beats_the_price_and_records_every_check(op
     openai["replies"] = []
     _, rows2 = ai_check.run_checks(vs, {}, st, LATE + 3600, random.Random(2), [])
     assert rows2 and {r["event_id"] for r in rows2}.isdisjoint({r["event_id"] for r in rows})
+
+
+def test_nothing_is_bought_on_an_answer_about_something_else(openai):
+    openai["replies"] = [answer(0.95, about="XRP price"), answer(0.95, about="Ethereum")]
+    vs = [view(cid="0x1"), view(cid="0x2")]
+    st, problems = _state(), []
+    picks, rows = ai_check.run_checks(vs, {}, st, LATE, random.Random(1), problems)
+    bad, good = sorted(rows, key=lambda r: not r.get("off_subject"))
+    assert bad["off_subject"] and bad["side"] is None and "something else (XRP price)" in bad["error"]
+    assert bad["cost"] > 0 and bad["event_id"] in st["ai_checked"]  # billed, and not asked again
+    assert good["side"] == 0 and not good.get("off_subject") and good["about"] == "Ethereum"
+    assert [p[0]["conditionId"] for p in picks["move_ai"]] == [good["condition_id"]]
+    assert [w["condition_id"] for w in st["ai_watch"]] == [good["condition_id"]]  # only real answers are scored
+    assert "1 of 2 check(s) failed (answer about something else (XRP price))" in problems[0]
+    assert good["queries"] == ["q0", "q1"] and good["sites"] == ["news.example.com"]
 
 
 def test_a_check_that_does_not_say_whether_it_saw_odds_counts_as_seen(openai):
@@ -370,10 +411,12 @@ def test_ai_summary_compares_ai_and_market_errors(tmp_path):
     lab.append_jsonl(tmp_path / "ai_checks" / "2026-11-18.jsonl", [
         {"cost": 0.07, "chance0": 0.8, "side": 0, "bought": ["move_ai", "move_ai_clean"], "saw_odds": False},
         {"cost": 0.06, "chance0": 0.3, "side": 1, "bought": [], "saw_odds": True},
-        {"cost": 0.05, "side": None, "error": "x"}])
-    out = report.ai_summary(tmp_path, {"ai_budget": {"day": ai_check._day(NOW), "spent": 0.18, "checks": 3}}, NOW)
-    assert out["checks"] == 3 and out["rule_said_buy"] == 2 and out["bought"] == 1 and out["failed"] == 1
-    assert out["answered"] == 2 and out["saw_odds"] == 1 and out["spent_today"] == 0.18 and out["spent"] == 0.18
+        {"cost": 0.05, "side": None, "error": "x"},
+        {"cost": 0.08, "chance0": 0.2, "side": None, "error": "answer about something else (XRP)", "off_subject": True}])
+    out = report.ai_summary(tmp_path, {"ai_budget": {"day": ai_check._day(NOW), "spent": 0.26, "checks": 4}}, NOW)
+    assert out["checks"] == 4 and out["rule_said_buy"] == 2 and out["bought"] == 1 and out["failed"] == 2
+    assert out["off_subject"] == 1 and out["answered"] == 2 and out["saw_odds"] == 1
+    assert out["spent_today"] == 0.26 and out["spent"] == 0.26
     assert out["all"] == {"n": 2, "ai_error": pytest.approx((0.04 + 0.09) / 2),
                           "market_error": pytest.approx((0.16 + 0.25) / 2), "ai_closer": 2}
     assert out["clean"]["n"] == 1 and out["clean"]["ai_error"] == pytest.approx(0.04)

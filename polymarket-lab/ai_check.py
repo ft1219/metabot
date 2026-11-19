@@ -10,7 +10,11 @@ date, but not the price, and is asked not to look up betting odds. Its web
 search can still show it Polymarket's page, or odds quoted elsewhere, so
 every check records whether it did (saw_odds: the model's own answer, plus
 any prediction-market or betting site among the pages its search read,
-opened or cited). The rules in strategies.py then decide whether to buy.
+opened or cited). It also names, in a few words, what the question is
+about; an answer whose subject is not in the question, event or rules (the
+first live check on 19 Nov 2026 asked about Ethereum and was answered about
+XRP) is thrown out: its cost still counts, but nothing is bought on it.
+The rules in strategies.py then decide whether to buy.
 
 Cost. Paid from the owner's free OpenAI credit (OPENAI_API_KEY), at most
 DAILY_BUDGET_USD a UTC day. The day's money is let out evenly, so checks are
@@ -26,8 +30,10 @@ cents each (12 cents with the settings below), so about 7-8 checks a day.
 
 Records, on the polymarket-lab-data branch:
 - ai_checks/YYYY-MM-DD.jsonl: every check, bought or not, with the AI's
-  chance, whether it saw betting odds, the market's prices at that moment,
-  the cost and which AI strategies really bought (lab.py adds "bought");
+  chance, what it said the question is about, whether it saw betting odds,
+  what it searched for and which sites it read, the market's prices at
+  that moment, the cost and which AI strategies really bought (lab.py adds
+  "bought");
 - ai_results/YYYY-MM.jsonl: each checked market's result once it has one,
   so the AI's chances can be compared with the market's prices on every
   checked market, not only on the ones bought (report.ai_summary).
@@ -99,6 +105,20 @@ _ODDS_SEARCH = re.compile(r"betting odds|prediction market|bookmaker|implied pro
 _ODDS_TALK = re.compile(r"betting odds|bookmaker|implied probabilit", re.IGNORECASE)
 
 _JSON = re.compile(r"\{[^{}]*\}")
+# Words that say nothing about WHICH thing a question is about ("XRP price on
+# Binance" must not pass on an Ethereum question because both say "price").
+_GENERIC = frozenset("""
+    a an the of on in at by to for and or vs versus from with than over under above below between before after
+    will be is are was what who which whether how many much more less most least
+    price prices value close closing open high low hit reach reaches level rate total number count amount
+    market markets share shares stock stocks token coin coins crypto exchange binance candle usd usdt dollar
+    dollars cent cents percent yes no outcome result results resolution resolve forecast question event chance
+    end ends date day days daily week weeks weekly month months monthly year years time today tomorrow
+    january february march april may june july august september october november december
+    jan feb mar apr jun jul aug sep sept oct nov dec
+    monday tuesday wednesday thursday friday saturday sunday
+    """.split())
+QUERIES_KEPT, SITES_KEPT = 8, 25  # what a check searched for and read, kept in its record
 
 
 class Stop(RuntimeError):
@@ -181,10 +201,13 @@ estimate from the facts. (Data that the rules name as the resolution source is f
 much time is left and how such situations usually turn out, and do not be more certain than the evidence \
 allows.
 
+Remember that the question is: {v.get("question") or ""}
+
 End your answer with one line of JSON and nothing after it, like this:
-{{"chance": 0.37, "saw_odds": false, "why": "one short sentence"}}
-where "chance" is your probability (0 to 1) that the result is "{yes}", and "saw_odds" says whether you \
-saw any betting or prediction-market price or odds for this question."""
+{{"about": "what is being forecast, in 1-4 words", "chance": 0.37, "saw_odds": false, "why": "one short sentence"}}
+where "about" names the thing this question is about (a company, coin, person, place or count), "chance" \
+is your probability (0 to 1) that the result is "{yes}", and "saw_odds" says whether you saw any betting \
+or prediction-market price or odds for this question."""
 
 
 def request_for(prompt: str) -> dict:
@@ -265,6 +288,25 @@ def _host(url) -> str:
         return ""
 
 
+def searched(resp: dict) -> tuple[list[str], list[str]]:
+    """What the search looked for and the sites it read, opened or cited (kept in the record, to see what it was shown)."""
+    queries, hosts = [], set()
+    for item in resp.get("output") or []:
+        if item.get("type") == "web_search_call":
+            action = item.get("action") or {}
+            for q in [action.get("query"), *(action.get("queries") or [])]:
+                if isinstance(q, str) and q.strip() and q.strip()[:150] not in queries:
+                    queries.append(q.strip()[:150])
+            for url in [action.get("url")] + [s.get("url") for s in action.get("sources") or [] if isinstance(s, dict)]:
+                hosts.add(_host(url))
+        if item.get("type") == "message":
+            for c in item.get("content") or []:
+                for a in c.get("annotations") or []:
+                    hosts.add(_host(a.get("url")))
+    hosts.discard("")
+    return queries[:QUERIES_KEPT], sorted(hosts)[:SITES_KEPT]
+
+
 def odds_sites(resp: dict) -> list[str]:
     """
     Signs that the model may have seen betting odds: a prediction-market or
@@ -302,8 +344,11 @@ def odds_sites(resp: dict) -> list[str]:
     return sorted(found)
 
 
-def parse_answer(text: str) -> tuple[float | None, bool | None, str]:
-    """(chance, the model's own saw_odds, its "why") from the answer's last JSON line; chance None when there is none."""
+def parse_answer(text: str) -> tuple[float | None, bool | None, str, str]:
+    """
+    (chance, the model's own saw_odds, its "why", what it says the question
+    is about) from the answer's last JSON line; chance None when there is none.
+    """
     for found in reversed(_JSON.findall(text or "")):
         try:
             obj = json.loads(found)
@@ -320,11 +365,37 @@ def parse_answer(text: str) -> tuple[float | None, bool | None, str]:
         if not 0 <= p <= 1:
             continue
         said = obj.get("saw_odds")
-        return min(0.99, max(0.01, p)), (said if isinstance(said, bool) else None), str(obj.get("why") or "")[:300]
-    return None, None, ""
+        about = obj.get("about")
+        return (min(0.99, max(0.01, p)), (said if isinstance(said, bool) else None), str(obj.get("why") or "")[:300],
+                (about.strip()[:80] if isinstance(about, str) else ""))
+    return None, None, "", ""
 
 
-def check(v: dict, prompt: str, now: float) -> dict:
+def _words(text: str) -> set[str]:
+    """Lower-case words, a plural "s" dropped (so "transits" meets "transit")."""
+    return {w[:-1] if len(w) > 3 and w.endswith("s") else w for w in re.findall(r"[a-z0-9]+", (text or "").lower())}
+
+
+def off_subject(about: str, v: dict, rules: str) -> bool:
+    """
+    True when the answer is not about this market: it named no subject, or
+    fewer than half of the telling words of the subject it named (not
+    numbers, and not words like "price" or "above" that fit any market) are
+    in the question, event, outcomes and rules: "XRP price" on an Ethereum
+    question, "Suez Canal transits" on a Malacca Strait one. A subject of
+    only such general words cannot be checked and passes.
+    """
+    if not about.strip():
+        return True
+    telling = {w for w in _words(about) if len(w) >= 2 and not w.isdigit() and w not in _GENERIC}
+    if not telling:
+        return False
+    known = _words(" ".join([str(v.get("question") or ""), str(v.get("event_title") or ""),
+                             " ".join(str(o) for o in v.get("outcomes") or []), rules or ""]))
+    return 2 * len(telling & known) < len(telling)
+
+
+def check(v: dict, prompt: str, now: float, rules: str = "") -> dict:
     """One market's check: the AI's chance for outcome 0 and what it cost. Never raises but Stop."""
     t0 = time.time()
     row = {"model": MODEL}
@@ -340,18 +411,22 @@ def check(v: dict, prompt: str, now: float) -> dict:
         usage = resp.get("usage") or {}
         tin, tout = usage.get("input_tokens") or 0, usage.get("output_tokens") or 0
         calls = tool_calls(resp)
-        chance, said, why = parse_answer(answer_text(resp))
+        chance, said, why, about = parse_answer(answer_text(resp))
         sites = odds_sites(resp)
+        queries, hosts = searched(resp)
         row.update(input_tokens=tin, output_tokens=tout, searches=calls,
                    cost=round(token_cost(tin, tout) + calls * USD_PER_SEARCH, 4),
-                   chance0=chance, why=why, said_saw_odds=said, odds_sites=sites,
+                   chance0=chance, about=about, why=why, said_saw_odds=said, odds_sites=sites,
                    # strict: odds on any page it read, or it said so, or it did not say
-                   saw_odds=bool(sites) or said is not False)
+                   saw_odds=bool(sites) or said is not False, queries=queries, sites=hosts)
         if resp.get("status") not in (None, "completed"):
             reason = (resp.get("incomplete_details") or {}).get("reason") or resp.get("status")
             row["error"] = f"answer {reason}"[:120]
         elif chance is None:
             row["error"] = "no chance in the answer"
+        elif off_subject(about, v, rules):
+            row["off_subject"] = True  # billed, but nothing is bought on an answer about something else
+            row["error"] = f"answer about something else ({about or 'no subject given'})"[:120]
     row["seconds"] = round(time.time() - t0, 1)
     return row
 
@@ -391,23 +466,24 @@ def run_checks(views: list[dict], events_by_id: dict, state: dict, now: float, r
     room = allowance(now) - b["spent"]
     chosen = []
     for v in cands[:MAX_CHECKS_PER_RUN]:
-        prompt = prompt_for(v, rules_of(v, events_by_id), now)
+        rules = rules_of(v, events_by_id)
+        prompt = prompt_for(v, rules, now)
         most = most_a_check_can_cost(prompt)
         if most > room + 1e-9:
             break
         room -= most
-        chosen.append((v, prompt))
+        chosen.append((v, prompt, rules))
     if not chosen:
         return picks, []
     if not os.environ.get("OPENAI_API_KEY", "").strip():
         problems.append("AI check: no OPENAI_API_KEY, so move_ai and move_ai_clean made no checks")
         return picks, []
-    results = pmapi.parallel({str(i): (lambda v=v, p=prompt: check(v, p, now)) for i, (v, p) in enumerate(chosen)},
-                             workers=MAX_CHECKS_PER_RUN)
+    results = pmapi.parallel({str(i): (lambda v=v, p=prompt, r=rules: check(v, p, now, r))
+                              for i, (v, prompt, rules) in enumerate(chosen)}, workers=MAX_CHECKS_PER_RUN)
     rows: list[dict] = []
     stops = set()
     errors = []
-    for i, (v, prompt) in enumerate(chosen):
+    for i, (v, prompt, _rules) in enumerate(chosen):
         res = results.get(str(i))
         if isinstance(res, Stop):
             stops.add(str(res))
@@ -502,12 +578,13 @@ def main() -> None:
     random.Random(int(now)).shuffle(cands)
     total = 0.0
     for v in cands[: args.n]:
-        prompt = prompt_for(v, rules_of(v, events_by_id), now)
-        res = check(v, prompt, now)
+        rules = rules_of(v, events_by_id)
+        prompt = prompt_for(v, rules, now)
+        res = check(v, prompt, now, rules)
         total += res.get("cost", 0.0)
         sides = dict(S._sides(v))
         hits = ({name: rule(v, res["chance0"], res["saw_odds"]) for name, rule in S.AI_RULES.items()}
-                if res.get("chance0") is not None else {})
+                if res.get("chance0") is not None and not res.get("error") else {})
         print(json.dumps({"question": v.get("question"), "outcomes": v["outcomes"], "move": v["oneDayPriceChange"],
                           "ask0": sides.get(0), "ask1": sides.get(1), "most_cost": round(most_a_check_can_cost(prompt), 3),
                           **res, "would_buy": {k: h for k, h in hits.items() if h}}, indent=1))

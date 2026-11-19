@@ -162,6 +162,7 @@ def ai_summary(data: Path, state: dict, now: float) -> dict:
             "rule_said_buy": sum(1 for r in checks if r.get("side") is not None),
             "bought": sum(1 for r in checks if r.get("bought")),
             "failed": sum(1 for r in checks if r.get("error")),
+            "off_subject": sum(1 for r in checks if r.get("off_subject")),
             "saw_odds": sum(1 for r in answered if r.get("saw_odds") is not False),
             "answered": len(answered),
             "waiting": len(state.get("ai_watch") or []),
@@ -278,7 +279,10 @@ def build(data: Path, now: float, state: dict | None = None, current: dict | Non
                   f"Today: {ai['checks_today']} checks, ${ai['spent_today']:.2f} of OpenAI credit (limit $1.00 a day). "
                   f"Since the start: {ai['checks']} checks (${ai['spent']:.2f}); on {ai['rule_said_buy']} the AI beat "
                   f"the price by 5c or more and {ai['bought']} were bought (the rest found no seller at that price); "
-                  f"{ai['failed']} failed. The AI saw betting odds while searching on {ai['saw_odds']} of the "
+                  f"{ai['failed']} failed"
+                  + (f" ({ai['off_subject']} answered about something else, so nothing was bought on them)"
+                     if ai.get("off_subject") else "")
+                  + f". The AI saw betting odds while searching on {ai['saw_odds']} of the "
                   f"{ai['answered']} it answered."]
         for key, what in (("all", "all checked markets"), ("clean", "checks where it saw no betting odds")):
             br = ai[key]
