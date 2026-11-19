@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-19 05:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-19 06:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-19 05:27 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | follow_move_cheap | 19 | 8/19 | +6.6% | +$6.26 | 3 | 81 | too early |
 | 2 | follow_move | 472 | 297/472 | +2.4% | +$57.25 | 14 | 137 | FAIL |
-| 3 | sure_thing | 2257 | 2100/2257 | -0.3% | -$35.66 | 13 | 128 | FAIL |
+| 3 | sure_thing | 2270 | 2112/2270 | -0.3% | -$36.56 | 13 | 122 | FAIL |
 | 4 | follow_move_2 | 57 | 39/57 | -1.3% | -$3.67 | 3 | 112 | too early |
-| 5 | safe_no_week | 817 | 751/817 | -4.1% | -$166.31 | 14 | 316 | FAIL |
+| 5 | safe_no_week | 820 | 753/820 | -4.2% | -$171.16 | 14 | 318 | FAIL |
 | 6 | follow_move_big | 39 | 25/39 | -7.6% | -$14.85 | 3 | 76 | too early |
 | 7 | follow_move_crypto | 20 | 13/20 | -10.1% | -$10.09 | 2 | 46 | too early |
-| 8 | sports_underdog | 1600 | 375/1600 | -13.5% | -$1074.86 | 12 | 39 | FAIL |
+| 8 | sports_underdog | 1608 | 377/1608 | -13.4% | -$1070.94 | 12 | 37 | FAIL |
 | 9 | fade_move | 515 | 159/515 | -13.6% | -$350.78 | 14 | 146 | FAIL |
-| 10 | weather_forecast | 598 | 302/598 | -20.2% | -$595.19 | 12 | 148 | FAIL |
+| 10 | weather_forecast | 598 | 302/598 | -20.2% | -$595.19 | 12 | 155 | FAIL |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
 | 12 | move_ai | 0 | - | - | +$0.00 | 0 | 0 | too early |
 | 13 | move_ai_clean | 0 | - | - | +$0.00 | 0 | 0 | too early |
-| 14 | coin_flip | 2415 | 1190/2415 | -5.2% | -$631.04 | 14 | 233 | yardstick |
+| 14 | coin_flip | 2423 | 1192/2423 | -5.4% | -$652.09 | 14 | 233 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | follow_move_2 | safe_no_week | follow_move_big | follow_move_crypto | sports_underdog | fade_move | weather_forecast | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-19 | +$2.52 | -$6.19 | +$5.92 | -$0.56 | -$0.04 | -$5.00 |  | -$164.69 | -$7.16 | -$14.05 |  | -$13.67 |
+| 2026-11-19 | +$2.52 | -$6.19 | +$5.02 | -$0.56 | -$4.90 | -$5.00 |  | -$160.77 | -$7.16 | -$14.05 |  | -$34.71 |
 | 2026-11-18 | +$1.98 | -$38.68 | +$1.67 | -$32.52 | -$18.18 | -$14.72 | -$18.73 | -$43.96 | +$13.07 | -$60.57 |  | -$25.46 |
 | 2026-11-17 | +$1.77 | -$26.56 | +$4.02 | +$29.40 | -$6.81 | +$4.87 | +$8.64 | -$26.19 | -$62.15 | -$31.10 |  | -$62.47 |
 | 2026-11-16 |  | +$11.58 | -$6.40 |  | -$11.02 |  |  | +$21.94 | -$17.46 |  | +$0.08 | -$21.29 |
@@ -59,16 +59,16 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-19 follow_move_cheap: Will the price of Ethereum be between $1,800 and $1,900 on November 21? -> Yes at 0.407 ($5.00)
 - 2026-11-19 follow_move: Will the price of XRP be above $1.00 on November 21? -> No at 0.724 ($5.00)
-- 2026-11-19 sure_thing: Will Walmart say "Zipline" during earnings call? -> No at 0.913 ($5.00)
+- 2026-11-19 sure_thing: Ethereum Up or Down on November 19? -> Up at 0.897 ($5.00)
 - 2026-11-19 follow_move_2: Will the price of XRP be above $1.00 on November 21? -> No at 0.724 ($5.00)
-- 2026-11-19 safe_no_week: Will the highest temperature in Chengdu be 16°C on November 21? -> No at 0.943 ($5.00)
+- 2026-11-19 safe_no_week: Will the lowest temperature in Shanghai be 7°C on November 21? -> No at 0.968 ($5.00)
 - 2026-11-19 follow_move_big: Solana Up or Down on November 19? -> Up at 0.821 ($5.00)
 - 2026-11-19 follow_move_crypto: Will the price of XRP be above $1.00 on November 21? -> No at 0.724 ($5.00)
-- 2026-11-19 sports_underdog: W15 Alcala de Henares: Marta Soriano Santiago vs Esther Lopez Alcaraz -> Esther Lopez Alcaraz at 0.361 ($5.00)
+- 2026-11-19 sports_underdog: Counter-Strike: 33 vs ex-RUSTEC (BO3) - CCT Europe Playoffs -> ex-RUSTEC at 0.351 ($5.00)
 - 2026-11-19 fade_move: Will the price of XRP be above $1.00 on November 21? -> Yes at 0.354 ($5.00)
-- 2026-11-19 weather_forecast: Will the highest temperature in Munich be 8°C on November 21? -> No at 0.562 ($5.00)
+- 2026-11-19 weather_forecast: Will the highest temperature in Chengdu be 18°C on November 21? -> No at 0.572 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-19 coin_flip: Will CA Boca Juniors win on 2026-11-21? -> No at 0.572 ($5.00)
+- 2026-11-19 coin_flip: FC Barcelona vs. Servette FC Chênois Féminin: O/U 7.5 -> Over at 0.307 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
 
