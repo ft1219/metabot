@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-19 12:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-19 13:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move | 474 | 298/474 | +2.3% | +$53.92 | 14 | 145 | FAIL |
-| 2 | sure_thing | 2303 | 2141/2303 | -0.4% | -$45.92 | 13 | 159 | FAIL |
-| 3 | follow_move_2 | 59 | 40/59 | -2.4% | -$7.00 | 3 | 123 | too early |
-| 4 | follow_move_cheap | 21 | 8/21 | -3.6% | -$3.74 | 3 | 84 | too early |
-| 5 | safe_no_week | 836 | 767/836 | -4.2% | -$177.38 | 14 | 341 | FAIL |
-| 6 | follow_move_big | 40 | 25/40 | -9.9% | -$19.85 | 3 | 87 | too early |
-| 7 | follow_move_crypto | 20 | 13/20 | -10.1% | -$10.09 | 2 | 49 | too early |
-| 8 | sports_underdog | 1630 | 383/1630 | -13.4% | -$1084.10 | 12 | 60 | FAIL |
-| 9 | fade_move | 517 | 159/517 | -14.0% | -$360.78 | 14 | 150 | FAIL |
-| 10 | weather_forecast | 615 | 310/615 | -20.3% | -$615.41 | 12 | 168 | FAIL |
+| 1 | follow_move | 474 | 298/474 | +2.3% | +$53.92 | 14 | 153 | FAIL |
+| 2 | sure_thing | 2306 | 2143/2306 | -0.4% | -$50.27 | 13 | 164 | FAIL |
+| 3 | follow_move_2 | 59 | 40/59 | -2.4% | -$7.00 | 3 | 131 | too early |
+| 4 | follow_move_cheap | 21 | 8/21 | -3.6% | -$3.74 | 3 | 88 | too early |
+| 5 | safe_no_week | 837 | 768/837 | -4.2% | -$176.96 | 14 | 340 | FAIL |
+| 6 | follow_move_big | 40 | 25/40 | -9.9% | -$19.85 | 3 | 95 | too early |
+| 7 | follow_move_crypto | 20 | 13/20 | -10.1% | -$10.09 | 2 | 50 | too early |
+| 8 | sports_underdog | 1633 | 384/1633 | -13.3% | -$1075.84 | 12 | 63 | FAIL |
+| 9 | fade_move | 517 | 159/517 | -14.0% | -$360.78 | 14 | 158 | FAIL |
+| 10 | weather_forecast | 615 | 310/615 | -20.3% | -$615.41 | 12 | 171 | FAIL |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
 | 12 | move_ai | 0 | - | - | +$0.00 | 0 | 1 | too early |
 | 13 | move_ai_clean | 0 | - | - | +$0.00 | 0 | 1 | too early |
-| 14 | coin_flip | 2470 | 1218/2470 | -5.2% | -$639.13 | 14 | 265 | yardstick |
+| 14 | coin_flip | 2473 | 1220/2473 | -5.2% | -$634.99 | 14 | 270 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move | sure_thing | follow_move_2 | follow_move_cheap | safe_no_week | follow_move_big | follow_move_crypto | sports_underdog | fade_move | weather_forecast | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-19 | -$9.52 | -$4.34 | -$3.89 | -$7.48 | -$11.11 | -$10.00 |  | -$173.94 | -$17.16 | -$34.27 |  | -$21.76 |
+| 2026-11-19 | -$9.52 | -$8.69 | -$3.89 | -$7.48 | -$10.69 | -$10.00 |  | -$165.67 | -$17.16 | -$34.27 |  | -$17.61 |
 | 2026-11-18 | -$38.68 | +$1.67 | -$32.52 | +$1.98 | -$18.18 | -$14.72 | -$18.73 | -$43.96 | +$13.07 | -$60.57 |  | -$25.46 |
 | 2026-11-17 | -$26.56 | +$4.02 | +$29.40 | +$1.77 | -$6.81 | +$4.87 | +$8.64 | -$26.19 | -$62.15 | -$31.10 |  | -$62.47 |
 | 2026-11-16 | +$11.58 | -$6.40 |  |  | -$11.02 |  |  | +$21.94 | -$17.46 |  | +$0.08 | -$21.29 |
@@ -57,16 +57,16 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-19 follow_move: Will "The Body: Season 1" be the top global Netflix show this week? -> Yes at 0.856 ($5.00)
-- 2026-11-19 sure_thing: Exact Score: Western Sydney Wanderers FC 0 - 0 Adelaide United FC? -> No at 0.969 ($5.00)
-- 2026-11-19 follow_move_2: Will "The Body: Season 1" be the top global Netflix show this week? -> Yes at 0.856 ($5.00)
-- 2026-11-19 follow_move_cheap: Will Alexander Zverev win the 2026 Nitto ATP Finals? -> Yes at 0.402 ($5.00)
+- 2026-11-19 follow_move: Will NVIDIA (NVDA) close above $150 on November 19? -> Yes at 0.748 ($5.00)
+- 2026-11-19 sure_thing: Ethereum above 1,790 on November 19, 9AM ET? -> Yes at 0.972 ($5.00)
+- 2026-11-19 follow_move_2: Palantir (PLTR) Up or Down on November 19? -> Up at 0.816 ($5.00)
+- 2026-11-19 follow_move_cheap: Will Microsoft (MSFT) close above $520 on November 19? -> Yes at 0.410 ($5.00)
 - 2026-11-19 safe_no_week: Will the highest temperature in San Francisco be between 52-53°F on November 21? -> No at 0.980 ($5.00)
-- 2026-11-19 follow_move_big: Will "The Body: Season 1" be the top global Netflix show this week? -> Yes at 0.856 ($5.00)
-- 2026-11-19 follow_move_crypto: XRP Up or Down on November 19? -> Up at 0.859 ($5.00)
-- 2026-11-19 sports_underdog: W50 Funchal: Maria Martinez Vaquero vs Charo Esquiva Banuls -> Maria Martinez Vaquero at 0.229 ($5.00)
-- 2026-11-19 fade_move: Will it rain in New Orleans, LA on November 19? -> Yes at 0.110 ($5.00)
-- 2026-11-19 weather_forecast: Will the highest temperature in Jeddah be 35°C on November 21? -> No at 0.660 ($5.00)
+- 2026-11-19 follow_move_big: Rocket Lab (RKLB) Up or Down on November 19? -> Up at 0.816 ($5.00)
+- 2026-11-19 follow_move_crypto: Will the price of Solana be between $70 and $80 on November 24? -> Yes at 0.676 ($5.00)
+- 2026-11-19 sports_underdog: Colina: Valeriya Strakhova vs Veronika Erjavec -> Valeriya Strakhova at 0.239 ($5.00)
+- 2026-11-19 fade_move: Rocket Lab (RKLB) Up or Down on November 19? -> Down at 0.237 ($5.00)
+- 2026-11-19 weather_forecast: Will the highest temperature in Toronto be 16°C on November 21? -> No at 0.808 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
 - 2026-11-19 move_ai: Will NVIDIA (NVDA) finish week of November 16 above $145? -> No at 0.206 ($5.00)
 
@@ -79,5 +79,5 @@ No checked market has a result yet (3 waiting). The AI's chances will be compare
 
 No near-gaps today.
 
-Runs in the last 24 hours: 36 (36 with a problem).
+Runs in the last 24 hours: 37 (37 with a problem).
 Latest problem: 42 position(s) still open more than 3 days after their market ended
