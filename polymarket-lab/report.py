@@ -149,29 +149,34 @@ def ai_summary(data: Path, state: dict, now: float) -> dict:
     given for all such markets, and separately for the checks where the AI
     saw no betting odds ("clean"), which is the fair test of its own reading.
     """
-    checks = read_jsonl(data / "ai_checks")
+    every = read_jsonl(data / "ai_checks")
+    checks = [r for r in every if (r.get("ai_version") or 1) >= S.AI_VERSION]  # see strategies.AI_VERSION
     results = [r for r in read_jsonl(data / "ai_results")
                if r.get("result0") in (0, 1, 0.0, 1.0) and r.get("chance0") is not None
-               and r.get("bid0") is not None and r.get("ask0") is not None]
+               and r.get("bid0") is not None and r.get("ask0") is not None
+               and (r.get("ai_version") or 1) >= S.AI_VERSION]
     today = _day(now)
     b = state.get("ai_budget") or {}
     answered = [r for r in checks if r.get("chance0") is not None and not r.get("error")]
-    return {"checks": len(checks), "spent": round(sum(r.get("cost") or 0 for r in checks), 2),
+    return {"checks": len(checks), "spent": round(sum(r.get("cost") or 0 for r in every), 2),
+            "left_out": len(every) - len(checks),
             "checks_today": b.get("checks", 0) if b.get("day") == today else 0,
             "spent_today": round(b.get("spent", 0.0), 2) if b.get("day") == today else 0.0,
             "rule_said_buy": sum(1 for r in checks if r.get("side") is not None),
             "bought": sum(1 for r in checks if r.get("bought")),
             "failed": sum(1 for r in checks if r.get("error")),
+            "wrong_question": sum(1 for r in checks if r.get("wrong_question")),
             "saw_odds": sum(1 for r in answered if r.get("saw_odds") is not False),
             "answered": len(answered),
-            "waiting": len(state.get("ai_watch") or []),
+            "waiting": sum(1 for w in state.get("ai_watch") or [] if (w.get("ai_version") or 1) >= S.AI_VERSION),
             "all": _brier(results), "clean": _brier([r for r in results if r.get("saw_odds") is False])}
 
 
 def build(data: Path, now: float, state: dict | None = None, current: dict | None = None) -> tuple[str, dict]:
     """report.md text and summary.json data. `current` is the running run's row, not yet in runs.jsonl."""
-    trades = read_jsonl(data / "trades")
-    settled = read_jsonl(data / "settled")
+    # the AI strategies' trades made on first-version checks are kept on file but left out (strategies.AI_VERSION)
+    trades = [t for t in read_jsonl(data / "trades") if S.counted(t["strategy"], t)]
+    settled = [r for r in read_jsonl(data / "settled") if S.counted(r["strategy"], r)]
     runs = read_jsonl(data / "runs.jsonl") + ([current] if current else [])
     if state is None:
         state = json.loads((data / "state.json").read_text()) if (data / "state.json").exists() else {}
@@ -186,7 +191,7 @@ def build(data: Path, now: float, state: dict | None = None, current: dict | Non
         since = dt.datetime.fromisoformat(cfg["since"]).replace(tzinfo=dt.timezone.utc).timestamp()
         days_running = max(0.0, (now - since) / 86400)
         opened = [t for t in trades if t["strategy"] == name]
-        still_open = [p for p in state["positions"] if p["strategy"] == name]
+        still_open = [p for p in state["positions"] if p["strategy"] == name and S.counted(name, p)]
         if name not in verdicts:
             j = judge(name, st, days_running, len(opened))
             if j in ("PASS", "FAIL"):  # only a real judgment is kept; "nothing to judge" is looked at again each run
@@ -276,10 +281,16 @@ def build(data: Path, now: float, state: dict | None = None, current: dict | Non
     if ai["checks"] or any(S.STRATEGIES.get(n, {}).get("active") for n in S.AI_RULES):
         lines += ["", "## AI check (move_ai, move_ai_clean)", "",
                   f"Today: {ai['checks_today']} checks, ${ai['spent_today']:.2f} of OpenAI credit (limit $1.00 a day). "
-                  f"Since the start: {ai['checks']} checks (${ai['spent']:.2f}); on {ai['rule_said_buy']} the AI beat "
+                  f"Since the start: {ai['checks']} checks (${ai['spent']:.2f} spent in all); on {ai['rule_said_buy']} the AI beat "
                   f"the price by 5c or more and {ai['bought']} were bought (the rest found no seller at that price); "
-                  f"{ai['failed']} failed. The AI saw betting odds while searching on {ai['saw_odds']} of the "
-                  f"{ai['answered']} it answered."]
+                  f"{ai['failed']} failed"
+                  + (f" ({ai['wrong_question']} answered another question, so nothing was bought on them)"
+                     if ai.get("wrong_question") else "")
+                  + f". The AI saw betting odds while searching on {ai['saw_odds']} of the "
+                  f"{ai['answered']} it answered."
+                  + (f" {ai['left_out']} checks from the first version (19 Nov) are left out here and in the AI "
+                     "strategies' results: a bug sent each of them another market's question."
+                     if ai.get("left_out") else "")]
         for key, what in (("all", "all checked markets"), ("clean", "checks where it saw no betting odds")):
             br = ai[key]
             if br["n"]:

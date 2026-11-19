@@ -12,6 +12,14 @@ every check records whether it did (saw_odds: the model's own answer, plus
 any prediction-market or betting site among the pages its search read,
 opened or cited). The rules in strategies.py then decide whether to buy.
 
+The first version (19 Nov 2026) sent each check the question of another
+market, the last one run_checks had looked at: an Ethereum market was
+answered about XRP. Those checks and their trades are left out of every
+result (strategies.AI_VERSION). As a second guard, each answer now copies
+back the question it was asked, and an answer whose copy does not match the
+market's own question (wrong_question) is thrown out: its cost still counts,
+but nothing is bought on it and it is not scored.
+
 Cost. Paid from the owner's free OpenAI credit (OPENAI_API_KEY), at most
 DAILY_BUDGET_USD a UTC day. The day's money is let out evenly, so checks are
 spread over the day rather than all made after midnight: by a given time the
@@ -26,8 +34,10 @@ cents each (12 cents with the settings below), so about 7-8 checks a day.
 
 Records, on the polymarket-lab-data branch:
 - ai_checks/YYYY-MM-DD.jsonl: every check, bought or not, with the AI's
-  chance, whether it saw betting odds, the market's prices at that moment,
-  the cost and which AI strategies really bought (lab.py adds "bought");
+  chance, the question it copied back, whether it saw betting odds,
+  what it searched for and which sites it read, the market's prices at
+  that moment, the cost and which AI strategies really bought (lab.py adds
+  "bought");
 - ai_results/YYYY-MM.jsonl: each checked market's result once it has one,
   so the AI's chances can be compared with the market's prices on every
   checked market, not only on the ones bought (report.ai_summary).
@@ -43,7 +53,9 @@ Set the repository variable POLYMARKET_AI_CHECK to "off" to stop the checks
 from __future__ import annotations
 
 import datetime as dt
+import functools
 import json
+import unicodedata
 import os
 import random
 import re
@@ -99,6 +111,26 @@ _ODDS_SEARCH = re.compile(r"betting odds|prediction market|bookmaker|implied pro
 _ODDS_TALK = re.compile(r"betting odds|bookmaker|implied probabilit", re.IGNORECASE)
 
 _JSON = re.compile(r"\{[^{}]*\}")
+# Words that say nothing about WHICH market a question is (an XRP question
+# must not pass for an Ethereum one because both say "will the price be
+# above"). Read through _words, as the answers are ("reaches" is "reache").
+_GENERIC_TEXT = """
+    a an the of on in at by to for and or vs versus from with than over under above below between before after
+    will be is are was what who which whether how many much more less most least
+    price prices value close closing open high low hit hits hitting reach reaches reaching level rate rates
+    total number count amount market markets share shares stock stocks token coin coins crypto exchange binance
+    candle usd usdt dollar dollars cent cents percent yes no outcome result results resolution resolve forecast
+    question event chance end ends date day days daily week weeks weekly month months monthly year years time
+    today tomorrow up down dip dips dipping drop drops dropping fall falls falling rise rises rising stay stays
+    staying trade trades trading cross crosses crossing move moves moving go going get getting
+    increase increases increasing decrease decreases decreasing cut cuts cutting
+    january february march april may june july august september october november december
+    jan feb mar apr jun jul aug sep sept oct nov dec
+    monday tuesday wednesday thursday friday saturday sunday
+    """
+SAME_QUESTION = 0.8  # share of the question's telling words its copy must have
+QUERIES_KEPT, SITES_KEPT = 8, 25  # what a check searched for and read, kept in its record
+HOST_CHARS = 253  # the longest a site's name can be
 
 
 class Stop(RuntimeError):
@@ -181,10 +213,13 @@ estimate from the facts. (Data that the rules name as the resolution source is f
 much time is left and how such situations usually turn out, and do not be more certain than the evidence \
 allows.
 
+Remember that the question is: {v.get("question") or ""}
+
 End your answer with one line of JSON and nothing after it, like this:
-{{"chance": 0.37, "saw_odds": false, "why": "one short sentence"}}
-where "chance" is your probability (0 to 1) that the result is "{yes}", and "saw_odds" says whether you \
-saw any betting or prediction-market price or odds for this question."""
+{{"question": "the question, copied word for word", "chance": 0.37, "saw_odds": false, "why": "one short sentence"}}
+where "question" is the question you were asked, copied word for word, "chance" is your probability (0 to 1) \
+that the result is "{yes}", and "saw_odds" says whether you saw any betting or prediction-market price or odds \
+for this question."""
 
 
 def request_for(prompt: str) -> dict:
@@ -265,6 +300,28 @@ def _host(url) -> str:
         return ""
 
 
+def searched(resp: dict) -> tuple[list[str], list[str]]:
+    """
+    What the search looked for, and the sites it cited, opened or read, in
+    that order (the record keeps the first few of each, to see what the
+    model was shown).
+    """
+    queries, cited, opened, read = [], [], [], []
+    for item in resp.get("output") or []:
+        if item.get("type") == "web_search_call":
+            action = item.get("action") or {}
+            for q in [action.get("query"), *(action.get("queries") or [])]:
+                if isinstance(q, str) and q.strip():
+                    queries.append(q.strip()[:150])
+            opened.append(action.get("url"))
+            read += [s.get("url") for s in action.get("sources") or [] if isinstance(s, dict)]
+        if item.get("type") == "message":
+            for c in item.get("content") or []:
+                cited += [a.get("url") for a in c.get("annotations") or []]
+    hosts = [h for h in (_host(u) for u in cited + opened + read) if h and len(h) <= HOST_CHARS]
+    return list(dict.fromkeys(queries)), list(dict.fromkeys(hosts))
+
+
 def odds_sites(resp: dict) -> list[str]:
     """
     Signs that the model may have seen betting odds: a prediction-market or
@@ -302,8 +359,11 @@ def odds_sites(resp: dict) -> list[str]:
     return sorted(found)
 
 
-def parse_answer(text: str) -> tuple[float | None, bool | None, str]:
-    """(chance, the model's own saw_odds, its "why") from the answer's last JSON line; chance None when there is none."""
+def parse_answer(text: str) -> tuple[float | None, bool | None, str, str]:
+    """
+    (chance, the model's own saw_odds, its "why", the question it copied
+    back) from the answer's last JSON line; chance None when there is none.
+    """
     for found in reversed(_JSON.findall(text or "")):
         try:
             obj = json.loads(found)
@@ -320,8 +380,42 @@ def parse_answer(text: str) -> tuple[float | None, bool | None, str]:
         if not 0 <= p <= 1:
             continue
         said = obj.get("saw_odds")
-        return min(0.99, max(0.01, p)), (said if isinstance(said, bool) else None), str(obj.get("why") or "")[:300]
-    return None, None, ""
+        echo = obj.get("question")
+        return (min(0.99, max(0.01, p)), (said if isinstance(said, bool) else None), str(obj.get("why") or "")[:300],
+                (echo.strip()[:300] if isinstance(echo, str) else ""))
+    return None, None, "", ""
+
+
+def _words(text: str) -> set[str]:
+    """
+    Lower-case words with accents dropped ("Sánchez" is "sanchez"), numbers
+    kept whole ("$1,800" is "1800") and a plural "s" dropped ("transits" is
+    "transit").
+    """
+    text = "".join(c for c in unicodedata.normalize("NFKD", text or "") if not unicodedata.combining(c)).lower()
+    text = re.sub(r"(?<=\d),(?=\d)", "", text)
+    return {w[:-1] if len(w) > 3 and w.endswith("s") else w for w in re.findall(r"[^\W_]+", text)}
+
+
+_GENERIC = frozenset(_words(_GENERIC_TEXT))
+
+
+def wrong_question(echo: str, v: dict) -> bool:
+    """
+    True when the answer was not given to this market's question: it copied
+    back no question, or its copy lacks more than a fifth of the question's
+    telling words (its names and numbers, not words like "price" or "above"
+    that fit any market). It catches a check sent another market's prompt,
+    as all of them were in the first version: "Will the price of XRP be
+    above $1.00 on November 19?" for "Will the price of Ethereum be above
+    $1,800 on November 19?", and the same question at another price level.
+    """
+    if not echo.strip():
+        return True
+    need = _words(v.get("question") or "") - _GENERIC
+    if not need:
+        return False
+    return len(need & _words(echo)) < SAME_QUESTION * len(need)
 
 
 def check(v: dict, prompt: str, now: float) -> dict:
@@ -340,18 +434,24 @@ def check(v: dict, prompt: str, now: float) -> dict:
         usage = resp.get("usage") or {}
         tin, tout = usage.get("input_tokens") or 0, usage.get("output_tokens") or 0
         calls = tool_calls(resp)
-        chance, said, why = parse_answer(answer_text(resp))
+        chance, said, why, echo = parse_answer(answer_text(resp))
         sites = odds_sites(resp)
+        queries, hosts = searched(resp)
         row.update(input_tokens=tin, output_tokens=tout, searches=calls,
                    cost=round(token_cost(tin, tout) + calls * USD_PER_SEARCH, 4),
-                   chance0=chance, why=why, said_saw_odds=said, odds_sites=sites,
+                   chance0=chance, echo=echo, why=why, said_saw_odds=said, odds_sites=sites,
                    # strict: odds on any page it read, or it said so, or it did not say
-                   saw_odds=bool(sites) or said is not False)
+                   saw_odds=bool(sites) or said is not False,
+                   queries=queries[:QUERIES_KEPT], queries_count=len(queries),
+                   sites=hosts[:SITES_KEPT], sites_count=len(hosts))
         if resp.get("status") not in (None, "completed"):
             reason = (resp.get("incomplete_details") or {}).get("reason") or resp.get("status")
             row["error"] = f"answer {reason}"[:120]
         elif chance is None:
             row["error"] = "no chance in the answer"
+        elif wrong_question(echo, v):
+            row["wrong_question"] = True  # billed, but nothing is bought on an answer to another question
+            row["error"] = f"answered another question ({echo or 'none copied back'})"[:120]
     row["seconds"] = round(time.time() - t0, 1)
     return row
 
@@ -402,7 +502,10 @@ def run_checks(views: list[dict], events_by_id: dict, state: dict, now: float, r
     if not os.environ.get("OPENAI_API_KEY", "").strip():
         problems.append("AI check: no OPENAI_API_KEY, so move_ai and move_ai_clean made no checks")
         return picks, []
-    results = pmapi.parallel({str(i): (lambda v=v, p=prompt: check(v, p, now)) for i, (v, p) in enumerate(chosen)},
+    # Each call is bound to its own market's prompt (partial, not a lambda
+    # whose default could pick up a name from this function: in the first
+    # version every check was sent the last prompt built above).
+    results = pmapi.parallel({str(i): functools.partial(check, c[0], c[1], now) for i, c in enumerate(chosen)},
                              workers=MAX_CHECKS_PER_RUN)
     rows: list[dict] = []
     stops = set()
@@ -422,7 +525,7 @@ def run_checks(views: list[dict], events_by_id: dict, state: dict, now: float, r
         checked[v["event_id"]] = int(v["ends_at"] + 86400)
         sides = dict(S._sides(v))
         up = 0 if float(v["oneDayPriceChange"]) > 0 else 1
-        row = {"at": int(now), "condition_id": v["conditionId"], "event_id": v["event_id"],
+        row = {"at": int(now), "ai_version": S.AI_VERSION, "condition_id": v["conditionId"], "event_id": v["event_id"],
                "question": (v.get("question") or "")[:200], "event": (v.get("event_title") or "")[:200],
                "outcomes": v["outcomes"][:2], "ends_at": v["ends_at"], "hours_left": round(v["hours_left"], 1),
                "move": float(v["oneDayPriceChange"]), "rose": up,
@@ -437,10 +540,11 @@ def run_checks(views: list[dict], events_by_id: dict, state: dict, now: float, r
                 if hit:
                     row.update(side=hit[0], cap=hit[1], with_move=hit[0] == up)
                     picks[name].append((v, hit[0], hit[1], {"ai_chance0": chance, "ai_saw_odds": res["saw_odds"],
-                                                            "ai_why": res.get("why", "")[:200]}))
+                                                            "ai_why": res.get("why", "")[:200],
+                                                            "ai_version": S.AI_VERSION}))
             state.setdefault("ai_watch", []).append(
-                {k: row.get(k) for k in ("at", "condition_id", "question", "outcomes", "ends_at", "bid0", "ask0",
-                                         "ask1", "move", "rose", "chance0", "saw_odds", "side")})
+                {k: row.get(k) for k in ("at", "ai_version", "condition_id", "question", "outcomes", "ends_at", "bid0",
+                                         "ask0", "ask1", "move", "rose", "chance0", "saw_odds", "side")})
         rows.append(row)
     for s in sorted(stops):
         problems.append(f"AI check: {s}")
@@ -507,7 +611,7 @@ def main() -> None:
         total += res.get("cost", 0.0)
         sides = dict(S._sides(v))
         hits = ({name: rule(v, res["chance0"], res["saw_odds"]) for name, rule in S.AI_RULES.items()}
-                if res.get("chance0") is not None else {})
+                if res.get("chance0") is not None and not res.get("error") else {})
         print(json.dumps({"question": v.get("question"), "outcomes": v["outcomes"], "move": v["oneDayPriceChange"],
                           "ask0": sides.get(0), "ask1": sides.get(1), "most_cost": round(most_a_check_can_cost(prompt), 3),
                           **res, "would_buy": {k: h for k, h in hits.items() if h}}, indent=1))

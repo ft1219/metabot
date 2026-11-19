@@ -185,8 +185,20 @@ def follow_move_big(m: dict, rng: random.Random):
 # are judged only at AI_MIN_SETTLED finished trades (fixed now, before any
 # results). The AI's chances are also compared with the market prices on
 # every checked market, bought or not (report.ai_summary).
+# AI_VERSION marks the checks, and the trades made on them, that count. The
+# first version (merged 19 Nov 2026 02:22 UTC) had a bug that sent each check
+# the question of another market (the last one it had looked at), so its
+# checks and trades are kept on file but left out of every result.
 AI_MARGIN = 0.05
 AI_MIN_SETTLED = 150
+AI_VERSION = 2
+
+
+def counted(name: str, row: dict) -> bool:
+    """False for an AI strategy's trade made on a check from before AI_VERSION (see above)."""
+    if name not in AI_RULES:
+        return True
+    return ((row.get("note") or {}).get("ai_version") or 1) >= AI_VERSION
 
 
 def ai_candidate(m: dict) -> bool:

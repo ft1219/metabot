@@ -14,7 +14,7 @@ from .test_lab import NOW, gamma, serial
 
 LATE = NOW - NOW % 86400 + 20 * 3600  # late in the UTC day: most of the day's money is free
 # a market that rose 15c in a day: outcome 0 ("Yes") went up, Yes costs 60c, No costs 41c
-MOVED = dict(bid=0.59, ask=0.60, oneDayPriceChange=0.15)
+MOVED = dict(bid=0.59, ask=0.60, oneDayPriceChange=0.15, question="Will the price of Ethereum be above $1,800 on Friday?")
 
 
 def view(**kw):
@@ -24,12 +24,13 @@ def view(**kw):
 
 
 def answer(chance=0.7, searches=2, tin=12_000, tout=1_500, text=None, status="completed", url=None, said="false",
-           sources=("https://news.example.com/a",)):
+           sources=("https://news.example.com/a",), echo=MOVED["question"]):
     out = [{"type": "reasoning"}]
     out += [{"type": "web_search_call", "action": {"type": "search", "query": f"q{i}",
                                                    "sources": [{"type": "url", "url": u} for u in sources]}}
             for i in range(searches)]
-    msg = text if text is not None else f'The news says so.\n{{"chance": {chance}, "saw_odds": {said}, "why": "because"}}'
+    msg = text if text is not None else (f'The news says so.\n{{"question": {json.dumps(echo)}, "chance": {chance}, '
+                                         f'"saw_odds": {said}, "why": "because"}}')
     out.append({"type": "message", "content": [{"type": "output_text", "text": msg,
                                                 "annotations": [{"type": "url_citation", "url": url}] if url else []}]})
     return {"status": status, "output": out, "usage": {"input_tokens": tin, "output_tokens": tout}}
@@ -104,14 +105,52 @@ def test_ai_strategies_start_on_their_own_date_and_wait_for_150_trades():
 # ---------------------------------------------------------------- answer, prompt, cost
 
 def test_parse_answer_takes_the_last_json_line():
-    assert ai_check.parse_answer('{"chance": 0.2}\nthen\n{"chance": 0.64, "saw_odds": false, "why": "x"}') == (
-        0.64, False, "x")
-    assert ai_check.parse_answer('{"chance": 64, "saw_odds": true, "why": "pct"}') == (0.64, True, "pct")
-    assert ai_check.parse_answer('{"chance": 1.0}') == (0.99, None, "")
-    assert ai_check.parse_answer('{"chance": 0, "saw_odds": "no"}') == (0.01, None, "")
+    assert ai_check.parse_answer('{"chance": 0.2}\nthen\n{"question": " Will X? ", "chance": 0.64, "saw_odds": false, '
+                                 '"why": "x"}') == (0.64, False, "x", "Will X?")
+    assert ai_check.parse_answer('{"chance": 64, "saw_odds": true, "why": "pct"}') == (0.64, True, "pct", "")
+    assert ai_check.parse_answer('{"chance": 1.0, "question": 7}') == (0.99, None, "", "")
+    assert ai_check.parse_answer('{"chance": 0, "saw_odds": "no"}') == (0.01, None, "", "")
     assert ai_check.parse_answer("I think about 60%.")[0] is None
     assert ai_check.parse_answer('{"chance": "high"}')[0] is None
     assert ai_check.parse_answer('{"chance": 250}')[0] is None
+
+
+def test_an_answer_to_another_question_is_caught():
+    eth = view(question="Will the price of Ethereum be above $1,800 on November 19?")
+    for echo in ("Will the price of Ethereum be above $1,800 on November 19?",
+                 "will the price of ethereum be above 1800 on november 19",  # case, $ and commas do not matter
+                 "Will the price of Ethereum be above $1,800 on Nov 19?"):
+        assert not ai_check.wrong_question(echo, eth), echo
+    for echo in ("Will the price of XRP be above $1.00 on November 19?",  # 19 Nov: another market's prompt
+                 "Will the price of Ethereum be above $1,900 on November 19?",  # the same event, another level
+                 "", "  "):
+        assert ai_check.wrong_question(echo, eth), echo
+    googl = view(question="Will Alphabet Inc. (GOOGL) hit (LOW) $275 Week of November 16 2026?")
+    assert not ai_check.wrong_question("Will Alphabet (GOOGL) hit (LOW) $275 Week of November 16 2026?", googl)
+    assert ai_check.wrong_question("Will Donald Trump post 40-59 Truth Social posts November 14-21?", googl)
+    pm = view(question="Will Pedro Sánchez remain Prime Minister of Spain through 2026?")
+    assert not ai_check.wrong_question("Will Pedro Sanchez remain Prime Minister of Spain through 2026?", pm)
+    assert not ai_check.wrong_question("anything", view(question="Will the price be above?"))  # nothing telling to check
+
+
+def test_the_record_keeps_what_was_searched_and_read():
+    r = answer(searches=2, sources=("https://www.reuters.com/a", "https://coindesk.com/b"), url="https://cnbc.com/c")
+    # cited first, then opened, then read; each once
+    assert ai_check.searched(r) == (["q0", "q1"], ["cnbc.com", "www.reuters.com", "coindesk.com"])
+    r["output"][1]["action"] = {"type": "open_page", "url": "https://example.org/p"}
+    assert ai_check.searched(r)[1] == ["cnbc.com", "example.org", "www.reuters.com", "coindesk.com"]
+    r["output"][2]["action"]["url"] = "https://" + "x" * 300 + ".com/p"  # no real site has a name this long
+    assert len(ai_check.searched(r)[1]) == 4
+    assert ai_check.searched({"output": []}) == ([], [])
+
+
+def test_the_record_says_when_its_lists_were_cut(openai):
+    many = answer(searches=3, sources=[f"https://s{i}.example.com/" for i in range(40)])
+    many["output"][1]["action"]["queries"] = [f"extra {i}" for i in range(10)]
+    openai["replies"] = [many]
+    _, (row,) = ai_check.run_checks([view()], {}, _state(), LATE, random.Random(1), [])
+    assert len(row["sites"]) == ai_check.SITES_KEPT and row["sites_count"] == 40
+    assert len(row["queries"]) == ai_check.QUERIES_KEPT and row["queries_count"] == 13
 
 
 def test_saw_odds_is_strict():
@@ -144,7 +183,8 @@ def test_prompt_never_shows_the_price_and_request_keeps_nothing():
         assert price not in prompt.replace(ai_check._stamp(NOW), "").replace(ai_check._stamp(v["ends_at"]), "")
     req = ai_check.request_for(prompt)
     assert req["store"] is False and "timeout" not in req and req["tools"][0]["type"] == "web_search"
-    assert req["include"] == ["web_search_call.action.sources"] and '"saw_odds"' in prompt
+    assert req["include"] == ["web_search_call.action.sources"] and '"saw_odds"' in prompt and '"question"' in prompt
+    assert prompt.count("Will X happen by Friday?") == 2  # asked again right before the answer
     assert req["max_tool_calls"] == ai_check.MAX_TOOL_CALLS and req["max_output_tokens"] == ai_check.MAX_OUTPUT_TOKENS
 
 
@@ -194,6 +234,62 @@ def test_run_checks_buys_where_the_ai_beats_the_price_and_records_every_check(op
     openai["replies"] = []
     _, rows2 = ai_check.run_checks(vs, {}, st, LATE + 3600, random.Random(2), [])
     assert rows2 and {r["event_id"] for r in rows2}.isdisjoint({r["event_id"] for r in rows})
+
+
+def _echo(request, timeout=None):
+    """An OpenAI that answers whatever question it was sent (read back from the prompt) and copies it back."""
+    asked = request["input"].split("Remember that the question is: ", 1)[1].split("\n", 1)[0]
+    reply = answer(0.95, echo=asked)
+    reply["output"][-1]["content"][0]["text"] = reply["output"][-1]["content"][0]["text"].replace(
+        '"because"', json.dumps(asked))
+    return reply
+
+
+@pytest.mark.parametrize("when, n", [(LATE, 3), (LATE - 20 * 3600 + 60, 1)])
+def test_each_check_is_sent_its_own_markets_question(openai, monkeypatch, when, n):
+    # 19 Nov: every check was sent the last prompt built, even one for a market the budget then left out
+    monkeypatch.setattr(ai_check, "ask_openai", _echo)
+    names = ["Ethereum", "Solana", "Dogecoin", "Cardano", "Litecoin"]
+    vs = [view(cid=f"0x{i}", question=f"Will {name} be above $1 on Friday?") for i, name in enumerate(names)]
+    events = {v["event_id"]: {"markets": [{"conditionId": v["conditionId"], "description": f"About {name} only."}]}
+              for v, name in zip(vs, names)}
+    picks, rows = ai_check.run_checks(vs, events, _state(), when, random.Random(3), [])
+    assert len(rows) == n
+    for r in rows:
+        assert r["why"] == r["question"] == r["echo"] and not r.get("error")
+        assert r["ai_version"] == S.AI_VERSION
+    assert all(note["ai_version"] == S.AI_VERSION for *_, note in picks["move_ai"])
+
+
+def test_trades_from_the_first_version_are_left_out_of_results(tmp_path):
+    old = {"strategy": "move_ai", "title": "Old market Zebra?", "cost": 5.0, "avg_price": 0.744,
+           "payout_if_won": 6.7, "opened_at": NOW, "settled_at": NOW, "payout": 6.7, "pnl": 1.7,
+           "legs": [{"condition_id": "0x1", "outcome": "No", "outcome_index": 1}], "note": {"ai_chance0": 0.2}}
+    new = dict(old, title="New market Quokka?", note={"ai_chance0": 0.2, "ai_version": S.AI_VERSION},
+               legs=[{"condition_id": "0x2", "outcome": "No", "outcome_index": 1}])
+    assert not S.counted("move_ai", old) and S.counted("move_ai", new) and S.counted("follow_move", old)
+    lab.append_jsonl(tmp_path / "settled" / "2026-11.jsonl", [old, new])
+    lab.append_jsonl(tmp_path / "trades" / "2026-11.jsonl", [old, new])
+    text, summary = report.build(tmp_path, NOW, state={"positions": [dict(old, strategy="move_ai_clean")]})
+    assert summary["strategies"]["move_ai"]["settled"] == 1 and summary["strategies"]["move_ai"]["trades"] == 1
+    assert summary["strategies"]["move_ai_clean"]["open"] == 0
+    assert "Quokka" in text and "Zebra" not in text  # not in the daily table or the latest buys either
+
+
+def test_nothing_is_bought_on_an_answer_to_another_question(openai):
+    xrp = "Will the price of XRP be above $1.00 on Friday?"
+    openai["replies"] = [answer(0.95, echo=xrp), answer(0.95)]
+    vs = [view(cid="0x1"), view(cid="0x2")]
+    st, problems = _state(), []
+    picks, rows = ai_check.run_checks(vs, {}, st, LATE, random.Random(1), problems)
+    bad, good = sorted(rows, key=lambda r: not r.get("wrong_question"))
+    assert bad["wrong_question"] and bad["side"] is None and xrp in bad["error"]
+    assert bad["cost"] > 0 and bad["event_id"] in st["ai_checked"]  # billed, and not asked again
+    assert good["side"] == 0 and not good.get("wrong_question") and good["echo"] == good["question"]
+    assert [p[0]["conditionId"] for p in picks["move_ai"]] == [good["condition_id"]]
+    assert [w["condition_id"] for w in st["ai_watch"]] == [good["condition_id"]]  # only real answers are scored
+    assert "1 of 2 check(s) failed (answered another question (Will the price of XRP" in problems[0]
+    assert good["queries"] == ["q0", "q1"] and good["sites"] == ["news.example.com"]
 
 
 def test_a_check_that_does_not_say_whether_it_saw_odds_counts_as_seen(openai):
@@ -366,14 +462,19 @@ def test_ai_summary_compares_ai_and_market_errors(tmp_path):
     rows = [{"chance0": 0.8, "bid0": 0.59, "ask0": 0.61, "result0": 1.0, "saw_odds": False, "settled_at": NOW},
             {"chance0": 0.3, "bid0": 0.49, "ask0": 0.51, "result0": 0.0, "saw_odds": True, "settled_at": NOW},
             {"chance0": 0.3, "bid0": 0.49, "ask0": 0.51, "result0": None, "saw_odds": False, "settled_at": NOW}]
-    lab.append_jsonl(tmp_path / "ai_results" / "2026-11.jsonl", rows)
-    lab.append_jsonl(tmp_path / "ai_checks" / "2026-11-18.jsonl", [
+    first = {"chance0": 0.9, "bid0": 0.49, "ask0": 0.51, "result0": 0.0, "saw_odds": False, "settled_at": NOW}
+    v2 = {"ai_version": S.AI_VERSION}
+    lab.append_jsonl(tmp_path / "ai_results" / "2026-11.jsonl", [dict(r, **v2) for r in rows] + [first])
+    lab.append_jsonl(tmp_path / "ai_checks" / "2026-11-18.jsonl", [dict(r, **v2) for r in [
         {"cost": 0.07, "chance0": 0.8, "side": 0, "bought": ["move_ai", "move_ai_clean"], "saw_odds": False},
         {"cost": 0.06, "chance0": 0.3, "side": 1, "bought": [], "saw_odds": True},
-        {"cost": 0.05, "side": None, "error": "x"}])
-    out = report.ai_summary(tmp_path, {"ai_budget": {"day": ai_check._day(NOW), "spent": 0.18, "checks": 3}}, NOW)
-    assert out["checks"] == 3 and out["rule_said_buy"] == 2 and out["bought"] == 1 and out["failed"] == 1
-    assert out["answered"] == 2 and out["saw_odds"] == 1 and out["spent_today"] == 0.18 and out["spent"] == 0.18
+        {"cost": 0.05, "side": None, "error": "x"},
+        {"cost": 0.08, "chance0": 0.2, "side": None, "error": "answered another question (x)", "wrong_question": True}]]
+        + [{"cost": 0.10, "chance0": 0.9, "side": 1, "bought": ["move_ai"], "saw_odds": False}])  # first version
+    out = report.ai_summary(tmp_path, {"ai_budget": {"day": ai_check._day(NOW), "spent": 0.36, "checks": 5}}, NOW)
+    assert out["checks"] == 4 and out["rule_said_buy"] == 2 and out["bought"] == 1 and out["failed"] == 2
+    assert out["wrong_question"] == 1 and out["answered"] == 2 and out["saw_odds"] == 1 and out["left_out"] == 1
+    assert out["spent_today"] == 0.36 and out["spent"] == 0.36  # money spent counts, whatever the version
     assert out["all"] == {"n": 2, "ai_error": pytest.approx((0.04 + 0.09) / 2),
                           "market_error": pytest.approx((0.16 + 0.25) / 2), "ai_closer": 2}
     assert out["clean"]["n"] == 1 and out["clean"]["ai_error"] == pytest.approx(0.04)
