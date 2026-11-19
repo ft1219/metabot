@@ -1,32 +1,32 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-19 04:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-19 05:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move | 472 | 297/472 | +2.4% | +$57.25 | 14 | 136 | FAIL |
-| 2 | sure_thing | 2236 | 2082/2236 | -0.2% | -$26.95 | 13 | 141 | FAIL |
-| 3 | follow_move_2 | 57 | 39/57 | -1.3% | -$3.67 | 3 | 111 | too early |
-| 4 | follow_move_cheap | 18 | 7/18 | -1.4% | -$1.25 | 3 | 82 | too early |
-| 5 | safe_no_week | 814 | 748/814 | -4.1% | -$167.13 | 14 | 316 | FAIL |
+| 1 | follow_move_cheap | 19 | 8/19 | +6.6% | +$6.26 | 3 | 81 | too early |
+| 2 | follow_move | 472 | 297/472 | +2.4% | +$57.25 | 14 | 137 | FAIL |
+| 3 | sure_thing | 2257 | 2100/2257 | -0.3% | -$35.66 | 13 | 128 | FAIL |
+| 4 | follow_move_2 | 57 | 39/57 | -1.3% | -$3.67 | 3 | 112 | too early |
+| 5 | safe_no_week | 817 | 751/817 | -4.1% | -$166.31 | 14 | 316 | FAIL |
 | 6 | follow_move_big | 39 | 25/39 | -7.6% | -$14.85 | 3 | 76 | too early |
-| 7 | follow_move_crypto | 20 | 13/20 | -10.1% | -$10.09 | 2 | 45 | too early |
-| 8 | sports_underdog | 1590 | 374/1590 | -13.2% | -$1043.41 | 12 | 48 | FAIL |
-| 9 | fade_move | 515 | 159/515 | -13.6% | -$350.78 | 14 | 145 | FAIL |
-| 10 | weather_forecast | 596 | 301/596 | -20.2% | -$593.91 | 12 | 145 | FAIL |
+| 7 | follow_move_crypto | 20 | 13/20 | -10.1% | -$10.09 | 2 | 46 | too early |
+| 8 | sports_underdog | 1600 | 375/1600 | -13.5% | -$1074.86 | 12 | 39 | FAIL |
+| 9 | fade_move | 515 | 159/515 | -13.6% | -$350.78 | 14 | 146 | FAIL |
+| 10 | weather_forecast | 598 | 302/598 | -20.2% | -$595.19 | 12 | 148 | FAIL |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
 | 12 | move_ai | 0 | - | - | +$0.00 | 0 | 0 | too early |
 | 13 | move_ai_clean | 0 | - | - | +$0.00 | 0 | 0 | too early |
-| 14 | coin_flip | 2408 | 1187/2408 | -5.2% | -$625.58 | 14 | 232 | yardstick |
+| 14 | coin_flip | 2415 | 1190/2415 | -5.2% | -$631.04 | 14 | 233 | yardstick |
 
 What each one does:
 
+- **follow_move_cheap**: follow_move, only when the side that went up costs 50c or less (from 17 Nov).
 - **follow_move**: After a traded 10c+ move in a day, buy the side that went up.
 - **sure_thing**: Buy the almost-sure side (90-97c) in the last 24 hours (sports and other markets).
 - **follow_move_2**: Same as follow_move, restarted on 17 Nov so it is judged on new trades only.
-- **follow_move_cheap**: follow_move, only when the side that went up costs 50c or less (from 17 Nov).
 - **safe_no_week**: Buy the almost-sure side (92-98.5c), 1-7 days before the end, no sports.
 - **follow_move_big**: follow_move, only after a 20c+ move in a day (from 17 Nov).
 - **follow_move_crypto**: follow_move, Bitcoin, Ethereum, Solana, XRP and Dogecoin markets only (from 17 Nov).
@@ -42,33 +42,33 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Profit by day (trades that finished that day)
 
-| Day | follow_move | sure_thing | follow_move_2 | follow_move_cheap | safe_no_week | follow_move_big | follow_move_crypto | sports_underdog | fade_move | weather_forecast | price_gap | coin_flip |
+| Day | follow_move_cheap | follow_move | sure_thing | follow_move_2 | safe_no_week | follow_move_big | follow_move_crypto | sports_underdog | fade_move | weather_forecast | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-19 | -$6.19 | +$14.63 | -$0.56 | -$5.00 | -$0.86 | -$5.00 |  | -$133.24 | -$7.16 | -$12.76 |  | -$8.21 |
-| 2026-11-18 | -$38.68 | +$1.67 | -$32.52 | +$1.98 | -$18.18 | -$14.72 | -$18.73 | -$43.96 | +$13.07 | -$60.57 |  | -$25.46 |
-| 2026-11-17 | -$26.56 | +$4.02 | +$29.40 | +$1.77 | -$6.81 | +$4.87 | +$8.64 | -$26.19 | -$62.15 | -$31.10 |  | -$62.47 |
-| 2026-11-16 | +$11.58 | -$6.40 |  |  | -$11.02 |  |  | +$21.94 | -$17.46 |  | +$0.08 | -$21.29 |
-| 2026-11-15 | +$17.97 | +$0.34 |  |  | -$26.64 |  |  |  | +$30.37 | -$0.94 |  | -$47.97 |
-| 2026-11-14 | -$7.86 |  |  |  | -$37.34 |  |  |  | +$18.94 | -$4.48 |  | -$13.50 |
-| 2026-11-13 | +$81.98 | -$14.31 |  |  | -$18.10 |  |  | +$3.98 | -$172.42 | -$35.87 |  | -$19.82 |
-| 2026-11-12 | +$5.13 | -$7.41 |  |  | -$2.81 |  |  | -$67.52 | +$145.43 | -$51.23 |  | -$60.24 |
-| 2026-11-11 | +$9.69 | +$59.21 |  |  | -$18.78 |  |  | -$173.41 | -$50.06 | -$77.92 |  | -$29.87 |
-| 2026-11-10 | +$55.84 | -$15.92 |  |  | -$2.64 |  |  | +$61.94 | +$1.13 | -$101.16 |  | -$214.60 |
+| 2026-11-19 | +$2.52 | -$6.19 | +$5.92 | -$0.56 | -$0.04 | -$5.00 |  | -$164.69 | -$7.16 | -$14.05 |  | -$13.67 |
+| 2026-11-18 | +$1.98 | -$38.68 | +$1.67 | -$32.52 | -$18.18 | -$14.72 | -$18.73 | -$43.96 | +$13.07 | -$60.57 |  | -$25.46 |
+| 2026-11-17 | +$1.77 | -$26.56 | +$4.02 | +$29.40 | -$6.81 | +$4.87 | +$8.64 | -$26.19 | -$62.15 | -$31.10 |  | -$62.47 |
+| 2026-11-16 |  | +$11.58 | -$6.40 |  | -$11.02 |  |  | +$21.94 | -$17.46 |  | +$0.08 | -$21.29 |
+| 2026-11-15 |  | +$17.97 | +$0.34 |  | -$26.64 |  |  |  | +$30.37 | -$0.94 |  | -$47.97 |
+| 2026-11-14 |  | -$7.86 |  |  | -$37.34 |  |  |  | +$18.94 | -$4.48 |  | -$13.50 |
+| 2026-11-13 |  | +$81.98 | -$14.31 |  | -$18.10 |  |  | +$3.98 | -$172.42 | -$35.87 |  | -$19.82 |
+| 2026-11-12 |  | +$5.13 | -$7.41 |  | -$2.81 |  |  | -$67.52 | +$145.43 | -$51.23 |  | -$60.24 |
+| 2026-11-11 |  | +$9.69 | +$59.21 |  | -$18.78 |  |  | -$173.41 | -$50.06 | -$77.92 |  | -$29.87 |
+| 2026-11-10 |  | +$55.84 | -$15.92 |  | -$2.64 |  |  | +$61.94 | +$1.13 | -$101.16 |  | -$214.60 |
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-19 follow_move: Will "Obsession" be the #2 US Netflix movie this week? -> No at 0.691 ($5.00)
-- 2026-11-19 sure_thing: Will Amazon (AMZN) close above $260 on November 19? -> Yes at 0.952 ($5.00)
-- 2026-11-19 follow_move_2: Will "Obsession" be the #2 US Netflix movie this week? -> No at 0.691 ($5.00)
 - 2026-11-19 follow_move_cheap: Will the price of Ethereum be between $1,800 and $1,900 on November 21? -> Yes at 0.407 ($5.00)
-- 2026-11-19 safe_no_week: Will the Bank of Korea hold at the November 2026 meeting? -> No at 0.982 ($5.00)
+- 2026-11-19 follow_move: Will the price of XRP be above $1.00 on November 21? -> No at 0.724 ($5.00)
+- 2026-11-19 sure_thing: Will Walmart say "Zipline" during earnings call? -> No at 0.913 ($5.00)
+- 2026-11-19 follow_move_2: Will the price of XRP be above $1.00 on November 21? -> No at 0.724 ($5.00)
+- 2026-11-19 safe_no_week: Will the highest temperature in Chengdu be 16°C on November 21? -> No at 0.943 ($5.00)
 - 2026-11-19 follow_move_big: Solana Up or Down on November 19? -> Up at 0.821 ($5.00)
-- 2026-11-19 follow_move_crypto: Will the price of Ethereum be between $1,800 and $1,900 on November 21? -> Yes at 0.407 ($5.00)
-- 2026-11-19 sports_underdog: M25 Bhubaneswar: Sasikumar Mukund vs Maan Kesharwani -> Maan Kesharwani at 0.229 ($5.00)
-- 2026-11-19 fade_move: Will "Obsession" be the #2 US Netflix movie this week? -> Yes at 0.372 ($5.00)
-- 2026-11-19 weather_forecast: Will the lowest temperature in New York City be between 46-47°F on November 20? -> No at 0.845 ($5.00)
+- 2026-11-19 follow_move_crypto: Will the price of XRP be above $1.00 on November 21? -> No at 0.724 ($5.00)
+- 2026-11-19 sports_underdog: W15 Alcala de Henares: Marta Soriano Santiago vs Esther Lopez Alcaraz -> Esther Lopez Alcaraz at 0.361 ($5.00)
+- 2026-11-19 fade_move: Will the price of XRP be above $1.00 on November 21? -> Yes at 0.354 ($5.00)
+- 2026-11-19 weather_forecast: Will the highest temperature in Munich be 8°C on November 21? -> No at 0.562 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
-- 2026-11-19 coin_flip: FC Halifax Town vs. Woking FC: Woking FC O/U 1.5 -> Over at 0.356 ($5.00)
+- 2026-11-19 coin_flip: Will CA Boca Juniors win on 2026-11-21? -> No at 0.572 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
 
@@ -79,5 +79,5 @@ No checked market has a result yet (0 waiting). The AI's chances will be compare
 
 No near-gaps today.
 
-Runs in the last 24 hours: 37 (37 with a problem).
+Runs in the last 24 hours: 36 (36 with a problem).
 Latest problem: 42 position(s) still open more than 3 days after their market ended
