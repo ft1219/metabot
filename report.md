@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-19 22:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-19 22:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move | 509 | 311/509 | -0.3% | -$7.73 | 14 | 140 | FAIL |
-| 2 | sure_thing | 2377 | 2204/2377 | -0.6% | -$77.11 | 13 | 189 | FAIL |
-| 3 | safe_no_week | 877 | 808/877 | -3.8% | -$168.51 | 14 | 329 | FAIL |
-| 4 | fade_move | 554 | 180/554 | -5.7% | -$157.64 | 14 | 145 | FAIL |
-| 5 | follow_move_cheap | 38 | 14/38 | -12.4% | -$23.63 | 3 | 75 | too early |
-| 6 | sports_underdog | 1686 | 395/1686 | -13.9% | -$1160.39 | 12 | 86 | FAIL |
+| 1 | follow_move | 510 | 311/510 | -0.5% | -$12.73 | 14 | 139 | FAIL |
+| 2 | sure_thing | 2377 | 2204/2377 | -0.6% | -$77.11 | 13 | 197 | FAIL |
+| 3 | safe_no_week | 880 | 810/880 | -3.9% | -$173.00 | 14 | 327 | FAIL |
+| 4 | fade_move | 555 | 181/555 | -5.7% | -$156.76 | 14 | 144 | FAIL |
+| 5 | sports_underdog | 1691 | 395/1691 | -14.1% | -$1182.56 | 12 | 89 | FAIL |
+| 6 | follow_move_cheap | 39 | 14/39 | -14.7% | -$28.63 | 3 | 75 | too early |
 | 7 | follow_move_crypto | 32 | 19/32 | -16.5% | -$26.39 | 3 | 47 | too early |
-| 8 | follow_move_2 | 95 | 52/95 | -19.9% | -$94.55 | 3 | 119 | too early |
-| 9 | follow_move_big | 72 | 40/72 | -19.9% | -$71.74 | 3 | 80 | too early |
-| 10 | weather_forecast | 642 | 326/642 | -20.0% | -$634.37 | 12 | 157 | FAIL |
+| 8 | weather_forecast | 647 | 330/647 | -18.6% | -$594.94 | 12 | 153 | FAIL |
+| 9 | follow_move_2 | 96 | 52/96 | -20.7% | -$99.55 | 3 | 118 | too early |
+| 10 | follow_move_big | 73 | 40/73 | -21.0% | -$76.74 | 3 | 79 | too early |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
 | 12 | move_ai | 0 | - | - | +$0.00 | 0 | 2 | too early |
 | 13 | move_ai_clean | 0 | - | - | +$0.00 | 0 | 1 | too early |
-| 14 | coin_flip | 2531 | 1249/2531 | -5.1% | -$645.97 | 14 | 316 | yardstick |
+| 14 | coin_flip | 2535 | 1252/2535 | -5.1% | -$638.69 | 14 | 320 | yardstick |
 
 What each one does:
 
@@ -27,12 +27,12 @@ What each one does:
 - **sure_thing**: Buy the almost-sure side (90-97c) in the last 24 hours (sports and other markets).
 - **safe_no_week**: Buy the almost-sure side (92-98.5c), 1-7 days before the end, no sports.
 - **fade_move**: After a traded 10c+ move in a day, buy the side that went down.
-- **follow_move_cheap**: follow_move, only when the side that went up costs 50c or less (from 17 Nov).
 - **sports_underdog**: Buy the cheap side (15-35c) of sports games in the 3 hours before kick-off (history says this loses; kept as a check).
+- **follow_move_cheap**: follow_move, only when the side that went up costs 50c or less (from 17 Nov).
 - **follow_move_crypto**: follow_move, Bitcoin, Ethereum, Solana, XRP and Dogecoin markets only (from 17 Nov).
+- **weather_forecast**: Daily temperature markets, before the day starts: buy No on a range when 82 weather-model runs give it 10c+ less chance than the market (or Yes when they give it 10c+ more), with and without allowing for model error; in practice nearly always No against the market favourite.
 - **follow_move_2**: Same as follow_move, restarted on 17 Nov so it is judged on new trades only.
 - **follow_move_big**: follow_move, only after a 20c+ move in a day (from 17 Nov).
-- **weather_forecast**: Daily temperature markets, before the day starts: buy No on a range when 82 weather-model runs give it 10c+ less chance than the market (or Yes when they give it 10c+ more), with and without allowing for model error; in practice nearly always No against the market favourite.
 - **price_gap**: Multi-choice markets whose prices add up to less than $1: buy every choice.
 - **move_ai**: After a traded 10c+ move in a day, an AI model reads the news and gives its own chance (it is not told the price); buy whichever side it rates at least 5c above the price (a random sample of moves, about $1 of AI a day; judged at 150 finished trades).
 - **move_ai_clean**: Same buys as move_ai, but only when the AI saw no betting or prediction-market odds while searching, so the record is its own reading (judged at 150 finished trades).
@@ -42,31 +42,31 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Profit by day (trades that finished that day)
 
-| Day | follow_move | sure_thing | safe_no_week | fade_move | follow_move_cheap | sports_underdog | follow_move_crypto | follow_move_2 | follow_move_big | weather_forecast | price_gap | coin_flip |
+| Day | follow_move | sure_thing | safe_no_week | fade_move | sports_underdog | follow_move_cheap | follow_move_crypto | weather_forecast | follow_move_2 | follow_move_big | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-19 | -$71.17 | -$35.53 | -$2.24 | +$185.98 | -$27.37 | -$250.22 | -$16.30 | -$91.44 | -$61.89 | -$53.23 |  | -$28.60 |
-| 2026-11-18 | -$38.68 | +$1.67 | -$18.18 | +$13.07 | +$1.98 | -$43.96 | -$18.73 | -$32.52 | -$14.72 | -$60.57 |  | -$25.46 |
-| 2026-11-17 | -$26.56 | +$4.02 | -$6.81 | -$62.15 | +$1.77 | -$26.19 | +$8.64 | +$29.40 | +$4.87 | -$31.10 |  | -$62.47 |
-| 2026-11-16 | +$11.58 | -$6.40 | -$11.02 | -$17.46 |  | +$21.94 |  |  |  |  | +$0.08 | -$21.29 |
-| 2026-11-15 | +$17.97 | +$0.34 | -$26.64 | +$30.37 |  |  |  |  |  | -$0.94 |  | -$47.97 |
-| 2026-11-14 | -$7.86 |  | -$37.34 | +$18.94 |  |  |  |  |  | -$4.48 |  | -$13.50 |
-| 2026-11-13 | +$81.98 | -$14.31 | -$18.10 | -$172.42 |  | +$3.98 |  |  |  | -$35.87 |  | -$19.82 |
-| 2026-11-12 | +$5.13 | -$7.41 | -$2.81 | +$145.43 |  | -$67.52 |  |  |  | -$51.23 |  | -$60.24 |
-| 2026-11-11 | +$9.69 | +$59.21 | -$18.78 | -$50.06 |  | -$173.41 |  |  |  | -$77.92 |  | -$29.87 |
-| 2026-11-10 | +$55.84 | -$15.92 | -$2.64 | +$1.13 |  | +$61.94 |  |  |  | -$101.16 |  | -$214.60 |
+| 2026-11-19 | -$76.17 | -$35.53 | -$6.73 | +$186.86 | -$272.39 | -$32.37 | -$16.30 | -$13.80 | -$96.44 | -$66.89 |  | -$21.32 |
+| 2026-11-18 | -$38.68 | +$1.67 | -$18.18 | +$13.07 | -$43.96 | +$1.98 | -$18.73 | -$60.57 | -$32.52 | -$14.72 |  | -$25.46 |
+| 2026-11-17 | -$26.56 | +$4.02 | -$6.81 | -$62.15 | -$26.19 | +$1.77 | +$8.64 | -$31.10 | +$29.40 | +$4.87 |  | -$62.47 |
+| 2026-11-16 | +$11.58 | -$6.40 | -$11.02 | -$17.46 | +$21.94 |  |  |  |  |  | +$0.08 | -$21.29 |
+| 2026-11-15 | +$17.97 | +$0.34 | -$26.64 | +$30.37 |  |  |  | -$0.94 |  |  |  | -$47.97 |
+| 2026-11-14 | -$7.86 |  | -$37.34 | +$18.94 |  |  |  | -$4.48 |  |  |  | -$13.50 |
+| 2026-11-13 | +$81.98 | -$14.31 | -$18.10 | -$172.42 | +$3.98 |  |  | -$35.87 |  |  |  | -$19.82 |
+| 2026-11-12 | +$5.13 | -$7.41 | -$2.81 | +$145.43 | -$67.52 |  |  | -$51.23 |  |  |  | -$60.24 |
+| 2026-11-11 | +$9.69 | +$59.21 | -$18.78 | -$50.06 | -$173.41 |  |  | -$77.92 |  |  |  | -$29.87 |
+| 2026-11-10 | +$55.84 | -$15.92 | -$2.64 | +$1.13 | +$61.94 |  |  | -$101.16 |  |  |  | -$214.60 |
 
 ## Latest pretend buys (newest of each strategy first)
 
 - 2026-11-19 follow_move: Will Meta (META) finish week of November 16 above $610? -> No at 0.767 ($5.00)
-- 2026-11-19 sure_thing: Jong PSV Eindhoven leading at halftime? -> No at 0.943 ($5.00)
-- 2026-11-19 safe_no_week: Will the price of Solana be between $80 and $90 on November 24? -> No at 0.925 ($5.00)
+- 2026-11-19 sure_thing: Spread: Houston Christian Huskies (-20.5) -> Georgia Southern Eagles at 0.962 ($5.00)
+- 2026-11-19 safe_no_week: Will the lowest temperature in Chengdu be 5°C on November 21? -> No at 0.924 ($5.00)
 - 2026-11-19 fade_move: Will "The Hunger Games: Sunrise on the Reaping" Opening Weekend Box Office be less than 130m? -> No at 0.136 ($5.00)
-- 2026-11-19 follow_move_cheap: Will "The Body: Season 1" be the top global Netflix show this week? -> No at 0.382 ($5.00)
-- 2026-11-19 sports_underdog: Kings vs. Maple Leafs: O/U 4.5 -> Under at 0.229 ($5.00)
+- 2026-11-19 sports_underdog: Will Real Cartagena FC win on 2026-11-19? -> No at 0.208 ($5.00)
+- 2026-11-19 follow_move_cheap: Will Elon Musk post 40-64 tweets from November 19 to November 21, 2026? -> Yes at 0.259 ($5.00)
 - 2026-11-19 follow_move_crypto: Bitcoin Up or Down on November 20? -> Down at 0.636 ($5.00)
+- 2026-11-19 weather_forecast: Will the highest temperature in Dallas be between 74-75°F on November 21? -> No at 0.652 ($5.00)
 - 2026-11-19 follow_move_2: Will Meta (META) finish week of November 16 above $610? -> No at 0.767 ($5.00)
 - 2026-11-19 follow_move_big: Bitcoin Up or Down on November 20? -> Down at 0.753 ($5.00)
-- 2026-11-19 weather_forecast: Will the highest temperature in Qingdao be 7°C on November 21? -> No at 0.586 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
 - 2026-11-19 move_ai: Will the price of Solana be between $70 and $80 on November 20? -> No at 0.106 ($5.00)
 
@@ -79,5 +79,5 @@ No checked market has a result yet (6 waiting). The AI's chances will be compare
 
 No near-gaps today.
 
-Runs in the last 24 hours: 37 (37 with a problem).
+Runs in the last 24 hours: 36 (36 with a problem).
 Latest problem: 42 position(s) still open more than 3 days after their market ended
