@@ -10,11 +10,15 @@ date, but not the price, and is asked not to look up betting odds. Its web
 search can still show it Polymarket's page, or odds quoted elsewhere, so
 every check records whether it did (saw_odds: the model's own answer, plus
 any prediction-market or betting site among the pages its search read,
-opened or cited). It also names, in a few words, what the question is
-about; an answer whose subject is not in the question, event or rules (the
-first live check on 19 Nov 2026 asked about Ethereum and was answered about
-XRP) is thrown out: its cost still counts, but nothing is bought on it.
-The rules in strategies.py then decide whether to buy.
+opened or cited). The rules in strategies.py then decide whether to buy.
+
+The first version (19 Nov 2026) sent each check the question of another
+market, the last one run_checks had looked at: an Ethereum market was
+answered about XRP. Those checks and their trades are left out of every
+result (strategies.AI_VERSION). As a second guard, each answer now names in
+a few words what the question is about, and an answer whose subject is not
+in the market's question, event or rules is thrown out: its cost still
+counts, but nothing is bought on it and it is not scored.
 
 Cost. Paid from the owner's free OpenAI credit (OPENAI_API_KEY), at most
 DAILY_BUDGET_USD a UTC day. The day's money is let out evenly, so checks are
@@ -49,6 +53,7 @@ Set the repository variable POLYMARKET_AI_CHECK to "off" to stop the checks
 from __future__ import annotations
 
 import datetime as dt
+import functools
 import json
 import os
 import random
@@ -107,18 +112,23 @@ _ODDS_TALK = re.compile(r"betting odds|bookmaker|implied probabilit", re.IGNOREC
 _JSON = re.compile(r"\{[^{}]*\}")
 # Words that say nothing about WHICH thing a question is about ("XRP price on
 # Binance" must not pass on an Ethereum question because both say "price").
-_GENERIC = frozenset("""
+# Read through _words, as the answers are (so "reaches" is "reache" in both).
+_GENERIC_TEXT = """
     a an the of on in at by to for and or vs versus from with than over under above below between before after
     will be is are was what who which whether how many much more less most least
-    price prices value close closing open high low hit reach reaches level rate total number count amount
-    market markets share shares stock stocks token coin coins crypto exchange binance candle usd usdt dollar
-    dollars cent cents percent yes no outcome result results resolution resolve forecast question event chance
-    end ends date day days daily week weeks weekly month months monthly year years time today tomorrow
+    price prices value close closing open high low hit hits hitting reach reaches reaching level rate rates
+    total number count amount market markets share shares stock stocks token coin coins crypto exchange binance
+    candle usd usdt dollar dollars cent cents percent yes no outcome result results resolution resolve forecast
+    question event chance end ends date day days daily week weeks weekly month months monthly year years time
+    today tomorrow up down dip dips dipping drop drops dropping fall falls falling rise rises rising stay stays
+    staying trade trades trading cross crosses crossing move moves moving go going get getting
+    increase increases increasing decrease decreases decreasing cut cuts cutting
     january february march april may june july august september october november december
     jan feb mar apr jun jul aug sep sept oct nov dec
     monday tuesday wednesday thursday friday saturday sunday
-    """.split())
+    """
 QUERIES_KEPT, SITES_KEPT = 8, 25  # what a check searched for and read, kept in its record
+HOST_CHARS = 253  # the longest a site's name can be
 
 
 class Stop(RuntimeError):
@@ -289,22 +299,25 @@ def _host(url) -> str:
 
 
 def searched(resp: dict) -> tuple[list[str], list[str]]:
-    """What the search looked for and the sites it read, opened or cited (kept in the record, to see what it was shown)."""
-    queries, hosts = [], set()
+    """
+    What the search looked for, and the sites it cited, opened or read, in
+    that order (the record keeps the first few of each, to see what the
+    model was shown).
+    """
+    queries, cited, opened, read = [], [], [], []
     for item in resp.get("output") or []:
         if item.get("type") == "web_search_call":
             action = item.get("action") or {}
             for q in [action.get("query"), *(action.get("queries") or [])]:
-                if isinstance(q, str) and q.strip() and q.strip()[:150] not in queries:
+                if isinstance(q, str) and q.strip():
                     queries.append(q.strip()[:150])
-            for url in [action.get("url")] + [s.get("url") for s in action.get("sources") or [] if isinstance(s, dict)]:
-                hosts.add(_host(url))
+            opened.append(action.get("url"))
+            read += [s.get("url") for s in action.get("sources") or [] if isinstance(s, dict)]
         if item.get("type") == "message":
             for c in item.get("content") or []:
-                for a in c.get("annotations") or []:
-                    hosts.add(_host(a.get("url")))
-    hosts.discard("")
-    return queries[:QUERIES_KEPT], sorted(hosts)[:SITES_KEPT]
+                cited += [a.get("url") for a in c.get("annotations") or []]
+    hosts = [h for h in (_host(u) for u in cited + opened + read) if h and len(h) <= HOST_CHARS]
+    return list(dict.fromkeys(queries)), list(dict.fromkeys(hosts))
 
 
 def odds_sites(resp: dict) -> list[str]:
@@ -376,18 +389,22 @@ def _words(text: str) -> set[str]:
     return {w[:-1] if len(w) > 3 and w.endswith("s") else w for w in re.findall(r"[a-z0-9]+", (text or "").lower())}
 
 
+_GENERIC = frozenset(_words(_GENERIC_TEXT))
+
+
 def off_subject(about: str, v: dict, rules: str) -> bool:
     """
     True when the answer is not about this market: it named no subject, or
-    fewer than half of the telling words of the subject it named (not
-    numbers, and not words like "price" or "above" that fit any market) are
+    fewer than half of the telling words of the subject it named (none with
+    a digit, such as "100k", and not words like "price" or "reaching" that
+    fit any market) are
     in the question, event, outcomes and rules: "XRP price" on an Ethereum
     question, "Suez Canal transits" on a Malacca Strait one. A subject of
     only such general words cannot be checked and passes.
     """
     if not about.strip():
         return True
-    telling = {w for w in _words(about) if len(w) >= 2 and not w.isdigit() and w not in _GENERIC}
+    telling = {w for w in _words(about) if len(w) >= 2 and not any(c.isdigit() for c in w) and w not in _GENERIC}
     if not telling:
         return False
     known = _words(" ".join([str(v.get("question") or ""), str(v.get("event_title") or ""),
@@ -418,7 +435,9 @@ def check(v: dict, prompt: str, now: float, rules: str = "") -> dict:
                    cost=round(token_cost(tin, tout) + calls * USD_PER_SEARCH, 4),
                    chance0=chance, about=about, why=why, said_saw_odds=said, odds_sites=sites,
                    # strict: odds on any page it read, or it said so, or it did not say
-                   saw_odds=bool(sites) or said is not False, queries=queries, sites=hosts)
+                   saw_odds=bool(sites) or said is not False,
+                   queries=queries[:QUERIES_KEPT], queries_count=len(queries),
+                   sites=hosts[:SITES_KEPT], sites_count=len(hosts))
         if resp.get("status") not in (None, "completed"):
             reason = (resp.get("incomplete_details") or {}).get("reason") or resp.get("status")
             row["error"] = f"answer {reason}"[:120]
@@ -478,8 +497,11 @@ def run_checks(views: list[dict], events_by_id: dict, state: dict, now: float, r
     if not os.environ.get("OPENAI_API_KEY", "").strip():
         problems.append("AI check: no OPENAI_API_KEY, so move_ai and move_ai_clean made no checks")
         return picks, []
-    results = pmapi.parallel({str(i): (lambda v=v, p=prompt, r=rules: check(v, p, now, r))
-                              for i, (v, prompt, rules) in enumerate(chosen)}, workers=MAX_CHECKS_PER_RUN)
+    # Each call is bound to its own market's prompt (partial, not a lambda
+    # whose default could pick up a name from this function: in the first
+    # version every check was sent the last prompt built above).
+    results = pmapi.parallel({str(i): functools.partial(check, c[0], c[1], now, c[2]) for i, c in enumerate(chosen)},
+                             workers=MAX_CHECKS_PER_RUN)
     rows: list[dict] = []
     stops = set()
     errors = []
@@ -498,7 +520,7 @@ def run_checks(views: list[dict], events_by_id: dict, state: dict, now: float, r
         checked[v["event_id"]] = int(v["ends_at"] + 86400)
         sides = dict(S._sides(v))
         up = 0 if float(v["oneDayPriceChange"]) > 0 else 1
-        row = {"at": int(now), "condition_id": v["conditionId"], "event_id": v["event_id"],
+        row = {"at": int(now), "ai_version": S.AI_VERSION, "condition_id": v["conditionId"], "event_id": v["event_id"],
                "question": (v.get("question") or "")[:200], "event": (v.get("event_title") or "")[:200],
                "outcomes": v["outcomes"][:2], "ends_at": v["ends_at"], "hours_left": round(v["hours_left"], 1),
                "move": float(v["oneDayPriceChange"]), "rose": up,
@@ -513,10 +535,11 @@ def run_checks(views: list[dict], events_by_id: dict, state: dict, now: float, r
                 if hit:
                     row.update(side=hit[0], cap=hit[1], with_move=hit[0] == up)
                     picks[name].append((v, hit[0], hit[1], {"ai_chance0": chance, "ai_saw_odds": res["saw_odds"],
-                                                            "ai_why": res.get("why", "")[:200]}))
+                                                            "ai_why": res.get("why", "")[:200],
+                                                            "ai_version": S.AI_VERSION}))
             state.setdefault("ai_watch", []).append(
-                {k: row.get(k) for k in ("at", "condition_id", "question", "outcomes", "ends_at", "bid0", "ask0",
-                                         "ask1", "move", "rose", "chance0", "saw_odds", "side")})
+                {k: row.get(k) for k in ("at", "ai_version", "condition_id", "question", "outcomes", "ends_at", "bid0",
+                                         "ask0", "ask1", "move", "rose", "chance0", "saw_odds", "side")})
         rows.append(row)
     for s in sorted(stops):
         problems.append(f"AI check: {s}")

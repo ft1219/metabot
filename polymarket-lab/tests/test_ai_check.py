@@ -129,14 +129,33 @@ def test_an_answer_about_something_else_is_caught():
     assert ai_check.off_subject("Suez Canal transits", ships, "")  # one shared word is not enough
     fed = view(question="Will the Fed cut interest rates in December?")
     assert not ai_check.off_subject("Fed rate decision", fed, "")  # half the telling words is enough
+    assert not ai_check.off_subject("Fed 25bp cut", fed, "")  # amounts and numbers say nothing either way
+    btc = view(question="Will Bitcoin reach $100,000 November 16-22?")
+    btc["event_title"] = "What price will Bitcoin hit November 16-22?"
+    for about in ("Bitcoin reaching $100k", "Bitcoin reaches $100k", "Bitcoin hitting $100K", "Bitcoin dipping"):
+        assert not ai_check.off_subject(about, btc, "Binance BTC/USDT"), about
+    assert ai_check.off_subject("Ethereum hitting $3k", btc, "Binance BTC/USDT")
+    assert not ai_check.off_subject("ETH staying above $1.8k", v, rules)
 
 
 def test_the_record_keeps_what_was_searched_and_read():
     r = answer(searches=2, sources=("https://www.reuters.com/a", "https://coindesk.com/b"), url="https://cnbc.com/c")
-    assert ai_check.searched(r) == (["q0", "q1"], ["cnbc.com", "coindesk.com", "www.reuters.com"])
+    # cited first, then opened, then read; each once
+    assert ai_check.searched(r) == (["q0", "q1"], ["cnbc.com", "www.reuters.com", "coindesk.com"])
     r["output"][1]["action"] = {"type": "open_page", "url": "https://example.org/p"}
-    assert ai_check.searched(r)[1] == ["cnbc.com", "coindesk.com", "example.org", "www.reuters.com"]
+    assert ai_check.searched(r)[1] == ["cnbc.com", "example.org", "www.reuters.com", "coindesk.com"]
+    r["output"][2]["action"]["url"] = "https://" + "x" * 300 + ".com/p"  # no real site has a name this long
+    assert len(ai_check.searched(r)[1]) == 4
     assert ai_check.searched({"output": []}) == ([], [])
+
+
+def test_the_record_says_when_its_lists_were_cut(openai):
+    many = answer(searches=3, sources=[f"https://s{i}.example.com/" for i in range(40)])
+    many["output"][1]["action"]["queries"] = [f"extra {i}" for i in range(10)]
+    openai["replies"] = [many]
+    _, (row,) = ai_check.run_checks([view()], {}, _state(), LATE, random.Random(1), [])
+    assert len(row["sites"]) == ai_check.SITES_KEPT and row["sites_count"] == 40
+    assert len(row["queries"]) == ai_check.QUERIES_KEPT and row["queries_count"] == 13
 
 
 def test_saw_odds_is_strict():
@@ -220,6 +239,46 @@ def test_run_checks_buys_where_the_ai_beats_the_price_and_records_every_check(op
     openai["replies"] = []
     _, rows2 = ai_check.run_checks(vs, {}, st, LATE + 3600, random.Random(2), [])
     assert rows2 and {r["event_id"] for r in rows2}.isdisjoint({r["event_id"] for r in rows})
+
+
+def _echo(request, timeout=None):
+    """An OpenAI that answers about whatever question it was sent (read back from the prompt)."""
+    asked = request["input"].split("Remember that the question is: ", 1)[1].split("\n", 1)[0]
+    reply = answer(0.95, about=asked)
+    reply["output"][-1]["content"][0]["text"] = reply["output"][-1]["content"][0]["text"].replace(
+        '"because"', json.dumps(asked))
+    return reply
+
+
+@pytest.mark.parametrize("when, n", [(LATE, 3), (LATE - 20 * 3600 + 60, 1)])
+def test_each_check_is_sent_its_own_markets_question(openai, monkeypatch, when, n):
+    # 19 Nov: every check was sent the last prompt built, even one for a market the budget then left out
+    monkeypatch.setattr(ai_check, "ask_openai", _echo)
+    names = ["Ethereum", "Solana", "Dogecoin", "Cardano", "Litecoin"]
+    vs = [view(cid=f"0x{i}", question=f"Will {name} be above $1 on Friday?") for i, name in enumerate(names)]
+    events = {v["event_id"]: {"markets": [{"conditionId": v["conditionId"], "description": f"About {name} only."}]}
+              for v, name in zip(vs, names)}
+    picks, rows = ai_check.run_checks(vs, events, _state(), when, random.Random(3), [])
+    assert len(rows) == n
+    for r in rows:
+        assert r["why"] == r["question"] and r["about"] == r["question"] and not r.get("error")
+        assert r["ai_version"] == S.AI_VERSION
+    assert all(note["ai_version"] == S.AI_VERSION for *_, note in picks["move_ai"])
+
+
+def test_trades_from_the_first_version_are_left_out_of_results(tmp_path):
+    old = {"strategy": "move_ai", "title": "Old market Zebra?", "cost": 5.0, "avg_price": 0.744,
+           "payout_if_won": 6.7, "opened_at": NOW, "settled_at": NOW, "payout": 6.7, "pnl": 1.7,
+           "legs": [{"condition_id": "0x1", "outcome": "No", "outcome_index": 1}], "note": {"ai_chance0": 0.2}}
+    new = dict(old, title="New market Quokka?", note={"ai_chance0": 0.2, "ai_version": S.AI_VERSION},
+               legs=[{"condition_id": "0x2", "outcome": "No", "outcome_index": 1}])
+    assert not S.counted("move_ai", old) and S.counted("move_ai", new) and S.counted("follow_move", old)
+    lab.append_jsonl(tmp_path / "settled" / "2026-11.jsonl", [old, new])
+    lab.append_jsonl(tmp_path / "trades" / "2026-11.jsonl", [old, new])
+    text, summary = report.build(tmp_path, NOW, state={"positions": [dict(old, strategy="move_ai_clean")]})
+    assert summary["strategies"]["move_ai"]["settled"] == 1 and summary["strategies"]["move_ai"]["trades"] == 1
+    assert summary["strategies"]["move_ai_clean"]["open"] == 0
+    assert "Quokka" in text and "Zebra" not in text  # not in the daily table or the latest buys either
 
 
 def test_nothing_is_bought_on_an_answer_about_something_else(openai):
@@ -407,16 +466,19 @@ def test_ai_summary_compares_ai_and_market_errors(tmp_path):
     rows = [{"chance0": 0.8, "bid0": 0.59, "ask0": 0.61, "result0": 1.0, "saw_odds": False, "settled_at": NOW},
             {"chance0": 0.3, "bid0": 0.49, "ask0": 0.51, "result0": 0.0, "saw_odds": True, "settled_at": NOW},
             {"chance0": 0.3, "bid0": 0.49, "ask0": 0.51, "result0": None, "saw_odds": False, "settled_at": NOW}]
-    lab.append_jsonl(tmp_path / "ai_results" / "2026-11.jsonl", rows)
-    lab.append_jsonl(tmp_path / "ai_checks" / "2026-11-18.jsonl", [
+    first = {"chance0": 0.9, "bid0": 0.49, "ask0": 0.51, "result0": 0.0, "saw_odds": False, "settled_at": NOW}
+    v2 = {"ai_version": S.AI_VERSION}
+    lab.append_jsonl(tmp_path / "ai_results" / "2026-11.jsonl", [dict(r, **v2) for r in rows] + [first])
+    lab.append_jsonl(tmp_path / "ai_checks" / "2026-11-18.jsonl", [dict(r, **v2) for r in [
         {"cost": 0.07, "chance0": 0.8, "side": 0, "bought": ["move_ai", "move_ai_clean"], "saw_odds": False},
         {"cost": 0.06, "chance0": 0.3, "side": 1, "bought": [], "saw_odds": True},
         {"cost": 0.05, "side": None, "error": "x"},
-        {"cost": 0.08, "chance0": 0.2, "side": None, "error": "answer about something else (XRP)", "off_subject": True}])
-    out = report.ai_summary(tmp_path, {"ai_budget": {"day": ai_check._day(NOW), "spent": 0.26, "checks": 4}}, NOW)
+        {"cost": 0.08, "chance0": 0.2, "side": None, "error": "answer about something else (XRP)", "off_subject": True}]]
+        + [{"cost": 0.10, "chance0": 0.9, "side": 1, "bought": ["move_ai"], "saw_odds": False}])  # first version
+    out = report.ai_summary(tmp_path, {"ai_budget": {"day": ai_check._day(NOW), "spent": 0.36, "checks": 5}}, NOW)
     assert out["checks"] == 4 and out["rule_said_buy"] == 2 and out["bought"] == 1 and out["failed"] == 2
-    assert out["off_subject"] == 1 and out["answered"] == 2 and out["saw_odds"] == 1
-    assert out["spent_today"] == 0.26 and out["spent"] == 0.26
+    assert out["off_subject"] == 1 and out["answered"] == 2 and out["saw_odds"] == 1 and out["left_out"] == 1
+    assert out["spent_today"] == 0.36 and out["spent"] == 0.36  # money spent counts, whatever the version
     assert out["all"] == {"n": 2, "ai_error": pytest.approx((0.04 + 0.09) / 2),
                           "market_error": pytest.approx((0.16 + 0.25) / 2), "ai_closer": 2}
     assert out["clean"]["n"] == 1 and out["clean"]["ai_error"] == pytest.approx(0.04)
