@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-20 00:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-20 00:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | sure_thing | 2390 | 2217/2390 | -0.6% | -$72.97 | 14 | 200 | FAIL |
-| 2 | follow_move | 515 | 313/515 | -0.9% | -$23.55 | 15 | 134 | FAIL |
-| 3 | safe_no_week | 889 | 817/889 | -4.1% | -$181.55 | 15 | 319 | FAIL |
-| 4 | fade_move | 559 | 183/559 | -4.9% | -$136.95 | 15 | 140 | FAIL |
-| 5 | sports_underdog | 1709 | 397/1709 | -14.4% | -$1225.38 | 13 | 87 | FAIL |
-| 6 | follow_move_cheap | 39 | 14/39 | -14.7% | -$28.63 | 3 | 76 | too early |
+| 1 | sure_thing | 2393 | 2220/2393 | -0.6% | -$72.32 | 14 | 205 | FAIL |
+| 2 | follow_move | 515 | 313/515 | -0.9% | -$23.55 | 15 | 136 | FAIL |
+| 3 | safe_no_week | 891 | 818/891 | -4.2% | -$186.36 | 15 | 318 | FAIL |
+| 4 | fade_move | 559 | 183/559 | -4.9% | -$136.95 | 15 | 141 | FAIL |
+| 5 | sports_underdog | 1717 | 400/1717 | -14.3% | -$1215.34 | 13 | 87 | FAIL |
+| 6 | follow_move_cheap | 39 | 14/39 | -14.7% | -$28.63 | 3 | 82 | too early |
 | 7 | follow_move_crypto | 32 | 19/32 | -16.5% | -$26.39 | 3 | 47 | too early |
-| 8 | weather_forecast | 657 | 334/657 | -18.6% | -$601.35 | 13 | 144 | FAIL |
-| 9 | follow_move_2 | 101 | 55/101 | -20.4% | -$103.24 | 4 | 113 | too early |
-| 10 | follow_move_big | 77 | 42/77 | -21.5% | -$82.80 | 4 | 75 | too early |
+| 8 | weather_forecast | 659 | 335/659 | -18.6% | -$604.51 | 13 | 142 | FAIL |
+| 9 | follow_move_2 | 101 | 55/101 | -20.4% | -$103.24 | 4 | 115 | too early |
+| 10 | follow_move_big | 77 | 42/77 | -21.5% | -$82.80 | 4 | 76 | too early |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
 | 12 | move_ai | 0 | - | - | +$0.00 | 0 | 3 | too early |
 | 13 | move_ai_clean | 0 | - | - | +$0.00 | 0 | 2 | too early |
-| 14 | coin_flip | 2544 | 1254/2544 | -5.3% | -$666.57 | 15 | 327 | yardstick |
+| 14 | coin_flip | 2547 | 1254/2547 | -5.4% | -$681.57 | 15 | 332 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | sure_thing | follow_move | safe_no_week | fade_move | sports_underdog | follow_move_cheap | follow_move_crypto | weather_forecast | follow_move_2 | follow_move_big | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-20 | +$3.84 | -$10.81 | -$4.71 | +$19.82 | -$12.82 |  |  | +$0.78 | -$3.68 | -$6.06 |  | -$17.37 |
+| 2026-11-20 | +$4.48 | -$10.81 | -$9.51 | +$19.82 | -$2.78 |  |  | -$2.37 | -$3.68 | -$6.06 |  | -$32.37 |
 | 2026-11-19 | -$35.23 | -$76.17 | -$10.58 | +$186.86 | -$302.39 | -$32.37 | -$16.30 | -$20.99 | -$96.44 | -$66.89 |  | -$31.84 |
 | 2026-11-18 | +$1.67 | -$38.68 | -$18.18 | +$13.07 | -$43.96 | +$1.98 | -$18.73 | -$60.57 | -$32.52 | -$14.72 |  | -$25.46 |
 | 2026-11-17 | +$4.02 | -$26.56 | -$6.81 | -$62.15 | -$26.19 | +$1.77 | +$8.64 | -$31.10 | +$29.40 | +$4.87 |  | -$62.47 |
@@ -57,16 +57,16 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-20 sure_thing: Will Elon Musk post 400-419 tweets from November 13 to November 20, 2026? -> No at 0.966 ($5.00)
-- 2026-11-19 follow_move: Will Meta (META) finish week of November 16 above $610? -> No at 0.767 ($5.00)
-- 2026-11-19 safe_no_week: Will Trump say "Nuclear" or "Nuke" during his November 20 news conference? -> Yes at 0.952 ($5.00)
-- 2026-11-19 fade_move: Will "The Hunger Games: Sunrise on the Reaping" Opening Weekend Box Office be less than 130m? -> No at 0.136 ($5.00)
-- 2026-11-20 sports_underdog: Canucks vs. Kraken: O/U 4.5 -> Under at 0.208 ($5.00)
-- 2026-11-19 follow_move_cheap: Will CZ post 40-59 posts from November 13 to November 20, 2026? -> Yes at 0.201 ($5.00)
+- 2026-11-20 sure_thing: Will Amazon (AMZN) close above $265 on November 20? -> No at 0.935 ($5.00)
+- 2026-11-20 follow_move: Will "The Hunger Games: Sunrise on the Reaping" Opening Weekend Box Office be between 95m and 105m? -> Yes at 0.186 ($5.00)
+- 2026-11-20 safe_no_week: Will the highest temperature in Istanbul be 19°C on November 21? -> No at 0.972 ($5.00)
+- 2026-11-20 fade_move: Will Meta (META) close at <$590 on the final day of trading of the week of Nov 16 – Nov 20? -> No at 0.490 ($5.00)
+- 2026-11-20 sports_underdog: Sydney: Hiroki Moriya vs Omar Jasika -> Hiroki Moriya at 0.300 ($5.00)
+- 2026-11-20 follow_move_cheap: Will the price of Ethereum be between $1,600 and $1,700 on November 24? -> Yes at 0.263 ($5.00)
 - 2026-11-19 follow_move_crypto: Bitcoin Up or Down on November 20? -> Down at 0.636 ($5.00)
 - 2026-11-20 weather_forecast: Will the highest temperature in Austin be between 76-77°F on November 21? -> No at 0.769 ($5.00)
-- 2026-11-19 follow_move_2: Will Meta (META) finish week of November 16 above $610? -> No at 0.767 ($5.00)
-- 2026-11-19 follow_move_big: Bitcoin Up or Down on November 20? -> Down at 0.753 ($5.00)
+- 2026-11-20 follow_move_2: Will Meta (META) close at <$590 on the final day of trading of the week of Nov 16 – Nov 20? -> Yes at 0.588 ($5.00)
+- 2026-11-20 follow_move_big: Will Meta (META) close at <$590 on the final day of trading of the week of Nov 16 – Nov 20? -> Yes at 0.588 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
 - 2026-11-20 move_ai: Will there be exactly 2 Codex weekly usage limit resets in the week of November 16? -> No at 0.826 ($5.00)
 
