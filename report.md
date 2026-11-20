@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-20 02:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-20 02:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | sure_thing | 2399 | 2226/2399 | -0.6% | -$68.51 | 14 | 215 | FAIL |
-| 2 | follow_move | 515 | 313/515 | -0.9% | -$23.55 | 15 | 139 | FAIL |
-| 3 | safe_no_week | 891 | 818/891 | -4.2% | -$186.36 | 15 | 319 | FAIL |
-| 4 | fade_move | 559 | 183/559 | -4.9% | -$136.95 | 15 | 145 | FAIL |
-| 5 | sports_underdog | 1720 | 400/1720 | -14.4% | -$1230.34 | 13 | 92 | FAIL |
+| 1 | sure_thing | 2411 | 2237/2411 | -0.6% | -$70.03 | 14 | 211 | FAIL |
+| 2 | follow_move | 515 | 313/515 | -0.9% | -$23.55 | 15 | 140 | FAIL |
+| 3 | safe_no_week | 891 | 818/891 | -4.2% | -$186.36 | 15 | 320 | FAIL |
+| 4 | fade_move | 559 | 183/559 | -4.9% | -$136.95 | 15 | 146 | FAIL |
+| 5 | sports_underdog | 1732 | 403/1732 | -14.4% | -$1238.97 | 13 | 80 | FAIL |
 | 6 | follow_move_cheap | 39 | 14/39 | -14.7% | -$28.63 | 3 | 82 | too early |
-| 7 | follow_move_crypto | 32 | 19/32 | -16.5% | -$26.39 | 3 | 48 | too early |
+| 7 | follow_move_crypto | 32 | 19/32 | -16.5% | -$26.39 | 3 | 49 | too early |
 | 8 | weather_forecast | 659 | 335/659 | -18.6% | -$604.51 | 13 | 143 | FAIL |
-| 9 | follow_move_2 | 101 | 55/101 | -20.4% | -$103.24 | 4 | 118 | too early |
-| 10 | follow_move_big | 77 | 42/77 | -21.5% | -$82.80 | 4 | 78 | too early |
+| 9 | follow_move_2 | 101 | 55/101 | -20.4% | -$103.24 | 4 | 119 | too early |
+| 10 | follow_move_big | 77 | 42/77 | -21.5% | -$82.80 | 4 | 80 | too early |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
 | 12 | move_ai | 0 | - | - | +$0.00 | 0 | 3 | too early |
 | 13 | move_ai_clean | 0 | - | - | +$0.00 | 0 | 2 | too early |
-| 14 | coin_flip | 2555 | 1259/2555 | -5.3% | -$674.00 | 15 | 340 | yardstick |
+| 14 | coin_flip | 2566 | 1266/2566 | -5.2% | -$662.46 | 15 | 337 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | sure_thing | follow_move | safe_no_week | fade_move | sports_underdog | follow_move_cheap | follow_move_crypto | weather_forecast | follow_move_2 | follow_move_big | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-20 | +$8.29 | -$10.81 | -$9.51 | +$19.82 | -$17.78 |  |  | -$2.37 | -$3.68 | -$6.06 |  | -$24.79 |
+| 2026-11-20 | +$6.78 | -$10.81 | -$9.51 | +$19.82 | -$26.41 |  |  | -$2.37 | -$3.68 | -$6.06 |  | -$13.25 |
 | 2026-11-19 | -$35.23 | -$76.17 | -$10.58 | +$186.86 | -$302.39 | -$32.37 | -$16.30 | -$20.99 | -$96.44 | -$66.89 |  | -$31.84 |
 | 2026-11-18 | +$1.67 | -$38.68 | -$18.18 | +$13.07 | -$43.96 | +$1.98 | -$18.73 | -$60.57 | -$32.52 | -$14.72 |  | -$25.46 |
 | 2026-11-17 | +$4.02 | -$26.56 | -$6.81 | -$62.15 | -$26.19 | +$1.77 | +$8.64 | -$31.10 | +$29.40 | +$4.87 |  | -$62.47 |
@@ -57,16 +57,16 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-20 sure_thing: Spread: Le Havre AC (-1.5) -> ES Troyes AC at 0.904 ($5.00)
-- 2026-11-20 follow_move: Solana Up or Down on November 20? -> Down at 0.734 ($5.00)
-- 2026-11-20 safe_no_week: Will the lowest temperature in Ankara be 8°C on November 21? -> No at 0.971 ($5.00)
-- 2026-11-20 fade_move: Will Natural Gas (NG) hit (LOW) $3.20 Week of November 16 2026? -> No at 0.268 ($5.00)
+- 2026-11-20 sure_thing: Exact Score: Liverpool Montevideo 0 - 0 Montevideo Wanderers? -> No at 0.933 ($5.00)
+- 2026-11-20 follow_move: XRP Up or Down on November 20? -> Down at 0.782 ($5.00)
+- 2026-11-20 safe_no_week: Will the price of Solana be between $50 and $60 on November 26? -> No at 0.986 ($5.00)
+- 2026-11-20 fade_move: XRP Up or Down on November 20? -> Up at 0.379 ($5.00)
 - 2026-11-20 sports_underdog: Kobe: Billy Harris vs Benjamin Hassan -> Benjamin Hassan at 0.321 ($5.00)
 - 2026-11-20 follow_move_cheap: Will the price of Ethereum be between $1,600 and $1,700 on November 24? -> Yes at 0.263 ($5.00)
-- 2026-11-20 follow_move_crypto: Solana Up or Down on November 20? -> Down at 0.734 ($5.00)
+- 2026-11-20 follow_move_crypto: XRP Up or Down on November 20? -> Down at 0.782 ($5.00)
 - 2026-11-20 weather_forecast: Will the lowest temperature in Helsinki be 0°C on November 21? -> No at 0.632 ($5.00)
-- 2026-11-20 follow_move_2: Will Natural Gas (NG) hit (LOW) $3.20 Week of November 16 2026? -> Yes at 0.787 ($5.00)
-- 2026-11-20 follow_move_big: Ethereum Up or Down on November 20? -> Down at 0.773 ($5.00)
+- 2026-11-20 follow_move_2: XRP Up or Down on November 20? -> Down at 0.782 ($5.00)
+- 2026-11-20 follow_move_big: Solana Up or Down on November 20? -> Down at 0.705 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
 - 2026-11-20 move_ai: Will there be exactly 2 Codex weekly usage limit resets in the week of November 16? -> No at 0.826 ($5.00)
 
@@ -79,5 +79,5 @@ No checked market has a result yet (8 waiting). The AI's chances will be compare
 
 No near-gaps today.
 
-Runs in the last 24 hours: 36 (36 with a problem).
+Runs in the last 24 hours: 37 (37 with a problem).
 Latest problem: 42 position(s) still open more than 3 days after their market ended
