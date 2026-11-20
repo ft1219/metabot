@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-20 13:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-20 14:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | sure_thing | 2496 | 2315/2496 | -0.6% | -$77.93 | 14 | 250 | FAIL |
-| 2 | follow_move | 518 | 315/518 | -0.9% | -$23.15 | 15 | 149 | FAIL |
-| 3 | safe_no_week | 911 | 838/911 | -4.0% | -$180.89 | 15 | 360 | FAIL |
-| 4 | fade_move | 562 | 184/562 | -5.2% | -$144.70 | 15 | 157 | FAIL |
-| 5 | sports_underdog | 1817 | 426/1817 | -13.7% | -$1232.72 | 13 | 84 | FAIL |
+| 1 | sure_thing | 2499 | 2317/2499 | -0.7% | -$82.48 | 14 | 255 | FAIL |
+| 2 | follow_move | 518 | 315/518 | -0.9% | -$23.15 | 15 | 153 | FAIL |
+| 3 | safe_no_week | 911 | 838/911 | -4.0% | -$180.89 | 15 | 361 | FAIL |
+| 4 | fade_move | 562 | 184/562 | -5.2% | -$144.70 | 15 | 162 | FAIL |
+| 5 | sports_underdog | 1823 | 428/1823 | -13.5% | -$1220.54 | 13 | 86 | FAIL |
 | 6 | follow_move_crypto | 32 | 19/32 | -16.5% | -$26.39 | 3 | 52 | too early |
-| 7 | follow_move_cheap | 40 | 14/40 | -16.8% | -$33.63 | 4 | 89 | too early |
-| 8 | weather_forecast | 680 | 346/680 | -18.9% | -$633.27 | 13 | 185 | FAIL |
-| 9 | follow_move_2 | 103 | 57/103 | -19.0% | -$97.83 | 4 | 130 | too early |
-| 10 | follow_move_big | 80 | 44/80 | -20.8% | -$83.15 | 4 | 99 | too early |
+| 7 | follow_move_cheap | 40 | 14/40 | -16.8% | -$33.63 | 4 | 91 | too early |
+| 8 | weather_forecast | 680 | 346/680 | -18.9% | -$633.27 | 13 | 186 | FAIL |
+| 9 | follow_move_2 | 103 | 57/103 | -19.0% | -$97.83 | 4 | 134 | too early |
+| 10 | follow_move_big | 80 | 44/80 | -20.8% | -$83.15 | 4 | 103 | too early |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
 | 12 | move_ai | 0 | - | - | +$0.00 | 0 | 5 | too early |
 | 13 | move_ai_clean | 0 | - | - | +$0.00 | 0 | 4 | too early |
-| 14 | coin_flip | 2653 | 1314/2653 | -4.9% | -$649.65 | 15 | 378 | yardstick |
+| 14 | coin_flip | 2656 | 1316/2656 | -4.9% | -$645.69 | 15 | 383 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | sure_thing | follow_move | safe_no_week | fade_move | sports_underdog | follow_move_crypto | follow_move_cheap | weather_forecast | follow_move_2 | follow_move_big | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-20 | -$1.12 | -$10.41 | -$4.04 | +$12.07 | -$20.16 |  | -$5.00 | -$31.14 | +$1.72 | -$6.40 |  | -$0.44 |
+| 2026-11-20 | -$5.67 | -$10.41 | -$4.04 | +$12.07 | -$7.98 |  | -$5.00 | -$31.14 | +$1.72 | -$6.40 |  | +$3.52 |
 | 2026-11-19 | -$35.23 | -$76.17 | -$10.58 | +$186.86 | -$302.39 | -$16.30 | -$32.37 | -$20.99 | -$96.44 | -$66.89 |  | -$31.84 |
 | 2026-11-18 | +$1.67 | -$38.68 | -$18.18 | +$13.07 | -$43.96 | -$18.73 | +$1.98 | -$60.57 | -$32.52 | -$14.72 |  | -$25.46 |
 | 2026-11-17 | +$4.02 | -$26.56 | -$6.81 | -$62.15 | -$26.19 | +$8.64 | +$1.77 | -$31.10 | +$29.40 | +$4.87 |  | -$62.47 |
@@ -57,16 +57,16 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-20 sure_thing: Matsumoto Yamaga FC vs. FC Ryukyu: O/U 0.5 -> Over at 0.952 ($5.00)
-- 2026-11-20 follow_move: SPY (SPY) Up or Down on November 20? -> Down at 0.738 ($5.00)
-- 2026-11-20 safe_no_week: Will the lowest temperature in Hong Kong be 18°C on November 22? -> No at 0.953 ($5.00)
-- 2026-11-20 fade_move: S&P 500 (SPY) closes above $725 on November 20? -> Yes at 0.110 ($5.00)
-- 2026-11-20 sports_underdog: Counter-Strike: Rune Eaters vs Butterfly (BO3) - CCT Europe Playoffs -> Rune Eaters at 0.290 ($5.00)
+- 2026-11-20 sure_thing: Will Ethereum reach $1,850 on November 20? -> No at 0.961 ($5.00)
+- 2026-11-20 follow_move: Micron (MU) Up or Down on November 20? -> Down at 0.777 ($5.00)
+- 2026-11-20 safe_no_week: Will the highest temperature in Sao Paulo be 34°C on November 22? -> No at 0.933 ($5.00)
+- 2026-11-20 fade_move: Will Tesla (TSLA) close above $380 on November 20? -> Yes at 0.145 ($5.00)
+- 2026-11-20 sports_underdog: Will FK Rostov vs. PFK Krylia Sovetov Samara end in a draw? -> Yes at 0.321 ($5.00)
 - 2026-11-20 follow_move_crypto: Will the price of XRP be between $1.00 and $1.10 on November 23? -> No at 0.792 ($5.00)
-- 2026-11-20 follow_move_cheap: Will Apple (AAPL) close above $350 on November 20? -> No at 0.510 ($5.00)
-- 2026-11-20 weather_forecast: Will the highest temperature in Shenzhen be 22°C on November 21? -> No at 0.632 ($5.00)
-- 2026-11-20 follow_move_2: S&P 500 (SPY) closes above $715 on November 20? -> No at 0.738 ($5.00)
-- 2026-11-20 follow_move_big: SPY (SPY) Up or Down on November 20? -> Down at 0.738 ($5.00)
+- 2026-11-20 follow_move_cheap: Will "Steps" be the #2 US Netflix movie this week? -> Yes at 0.290 ($5.00)
+- 2026-11-20 weather_forecast: Will the highest temperature in San Francisco be between 56-57°F on November 22? -> No at 0.522 ($5.00)
+- 2026-11-20 follow_move_2: Silver (XAGUSD) Up or Down on November 20? -> Down at 0.836 ($5.00)
+- 2026-11-20 follow_move_big: Silver (XAGUSD) Up or Down on November 20? -> Down at 0.836 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
 - 2026-11-20 move_ai: Will "Heartland" be the #2 global Netflix movie this week? -> No at 0.341 ($5.00)
 
