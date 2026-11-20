@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-20 22:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-20 23:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-20 22:47 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | follow_move | 577 | 360/577 | +0.9% | +$27.28 | 15 | 110 | FAIL |
 | 2 | follow_move_cheap | 68 | 28/68 | +0.6% | +$2.11 | 4 | 79 | too early |
-| 3 | sure_thing | 2605 | 2415/2605 | -0.7% | -$96.54 | 14 | 253 | FAIL |
-| 4 | safe_no_week | 1004 | 928/1004 | -3.5% | -$174.69 | 15 | 285 | FAIL |
+| 3 | sure_thing | 2643 | 2451/2643 | -0.7% | -$95.99 | 14 | 223 | FAIL |
+| 4 | safe_no_week | 1010 | 933/1010 | -3.5% | -$178.84 | 15 | 281 | FAIL |
 | 5 | fade_move | 626 | 203/626 | -4.4% | -$138.65 | 15 | 117 | FAIL |
 | 6 | follow_move_2 | 156 | 96/156 | -6.4% | -$49.89 | 4 | 97 | too early |
 | 7 | follow_move_big | 127 | 82/127 | -8.0% | -$50.53 | 4 | 73 | too early |
-| 8 | sports_underdog | 1927 | 454/1927 | -12.9% | -$1236.67 | 13 | 86 | FAIL |
-| 9 | weather_forecast | 713 | 365/713 | -18.9% | -$666.39 | 13 | 164 | FAIL |
+| 8 | sports_underdog | 1942 | 455/1942 | -13.4% | -$1292.39 | 13 | 79 | FAIL |
+| 9 | weather_forecast | 718 | 367/718 | -19.0% | -$674.76 | 13 | 159 | FAIL |
 | 10 | follow_move_crypto | 45 | 24/45 | -24.5% | -$55.13 | 4 | 51 | too early |
 | 11 | move_ai | 2 | 2/2 | +612.6% | +$61.26 | 1 | 5 | too early |
 | 12 | move_ai_clean | 1 | 1/1 | +384.5% | +$19.22 | 1 | 4 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 2720 | 1349/2720 | -4.9% | -$662.66 | 15 | 423 | yardstick |
+| 14 | coin_flip | 2741 | 1357/2741 | -5.1% | -$700.69 | 15 | 410 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move | follow_move_cheap | sure_thing | safe_no_week | fade_move | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-20 | +$40.01 | +$30.74 | -$19.73 | +$2.16 | +$18.12 | +$49.66 | +$26.21 | -$24.11 | -$64.26 | -$28.74 | +$61.26 | +$19.22 |  | -$13.45 |
+| 2026-11-20 | +$40.01 | +$30.74 | -$19.18 | -$1.99 | +$18.12 | +$49.66 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
 | 2026-11-19 | -$76.17 | -$32.37 | -$35.23 | -$10.58 | +$186.86 | -$96.44 | -$66.89 | -$302.39 | -$20.99 | -$16.30 |  |  |  | -$31.84 |
 | 2026-11-18 | -$38.68 | +$1.98 | +$1.67 | -$18.18 | +$13.07 | -$32.52 | -$14.72 | -$43.96 | -$60.57 | -$18.73 |  |  |  | -$25.46 |
 | 2026-11-17 | -$26.56 | +$1.77 | +$4.02 | -$6.81 | -$62.15 | +$29.40 | +$4.87 | -$26.19 | -$31.10 | +$8.64 |  |  |  | -$62.47 |
@@ -59,12 +59,12 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-20 follow_move: XRP Up or Down on November 21? -> Down at 0.695 ($5.00)
 - 2026-11-20 follow_move_cheap: Will the price of XRP be above $0.90 on November 26? -> No at 0.507 ($5.00)
-- 2026-11-20 sure_thing: Exact Score: Grimsby Town FC 0 - 0 Rotherham United FC? -> No at 0.971 ($5.00)
-- 2026-11-20 safe_no_week: Will the price of XRP be above $1.10 on November 27? -> No at 0.972 ($5.00)
+- 2026-11-20 sure_thing: Spread: Virtus Entella (-1.5) -> Carrarese Calcio at 0.933 ($5.00)
+- 2026-11-20 safe_no_week: Will the price of XRP be between $1.10 and $1.20 on November 27? -> No at 0.981 ($5.00)
 - 2026-11-20 fade_move: Will DICK'S Sporting Goods Q3 Dick's business comparable sales growth be between 1% and 2%? -> Yes at 0.109 ($5.00)
 - 2026-11-20 follow_move_2: XRP Up or Down on November 21? -> Down at 0.695 ($5.00)
 - 2026-11-20 follow_move_big: Will the price of Solana be above $70 on November 25? -> No at 0.607 ($5.00)
-- 2026-11-20 sports_underdog: Spread: Kentucky Wildcats (-3.5) -> Kentucky Wildcats at 0.300 ($5.00)
+- 2026-11-20 sports_underdog: Spread: AD Cali (-1.5) -> AD Cali at 0.167 ($5.00)
 - 2026-11-20 weather_forecast: Will the lowest temperature in New York City be between 52-53°F on November 22? -> No at 0.681 ($5.00)
 - 2026-11-20 follow_move_crypto: XRP Up or Down on November 21? -> Down at 0.695 ($5.00)
 - 2026-11-20 move_ai: Will Ethereum dip to $1,500 November 16-22? -> Yes at 0.350 ($5.00)
