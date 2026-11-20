@@ -320,7 +320,7 @@ def build(data: Path, now: float, state: dict | None = None, current: dict | Non
     lines += ["", f"Runs in the last 24 hours: {len(last_day)} ({len(bad)} with a problem)."]
     if bad:
         lines.append("Latest problem: " + str(bad[-1]["problems"][-1])[:200])
-    waiting = (runs[-1].get("waiting_on_polymarket") if runs else None) or 0
+    waiting = runs[-1].get("waiting_on_polymarket") if runs else None  # None: not looked up this run
     if waiting:
         lines.append(f"{waiting} open position(s) ended more than {STALE_DAYS} days ago, but Polymarket has not "
                      "settled their markets yet (a result still being counted, or a postponed match). They are "

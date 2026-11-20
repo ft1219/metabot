@@ -74,6 +74,7 @@ GAP_MAX_OUTCOMES = 40
 GAP_NEAR = 0.02  # a set within 2% of its payout is worth looking at (and recording)
 GAP_MAX_EVENTS = 60  # most events whose books are read in one run (the nearest gaps first)
 STALE_DAYS = report.STALE_DAYS  # an open position this long past its market's end is looked up on Polymarket
+STUCK_DAYS = 30  # still waiting this long after its market's (latest) end: reported, the market may never settle
 REMEMBER_DAYS = 7  # how long after its end an event stays "already traded"
 
 
@@ -342,31 +343,36 @@ def settle(state: dict, now: float, fetch=pmapi.http_json, closed: dict[str, dic
     return done
 
 
-def stale_check(stale: list[dict], closed: dict[str, dict], fetch=pmapi.http_json) -> tuple[int, list[str]]:
+def stale_check(stale: list[dict], closed: dict[str, dict], now: float,
+                fetch=pmapi.http_json) -> tuple[int, list[str]]:
     """
     (waiting, problems) for the positions still open more than STALE_DAYS
     after their market's end, given `closed` (closed_markets() of them).
 
     Waiting: every leg without a final price is in a market Polymarket still
     lists as open, because the result is not in yet (an election still being
-    counted, a postponed match). The lab can only wait, so it is no problem.
+    counted, a postponed match), or that has just closed with a final price
+    (the next run settles it). The lab can only wait, so it is no problem
+    for STUCK_DAYS after the market's end (its latest endDate, which moves
+    when a match is postponed).
 
-    A problem: a leg's market is closed but has no final price the lab can
-    read, or Polymarket does not list it at all. Either would keep the
-    position open for good, so the run reports it.
+    A problem: a leg's market is closed with no final price the lab can read,
+    Polymarket does not list it at all, or it has waited past STUCK_DAYS.
+    Each could keep the position open for good, so the run reports it.
     """
     if not stale:
         return 0, []
     need = {leg["condition_id"] for p in stale for leg in p["legs"] if leg["condition_id"] not in closed}
-    listed = _markets(need, fetch, closed_only=False) if need else {}
-    waiting, unreadable, missing = 0, 0, 0
+    known = {**(_markets(need, fetch, closed_only=False) if need else {}), **closed}
+    waiting, unreadable, missing, stuck = 0, 0, 0, 0
     for p in stale:
-        cids = [leg["condition_id"] for leg in p["legs"]]
-        if any(c in closed and final_prices(closed[c]) is None for c in cids) or \
-                any(c not in closed and (listed.get(c) or {}).get("closed") for c in cids):
+        rows = [known.get(leg["condition_id"]) for leg in p["legs"]]
+        if any(r and r.get("closed") and final_prices(r) is None for r in rows):
             unreadable += 1
-        elif any(c not in closed and c not in listed for c in cids):
+        elif any(r is None for r in rows):
             missing += 1
+        elif now - max([p.get("ends_at", now)] + [parse_ts(r.get("endDate")) or 0 for r in rows]) > STUCK_DAYS * 86400:
+            stuck += 1
         else:
             waiting += 1
     problems = []
@@ -376,6 +382,9 @@ def stale_check(stale: list[dict], closed: dict[str, dict], fetch=pmapi.http_jso
     if missing:
         problems.append(f"{missing} position(s) ended more than {STALE_DAYS} days ago and Polymarket no longer "
                         "lists their market")
+    if stuck:
+        problems.append(f"{stuck} position(s) ended more than {STUCK_DAYS} days ago and Polymarket has still not "
+                        "settled their market")
     return waiting, problems
 
 
@@ -588,14 +597,14 @@ def run(data: Path, now: float | None = None, fetch=pmapi.http_json, seed: int |
             ai_results = ai_check.settle_checks(state, now, lambda ids: closed_markets(ids, fetch), final_prices)
         except pmapi.ApiError as e:
             problems.append(f"AI check results: {e}")
-        lap("settle")
         if closed is not None:  # when settling failed, Polymarket is not answering: the settle problem says so
             stale = [p for p in state["positions"] if now - p.get("ends_at", now) > STALE_DAYS * 86400]
             try:
-                waiting, more = stale_check(stale, closed, fetch)
+                waiting, more = stale_check(stale, closed, now, fetch)
                 problems += more
             except pmapi.ApiError as e:
                 problems.append(f"stale positions: {e}")
+        lap("settle")
 
         events: list[dict] = []
         try:

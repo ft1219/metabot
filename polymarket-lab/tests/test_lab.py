@@ -165,6 +165,20 @@ def _stale(cid, strategy="s", days_late=5.0, legs=None):
             "legs": legs or [{"condition_id": cid, "outcome_index": 0, "shares": 10.0}]}
 
 
+def _iso(days_from_now):
+    return lab.dt.datetime.fromtimestamp(NOW + days_from_now * 86400, lab.dt.timezone.utc).isoformat()
+
+
+def _gamma_lookup(rows, asked):
+    """A fake Gamma /markets lookup that answers only for the condition ids the URL asks for."""
+    def fetch(url, body):
+        assert "/markets?" in url and "closed=true" not in url  # the closed markets are already known
+        ids = set(lab.urllib.parse.parse_qs(lab.urllib.parse.urlsplit(url).query).get("condition_ids", []))
+        asked.append(ids)
+        return [r for r in rows if r["conditionId"] in ids]
+    return fetch
+
+
 def test_stale_check_tells_waiting_from_stuck():
     """A position long past its end is only a problem if the lab could never settle it."""
     stale = [
@@ -173,37 +187,45 @@ def test_stale_check_tells_waiting_from_stuck():
         _stale("gone"),  # Polymarket no longer lists it
         _stale("x", legs=[{"condition_id": "done", "outcome_index": 0, "shares": 1.0},
                           {"condition_id": "open2", "outcome_index": 1, "shares": 1.0}]),  # one leg still open: wait
+        _stale("just"),  # closed with a final price since settle read the closed markets: the next run settles it
+        _stale("late", days_late=31),  # still open a month after its end: it may never settle
+        _stale("moved", days_late=31),  # a postponed match: Polymarket moved its end to next week, so wait
     ]
     closed = {"done": {"conditionId": "done", "closed": True, "outcomePrices": '["1", "0"]'},
               "odd": {"conditionId": "odd", "closed": True, "outcomePrices": '["0.97", "0.03"]'}}
+    listed = [{"conditionId": c, "closed": False, "outcomePrices": '["0.6", "0.4"]', "endDate": _iso(-5)}
+              for c in ("open", "open2")]
+    listed += [{"conditionId": "late", "closed": False, "outcomePrices": '["0.6", "0.4"]', "endDate": _iso(-31)}]
+    listed += [{"conditionId": "just", "closed": True, "outcomePrices": '["0", "1"]', "endDate": _iso(-5)},
+               {"conditionId": "moved", "closed": False, "outcomePrices": '["0.5", "0.5"]', "endDate": _iso(7)},
+               {"conditionId": "other", "closed": False, "outcomePrices": '["0.5", "0.5"]'}]  # not asked for
     asked = []
 
-    def fetch(url, body):
-        assert "closed=true" not in url  # the closed markets are already known
-        asked.append(url)
-        return [{"conditionId": c, "closed": False, "outcomePrices": '["0.6", "0.4"]'} for c in ("open", "open2")]
-
-    waiting, problems = lab.stale_check(stale, closed, fetch)
-    assert waiting == 2
-    assert len(problems) == 2
+    waiting, problems = lab.stale_check(stale, closed, NOW, _gamma_lookup(listed, asked))
+    assert waiting == 4  # open, x, just, moved
+    assert asked == [{"open", "gone", "open2", "just", "late", "moved"}]  # only the legs not already known closed
+    assert len(problems) == 3
     assert "1 position(s) ended more than 3 days ago" in problems[0] and "no final price" in problems[0]
     assert "1 position(s) ended more than 3 days ago" in problems[1] and "no longer lists" in problems[1]
-    assert len(asked) == 1 and "condition_ids=done" not in asked[0] and "condition_ids=odd" not in asked[0]
+    assert "1 position(s) ended more than 30 days ago" in problems[2] and "still not settled" in problems[2]
     # nothing stale: nothing is asked
-    assert lab.stale_check([], closed, fetch) == (0, [])
+    assert lab.stale_check([], closed, NOW, _gamma_lookup(listed, asked)) == (0, [])
     assert len(asked) == 1
 
 
-def _stale_run(tmp_path, monkeypatch, listed):
-    """One full run holding a position that ended 5 days ago; `listed` is what Polymarket says of its market."""
+def _stale_run(tmp_path, monkeypatch, listed, asked=None):
+    """One full run holding a position that ended 5 days ago (and one that ended 2 days ago, not yet looked up);
+    `listed` is what Polymarket's plain lookup says of their markets."""
     serial(monkeypatch)
-    (tmp_path / "state.json").write_text(json.dumps({"positions": [_stale("0xnz", strategy="follow_move")]}))
+    (tmp_path / "state.json").write_text(json.dumps({"positions": [
+        _stale("0xnz", strategy="follow_move"), _stale("0xrecent", strategy="follow_move", days_late=2)]}))
+    lookup = _gamma_lookup(listed, asked if asked is not None else [])
 
     def fetch(url, body):
         if "/markets?" in url and "closed=true" in url:
             return []
         if "/markets?" in url:
-            return listed
+            return lookup(url, body)
         if "/events?" in url:
             return []
         raise AssertionError(url)
@@ -212,8 +234,11 @@ def _stale_run(tmp_path, monkeypatch, listed):
 
 
 def test_a_market_polymarket_has_not_settled_yet_is_not_a_problem(tmp_path, monkeypatch):
-    row = _stale_run(tmp_path, monkeypatch, [{"conditionId": "0xnz", "closed": False, "outcomePrices": '["0.8", "0.2"]'}])
-    assert row["problems"] == [] and row["waiting_on_polymarket"] == 1 and row["open"] == 1
+    asked = []
+    row = _stale_run(tmp_path, monkeypatch, [{"conditionId": "0xnz", "closed": False, "outcomePrices": '["0.8", "0.2"]'}],
+                     asked)
+    assert asked == [{"0xnz"}]  # the position 2 days past its end is not looked up yet
+    assert row["problems"] == [] and row["waiting_on_polymarket"] == 1 and row["open"] == 2
     text = (tmp_path / "report.md").read_text()
     assert "Runs in the last 24 hours: 1 (0 with a problem)" in text
     assert "1 open position(s) ended more than 3 days ago" in text and "not settled" in text
@@ -225,7 +250,29 @@ def test_a_market_polymarket_no_longer_lists_is_a_problem(tmp_path, monkeypatch)
     row = _stale_run(tmp_path, monkeypatch, [])
     assert row["waiting_on_polymarket"] == 0
     assert len(row["problems"]) == 1 and "no longer lists" in row["problems"][0]
-    assert "with a problem" in (tmp_path / "report.md").read_text()
+    text = (tmp_path / "report.md").read_text()
+    assert "(1 with a problem)" in text and "has not settled" not in text
+
+
+def test_stale_lookup_failing_is_a_problem_not_a_crash(tmp_path, monkeypatch):
+    serial(monkeypatch)
+    (tmp_path / "state.json").write_text(json.dumps({"positions": [_stale("0xnz")]}))
+    asked = []
+
+    def fetch(url, body):
+        asked.append(url)
+        if "/markets?" in url and "closed=true" in url:
+            return []
+        if "/markets?" in url:
+            raise lab.pmapi.ApiError("503 on the plain lookup")
+        if "/events?" in url:
+            return []
+        raise AssertionError(url)
+
+    row = lab.run(tmp_path, NOW, fetch, seed=1)
+    assert row["problems"] == ["stale positions: 503 on the plain lookup"] and row["waiting_on_polymarket"] is None
+    assert any("/events?" in u for u in asked)  # the run went on to list markets
+    assert json.loads((tmp_path / "summary.json").read_text())["waiting_on_polymarket"] is None
 
 
 def test_settle_failing_skips_the_stale_check(tmp_path, monkeypatch):
