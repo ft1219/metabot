@@ -12,7 +12,5 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: FutureEval question schedule (read-only)
-        run: python3 -u probe/question_schedule.py
-        env:
-          METACULUS_TOKEN: ${{ secrets.METACULUS_TOKEN }}
+      - name: Polymarket stale positions (read-only)
+        run: python3 -u probe/stale_markets.py
