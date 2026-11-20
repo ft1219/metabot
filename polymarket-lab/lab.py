@@ -73,7 +73,7 @@ GAP_MIN_EDGE = 0.005  # needs at least half a cent a share-set after fees
 GAP_MAX_OUTCOMES = 40
 GAP_NEAR = 0.02  # a set within 2% of its payout is worth looking at (and recording)
 GAP_MAX_EVENTS = 60  # most events whose books are read in one run (the nearest gaps first)
-STALE_DAYS = 3  # an open position this long past its market's end is reported
+STALE_DAYS = report.STALE_DAYS  # an open position this long past its market's end is looked up on Polymarket
 REMEMBER_DAYS = 7  # how long after its end an event stays "already traded"
 
 
@@ -284,16 +284,20 @@ def markets_of(events: list[dict]):
             yield m
 
 
-def closed_markets(condition_ids, fetch=pmapi.http_json) -> dict[str, dict]:
-    ids = list(condition_ids)
+def _markets(condition_ids, fetch, closed_only: bool) -> dict[str, dict]:
+    ids = sorted(condition_ids)
     out: dict[str, dict] = {}
     for i in range(0, len(ids), 20):
         q = "&".join(f"condition_ids={c}" for c in ids[i:i + 20])
-        rows = fetch(f"{pmapi.GAMMA}/markets?closed=true&limit=20&{q}", None)
+        rows = fetch(f"{pmapi.GAMMA}/markets?{'closed=true&' if closed_only else ''}limit=20&{q}", None)
         for r in rows if isinstance(rows, list) else []:
             if r.get("conditionId"):
                 out[r["conditionId"]] = r
     return out
+
+
+def closed_markets(condition_ids, fetch=pmapi.http_json) -> dict[str, dict]:
+    return _markets(condition_ids, fetch, closed_only=True)
 
 
 # ---------------------------------------------------------------- settlement
@@ -310,12 +314,14 @@ def final_prices(m: dict) -> list[float] | None:
     return prices
 
 
-def settle(state: dict, now: float, fetch=pmapi.http_json) -> list[dict]:
+def settle(state: dict, now: float, fetch=pmapi.http_json, closed: dict[str, dict] | None = None) -> list[dict]:
+    """Settles every open position whose markets all have a final price. `closed`: closed_markets() of them, if read."""
     open_pos = state["positions"]
     ids = {leg["condition_id"] for p in open_pos for leg in p["legs"]}
     if not ids:
         return []
-    closed = closed_markets(ids, fetch)
+    if closed is None:
+        closed = closed_markets(ids, fetch)
     done, keep = [], []
     for p in open_pos:
         payout = 0.0
@@ -334,6 +340,43 @@ def settle(state: dict, now: float, fetch=pmapi.http_json) -> list[dict]:
         done.append(p)
     state["positions"] = keep
     return done
+
+
+def stale_check(stale: list[dict], closed: dict[str, dict], fetch=pmapi.http_json) -> tuple[int, list[str]]:
+    """
+    (waiting, problems) for the positions still open more than STALE_DAYS
+    after their market's end, given `closed` (closed_markets() of them).
+
+    Waiting: every leg without a final price is in a market Polymarket still
+    lists as open, because the result is not in yet (an election still being
+    counted, a postponed match). The lab can only wait, so it is no problem.
+
+    A problem: a leg's market is closed but has no final price the lab can
+    read, or Polymarket does not list it at all. Either would keep the
+    position open for good, so the run reports it.
+    """
+    if not stale:
+        return 0, []
+    need = {leg["condition_id"] for p in stale for leg in p["legs"] if leg["condition_id"] not in closed}
+    listed = _markets(need, fetch, closed_only=False) if need else {}
+    waiting, unreadable, missing = 0, 0, 0
+    for p in stale:
+        cids = [leg["condition_id"] for leg in p["legs"]]
+        if any(c in closed and final_prices(closed[c]) is None for c in cids) or \
+                any(c not in closed and (listed.get(c) or {}).get("closed") for c in cids):
+            unreadable += 1
+        elif any(c not in closed and c not in listed for c in cids):
+            missing += 1
+        else:
+            waiting += 1
+    problems = []
+    if unreadable:
+        problems.append(f"{unreadable} position(s) ended more than {STALE_DAYS} days ago and Polymarket closed "
+                        "their market with no final price the lab can read")
+    if missing:
+        problems.append(f"{missing} position(s) ended more than {STALE_DAYS} days ago and Polymarket no longer "
+                        "lists their market")
+    return waiting, problems
 
 
 # ---------------------------------------------------------------- entries
@@ -531,19 +574,28 @@ def run(data: Path, now: float | None = None, fetch=pmapi.http_json, seed: int |
     def lap(name: str) -> None:
         timing[name] = round(time.time() - t0 - sum(timing.values()), 1)
 
+    waiting: int | None = None  # positions past their end that Polymarket has not settled yet (None: not looked up)
     try:
+        closed: dict[str, dict] | None = None
         try:
-            settled = settle(state, now, fetch)
+            ids = {leg["condition_id"] for p in state["positions"] for leg in p["legs"]}
+            closed = closed_markets(ids, fetch) if ids else {}
+            settled = settle(state, now, fetch, closed)
         except pmapi.ApiError as e:
+            closed = None
             problems.append(f"settle: {e}")
         try:
             ai_results = ai_check.settle_checks(state, now, lambda ids: closed_markets(ids, fetch), final_prices)
         except pmapi.ApiError as e:
             problems.append(f"AI check results: {e}")
         lap("settle")
-        stale = [p for p in state["positions"] if now - p.get("ends_at", now) > STALE_DAYS * 86400]
-        if stale:
-            problems.append(f"{len(stale)} position(s) still open more than {STALE_DAYS} days after their market ended")
+        if closed is not None:  # when settling failed, Polymarket is not answering: the settle problem says so
+            stale = [p for p in state["positions"] if now - p.get("ends_at", now) > STALE_DAYS * 86400]
+            try:
+                waiting, more = stale_check(stale, closed, fetch)
+                problems += more
+            except pmapi.ApiError as e:
+                problems.append(f"stale positions: {e}")
 
         events: list[dict] = []
         try:
@@ -626,7 +678,7 @@ def run(data: Path, now: float | None = None, fetch=pmapi.http_json, seed: int |
 
     run_row = {"at": int(now), "seconds": round(time.time() - t0, 1), "timing": timing, "markets": len(views),
                "new_trades": len(new), "settled": len(settled), "open": len(state["positions"]),
-               "problems": problems}
+               "waiting_on_polymarket": waiting, "problems": problems}
     try:
         text, summary = report.build(data, now, state, run_row)
         write_text(data / "report.md", text)

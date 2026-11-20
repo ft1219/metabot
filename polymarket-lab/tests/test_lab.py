@@ -160,6 +160,90 @@ def test_settle_pays_winners_and_keeps_open():
     assert len(state["positions"]) == 1
 
 
+def _stale(cid, strategy="s", days_late=5.0, legs=None):
+    return {"strategy": strategy, "cost": 5.0, "ends_at": int(NOW - days_late * 86400), "title": f"Q {cid}?",
+            "legs": legs or [{"condition_id": cid, "outcome_index": 0, "shares": 10.0}]}
+
+
+def test_stale_check_tells_waiting_from_stuck():
+    """A position long past its end is only a problem if the lab could never settle it."""
+    stale = [
+        _stale("open"),  # Polymarket has not settled it yet (an election still being counted): wait
+        _stale("odd"),  # closed, but with no final price the lab can read
+        _stale("gone"),  # Polymarket no longer lists it
+        _stale("x", legs=[{"condition_id": "done", "outcome_index": 0, "shares": 1.0},
+                          {"condition_id": "open2", "outcome_index": 1, "shares": 1.0}]),  # one leg still open: wait
+    ]
+    closed = {"done": {"conditionId": "done", "closed": True, "outcomePrices": '["1", "0"]'},
+              "odd": {"conditionId": "odd", "closed": True, "outcomePrices": '["0.97", "0.03"]'}}
+    asked = []
+
+    def fetch(url, body):
+        assert "closed=true" not in url  # the closed markets are already known
+        asked.append(url)
+        return [{"conditionId": c, "closed": False, "outcomePrices": '["0.6", "0.4"]'} for c in ("open", "open2")]
+
+    waiting, problems = lab.stale_check(stale, closed, fetch)
+    assert waiting == 2
+    assert len(problems) == 2
+    assert "1 position(s) ended more than 3 days ago" in problems[0] and "no final price" in problems[0]
+    assert "1 position(s) ended more than 3 days ago" in problems[1] and "no longer lists" in problems[1]
+    assert len(asked) == 1 and "condition_ids=done" not in asked[0] and "condition_ids=odd" not in asked[0]
+    # nothing stale: nothing is asked
+    assert lab.stale_check([], closed, fetch) == (0, [])
+    assert len(asked) == 1
+
+
+def _stale_run(tmp_path, monkeypatch, listed):
+    """One full run holding a position that ended 5 days ago; `listed` is what Polymarket says of its market."""
+    serial(monkeypatch)
+    (tmp_path / "state.json").write_text(json.dumps({"positions": [_stale("0xnz", strategy="follow_move")]}))
+
+    def fetch(url, body):
+        if "/markets?" in url and "closed=true" in url:
+            return []
+        if "/markets?" in url:
+            return listed
+        if "/events?" in url:
+            return []
+        raise AssertionError(url)
+
+    return lab.run(tmp_path, NOW, fetch, seed=1)
+
+
+def test_a_market_polymarket_has_not_settled_yet_is_not_a_problem(tmp_path, monkeypatch):
+    row = _stale_run(tmp_path, monkeypatch, [{"conditionId": "0xnz", "closed": False, "outcomePrices": '["0.8", "0.2"]'}])
+    assert row["problems"] == [] and row["waiting_on_polymarket"] == 1 and row["open"] == 1
+    text = (tmp_path / "report.md").read_text()
+    assert "Runs in the last 24 hours: 1 (0 with a problem)" in text
+    assert "1 open position(s) ended more than 3 days ago" in text and "not settled" in text
+    summary = json.loads((tmp_path / "summary.json").read_text())
+    assert summary["waiting_on_polymarket"] == 1 and summary["runs_with_problems_24h"] == 0
+
+
+def test_a_market_polymarket_no_longer_lists_is_a_problem(tmp_path, monkeypatch):
+    row = _stale_run(tmp_path, monkeypatch, [])
+    assert row["waiting_on_polymarket"] == 0
+    assert len(row["problems"]) == 1 and "no longer lists" in row["problems"][0]
+    assert "with a problem" in (tmp_path / "report.md").read_text()
+
+
+def test_settle_failing_skips_the_stale_check(tmp_path, monkeypatch):
+    serial(monkeypatch)
+    (tmp_path / "state.json").write_text(json.dumps({"positions": [_stale("0xnz")]}))
+
+    def fetch(url, body):
+        if "/markets?" in url:
+            raise lab.pmapi.ApiError("Gamma down")
+        if "/events?" in url:
+            return []
+        raise AssertionError(url)
+
+    row = lab.run(tmp_path, NOW, fetch, seed=1)
+    assert [p for p in row["problems"] if "Gamma down" in p] and not [p for p in row["problems"] if "stale" in p]
+    assert row["waiting_on_polymarket"] is None
+
+
 def test_final_prices_rejects_unsettled():
     assert lab.final_prices({"closed": True, "outcomePrices": '["0.97", "0.03"]'}) is None
     assert lab.final_prices({"closed": False, "outcomePrices": '["1", "0"]'}) is None
