@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-20 16:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-20 16:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move_cheap | 46 | 20/46 | +4.5% | +$10.24 | 4 | 85 | too early |
-| 2 | sure_thing | 2509 | 2327/2509 | -0.6% | -$80.58 | 14 | 269 | FAIL |
-| 3 | follow_move | 521 | 316/521 | -0.8% | -$21.54 | 15 | 152 | FAIL |
-| 4 | safe_no_week | 915 | 842/915 | -3.9% | -$180.08 | 15 | 360 | FAIL |
-| 5 | fade_move | 565 | 186/565 | -4.5% | -$126.95 | 15 | 163 | FAIL |
-| 6 | sports_underdog | 1843 | 431/1843 | -13.7% | -$1258.16 | 13 | 90 | FAIL |
-| 7 | follow_move_2 | 106 | 59/106 | -16.0% | -$84.86 | 4 | 133 | too early |
-| 8 | weather_forecast | 685 | 350/685 | -18.6% | -$627.10 | 13 | 185 | FAIL |
+| 1 | follow_move_cheap | 46 | 20/46 | +4.5% | +$10.24 | 4 | 89 | too early |
+| 2 | sure_thing | 2517 | 2335/2517 | -0.6% | -$78.34 | 14 | 269 | FAIL |
+| 3 | follow_move | 521 | 316/521 | -0.8% | -$21.54 | 15 | 153 | FAIL |
+| 4 | safe_no_week | 928 | 854/928 | -3.9% | -$182.39 | 15 | 347 | FAIL |
+| 5 | fade_move | 565 | 186/565 | -4.5% | -$126.95 | 15 | 165 | FAIL |
+| 6 | sports_underdog | 1855 | 436/1855 | -13.3% | -$1221.68 | 13 | 86 | FAIL |
+| 7 | follow_move_2 | 106 | 59/106 | -16.0% | -$84.86 | 4 | 134 | too early |
+| 8 | weather_forecast | 700 | 359/700 | -18.6% | -$641.98 | 13 | 170 | FAIL |
 | 9 | follow_move_crypto | 33 | 19/33 | -19.0% | -$31.39 | 4 | 51 | too early |
-| 10 | follow_move_big | 82 | 45/82 | -20.2% | -$82.73 | 4 | 103 | too early |
+| 10 | follow_move_big | 82 | 45/82 | -20.2% | -$82.73 | 4 | 106 | too early |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
 | 12 | move_ai | 0 | - | - | +$0.00 | 0 | 6 | too early |
 | 13 | move_ai_clean | 0 | - | - | +$0.00 | 0 | 4 | too early |
-| 14 | coin_flip | 2666 | 1320/2666 | -5.0% | -$659.62 | 15 | 397 | yardstick |
+| 14 | coin_flip | 2670 | 1324/2670 | -4.8% | -$643.03 | 15 | 401 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | sure_thing | follow_move | safe_no_week | fade_move | sports_underdog | follow_move_2 | weather_forecast | follow_move_crypto | follow_move_big | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-20 | +$38.87 | -$3.77 | -$8.80 | -$3.23 | +$29.81 | -$45.60 | +$14.69 | -$24.97 | -$5.00 | -$5.99 |  | -$10.42 |
+| 2026-11-20 | +$38.87 | -$1.54 | -$8.80 | -$5.54 | +$29.81 | -$9.12 | +$14.69 | -$39.85 | -$5.00 | -$5.99 |  | +$6.18 |
 | 2026-11-19 | -$32.37 | -$35.23 | -$76.17 | -$10.58 | +$186.86 | -$302.39 | -$96.44 | -$20.99 | -$16.30 | -$66.89 |  | -$31.84 |
 | 2026-11-18 | +$1.98 | +$1.67 | -$38.68 | -$18.18 | +$13.07 | -$43.96 | -$32.52 | -$60.57 | -$18.73 | -$14.72 |  | -$25.46 |
 | 2026-11-17 | +$1.77 | +$4.02 | -$26.56 | -$6.81 | -$62.15 | -$26.19 | +$29.40 | -$31.10 | +$8.64 | +$4.87 |  | -$62.47 |
@@ -57,16 +57,16 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-20 follow_move_cheap: Will "Steps" be the #2 US Netflix movie this week? -> Yes at 0.290 ($5.00)
-- 2026-11-20 sure_thing: Georgia Bulldogs vs. Georgia Tech Yellow Jackets: O/U 144.5 -> Over at 0.933 ($5.00)
-- 2026-11-20 follow_move: EWY (EWY) Up or Down on November 20? -> Down at 0.845 ($5.00)
+- 2026-11-20 follow_move_cheap: Will the price of XRP be above $0.90 on November 24? -> No at 0.477 ($5.00)
+- 2026-11-20 sure_thing: Spread: FK Mladost Lucani (-1.5) -> FK Zeleznicar Pancevo at 0.971 ($5.00)
+- 2026-11-20 follow_move: Will "The Cat in the Hat" 3rd Weekend Box Office be between 7m and 8m? -> Yes at 0.522 ($5.00)
 - 2026-11-20 safe_no_week: Will Apple (AAPL) close above $360 on November 23? -> No at 0.962 ($5.00)
-- 2026-11-20 fade_move: Palantir (PLTR) Up or Down on November 20? -> Up at 0.339 ($5.00)
-- 2026-11-20 sports_underdog: Spread: GKS Piast Gliwice (-1.5) -> GKS Piast Gliwice at 0.177 ($5.00)
-- 2026-11-20 follow_move_2: Palantir (PLTR) Up or Down on November 20? -> Down at 0.777 ($5.00)
+- 2026-11-20 fade_move: Will "Ebenezer" 2nd Weekend Box Office be between 6m and 7.5m? -> Yes at 0.125 ($5.00)
+- 2026-11-20 sports_underdog: ATP World Tour Finals, Ivan Lendl Group: Daniil Medvedev vs Frances Tiafoe -> Frances Tiafoe at 0.331 ($5.00)
+- 2026-11-20 follow_move_2: Will "The Cat in the Hat" 3rd Weekend Box Office be between 7m and 8m? -> Yes at 0.522 ($5.00)
 - 2026-11-20 weather_forecast: Will the lowest temperature in Sao Paulo be 20°C on November 21? -> No at 0.730 ($5.00)
 - 2026-11-20 follow_move_crypto: Will the price of XRP be between $1.00 and $1.10 on November 23? -> No at 0.792 ($5.00)
-- 2026-11-20 follow_move_big: Palantir (PLTR) Up or Down on November 20? -> Down at 0.777 ($5.00)
+- 2026-11-20 follow_move_big: Will the price of Solana be above $70 on November 24? -> No at 0.597 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
 - 2026-11-20 move_ai: Will 5+ ships transit the Strait of Hormuz on any day week of November 16? -> Yes at 0.750 ($5.00)
 
@@ -79,5 +79,5 @@ No checked market has a result yet (12 waiting). The AI's chances will be compar
 
 No near-gaps today.
 
-Runs in the last 24 hours: 37 (37 with a problem).
+Runs in the last 24 hours: 36 (36 with a problem).
 Latest problem: 42 position(s) still open more than 3 days after their market ended
