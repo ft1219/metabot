@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-20 10:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-20 11:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | sure_thing | 2479 | 2300/2479 | -0.6% | -$71.88 | 14 | 238 | FAIL |
+| 1 | sure_thing | 2480 | 2301/2480 | -0.6% | -$71.36 | 14 | 244 | FAIL |
 | 2 | follow_move | 518 | 315/518 | -0.9% | -$23.15 | 15 | 141 | FAIL |
-| 3 | safe_no_week | 910 | 837/910 | -4.0% | -$181.04 | 15 | 351 | FAIL |
+| 3 | safe_no_week | 911 | 838/911 | -4.0% | -$180.89 | 15 | 354 | FAIL |
 | 4 | fade_move | 562 | 184/562 | -5.2% | -$144.70 | 15 | 148 | FAIL |
-| 5 | sports_underdog | 1796 | 421/1796 | -13.6% | -$1211.05 | 13 | 78 | FAIL |
+| 5 | sports_underdog | 1796 | 421/1796 | -13.6% | -$1211.05 | 13 | 86 | FAIL |
 | 6 | follow_move_crypto | 32 | 19/32 | -16.5% | -$26.39 | 3 | 52 | too early |
-| 7 | follow_move_cheap | 40 | 14/40 | -16.8% | -$33.63 | 4 | 87 | too early |
-| 8 | weather_forecast | 679 | 345/679 | -19.0% | -$634.85 | 13 | 176 | FAIL |
+| 7 | follow_move_cheap | 40 | 14/40 | -16.8% | -$33.63 | 4 | 88 | too early |
+| 8 | weather_forecast | 680 | 346/680 | -18.9% | -$633.27 | 13 | 181 | FAIL |
 | 9 | follow_move_2 | 103 | 57/103 | -19.0% | -$97.83 | 4 | 122 | too early |
-| 10 | follow_move_big | 80 | 44/80 | -20.8% | -$83.15 | 4 | 90 | too early |
+| 10 | follow_move_big | 80 | 44/80 | -20.8% | -$83.15 | 4 | 91 | too early |
 | 11 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
 | 12 | move_ai | 0 | - | - | +$0.00 | 0 | 4 | too early |
 | 13 | move_ai_clean | 0 | - | - | +$0.00 | 0 | 3 | too early |
-| 14 | coin_flip | 2625 | 1300/2625 | -4.9% | -$637.18 | 15 | 374 | yardstick |
+| 14 | coin_flip | 2627 | 1301/2627 | -4.9% | -$637.52 | 15 | 380 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | sure_thing | follow_move | safe_no_week | fade_move | sports_underdog | follow_move_crypto | follow_move_cheap | weather_forecast | follow_move_2 | follow_move_big | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-20 | +$4.93 | -$10.41 | -$4.19 | +$12.07 | +$1.51 |  | -$5.00 | -$32.72 | +$1.72 | -$6.40 |  | +$12.03 |
+| 2026-11-20 | +$5.45 | -$10.41 | -$4.04 | +$12.07 | +$1.51 |  | -$5.00 | -$31.14 | +$1.72 | -$6.40 |  | +$11.69 |
 | 2026-11-19 | -$35.23 | -$76.17 | -$10.58 | +$186.86 | -$302.39 | -$16.30 | -$32.37 | -$20.99 | -$96.44 | -$66.89 |  | -$31.84 |
 | 2026-11-18 | +$1.67 | -$38.68 | -$18.18 | +$13.07 | -$43.96 | -$18.73 | +$1.98 | -$60.57 | -$32.52 | -$14.72 |  | -$25.46 |
 | 2026-11-17 | +$4.02 | -$26.56 | -$6.81 | -$62.15 | -$26.19 | +$8.64 | +$1.77 | -$31.10 | +$29.40 | +$4.87 |  | -$62.47 |
@@ -57,16 +57,16 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-20 sure_thing: Exact Score: Busan IPark 0 - 0 Chungbuk Cheongju FC? -> No at 0.952 ($5.00)
+- 2026-11-20 sure_thing: Spread: Gimpo FC (-1.5) -> Suwon FC at 0.952 ($5.00)
 - 2026-11-20 follow_move: Democratic 2028 presidential odds 66-68% on November 20? -> No at 0.560 ($5.00)
-- 2026-11-20 safe_no_week: Will the highest temperature in Houston be between 84-85°F on November 22? -> No at 0.965 ($5.00)
+- 2026-11-20 safe_no_week: Will the highest temperature in Buenos Aires be 23°C on November 22? -> No at 0.981 ($5.00)
 - 2026-11-20 fade_move: Democratic 2028 presidential odds 66-68% on November 20? -> Yes at 0.475 ($5.00)
-- 2026-11-20 sports_underdog: Spread: Navbahor (-1.5) -> Navbahor at 0.229 ($5.00)
+- 2026-11-20 sports_underdog: Spread: Bengaluru FC (-1.5) -> Bengaluru FC at 0.341 ($5.00)
 - 2026-11-20 follow_move_crypto: Will the price of XRP be between $1.00 and $1.10 on November 23? -> No at 0.792 ($5.00)
-- 2026-11-20 follow_move_cheap: Will CZ post 40-59 posts from November 17 to November 24, 2026? -> Yes at 0.290 ($5.00)
-- 2026-11-20 weather_forecast: Will the lowest temperature in Denver be between 20-21°F on November 22? -> No at 0.808 ($5.00)
+- 2026-11-20 follow_move_cheap: Will "Steps" be the #2 global Netflix movie this week? -> Yes at 0.218 ($5.00)
+- 2026-11-20 weather_forecast: Will the lowest temperature in Warsaw be 0°C on November 21? -> Yes at 0.160 ($3.77)
 - 2026-11-20 follow_move_2: Democratic 2028 presidential odds 66-68% on November 20? -> No at 0.560 ($5.00)
-- 2026-11-20 follow_move_big: Will Micron (MU) close at <$680 on the final day of trading of the week of Nov 16 – Nov 20? -> Yes at 0.669 ($5.00)
+- 2026-11-20 follow_move_big: Will the price of XRP be above $1.00 on November 22? -> No at 0.851 ($5.00)
 - 2026-11-11 price_gap: All Yes on: Japan GDP growth in Q3 2026 (QoQ Annualized)? at 0.995 ($15.92)
 - 2026-11-20 move_ai: Will the price of Ethereum be between $1,700 and $1,800 on November 21? -> No at 0.417 ($5.00)
 
