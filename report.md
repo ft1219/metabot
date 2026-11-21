@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-21 18:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-21 19:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move_cheap | 78 | 32/78 | +8.1% | +$31.57 | 5 | 77 | too early |
-| 2 | follow_move | 596 | 372/596 | +0.5% | +$15.82 | 16 | 103 | FAIL |
-| 3 | sure_thing | 2893 | 2682/2893 | -0.8% | -$120.13 | 15 | 204 | FAIL |
-| 4 | fade_move | 649 | 212/649 | -2.7% | -$87.13 | 16 | 107 | FAIL |
-| 5 | safe_no_week | 1073 | 994/1073 | -3.3% | -$176.30 | 16 | 287 | FAIL |
-| 6 | follow_move_2 | 174 | 107/174 | -3.5% | -$30.22 | 5 | 90 | too early |
-| 7 | follow_move_big | 144 | 91/144 | -8.1% | -$58.65 | 5 | 75 | too early |
-| 8 | sports_underdog | 2168 | 502/2168 | -14.5% | -$1565.03 | 14 | 82 | FAIL |
-| 9 | weather_forecast | 766 | 394/766 | -18.3% | -$692.58 | 14 | 168 | FAIL |
-| 10 | follow_move_crypto | 57 | 29/57 | -22.4% | -$63.91 | 5 | 45 | too early |
+| 1 | follow_move_cheap | 79 | 32/79 | +6.7% | +$26.57 | 5 | 76 | too early |
+| 2 | follow_move | 598 | 374/598 | +0.7% | +$21.40 | 16 | 103 | FAIL |
+| 3 | sure_thing | 2930 | 2717/2930 | -0.8% | -$120.09 | 15 | 175 | FAIL |
+| 4 | fade_move | 651 | 212/651 | -3.0% | -$97.13 | 16 | 107 | FAIL |
+| 5 | safe_no_week | 1077 | 998/1077 | -3.3% | -$175.53 | 16 | 283 | FAIL |
+| 6 | follow_move_2 | 176 | 108/176 | -3.8% | -$33.55 | 5 | 90 | too early |
+| 7 | follow_move_big | 144 | 91/144 | -8.1% | -$58.65 | 5 | 77 | too early |
+| 8 | sports_underdog | 2185 | 506/2185 | -14.4% | -$1559.63 | 14 | 73 | FAIL |
+| 9 | weather_forecast | 769 | 394/769 | -18.6% | -$707.58 | 14 | 166 | FAIL |
+| 10 | follow_move_crypto | 57 | 29/57 | -22.4% | -$63.91 | 5 | 46 | too early |
 | 11 | move_ai | 3 | 3/3 | +455.1% | +$68.26 | 2 | 10 | too early |
 | 12 | move_ai_clean | 2 | 2/2 | +262.2% | +$26.22 | 2 | 8 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3009 | 1490/3009 | -5.1% | -$761.74 | 16 | 373 | yardstick |
+| 14 | coin_flip | 3049 | 1509/3049 | -5.1% | -$780.96 | 16 | 341 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | fade_move | safe_no_week | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-21 | +$29.46 | -$11.46 | -$24.14 | +$51.52 | +$2.54 | +$19.68 | -$8.12 | -$272.64 | -$17.82 | -$8.79 | +$7.00 | +$7.00 |  | -$61.05 |
+| 2026-11-21 | +$24.46 | -$5.88 | -$24.10 | +$41.52 | +$3.31 | +$16.35 | -$8.12 | -$267.24 | -$32.82 | -$8.79 | +$7.00 | +$7.00 |  | -$80.27 |
 | 2026-11-20 | +$30.74 | +$40.01 | -$19.18 | +$18.12 | -$1.99 | +$49.66 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
 | 2026-11-19 | -$32.37 | -$76.17 | -$35.23 | +$186.86 | -$10.58 | -$96.44 | -$66.89 | -$302.39 | -$20.99 | -$16.30 |  |  |  | -$31.84 |
 | 2026-11-18 | +$1.98 | -$38.68 | +$1.67 | +$13.07 | -$18.18 | -$32.52 | -$14.72 | -$43.96 | -$60.57 | -$18.73 |  |  |  | -$25.46 |
@@ -58,15 +58,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 ## Latest pretend buys (newest of each strategy first)
 
 - 2026-11-21 follow_move_cheap: Will the price of Ethereum be above $1,700 on November 27? -> Yes at 0.462 ($5.00)
-- 2026-11-21 follow_move: Will Ted Cruz post 40-59 posts from November 17 to November 24, 2026? -> Yes at 0.552 ($5.00)
-- 2026-11-21 sure_thing: SMU vs. Notre Dame -> Notre Dame at 0.914 ($5.00)
-- 2026-11-21 fade_move: Will Donald Trump post 40-59 Truth Social posts from November 20 to November 27, 2026? -> No at 0.792 ($5.00)
+- 2026-11-21 follow_move: S&P 500 (SPX) Up or Down on November 23? -> Up at 0.720 ($5.00)
+- 2026-11-21 sure_thing: Kasımpaşa SK vs. Alanyaspor: Neither team to score first? -> No at 0.962 ($5.00)
+- 2026-11-21 fade_move: Will the price of XRP be above $0.90 on November 27? -> No at 0.422 ($5.00)
 - 2026-11-21 safe_no_week: Will the highest temperature in Austin be between 58-59°F on November 23? -> No at 0.931 ($5.00)
-- 2026-11-21 follow_move_2: Will Donald Trump post 40-59 Truth Social posts from November 20 to November 27, 2026? -> Yes at 0.252 ($5.00)
-- 2026-11-21 follow_move_big: Democratic 2028 presidential odds 64-66% on November 27? -> Yes at 0.392 ($5.00)
-- 2026-11-21 sports_underdog: Spread: South Alabama (-20.5) -> South Alabama at 0.198 ($5.00)
-- 2026-11-21 weather_forecast: Will the highest temperature in Sao Paulo be 32°C on November 22? -> No at 0.672 ($5.00)
-- 2026-11-21 follow_move_crypto: Will the price of Ethereum be between $1,600 and $1,700 on November 27? -> No at 0.792 ($5.00)
+- 2026-11-21 follow_move_2: S&P 500 (SPX) Up or Down on November 23? -> Up at 0.720 ($5.00)
+- 2026-11-21 follow_move_big: S&P 500 (SPX) Up or Down on November 23? -> Up at 0.720 ($5.00)
+- 2026-11-21 sports_underdog: Longwood Lancers vs. East Tennessee State Buccaneers -> Longwood Lancers at 0.341 ($5.00)
+- 2026-11-21 weather_forecast: Will the lowest temperature in Los Angeles be between 52-53°F on November 23? -> No at 0.776 ($5.00)
+- 2026-11-21 follow_move_crypto: Will the price of XRP be above $0.90 on November 27? -> Yes at 0.632 ($5.00)
 - 2026-11-21 move_ai: Democratic 2028 presidential odds 66-68% on November 27? -> No at 0.572 ($5.00)
 - 2026-11-21 move_ai_clean: Will the price of Bitcoin be above $58,000 on November 26? -> No at 0.299 ($5.00)
 
@@ -81,5 +81,5 @@ Today: 9 checks, $0.67 of OpenAI credit (limit $1.00 a day). Since the start: 23
 
 No near-gaps today.
 
-Runs in the last 24 hours: 37 (37 with a problem).
+Runs in the last 24 hours: 36 (36 with a problem).
 Latest problem: 39 position(s) still open more than 3 days after their market ended
