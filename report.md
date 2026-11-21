@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-21 16:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-21 16:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-21 16:07 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | follow_move_cheap | 71 | 29/71 | +2.7% | +$9.60 | 5 | 79 | too early |
 | 2 | follow_move | 584 | 365/584 | +0.8% | +$24.08 | 16 | 107 | FAIL |
-| 3 | sure_thing | 2800 | 2593/2800 | -0.9% | -$126.85 | 15 | 265 | FAIL |
-| 4 | safe_no_week | 1048 | 970/1048 | -3.4% | -$175.84 | 16 | 305 | FAIL |
+| 3 | sure_thing | 2817 | 2610/2817 | -0.9% | -$122.07 | 15 | 256 | FAIL |
+| 4 | safe_no_week | 1064 | 985/1064 | -3.3% | -$177.43 | 16 | 291 | FAIL |
 | 5 | follow_move_2 | 162 | 101/162 | -3.7% | -$30.20 | 5 | 95 | too early |
 | 6 | fade_move | 636 | 205/636 | -4.5% | -$143.88 | 16 | 113 | FAIL |
 | 7 | follow_move_big | 132 | 84/132 | -9.4% | -$62.07 | 5 | 83 | too early |
-| 8 | sports_underdog | 2132 | 495/2132 | -14.3% | -$1509.87 | 14 | 86 | FAIL |
-| 9 | weather_forecast | 750 | 385/750 | -18.4% | -$679.95 | 14 | 179 | FAIL |
+| 8 | sports_underdog | 2142 | 496/2142 | -14.4% | -$1535.83 | 14 | 84 | FAIL |
+| 9 | weather_forecast | 766 | 394/766 | -18.3% | -$692.58 | 14 | 166 | FAIL |
 | 10 | follow_move_crypto | 45 | 24/45 | -24.5% | -$55.13 | 4 | 52 | too early |
-| 11 | move_ai | 2 | 2/2 | +612.6% | +$61.26 | 1 | 10 | too early |
+| 11 | move_ai | 2 | 2/2 | +612.6% | +$61.26 | 1 | 11 | too early |
 | 12 | move_ai_clean | 1 | 1/1 | +384.5% | +$19.22 | 1 | 9 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 2911 | 1436/2911 | -5.5% | -$797.32 | 16 | 439 | yardstick |
+| 14 | coin_flip | 2939 | 1452/2939 | -5.3% | -$778.45 | 16 | 419 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | safe_no_week | follow_move_2 | fade_move | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-21 | +$7.48 | -$3.20 | -$30.86 | +$3.00 | +$19.69 | -$5.23 | -$11.54 | -$217.48 | -$5.19 |  |  |  |  | -$96.63 |
+| 2026-11-21 | +$7.48 | -$3.20 | -$26.07 | +$1.41 | +$19.69 | -$5.23 | -$11.54 | -$243.44 | -$17.82 |  |  |  |  | -$77.76 |
 | 2026-11-20 | +$30.74 | +$40.01 | -$19.18 | -$1.99 | +$49.66 | +$18.12 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
 | 2026-11-19 | -$32.37 | -$76.17 | -$35.23 | -$10.58 | -$96.44 | +$186.86 | -$66.89 | -$302.39 | -$20.99 | -$16.30 |  |  |  | -$31.84 |
 | 2026-11-18 | +$1.98 | -$38.68 | +$1.67 | -$18.18 | -$32.52 | +$13.07 | -$14.72 | -$43.96 | -$60.57 | -$18.73 |  |  |  | -$25.46 |
@@ -59,23 +59,23 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-21 follow_move_cheap: Democratic 2028 presidential odds 64-66% on November 27? -> Yes at 0.392 ($5.00)
 - 2026-11-21 follow_move: Democratic 2028 presidential odds 64-66% on November 27? -> Yes at 0.392 ($5.00)
-- 2026-11-21 sure_thing: Exact Score: Panaitolikos Agrinio 0 - 0 Volos NPS? -> No at 0.943 ($5.00)
-- 2026-11-21 safe_no_week: Will the highest temperature in Tel Aviv be 23°C on November 23? -> No at 0.912 ($5.00)
+- 2026-11-21 sure_thing: Will CSD Suchitepéquez win on 2026-11-21? -> No at 0.952 ($5.00)
+- 2026-11-21 safe_no_week: Will the highest temperature in Miami be between 76-77°F on November 23? -> No at 0.958 ($5.00)
 - 2026-11-21 follow_move_2: Democratic 2028 presidential odds 64-66% on November 27? -> Yes at 0.392 ($5.00)
 - 2026-11-21 fade_move: Democratic 2028 presidential odds 64-66% on November 27? -> No at 0.642 ($5.00)
 - 2026-11-21 follow_move_big: Will 22+ ships transit the Strait of Hormuz week of November 16? -> No at 0.841 ($5.00)
-- 2026-11-21 sports_underdog: Will US Folgore Caratese win on 2026-11-21? -> Yes at 0.321 ($5.00)
-- 2026-11-21 weather_forecast: Will the highest temperature in Karachi be 31°C on November 23? -> No at 0.642 ($5.00)
+- 2026-11-21 sports_underdog: Spread: Arsenal FC (-2.5) -> Arsenal FC at 0.198 ($5.00)
+- 2026-11-21 weather_forecast: Will the highest temperature in Houston be between 70-71°F on November 23? -> Yes at 0.076 ($5.00)
 - 2026-11-21 follow_move_crypto: Will the price of XRP be between $0.90 and $1.00 on November 24? -> No at 0.712 ($5.00)
-- 2026-11-21 move_ai: Will the price of Bitcoin be above $58,000 on November 26? -> No at 0.299 ($5.00)
+- 2026-11-21 move_ai: Democratic 2028 presidential odds 66-68% on November 27? -> No at 0.572 ($5.00)
 - 2026-11-21 move_ai_clean: Will the price of Bitcoin be above $58,000 on November 26? -> No at 0.299 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
 
-Today: 8 checks, $0.56 of OpenAI credit (limit $1.00 a day). Since the start: 22 checks ($2.22 spent in all); on 12 the AI beat the price by 5c or more and 12 were bought (the rest found no seller at that price); 0 failed. The AI saw betting odds while searching on 4 of the 22 it answered. 3 checks from the first version (19 Nov) are left out here and in the AI strategies' results: a bug sent each of them another market's question.
+Today: 9 checks, $0.67 of OpenAI credit (limit $1.00 a day). Since the start: 23 checks ($2.32 spent in all); on 13 the AI beat the price by 5c or more and 13 were bought (the rest found no seller at that price); 0 failed. The AI saw betting odds while searching on 5 of the 23 it answered. 3 checks from the first version (19 Nov) are left out here and in the AI strategies' results: a bug sent each of them another market's question.
 - All checked markets, 5 with a result: AI error 0.282, market price 0.361 (lower is better; always saying 50% scores 0.250); the AI was closer on 4.
 - Checks where it saw no betting odds, 4 with a result: AI error 0.223, market price 0.242 (lower is better; always saying 50% scores 0.250); the AI was closer on 3.
-17 more checked markets are waiting for their result. A few dozen results say little; read this after 100 or more.
+18 more checked markets are waiting for their result. A few dozen results say little; read this after 100 or more.
 
 ## Price gaps seen today
 
