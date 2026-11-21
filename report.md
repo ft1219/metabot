@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-21 14:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-21 15:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-21 14:47 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | follow_move_cheap | 71 | 29/71 | +2.7% | +$9.60 | 5 | 79 | too early |
 | 2 | follow_move | 584 | 365/584 | +0.8% | +$24.08 | 16 | 107 | FAIL |
-| 3 | sure_thing | 2790 | 2583/2790 | -0.9% | -$130.11 | 15 | 259 | FAIL |
-| 4 | safe_no_week | 1043 | 965/1043 | -3.4% | -$177.04 | 16 | 308 | FAIL |
+| 3 | sure_thing | 2793 | 2586/2793 | -0.9% | -$128.81 | 15 | 264 | FAIL |
+| 4 | safe_no_week | 1048 | 970/1048 | -3.4% | -$175.84 | 16 | 304 | FAIL |
 | 5 | follow_move_2 | 162 | 101/162 | -3.7% | -$30.20 | 5 | 95 | too early |
 | 6 | fade_move | 636 | 205/636 | -4.5% | -$143.88 | 16 | 113 | FAIL |
-| 7 | follow_move_big | 132 | 84/132 | -9.4% | -$62.07 | 5 | 82 | too early |
-| 8 | sports_underdog | 2114 | 493/2114 | -13.8% | -$1450.75 | 14 | 88 | FAIL |
-| 9 | weather_forecast | 745 | 383/745 | -18.3% | -$673.71 | 14 | 183 | FAIL |
+| 7 | follow_move_big | 132 | 84/132 | -9.4% | -$62.07 | 5 | 83 | too early |
+| 8 | sports_underdog | 2122 | 494/2122 | -14.0% | -$1474.10 | 14 | 88 | FAIL |
+| 9 | weather_forecast | 750 | 385/750 | -18.4% | -$679.95 | 14 | 179 | FAIL |
 | 10 | follow_move_crypto | 45 | 24/45 | -24.5% | -$55.13 | 4 | 52 | too early |
 | 11 | move_ai | 2 | 2/2 | +612.6% | +$61.26 | 1 | 10 | too early |
 | 12 | move_ai_clean | 1 | 1/1 | +384.5% | +$19.22 | 1 | 9 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 2892 | 1428/2892 | -5.3% | -$766.76 | 16 | 442 | yardstick |
+| 14 | coin_flip | 2901 | 1431/2901 | -5.5% | -$788.94 | 16 | 441 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | safe_no_week | follow_move_2 | fade_move | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-21 | +$7.48 | -$3.20 | -$34.12 | +$1.79 | +$19.69 | -$5.23 | -$11.54 | -$158.36 | +$1.05 |  |  |  |  | -$66.07 |
+| 2026-11-21 | +$7.48 | -$3.20 | -$32.82 | +$3.00 | +$19.69 | -$5.23 | -$11.54 | -$181.71 | -$5.19 |  |  |  |  | -$88.25 |
 | 2026-11-20 | +$30.74 | +$40.01 | -$19.18 | -$1.99 | +$49.66 | +$18.12 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
 | 2026-11-19 | -$32.37 | -$76.17 | -$35.23 | -$10.58 | -$96.44 | +$186.86 | -$66.89 | -$302.39 | -$20.99 | -$16.30 |  |  |  | -$31.84 |
 | 2026-11-18 | +$1.98 | -$38.68 | +$1.67 | -$18.18 | -$32.52 | +$13.07 | -$14.72 | -$43.96 | -$60.57 | -$18.73 |  |  |  | -$25.46 |
@@ -59,13 +59,13 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-21 follow_move_cheap: Democratic 2028 presidential odds 64-66% on November 27? -> Yes at 0.392 ($5.00)
 - 2026-11-21 follow_move: Democratic 2028 presidential odds 64-66% on November 27? -> Yes at 0.392 ($5.00)
-- 2026-11-21 sure_thing: Falkirk FC vs. St Johnstone FC: Neither team to score first? -> No at 0.971 ($4.86)
-- 2026-11-21 safe_no_week: Will the highest temperature in San Francisco be between 60-61°F on November 23? -> No at 0.921 ($5.00)
+- 2026-11-21 sure_thing: Will FC Petrolul Ploieşti win on 2026-11-21? -> No at 0.904 ($5.00)
+- 2026-11-21 safe_no_week: Will Trump or Melania say "West Virginia" during the Thanksgiving Turkey Pardon on November 24? -> Yes at 0.941 ($5.00)
 - 2026-11-21 follow_move_2: Democratic 2028 presidential odds 64-66% on November 27? -> Yes at 0.392 ($5.00)
 - 2026-11-21 fade_move: Democratic 2028 presidential odds 64-66% on November 27? -> No at 0.642 ($5.00)
-- 2026-11-21 follow_move_big: Will Trump's approval rating be at least 38.0 on November 27, 2026? -> No at 0.662 ($5.00)
-- 2026-11-21 sports_underdog: Spread: Aldershot Town FC (-1.5) -> Aldershot Town FC at 0.167 ($5.00)
-- 2026-11-21 weather_forecast: Will the lowest temperature in Tel Aviv be 16°C on November 23? -> No at 0.712 ($5.00)
+- 2026-11-21 follow_move_big: Will 22+ ships transit the Strait of Hormuz week of November 16? -> No at 0.841 ($5.00)
+- 2026-11-21 sports_underdog: Will Ferencvarosi Budapest win on 2026-11-21? -> No at 0.331 ($5.00)
+- 2026-11-21 weather_forecast: Will the highest temperature in Karachi be 31°C on November 23? -> No at 0.642 ($5.00)
 - 2026-11-21 follow_move_crypto: Will the price of XRP be between $0.90 and $1.00 on November 24? -> No at 0.712 ($5.00)
 - 2026-11-21 move_ai: Will the price of Bitcoin be above $58,000 on November 26? -> No at 0.299 ($5.00)
 - 2026-11-21 move_ai_clean: Will the price of Bitcoin be above $58,000 on November 26? -> No at 0.299 ($5.00)
