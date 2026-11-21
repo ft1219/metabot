@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-21 05:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-21 06:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-21 05:27 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | follow_move_cheap | 70 | 29/70 | +4.2% | +$14.60 | 5 | 79 | too early |
 | 2 | follow_move | 584 | 365/584 | +0.8% | +$24.08 | 16 | 105 | FAIL |
-| 3 | sure_thing | 2709 | 2509/2709 | -0.9% | -$115.98 | 15 | 228 | FAIL |
-| 4 | safe_no_week | 1027 | 949/1027 | -3.5% | -$180.82 | 16 | 279 | FAIL |
+| 3 | sure_thing | 2715 | 2514/2715 | -0.9% | -$119.61 | 15 | 230 | FAIL |
+| 4 | safe_no_week | 1028 | 950/1028 | -3.5% | -$180.66 | 16 | 286 | FAIL |
 | 5 | follow_move_2 | 162 | 101/162 | -3.7% | -$30.20 | 5 | 93 | too early |
 | 6 | fade_move | 636 | 205/636 | -4.5% | -$143.88 | 16 | 109 | FAIL |
-| 7 | follow_move_big | 131 | 84/131 | -8.7% | -$57.07 | 5 | 78 | too early |
-| 8 | sports_underdog | 2017 | 473/2017 | -13.4% | -$1343.93 | 14 | 76 | FAIL |
-| 9 | weather_forecast | 727 | 373/727 | -18.8% | -$674.92 | 14 | 155 | FAIL |
+| 7 | follow_move_big | 131 | 84/131 | -8.7% | -$57.07 | 5 | 81 | too early |
+| 8 | sports_underdog | 2028 | 477/2028 | -13.3% | -$1341.52 | 14 | 73 | FAIL |
+| 9 | weather_forecast | 728 | 374/728 | -18.8% | -$673.86 | 14 | 162 | FAIL |
 | 10 | follow_move_crypto | 45 | 24/45 | -24.5% | -$55.13 | 4 | 52 | too early |
 | 11 | move_ai | 2 | 2/2 | +612.6% | +$61.26 | 1 | 7 | too early |
 | 12 | move_ai_clean | 1 | 1/1 | +384.5% | +$19.22 | 1 | 6 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 2788 | 1388/2788 | -4.6% | -$632.14 | 16 | 435 | yardstick |
+| 14 | coin_flip | 2798 | 1392/2798 | -4.7% | -$651.99 | 16 | 432 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | safe_no_week | follow_move_2 | fade_move | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-21 | +$12.48 | -$3.20 | -$19.98 | -$1.98 | +$19.69 | -$5.23 | -$6.54 | -$51.55 | -$0.16 |  |  |  |  | +$68.55 |
+| 2026-11-21 | +$12.48 | -$3.20 | -$23.62 | -$1.82 | +$19.69 | -$5.23 | -$6.54 | -$49.13 | +$0.90 |  |  |  |  | +$48.70 |
 | 2026-11-20 | +$30.74 | +$40.01 | -$19.18 | -$1.99 | +$49.66 | +$18.12 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
 | 2026-11-19 | -$32.37 | -$76.17 | -$35.23 | -$10.58 | -$96.44 | +$186.86 | -$66.89 | -$302.39 | -$20.99 | -$16.30 |  |  |  | -$31.84 |
 | 2026-11-18 | +$1.98 | -$38.68 | +$1.67 | -$18.18 | -$32.52 | +$13.07 | -$14.72 | -$43.96 | -$60.57 | -$18.73 |  |  |  | -$25.46 |
@@ -59,13 +59,13 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-21 follow_move_cheap: Will OpenRouter process between 675T and 725T tokens from Oct 26 to Nov 22? -> Yes at 0.505 ($5.00)
 - 2026-11-21 follow_move: Will OpenRouter process between 675T and 725T tokens from Oct 26 to Nov 22? -> Yes at 0.505 ($5.00)
-- 2026-11-21 sure_thing: Spread: Watford FC (-1.5) -> Sheffield United FC at 0.962 ($5.00)
-- 2026-11-21 safe_no_week: Will Trump's approval rating be at least 39.0 on November 27, 2026? -> No at 0.982 ($5.00)
+- 2026-11-21 sure_thing: Persijap Jepara leading at halftime? -> No at 0.933 ($5.00)
+- 2026-11-21 safe_no_week: Will Analog Devices (ADI) beat quarterly earnings? -> Yes at 0.931 ($5.00)
 - 2026-11-21 follow_move_2: Will the price of XRP be between $0.90 and $1.00 on November 24? -> No at 0.712 ($5.00)
 - 2026-11-21 fade_move: Will the price of XRP be between $0.90 and $1.00 on November 24? -> Yes at 0.342 ($5.00)
-- 2026-11-21 follow_move_big: Will the price of XRP be between $0.80 and $0.90 on November 23? -> Yes at 0.473 ($5.00)
-- 2026-11-21 sports_underdog: Spread: Gamba Ōsaka (-1.5) -> Gamba Ōsaka at 0.244 ($5.00)
-- 2026-11-21 weather_forecast: Will the highest temperature in Madrid be 12°C on November 23? -> Yes at 0.111 ($2.22)
+- 2026-11-21 follow_move_big: Will the price of Bitcoin be less than $54,000 on November 24? -> Yes at 0.429 ($5.00)
+- 2026-11-21 sports_underdog: Will Rans Nusantara win on 2026-11-21? -> Yes at 0.351 ($5.00)
+- 2026-11-21 weather_forecast: Will the highest temperature in Chengdu be 20°C on November 23? -> No at 0.706 ($5.00)
 - 2026-11-21 follow_move_crypto: Will the price of XRP be between $0.90 and $1.00 on November 24? -> No at 0.712 ($5.00)
 - 2026-11-21 move_ai: Will the price of Bitcoin be above $56,000 on November 25? -> No at 0.192 ($5.00)
 - 2026-11-21 move_ai_clean: Will the price of Bitcoin be above $56,000 on November 25? -> No at 0.192 ($5.00)
