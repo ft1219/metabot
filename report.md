@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-21 04:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-21 05:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move_cheap | 70 | 29/70 | +4.2% | +$14.60 | 5 | 78 | too early |
-| 2 | follow_move | 584 | 365/584 | +0.8% | +$24.08 | 16 | 103 | FAIL |
-| 3 | sure_thing | 2699 | 2500/2699 | -0.8% | -$113.78 | 15 | 230 | FAIL |
-| 4 | safe_no_week | 1026 | 948/1026 | -3.5% | -$181.18 | 16 | 275 | FAIL |
-| 5 | follow_move_2 | 162 | 101/162 | -3.7% | -$30.20 | 5 | 91 | too early |
-| 6 | fade_move | 636 | 205/636 | -4.5% | -$143.88 | 16 | 107 | FAIL |
-| 7 | follow_move_big | 131 | 84/131 | -8.7% | -$57.07 | 5 | 76 | too early |
-| 8 | sports_underdog | 2011 | 471/2011 | -13.5% | -$1343.71 | 14 | 74 | FAIL |
-| 9 | weather_forecast | 726 | 373/726 | -18.7% | -$669.92 | 14 | 152 | FAIL |
-| 10 | follow_move_crypto | 45 | 24/45 | -24.5% | -$55.13 | 4 | 51 | too early |
+| 1 | follow_move_cheap | 70 | 29/70 | +4.2% | +$14.60 | 5 | 79 | too early |
+| 2 | follow_move | 584 | 365/584 | +0.8% | +$24.08 | 16 | 105 | FAIL |
+| 3 | sure_thing | 2709 | 2509/2709 | -0.9% | -$115.98 | 15 | 228 | FAIL |
+| 4 | safe_no_week | 1027 | 949/1027 | -3.5% | -$180.82 | 16 | 279 | FAIL |
+| 5 | follow_move_2 | 162 | 101/162 | -3.7% | -$30.20 | 5 | 93 | too early |
+| 6 | fade_move | 636 | 205/636 | -4.5% | -$143.88 | 16 | 109 | FAIL |
+| 7 | follow_move_big | 131 | 84/131 | -8.7% | -$57.07 | 5 | 78 | too early |
+| 8 | sports_underdog | 2017 | 473/2017 | -13.4% | -$1343.93 | 14 | 76 | FAIL |
+| 9 | weather_forecast | 727 | 373/727 | -18.8% | -$674.92 | 14 | 155 | FAIL |
+| 10 | follow_move_crypto | 45 | 24/45 | -24.5% | -$55.13 | 4 | 52 | too early |
 | 11 | move_ai | 2 | 2/2 | +612.6% | +$61.26 | 1 | 7 | too early |
 | 12 | move_ai_clean | 1 | 1/1 | +384.5% | +$19.22 | 1 | 6 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 2781 | 1383/2781 | -4.6% | -$640.51 | 16 | 434 | yardstick |
+| 14 | coin_flip | 2788 | 1388/2788 | -4.6% | -$632.14 | 16 | 435 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | safe_no_week | follow_move_2 | fade_move | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-21 | +$12.48 | -$3.20 | -$17.78 | -$2.34 | +$19.69 | -$5.23 | -$6.54 | -$51.32 | +$4.84 |  |  |  |  | +$60.18 |
+| 2026-11-21 | +$12.48 | -$3.20 | -$19.98 | -$1.98 | +$19.69 | -$5.23 | -$6.54 | -$51.55 | -$0.16 |  |  |  |  | +$68.55 |
 | 2026-11-20 | +$30.74 | +$40.01 | -$19.18 | -$1.99 | +$49.66 | +$18.12 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
 | 2026-11-19 | -$32.37 | -$76.17 | -$35.23 | -$10.58 | -$96.44 | +$186.86 | -$66.89 | -$302.39 | -$20.99 | -$16.30 |  |  |  | -$31.84 |
 | 2026-11-18 | +$1.98 | -$38.68 | +$1.67 | -$18.18 | -$32.52 | +$13.07 | -$14.72 | -$43.96 | -$60.57 | -$18.73 |  |  |  | -$25.46 |
@@ -57,29 +57,29 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-21 follow_move_cheap: Will OpenRouter process 240T or more tokens the week of November 16? -> No at 0.182 ($5.00)
-- 2026-11-20 follow_move: XRP Up or Down on November 21? -> Down at 0.695 ($5.00)
-- 2026-11-21 sure_thing: Exact Score: OFK Beograd 0 - 0 FK Novi Pazar? -> No at 0.943 ($5.00)
-- 2026-11-21 safe_no_week: Will the lowest temperature in New York City be between 56-57°F on November 22? -> No at 0.912 ($5.00)
-- 2026-11-20 follow_move_2: XRP Up or Down on November 21? -> Down at 0.695 ($5.00)
-- 2026-11-20 fade_move: Will DICK'S Sporting Goods Q3 Dick's business comparable sales growth be between 1% and 2%? -> Yes at 0.109 ($5.00)
-- 2026-11-21 follow_move_big: Will "Ebenezer" 2nd Weekend Box Office be between 9m and 10.5m? -> No at 0.851 ($5.00)
-- 2026-11-21 sports_underdog: Will Zweigen Kanazawa win on 2026-11-21? -> Yes at 0.354 ($5.00)
-- 2026-11-21 weather_forecast: Will the lowest temperature in Houston be between 64-65°F on November 22? -> No at 0.702 ($5.00)
-- 2026-11-20 follow_move_crypto: XRP Up or Down on November 21? -> Down at 0.695 ($5.00)
+- 2026-11-21 follow_move_cheap: Will OpenRouter process between 675T and 725T tokens from Oct 26 to Nov 22? -> Yes at 0.505 ($5.00)
+- 2026-11-21 follow_move: Will OpenRouter process between 675T and 725T tokens from Oct 26 to Nov 22? -> Yes at 0.505 ($5.00)
+- 2026-11-21 sure_thing: Spread: Watford FC (-1.5) -> Sheffield United FC at 0.962 ($5.00)
+- 2026-11-21 safe_no_week: Will Trump's approval rating be at least 39.0 on November 27, 2026? -> No at 0.982 ($5.00)
+- 2026-11-21 follow_move_2: Will the price of XRP be between $0.90 and $1.00 on November 24? -> No at 0.712 ($5.00)
+- 2026-11-21 fade_move: Will the price of XRP be between $0.90 and $1.00 on November 24? -> Yes at 0.342 ($5.00)
+- 2026-11-21 follow_move_big: Will the price of XRP be between $0.80 and $0.90 on November 23? -> Yes at 0.473 ($5.00)
+- 2026-11-21 sports_underdog: Spread: Gamba Ōsaka (-1.5) -> Gamba Ōsaka at 0.244 ($5.00)
+- 2026-11-21 weather_forecast: Will the highest temperature in Madrid be 12°C on November 23? -> Yes at 0.111 ($2.22)
+- 2026-11-21 follow_move_crypto: Will the price of XRP be between $0.90 and $1.00 on November 24? -> No at 0.712 ($5.00)
 - 2026-11-21 move_ai: Will the price of Bitcoin be above $56,000 on November 25? -> No at 0.192 ($5.00)
 - 2026-11-21 move_ai_clean: Will the price of Bitcoin be above $56,000 on November 25? -> No at 0.192 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
 
 Today: 4 checks, $0.25 of OpenAI credit (limit $1.00 a day). Since the start: 18 checks ($1.90 spent in all); on 9 the AI beat the price by 5c or more and 9 were bought (the rest found no seller at that price); 0 failed. The AI saw betting odds while searching on 4 of the 18 it answered. 3 checks from the first version (19 Nov) are left out here and in the AI strategies' results: a bug sent each of them another market's question.
-- All checked markets, 4 with a result: AI error 0.352, market price 0.449 (lower is better; always saying 50% scores 0.250); the AI was closer on 3.
-- Checks where it saw no betting odds, 3 with a result: AI error 0.296, market price 0.320 (lower is better; always saying 50% scores 0.250); the AI was closer on 2.
-14 more checked markets are waiting for their result. A few dozen results say little; read this after 100 or more.
+- All checked markets, 5 with a result: AI error 0.282, market price 0.361 (lower is better; always saying 50% scores 0.250); the AI was closer on 4.
+- Checks where it saw no betting odds, 4 with a result: AI error 0.223, market price 0.242 (lower is better; always saying 50% scores 0.250); the AI was closer on 3.
+13 more checked markets are waiting for their result. A few dozen results say little; read this after 100 or more.
 
 ## Price gaps seen today
 
 No near-gaps today.
 
 Runs in the last 24 hours: 37 (37 with a problem).
-Latest problem: 37 position(s) still open more than 3 days after their market ended
+Latest problem: 39 position(s) still open more than 3 days after their market ended
