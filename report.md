@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-22 02:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-22 03:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move_cheap | 81 | 32/81 | +4.1% | +$16.57 | 6 | 78 | too early |
-| 2 | follow_move | 600 | 374/600 | +0.4% | +$11.40 | 17 | 110 | FAIL |
-| 3 | sure_thing | 3039 | 2815/3039 | -0.9% | -$144.21 | 16 | 153 | FAIL |
-| 4 | fade_move | 654 | 214/654 | -3.0% | -$97.63 | 17 | 115 | FAIL |
-| 5 | safe_no_week | 1100 | 1019/1100 | -3.3% | -$181.19 | 17 | 281 | FAIL |
-| 6 | follow_move_2 | 178 | 108/178 | -4.9% | -$43.55 | 6 | 97 | too early |
-| 7 | follow_move_big | 145 | 91/145 | -8.8% | -$63.65 | 5 | 79 | too early |
-| 8 | sports_underdog | 2271 | 520/2271 | -15.2% | -$1717.56 | 15 | 75 | FAIL |
-| 9 | weather_forecast | 792 | 404/792 | -19.1% | -$745.35 | 15 | 154 | FAIL |
-| 10 | follow_move_crypto | 57 | 29/57 | -22.4% | -$63.91 | 5 | 49 | too early |
-| 11 | move_ai | 3 | 3/3 | +455.1% | +$68.26 | 2 | 12 | too early |
-| 12 | move_ai_clean | 2 | 2/2 | +262.2% | +$26.22 | 2 | 9 | too early |
+| 1 | follow_move_cheap | 81 | 32/81 | +4.1% | +$16.57 | 6 | 79 | too early |
+| 2 | follow_move | 600 | 374/600 | +0.4% | +$11.40 | 17 | 112 | FAIL |
+| 3 | sure_thing | 3048 | 2824/3048 | -0.9% | -$141.94 | 16 | 152 | FAIL |
+| 4 | fade_move | 654 | 214/654 | -3.0% | -$97.63 | 17 | 117 | FAIL |
+| 5 | safe_no_week | 1102 | 1021/1102 | -3.3% | -$180.64 | 17 | 281 | FAIL |
+| 6 | follow_move_2 | 178 | 108/178 | -4.9% | -$43.55 | 6 | 99 | too early |
+| 7 | follow_move_big | 145 | 91/145 | -8.8% | -$63.65 | 5 | 81 | too early |
+| 8 | sports_underdog | 2276 | 521/2276 | -15.3% | -$1725.15 | 15 | 77 | FAIL |
+| 9 | weather_forecast | 795 | 406/795 | -19.0% | -$746.22 | 15 | 151 | FAIL |
+| 10 | follow_move_crypto | 57 | 29/57 | -22.4% | -$63.91 | 5 | 50 | too early |
+| 11 | move_ai | 3 | 3/3 | +455.1% | +$68.26 | 2 | 13 | too early |
+| 12 | move_ai_clean | 2 | 2/2 | +262.2% | +$26.22 | 2 | 10 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3191 | 1569/3191 | -5.8% | -$922.27 | 17 | 287 | yardstick |
+| 14 | coin_flip | 3200 | 1574/3200 | -5.8% | -$922.66 | 17 | 286 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | fade_move | safe_no_week | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-22 | -$5.00 | -$5.00 | -$19.43 | +$3.16 | +$1.34 | -$5.00 |  | -$92.56 | -$18.42 |  |  |  |  | -$23.60 |
+| 2026-11-22 | -$5.00 | -$5.00 | -$17.16 | +$3.16 | +$1.89 | -$5.00 |  | -$100.15 | -$19.29 |  |  |  |  | -$23.98 |
 | 2026-11-21 | +$19.46 | -$10.88 | -$28.79 | +$37.86 | -$3.69 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 | +$7.00 |  | -$197.98 |
 | 2026-11-20 | +$30.74 | +$40.01 | -$19.18 | +$18.12 | -$1.99 | +$49.66 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
 | 2026-11-19 | -$32.37 | -$76.17 | -$35.23 | +$186.86 | -$10.58 | -$96.44 | -$66.89 | -$302.39 | -$20.99 | -$16.30 |  |  |  | -$31.84 |
@@ -57,29 +57,29 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-22 follow_move_cheap: Will Amazon.com, Inc. (AMZN) hit (LOW) $248 Week of November 23 2026? -> No at 0.361 ($5.00)
-- 2026-11-22 follow_move: Will Dick's Sporting Goods (DKS) beat quarterly earnings? -> Yes at 0.632 ($5.00)
-- 2026-11-22 sure_thing: Spread: Alanyaspor (-1.5) -> Kasımpaşa SK at 0.943 ($5.00)
-- 2026-11-22 fade_move: Ethereum Up or Down on November 22? -> Up at 0.392 ($5.00)
-- 2026-11-22 safe_no_week: Will the lowest temperature in Madrid be 3°C on November 23? -> No at 0.970 ($5.00)
-- 2026-11-22 follow_move_2: Will Dick's Sporting Goods (DKS) beat quarterly earnings? -> Yes at 0.632 ($5.00)
-- 2026-11-22 follow_move_big: Solana Up or Down on November 22? -> Down at 0.742 ($5.00)
-- 2026-11-22 sports_underdog: Will Gwangju FC vs. Bucheon FC 1995 end in a draw? -> Yes at 0.290 ($5.00)
+- 2026-11-22 follow_move_cheap: Will Elon Musk post 300-319 tweets from November 17 to November 24, 2026? -> Yes at 0.252 ($5.00)
+- 2026-11-22 follow_move: Will Elon Musk post 300-319 tweets from November 17 to November 24, 2026? -> Yes at 0.252 ($5.00)
+- 2026-11-22 sure_thing: Angers SCO leading at halftime? -> No at 0.914 ($5.00)
+- 2026-11-22 fade_move: Will Elon Musk post 300-319 tweets from November 17 to November 24, 2026? -> No at 0.762 ($5.00)
+- 2026-11-22 safe_no_week: Will the 2026 National Thanksgiving Turkeys be named Honey and Ham? -> No at 0.960 ($5.00)
+- 2026-11-22 follow_move_2: Will Elon Musk post 300-319 tweets from November 17 to November 24, 2026? -> Yes at 0.252 ($5.00)
+- 2026-11-22 follow_move_big: Will the 2026 National Thanksgiving Turkeys be named Freedom and Feathers? -> No at 0.662 ($5.00)
+- 2026-11-22 sports_underdog: Spread: FC Osaka (-2.5) -> FC Osaka at 0.229 ($5.00)
 - 2026-11-22 weather_forecast: Will the lowest temperature in Seattle be between 40-41°F on November 22? -> No at 0.552 ($5.00)
-- 2026-11-22 follow_move_crypto: Ethereum Up or Down on November 22? -> Down at 0.632 ($5.00)
-- 2026-11-22 move_ai: Will the 2026 National Thanksgiving Turkeys be named Freedom and Feathers? -> No at 0.732 ($5.00)
-- 2026-11-21 move_ai_clean: Will Bitcoin reach $62,000 November 16-22? -> Yes at 0.431 ($5.00)
+- 2026-11-22 follow_move_crypto: XRP Up or Down on November 22? -> Down at 0.722 ($5.00)
+- 2026-11-22 move_ai: Will the price of Bitcoin be above $58,000 on November 24? -> No at 0.319 ($5.00)
+- 2026-11-22 move_ai_clean: Will the price of Bitcoin be above $58,000 on November 24? -> No at 0.319 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
 
-Today: 2 checks, $0.15 of OpenAI credit (limit $1.00 a day). Since the start: 27 checks ($2.67 spent in all); on 15 the AI beat the price by 5c or more and 15 were bought (the rest found no seller at that price); 0 failed. The AI saw betting odds while searching on 6 of the 27 it answered. 3 checks from the first version (19 Nov) are left out here and in the AI strategies' results: a bug sent each of them another market's question.
+Today: 3 checks, $0.25 of OpenAI credit (limit $1.00 a day). Since the start: 28 checks ($2.77 spent in all); on 16 the AI beat the price by 5c or more and 16 were bought (the rest found no seller at that price); 0 failed. The AI saw betting odds while searching on 6 of the 28 it answered. 3 checks from the first version (19 Nov) are left out here and in the AI strategies' results: a bug sent each of them another market's question.
 - All checked markets, 7 with a result: AI error 0.288, market price 0.368 (lower is better; always saying 50% scores 0.250); the AI was closer on 6.
 - Checks where it saw no betting odds, 6 with a result: AI error 0.250, market price 0.290 (lower is better; always saying 50% scores 0.250); the AI was closer on 5.
-20 more checked markets are waiting for their result. A few dozen results say little; read this after 100 or more.
+21 more checked markets are waiting for their result. A few dozen results say little; read this after 100 or more.
 
 ## Price gaps seen today
 
 No near-gaps today.
 
-Runs in the last 24 hours: 36 (36 with a problem).
+Runs in the last 24 hours: 37 (37 with a problem).
 Latest problem: 39 position(s) still open more than 3 days after their market ended
