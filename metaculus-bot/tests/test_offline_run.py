@@ -73,7 +73,8 @@ def test_build_llms_turns_on_reasoning_for_the_forecaster():
     assert llms["default"].litellm_kwargs["extra_body"] == {
         "reasoning": {"enabled": True}
     }
-    assert "extra_body" not in llms["parser"].litellm_kwargs
+    # The parser is told to think little: Gemini 3.8 Flash thinks hard by default.
+    assert llms["parser"].litellm_kwargs["extra_body"] == {"reasoning": {"effort": "low"}}
     assert llms["researcher"] == "asknews/news-summaries"
 
 

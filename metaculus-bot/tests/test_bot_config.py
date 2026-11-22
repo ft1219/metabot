@@ -341,8 +341,16 @@ def test_parser_request_options():
         "max_retries": 0,
         "extra_body": {"reasoning_effort": "low"},
     }
-    # Capped so what OpenRouter holds back for a parse stays at DeepSeek's cents.
-    assert parser_kwargs(PARSER_FALLBACK_MODEL) == {"temperature": 0.0, "max_tokens": 4000}
+    # Capped so what OpenRouter holds back for a parse stays at DeepSeek's
+    # cents, and Gemini told to think little so its thinking fits the cap.
+    assert parser_kwargs(PARSER_FALLBACK_MODEL) == {
+        "temperature": 0.0,
+        "max_tokens": 4000,
+        "extra_body": {"reasoning": {"effort": "low"}},
+    }
+    # A reasoning field would switch thinking on for DeepSeek, so another
+    # OpenRouter parser gets none.
+    assert parser_kwargs("openrouter/deepseek/deepseek-v3.2") == {"temperature": 0.0, "max_tokens": 4000}
 
 
 @pytest.mark.parametrize(

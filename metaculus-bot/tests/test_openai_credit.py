@@ -100,7 +100,7 @@ def test_openai_key_puts_the_parser_on_luna_with_an_openrouter_fallback():
     # The fallback is the parser as it was before the key.
     assert parser.fallback.litellm_kwargs["temperature"] == 0.0
     assert parser.fallback.litellm_kwargs["max_tokens"] == 4000
-    assert "extra_body" not in parser.fallback.litellm_kwargs
+    assert parser.fallback.litellm_kwargs["extra_body"] == {"reasoning": {"effort": "low"}}
     # The request options are published in every Metaculus comment: the
     # fallback and the run status stay out of them.
     published = str(parser.to_dict())
