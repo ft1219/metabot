@@ -1,6 +1,8 @@
 import argparse
 import asyncio
+import atexit
 import logging
+import os
 import sys
 from datetime import datetime, timezone
 from typing import Literal
@@ -8,16 +10,28 @@ from typing import Literal
 import dotenv
 
 # Runtime helpers (env validation, banners, dependency-warning suppression).
+import claude_month
 from budget import BudgetedLlm, RunBudget
+from claude_api import ClaudeApiLlm, ClaudeApiStatus
+from openai_credit import OpenAiParserLlm, OpenAiStatus, parser_status
+from web_search import ChatGptWebSearch, WebSearchResult, failure_annotation
 from bot_config import (
     BotSettings,
+    apply_monthly_claude_limit,
+    uses_monthly_claude_limit,
+    batch_size_for_money,
+    batch_size_on_claude_api,
     load_settings,
+    openrouter_twin,
+    parser_kwargs,
     pick_questions_to_forecast,
-    reasoning_kwargs,
+    forecaster_kwargs,
 )
 from bot_helpers import (
     check_environment,
+    announce_openrouter_money,
     drop_blank_env_vars,
+    openrouter_money_left,
     print_run_summary_banner,
     print_startup_banner,
     silence_noisy_dependencies,
@@ -138,13 +152,106 @@ class FallTemplateBot2026(ForecastBot):
     )
     _concurrency_limiter = asyncio.Semaphore(_max_concurrent_questions)
     _structure_output_validation_samples = 2
+    # ChatGPT web search, the second news source (make_bot sets it when
+    # OPENAI_API_KEY is saved); None leaves the researcher alone.
+    web_search: ChatGptWebSearch | None = None
 
     ##################################### RESEARCH #####################################
 
     async def run_research(self, question: MetaculusQuestion) -> str:
+        """
+        The researcher's news (AskNews) and ChatGPT web search's, fetched at
+        the same time and put together. The web search runs outside the
+        limiter that makes AskNews searches wait their turn, so web searches
+        never queue behind each other or behind AskNews; a question's research
+        takes as long as the slower of the two (the web search's timeout caps
+        it). A question goes ahead with whichever source
+        answered, and fails only when no source did: a forecast made without
+        any news scores badly, and the next run tries it again.
+        """
+        researcher = self.get_llm("researcher")
+        web_search = self.web_search
+        (found, failure), searched = await asyncio.gather(
+            self._research_with_researcher(question, researcher),
+            web_search.search(question) if web_search else _no_web_search(),
+        )
+        research = self._put_research_together(question, researcher, found, failure, searched)
+        logger.info(f"Found Research for URL {question.page_url}:\n{research}")
+        return research
+
+    @staticmethod
+    def _researcher_name(researcher: str | GeneralLlm) -> str:
+        name = GeneralLlm.to_model_name(researcher) if researcher else ""
+        return "AskNews" if name.startswith("asknews/") else name
+
+    def _put_research_together(
+        self,
+        question: MetaculusQuestion,
+        researcher: str | GeneralLlm,
+        found: str | None,
+        failure: Exception | None,
+        searched: WebSearchResult | None,
+    ) -> str:
+        """
+        One research text: the researcher's part first, then the web search's
+        under a heading with its date. With no web search part it is the
+        researcher's text exactly as before.
+        """
+        name = self._researcher_name(researcher)
+        uses_researcher = not _no_researcher(researcher)
+        web_text = searched.text if searched else None
+        if searched is not None:
+            if found:
+                instead = f"Forecast with {name} news only"
+            elif failure is not None or not uses_researcher:
+                instead = "No other news came through, so this question is not forecast this run"
+            else:
+                instead = "Forecast without news"
+            note = failure_annotation(question.page_url, searched, self.web_search.status, instead)
+            if note:
+                # print, not the logger: a GitHub annotation must start the line.
+                print(note, flush=True)
+        if not found and not web_text:
+            if failure is not None and searched is not None and searched.why:
+                raise RuntimeError(
+                    f"No news for {question.page_url}: {name} failed ({type(failure).__name__}: "
+                    f"{failure}) and ChatGPT web search failed ({searched.why})"
+                ) from failure
+            if failure is not None:
+                raise failure
+            if searched is not None and not uses_researcher:
+                raise RuntimeError(
+                    f"No news for {question.page_url}: ChatGPT web search "
+                    + (f"failed ({searched.why})" if searched.why else f"was not run ({searched.skipped})")
+                    + " and no other researcher is set"
+                )
+            return found or ""
+        if not web_text:
+            return found
+        web_part = f"## News from ChatGPT web search (searched {searched.searched_on} UTC)\n{web_text}"
+        if failure is not None:
+            logger.warning(
+                f"{name} failed for {question.page_url} ({type(failure).__name__}: {failure}); "
+                "forecasting with ChatGPT web search news only."
+            )
+            self.web_search.covered_for[type(failure).__name__] += 1
+        if not found:
+            return web_part
+        return f"## News from {name}\n{found.strip()}\n\n{web_part}"
+
+    async def _research_with_researcher(
+        self, question: MetaculusQuestion, researcher: str | GeneralLlm
+    ) -> tuple[str | None, Exception | None]:
+        """(the researcher's text, None), or (None, the error it raised)."""
+        try:
+            return await self._run_researcher(question, researcher), None
+        except Exception as e:
+            logger.warning(f"Research for {question.page_url} failed: {type(e).__name__}: {e}")
+            return None, e
+
+    async def _run_researcher(self, question: MetaculusQuestion, researcher: str | GeneralLlm) -> str:
         async with self._concurrency_limiter:
             research = ""
-            researcher = self.get_llm("researcher")
 
             prompt = self._get_research_prompt(question, researcher)
 
@@ -169,11 +276,10 @@ class FallTemplateBot2026(ForecastBot):
                     use_advanced_filters=False,
                 )
                 research = await searcher.invoke(prompt)
-            elif not researcher or researcher == "None" or researcher == "no_research":
+            elif _no_researcher(researcher):
                 research = ""
             else:
                 research = await self.get_llm("researcher", "llm").invoke(prompt)
-            logger.info(f"Found Research for URL {question.page_url}:\n{research}")
             return research
 
     @staticmethod
@@ -696,36 +802,111 @@ class FallTemplateBot2026(ForecastBot):
         )
 
 
-def build_llms(
-    settings: BotSettings, budget: RunBudget
-) -> dict[str, str | GeneralLlm]:
-    return {
-        "default": BudgetedLlm(
-            model=settings.forecast_model,
+async def _no_web_search() -> None:
+    return None
+
+
+def _no_researcher(researcher: str | GeneralLlm) -> bool:
+    return not researcher or researcher in ("None", "no_research")
+
+
+def build_forecaster(
+    settings: BotSettings,
+    budget: RunBudget,
+    model: str,
+    claude_api: ClaudeApiStatus | None = None,
+) -> BudgetedLlm:
+    """
+    The model that writes the forecasts. A Claude API model ("anthropic/...")
+    redoes the forecasts it cannot make on its OpenRouter version.
+    """
+    # The timeout caps a whole call, not a silence. DeepSeek V3.2 with
+    # reasoning takes 1.5 to 3 minutes on OpenRouter's cheaper hosts, so 180 s
+    # failed whole questions on 2026-10-19. Metaculus runs its own DeepSeek
+    # V3.2 reasoning bot with 300 s.
+    if model.startswith("anthropic/"):
+        twin = openrouter_twin(model)
+        return ClaudeApiLlm(
+            model=model,
             budget=budget,
-            temperature=0.3,
-            # The timeout caps a whole call, not a silence. DeepSeek V3.2 with
-            # reasoning takes 1.5 to 3 minutes on OpenRouter's cheaper hosts,
-            # so 180 s failed whole questions on 2026-10-19. Metaculus runs
-            # its own DeepSeek V3.2 reasoning bot with 300 s.
             timeout=300,
-            allowed_tries=2,
-            **reasoning_kwargs(settings),
-        ),
-        "summarizer": BudgetedLlm(
-            model=settings.parser_model, budget=budget, temperature=0.3
-        ),
+            status=claude_api or ClaudeApiStatus(),
+            fallback=build_forecaster(settings, budget, twin) if twin else None,
+            **forecaster_kwargs(settings, model),
+        )
+    return BudgetedLlm(
+        model=model,
+        budget=budget,
+        timeout=300,
+        allowed_tries=2,
+        **forecaster_kwargs(settings, model),
+    )
+
+
+def build_parser(
+    settings: BotSettings, budget: RunBudget, status: OpenAiStatus | None = None
+) -> BudgetedLlm:
+    """
+    The parser, which turns each forecast's written answer into a number. On
+    OpenAI (GPT-6 Luna, with an OPENAI_API_KEY) every parse it cannot make is
+    redone on its OpenRouter fallback (settings.parser_fallback_model).
+    """
+    # The parser reads answers that were already paid for, so it keeps
+    # working past the spending limit (the call limit still applies).
+    shared = {"budget": budget, "enforce_spending_limit": False}
+    model, fallback_model = settings.parser_model, settings.parser_fallback_model
+    if not fallback_model:
+        return BudgetedLlm(model=model, **shared, **parser_kwargs(model))
+    return OpenAiParserLlm(
+        model=model,
+        status=status or parser_status(),
+        fallback=BudgetedLlm(model=fallback_model, **shared, **parser_kwargs(fallback_model)),
+        **shared,
+        **parser_kwargs(model),
+    )
+
+
+def build_llms(
+    settings: BotSettings,
+    budget: RunBudget,
+    forecast_model: str | None = None,
+    claude_api: ClaudeApiStatus | None = None,
+    parser: OpenAiStatus | None = None,
+) -> dict[str, str | GeneralLlm]:
+    forecast_model = forecast_model or settings.forecast_model
+    # Never called (summaries are off, see make_bot); a GPT-6 model takes no temperature.
+    summarizer_kwargs = parser_kwargs(settings.parser_model)
+    if summarizer_kwargs.get("temperature") is not None:
+        summarizer_kwargs["temperature"] = 0.3
+    return {
+        "default": build_forecaster(settings, budget, forecast_model, claude_api),
+        "summarizer": BudgetedLlm(model=settings.parser_model, budget=budget, **summarizer_kwargs),
         "researcher": settings.researcher,
-        "parser": BudgetedLlm(
-            model=settings.parser_model, budget=budget, temperature=0.0
-        ),
+        "parser": build_parser(settings, budget, parser),
     }
 
 
+def build_web_search(
+    settings: BotSettings, budget: RunBudget, status: OpenAiStatus | None = None
+) -> ChatGptWebSearch | None:
+    """ChatGPT web search for the whole run, or None when it is off (no OPENAI_API_KEY, or WEB_SEARCH_MODEL=none)."""
+    if not settings.web_search_model:
+        return None
+    return ChatGptWebSearch(settings.web_search_model, budget, status)
+
+
 def make_bot(
-    settings: BotSettings, budget: RunBudget, publish: bool
+    settings: BotSettings,
+    budget: RunBudget,
+    publish: bool,
+    forecast_model: str | None = None,
+    claude_api: ClaudeApiStatus | None = None,
+    web_search: ChatGptWebSearch | None = None,
+    parser: OpenAiStatus | None = None,
 ) -> FallTemplateBot2026:
-    return FallTemplateBot2026(
+    """`web_search` and `parser` are shared by both bots, so a used-up OpenAI
+    credit stops each job once for the whole run."""
+    bot = FallTemplateBot2026(
         research_reports_per_question=1,
         predictions_per_research_report=settings.predictions_per_question,
         use_research_summary_to_forecast=False,
@@ -736,8 +917,10 @@ def make_bot(
         folder_to_save_reports_to=None,
         skip_previously_forecasted_questions=True,
         extra_metadata_in_explanation=True,
-        llms=build_llms(settings, budget),
+        llms=build_llms(settings, budget, forecast_model, claude_api, parser),
     )
+    bot.web_search = web_search
+    return bot
 
 
 def collect_questions(
@@ -758,23 +941,235 @@ def collect_questions(
     return questions, errors
 
 
+def load_questions(
+    client: MetaculusClient, run_mode: str
+) -> tuple[list[MetaculusQuestion], list[MetaculusQuestion], list[Exception]]:
+    """
+    Returns (questions for the stronger model, questions for the cheaper
+    model, load errors). The main tournament, where most of the prize money
+    is, gets the stronger model; MiniBench and the Cup the cheaper one. The
+    practice questions use the stronger one, so a test run checks that setup.
+    """
+    if run_mode == "tournament":
+        strong, errors = collect_questions(client, [client.CURRENT_AI_COMPETITION_ID])
+        cheap, more_errors = collect_questions(client, [client.CURRENT_MINIBENCH_ID])
+        return strong, cheap, errors + more_errors
+    if run_mode == "metaculus_cup":
+        cheap, errors = collect_questions(client, [client.CURRENT_METACULUS_CUP_ID])
+        return [], cheap, errors
+    # The bot-testing-area tournament contains all question types and is the
+    # recommended target for smoke-testing the bot.
+    strong, errors = collect_questions(client, ["bot-testing-area"])
+    return strong, [], errors
+
+
+def models_to_call(
+    settings: BotSettings,
+    chosen_strong: list[MetaculusQuestion],
+    chosen_cheap: list[MetaculusQuestion],
+) -> list[str]:
+    """The models this run will call for the questions it picked."""
+    if not (chosen_strong or chosen_cheap):
+        return []
+    forecasters = []
+    if chosen_strong:
+        forecasters.append(settings.tournament_forecast_model)
+    if chosen_cheap:
+        forecasters.append(settings.forecast_model)
+    # A Claude API forecaster's failed forecasts are redone on OpenRouter, and
+    # so are the parses an OpenAI parser cannot make.
+    twins = [twin for twin in map(openrouter_twin, forecasters) if twin]
+    parser_fallback = [settings.parser_fallback_model] if settings.parser_fallback_model else []
+    return [settings.parser_model] + parser_fallback + forecasters + twins
+
+
+class OpenRouterGate:
+    """
+    Before each batch of questions, before its research is paid for, reads
+    what the bot can still spend on OpenRouter and says how many questions
+    fit at once. Questions that do not fit at all are held back for the next
+    run. Reading again before every batch accounts for what earlier batches
+    spent, and judging each group by its own model lets MiniBench on OpenAI
+    run while Claude cannot.
+    """
+
+    def __init__(self, settings: BotSettings, read_money=None):
+        self.settings = settings
+        self.read_money = read_money or openrouter_money_left
+        self.held_back: list[MetaculusQuestion] = []
+        self.money_when_held = None
+        self.lowest_money = None
+
+    def batch_sizer(self, model):
+        """`model`: the model whose forecasts OpenRouter pays for, or a function
+        that turns the money left into a batch size (asked before every batch)."""
+
+        def next_batch_size(remaining: list[MetaculusQuestion]) -> int:
+            money = self.read_money()
+            if money is not None and (self.lowest_money is None or money.left < self.lowest_money.left):
+                self.lowest_money = money
+            left = money.left if money else None
+            size = model(left) if callable(model) else batch_size_for_money(self.settings, model, left)
+            if size == 0:
+                self.held_back.extend(remaining)
+                self.money_when_held = self.money_when_held or money
+            return size
+
+        return next_batch_size
+
+    def announce(self) -> None:
+        announce_openrouter_money(self.money_when_held or self.lowest_money, len(self.held_back))
+
+
+async def forecast_chosen(
+    settings: BotSettings,
+    tournament_bot: ForecastBot,
+    other_bot: ForecastBot,
+    chosen_strong: list[MetaculusQuestion],
+    chosen_cheap: list[MetaculusQuestion],
+    budget: RunBudget,
+    read_money=None,
+    claude_api: ClaudeApiStatus | None = None,
+) -> tuple[list, list[MetaculusQuestion], list[MetaculusQuestion]]:
+    """
+    Forecast the main tournament questions, then MiniBench/Cup, within the
+    run budget and the OpenRouter money left. Returns (reports, questions not
+    attempted because the run budget ran out, questions held back for lack of
+    OpenRouter money).
+    """
+    uses_openrouter = any(
+        m.startswith("openrouter/")
+        for m in models_to_call(settings, chosen_strong, chosen_cheap)
+    )
+    gate = OpenRouterGate(settings, read_money) if uses_openrouter else None
+
+    def paid_on_openrouter(model: str):
+        # The money rule for the Claude API. While it answers, a question on it
+        # needs OpenRouter only for its parse calls (with the parser on OpenAI,
+        # only for those OpenAI cannot make), so low OpenRouter money
+        # does not hold it back. Until it has answered this run, and after a
+        # batch in which some forecasts were redone on OpenRouter, the next
+        # batch is sized for OpenRouter but always lets one question through
+        # (bot_config.batch_size_on_claude_api). Once the Claude API is down
+        # for the run (key, credit, access, repeated timeouts), every forecast
+        # goes to OpenRouter, so the questions still waiting are judged by the
+        # OpenRouter model, exactly as without the key.
+        twin = openrouter_twin(model)
+        if not twin or claude_api is None:
+            return model
+        redone_before = claude_api.redone
+
+        def size_for(money_left: float | None) -> int:
+            nonlocal redone_before
+            proven = claude_api.answered > 0 and claude_api.redone == redone_before
+            redone_before = claude_api.redone
+            if claude_api.down_reason:
+                return batch_size_for_money(settings, twin, money_left)
+            return batch_size_on_claude_api(settings, model, money_left, proven)
+
+        return size_for
+
+    def sizer(model):
+        return gate.batch_sizer(paid_on_openrouter(model)) if gate else None
+
+    reports, not_attempted = await forecast_groups(
+        [
+            (tournament_bot, chosen_strong, sizer(settings.tournament_forecast_model)),
+            (other_bot, chosen_cheap, sizer(settings.forecast_model)),
+        ],
+        settings.questions_in_parallel,
+        budget,
+    )
+    if gate:
+        gate.announce()
+    return reports, not_attempted, (gate.held_back if gate else [])
+
+
+def split_by_model(
+    chosen: list[MetaculusQuestion], strong: list[MetaculusQuestion]
+) -> tuple[list[MetaculusQuestion], list[MetaculusQuestion]]:
+    """Split the questions picked for this run into (stronger model, cheaper model)."""
+    strong_ids = {id(q) for q in strong}
+    return (
+        [q for q in chosen if id(q) in strong_ids],
+        [q for q in chosen if id(q) not in strong_ids],
+    )
+
+
 async def forecast_in_batches(
     bot: ForecastBot,
     questions: list[MetaculusQuestion],
     batch_size: int,
     budget: RunBudget,
+    next_batch_size=None,
 ) -> tuple[list, list[MetaculusQuestion]]:
     """
     Forecast `batch_size` questions at a time, stopping before the next batch
     once the run budget is spent. Returns (reports, questions not attempted).
+
+    `next_batch_size(remaining questions)`, when given, decides each batch's
+    size instead; 0 stops the group, and it keeps track of the questions left.
     """
     reports: list = []
-    for start in range(0, len(questions), batch_size):
+    start = 0
+    while start < len(questions):
         if budget.exhausted:
             return reports, list(questions[start:])
-        batch = questions[start : start + batch_size]
+        size = batch_size if next_batch_size is None else next_batch_size(list(questions[start:]))
+        if size <= 0:
+            return reports, []
+        batch = questions[start : start + size]
         reports.extend(await bot.forecast_questions(batch, return_exceptions=True))
+        start += size
     return reports, []
+
+
+async def forecast_groups(
+    groups: list[tuple],
+    batch_size: int,
+    budget: RunBudget,
+) -> tuple[list, list[MetaculusQuestion]]:
+    """
+    Forecast each (bot, questions) group in turn under one shared run budget,
+    `batch_size` questions at a time. A group may carry a third item, a
+    next_batch_size function for forecast_in_batches. Returns (reports,
+    questions not attempted) across all groups.
+    """
+    reports: list = []
+    not_attempted: list[MetaculusQuestion] = []
+    for bot, questions, *sizer in groups:
+        if not questions:
+            continue
+        done, skipped = await forecast_in_batches(
+            bot, questions, batch_size, budget, sizer[0] if sizer else None
+        )
+        reports.extend(done)
+        not_attempted.extend(skipped)
+    return reports, not_attempted
+
+
+def settings_for_this_month(settings: BotSettings, env=None) -> BotSettings:
+    """
+    Moves the main tournament from Fable to Sonnet once this credit month's
+    Claude API spend reaches the monthly limit, or when it cannot be read.
+    """
+    if not uses_monthly_claude_limit(settings):
+        return settings
+    today = datetime.now(timezone.utc).date()
+    reset_day = settings.claude_credit_reset_day
+    try:
+        spent = claude_month.read_month_spend(today, reset_day, env)
+    except Exception as e:
+        # Never let the count stop the forecasts; an unknown count means Sonnet.
+        logger.warning(f"Could not read this month's Claude API spend: {e!r}")
+        spent = None
+    renews = claude_month.next_reset(today, reset_day)
+    settings, note = apply_monthly_claude_limit(
+        settings, spent, f"{renews.day} {renews:%B}"
+    )
+    if note:
+        print(note, flush=True)
+    return settings
 
 
 if __name__ == "__main__":
@@ -803,10 +1198,48 @@ if __name__ == "__main__":
     check_environment(strict=True, researcher=settings.researcher)
     publish_to_metaculus = not args.dry_run
     print_startup_banner(run_mode, will_publish=publish_to_metaculus)
+    settings = settings_for_this_month(settings)
     logger.info(f"Settings: {settings}")
+    claude_api_key_saved = bool((os.getenv("ANTHROPIC_API_KEY") or "").strip())
+    if claude_api_key_saved and not settings.tournament_forecast_model.startswith("anthropic/"):
+        # The saved key would otherwise go unused without a word.
+        print(
+            f"::notice title=Claude API key not used::TOURNAMENT_FORECAST_MODEL is "
+            f"{settings.tournament_forecast_model}, which has no Claude API version, so this run "
+            "does not use ANTHROPIC_API_KEY. Leave the variable blank to use the Claude API credit."
+        )
     budget = RunBudget(settings.max_cost_per_run_usd, settings.max_llm_calls_per_run)
+    # What the Claude API did this run (used when ANTHROPIC_API_KEY is saved).
+    claude_api = ClaudeApiStatus()
+    # The Claude API credit the run used goes to the job's outputs, for the
+    # job that adds it to this month's count, however the run ends (failed
+    # questions exit with 1; an error ends it with a traceback).
+    atexit.register(lambda: claude_month.write_run_output(claude_api.credit_used_usd()))
 
-    template_bot = make_bot(settings, budget, publish=publish_to_metaculus)
+    # With OPENAI_API_KEY saved, ChatGPT web search (a second news source)
+    # and the parser run on the free OpenAI credit; what they did this run.
+    web_search = build_web_search(settings, budget)
+    parser_on_openai = parser_status()
+
+    # The main tournament gets the stronger model; MiniBench and the Cup keep
+    # the cheaper one. Both share the run budget, the web search and the parser.
+    tournament_bot = make_bot(
+        settings,
+        budget,
+        publish=publish_to_metaculus,
+        forecast_model=settings.tournament_forecast_model,
+        claude_api=claude_api,
+        web_search=web_search,
+        parser=parser_on_openai,
+    )
+    other_bot = make_bot(
+        settings,
+        budget,
+        publish=publish_to_metaculus,
+        claude_api=claude_api,
+        web_search=web_search,
+        parser=parser_on_openai,
+    )
 
     TOURNAMENT_URLS = {
         "tournament": "https://www.metaculus.com/tournament/fall-futureeval-2026/",
@@ -815,23 +1248,13 @@ if __name__ == "__main__":
     }
 
     client = MetaculusClient()
-    if run_mode == "tournament":
-        open_questions, load_errors = collect_questions(
-            client, [client.CURRENT_AI_COMPETITION_ID, client.CURRENT_MINIBENCH_ID]
-        )
-    elif run_mode == "metaculus_cup":
-        # The Metaculus Cup may be uninitialized near the start of a season.
-        template_bot.skip_previously_forecasted_questions = False
-        open_questions, load_errors = collect_questions(
-            client, [client.CURRENT_METACULUS_CUP_ID]
-        )
-    else:
-        # The bot-testing-area tournament contains all question types and is
-        # the recommended target for smoke-testing the bot.
-        template_bot.skip_previously_forecasted_questions = False
-        open_questions, load_errors = collect_questions(client, ["bot-testing-area"])
-
-    if not template_bot.skip_previously_forecasted_questions:
+    strong_questions, cheap_questions, load_errors = load_questions(client, run_mode)
+    open_questions = strong_questions + cheap_questions
+    if run_mode != "tournament":
+        # The Metaculus Cup may be uninitialized near the start of a season,
+        # and practice questions are forecast again on every test run.
+        tournament_bot.skip_previously_forecasted_questions = False
+        other_bot.skip_previously_forecasted_questions = False
         for question in open_questions:
             question.already_forecasted = False
     chosen, deferred = pick_questions_to_forecast(
@@ -842,27 +1265,63 @@ if __name__ == "__main__":
         f"{len(deferred)} deferred to the next run"
     )
 
-    forecast_reports, not_attempted = asyncio.run(
-        forecast_in_batches(
-            template_bot, chosen, settings.questions_in_parallel, budget
+    # Main tournament questions first: if the budget runs out, MiniBench waits.
+    chosen_strong, chosen_cheap = split_by_model(chosen, strong_questions)
+    # Questions OpenRouter would refuse wait for the next run, before their
+    # research is paid for; the run then shows as failed (which emails the
+    # owner) and its page says why.
+    forecast_reports, not_attempted, held_back = asyncio.run(
+        forecast_chosen(
+            settings,
+            tournament_bot,
+            other_bot,
+            chosen_strong,
+            chosen_cheap,
+            budget,
+            claude_api=claude_api,
         )
     )
 
-    # raise_errors=False so the summary lines below still print when a question
-    # failed; the exit code at the end reports the failure.
-    template_bot.log_report_summary(forecast_reports, raise_errors=False)
-    print_run_summary_banner(
-        forecast_reports,
-        will_publish=publish_to_metaculus,
-        tournament_url=TOURNAMENT_URLS.get(run_mode),
-    )
-    print(
-        f"💰  AI cost this run: ${budget.spent_usd:.4f} over {budget.calls} call(s) "
-        f"(limit ${settings.max_cost_per_run_usd:.2f})"
-    )
+    if forecast_reports or not held_back:
+        # raise_errors=False so the summary lines below still print when a
+        # question failed; the exit code at the end reports the failure.
+        tournament_bot.log_report_summary(forecast_reports, raise_errors=False)
+        print_run_summary_banner(
+            forecast_reports,
+            will_publish=publish_to_metaculus,
+            tournament_url=TOURNAMENT_URLS.get(run_mode),
+        )
+    print(f"💰  {budget.cost_line()}")
+    credit_used = claude_api.credit_used_usd()
+    if credit_used:
+        # What goes into this month's count: also replies that were charged
+        # but gave no forecast (refusals, answers cut off, timeouts).
+        print(f"🧮  Claude API credit counted toward this month: ${credit_used:.4f}")
+    # The Claude API being down, or some forecasts redone on OpenRouter, shows
+    # as a warning on the run's page; the run still passes if they worked.
+    claude_api_note = claude_api.annotation()
+    if claude_api_note:
+        print(claude_api_note)
+    if web_search:
+        print(f"🔎  {web_search.summary()}")
+    # Parses redone on OpenRouter, and questions ChatGPT web search carried
+    # alone because AskNews failed, show as warnings on the run's page.
+    for note in (parser_on_openai.annotation(), web_search.covered_annotation() if web_search else None):
+        if note:
+            print(note)
     if budget.calls_without_cost:
         print(
             f"⚠️   {budget.calls_without_cost} call(s) had no price; the cost above is too low."
+        )
+    if budget.failed_calls:
+        print(
+            f"⚠️   {budget.failed_calls} call(s) failed after being sent; any cost they "
+            "had is not in the total above."
+        )
+    if budget.estimated_calls:
+        print(
+            f"⚠️   {budget.estimated_calls} call(s) were cut off before their answer came back; "
+            "the total above counts each at the most it is likely to have cost."
         )
     if not_attempted:
         print(
@@ -871,9 +1330,14 @@ if __name__ == "__main__":
         )
     if deferred:
         print(f"⏭️   {len(deferred)} question(s) left for the next run.")
+    if held_back:
+        print(
+            f"💳  {len(held_back)} question(s) not forecast: too little OpenRouter "
+            "money left. They will be tried on the next run."
+        )
 
     # A failed question makes the GitHub Actions run show as failed, which
     # emails the repository owner. The next run retries it automatically.
     failures = [r for r in forecast_reports if isinstance(r, BaseException)]
-    if failures or load_errors or not_attempted:
+    if failures or load_errors or not_attempted or held_back:
         sys.exit(1)
