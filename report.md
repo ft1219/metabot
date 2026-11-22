@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-22 03:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-22 04:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-22 03:27 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | follow_move_cheap | 81 | 32/81 | +4.1% | +$16.57 | 6 | 79 | too early |
 | 2 | follow_move | 600 | 374/600 | +0.4% | +$11.40 | 17 | 112 | FAIL |
-| 3 | sure_thing | 3048 | 2824/3048 | -0.9% | -$141.94 | 16 | 152 | FAIL |
+| 3 | sure_thing | 3053 | 2829/3053 | -0.9% | -$140.60 | 16 | 155 | FAIL |
 | 4 | fade_move | 654 | 214/654 | -3.0% | -$97.63 | 17 | 117 | FAIL |
-| 5 | safe_no_week | 1102 | 1021/1102 | -3.3% | -$180.64 | 17 | 281 | FAIL |
+| 5 | safe_no_week | 1102 | 1021/1102 | -3.3% | -$180.64 | 17 | 282 | FAIL |
 | 6 | follow_move_2 | 178 | 108/178 | -4.9% | -$43.55 | 6 | 99 | too early |
-| 7 | follow_move_big | 145 | 91/145 | -8.8% | -$63.65 | 5 | 81 | too early |
-| 8 | sports_underdog | 2276 | 521/2276 | -15.3% | -$1725.15 | 15 | 77 | FAIL |
+| 7 | follow_move_big | 145 | 91/145 | -8.8% | -$63.65 | 5 | 82 | too early |
+| 8 | sports_underdog | 2285 | 522/2285 | -15.4% | -$1749.22 | 15 | 72 | FAIL |
 | 9 | weather_forecast | 795 | 406/795 | -19.0% | -$746.22 | 15 | 151 | FAIL |
 | 10 | follow_move_crypto | 57 | 29/57 | -22.4% | -$63.91 | 5 | 50 | too early |
 | 11 | move_ai | 3 | 3/3 | +455.1% | +$68.26 | 2 | 13 | too early |
 | 12 | move_ai_clean | 2 | 2/2 | +262.2% | +$26.22 | 2 | 10 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3200 | 1574/3200 | -5.8% | -$922.66 | 17 | 286 | yardstick |
+| 14 | coin_flip | 3214 | 1582/3214 | -5.7% | -$914.83 | 17 | 280 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | fade_move | safe_no_week | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-22 | -$5.00 | -$5.00 | -$17.16 | +$3.16 | +$1.89 | -$5.00 |  | -$100.15 | -$19.29 |  |  |  |  | -$23.98 |
+| 2026-11-22 | -$5.00 | -$5.00 | -$15.82 | +$3.16 | +$1.89 | -$5.00 |  | -$124.21 | -$19.29 |  |  |  |  | -$16.16 |
 | 2026-11-21 | +$19.46 | -$10.88 | -$28.79 | +$37.86 | -$3.69 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 | +$7.00 |  | -$197.98 |
 | 2026-11-20 | +$30.74 | +$40.01 | -$19.18 | +$18.12 | -$1.99 | +$49.66 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
 | 2026-11-19 | -$32.37 | -$76.17 | -$35.23 | +$186.86 | -$10.58 | -$96.44 | -$66.89 | -$302.39 | -$20.99 | -$16.30 |  |  |  | -$31.84 |
@@ -59,12 +59,12 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-22 follow_move_cheap: Will Elon Musk post 300-319 tweets from November 17 to November 24, 2026? -> Yes at 0.252 ($5.00)
 - 2026-11-22 follow_move: Will Elon Musk post 300-319 tweets from November 17 to November 24, 2026? -> Yes at 0.252 ($5.00)
-- 2026-11-22 sure_thing: Angers SCO leading at halftime? -> No at 0.914 ($5.00)
+- 2026-11-22 sure_thing: Exact Score: Daegu FC 0 - 0 Gimhae FC? -> No at 0.971 ($5.00)
 - 2026-11-22 fade_move: Will Elon Musk post 300-319 tweets from November 17 to November 24, 2026? -> No at 0.762 ($5.00)
-- 2026-11-22 safe_no_week: Will the 2026 National Thanksgiving Turkeys be named Honey and Ham? -> No at 0.960 ($5.00)
+- 2026-11-22 safe_no_week: Will the highest temperature in Mexico City be 26°C on November 23? -> No at 0.980 ($5.00)
 - 2026-11-22 follow_move_2: Will Elon Musk post 300-319 tweets from November 17 to November 24, 2026? -> Yes at 0.252 ($5.00)
-- 2026-11-22 follow_move_big: Will the 2026 National Thanksgiving Turkeys be named Freedom and Feathers? -> No at 0.662 ($5.00)
-- 2026-11-22 sports_underdog: Spread: FC Osaka (-2.5) -> FC Osaka at 0.229 ($5.00)
+- 2026-11-22 follow_move_big: Will "Stop The Wedding! - Ashe" be the #1 song this week? -> No at 0.752 ($5.00)
+- 2026-11-22 sports_underdog: W75 Playford: Chloe Schwarz vs Renee Alame -> Chloe Schwarz at 0.156 ($5.00)
 - 2026-11-22 weather_forecast: Will the lowest temperature in Seattle be between 40-41°F on November 22? -> No at 0.552 ($5.00)
 - 2026-11-22 follow_move_crypto: XRP Up or Down on November 22? -> Down at 0.722 ($5.00)
 - 2026-11-22 move_ai: Will the price of Bitcoin be above $58,000 on November 24? -> No at 0.319 ($5.00)
@@ -81,5 +81,5 @@ Today: 3 checks, $0.25 of OpenAI credit (limit $1.00 a day). Since the start: 28
 
 No near-gaps today.
 
-Runs in the last 24 hours: 37 (37 with a problem).
+Runs in the last 24 hours: 36 (36 with a problem).
 Latest problem: 39 position(s) still open more than 3 days after their market ended
