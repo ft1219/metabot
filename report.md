@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-22 21:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-22 22:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-22 21:27 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | follow_move_cheap | 90 | 34/90 | +1.7% | +$7.64 | 6 | 86 | too early |
 | 2 | follow_move | 615 | 383/615 | +0.1% | +$2.81 | 17 | 120 | FAIL |
-| 3 | sure_thing | 3261 | 3027/3261 | -0.8% | -$133.52 | 16 | 154 | FAIL |
+| 3 | sure_thing | 3277 | 3042/3277 | -0.8% | -$134.29 | 16 | 145 | FAIL |
 | 4 | fade_move | 669 | 220/669 | -1.7% | -$58.48 | 17 | 125 | FAIL |
-| 5 | safe_no_week | 1151 | 1069/1151 | -3.0% | -$175.15 | 17 | 309 | FAIL |
+| 5 | safe_no_week | 1154 | 1072/1154 | -3.0% | -$174.44 | 17 | 309 | FAIL |
 | 6 | follow_move_2 | 194 | 117/194 | -4.3% | -$42.07 | 6 | 106 | too early |
 | 7 | follow_move_big | 160 | 98/160 | -11.2% | -$89.83 | 6 | 79 | too early |
-| 8 | sports_underdog | 2473 | 569/2473 | -14.3% | -$1760.32 | 15 | 72 | FAIL |
-| 9 | weather_forecast | 844 | 437/844 | -18.4% | -$767.30 | 15 | 161 | FAIL |
+| 8 | sports_underdog | 2477 | 571/2477 | -14.2% | -$1747.97 | 15 | 76 | FAIL |
+| 9 | weather_forecast | 847 | 438/847 | -18.6% | -$775.96 | 15 | 158 | FAIL |
 | 10 | follow_move_crypto | 69 | 34/69 | -21.0% | -$72.46 | 6 | 45 | too early |
 | 11 | move_ai | 5 | 4/5 | +257.2% | +$64.31 | 3 | 15 | too early |
 | 12 | move_ai_clean | 4 | 3/4 | +111.4% | +$22.27 | 3 | 10 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3458 | 1697/3458 | -6.2% | -$1067.66 | 17 | 243 | yardstick |
+| 14 | coin_flip | 3470 | 1701/3470 | -6.3% | -$1093.92 | 17 | 239 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | fade_move | safe_no_week | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-22 | -$13.94 | -$13.59 | -$8.74 | +$42.30 | +$7.38 | -$3.52 | -$26.18 | -$135.31 | -$40.37 | -$8.55 | -$3.95 | -$3.95 |  | -$168.99 |
+| 2026-11-22 | -$13.94 | -$13.59 | -$9.51 | +$42.30 | +$8.09 | -$3.52 | -$26.18 | -$122.97 | -$49.03 | -$8.55 | -$3.95 | -$3.95 |  | -$195.24 |
 | 2026-11-21 | +$19.46 | -$10.88 | -$28.79 | +$37.86 | -$3.69 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 | +$7.00 |  | -$197.98 |
 | 2026-11-20 | +$30.74 | +$40.01 | -$19.18 | +$18.12 | -$1.99 | +$49.66 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
 | 2026-11-19 | -$32.37 | -$76.17 | -$35.23 | +$186.86 | -$10.58 | -$96.44 | -$66.89 | -$302.39 | -$20.99 | -$16.30 |  |  |  | -$31.84 |
@@ -59,12 +59,12 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-22 follow_move_cheap: Will NVIDIA (NVDA) close above $135 on November 23? -> Yes at 0.462 ($5.00)
 - 2026-11-22 follow_move: Will NVIDIA (NVDA) close above $135 on November 23? -> Yes at 0.462 ($5.00)
-- 2026-11-22 sure_thing: Spread: Brentford FC (-2.5) -> Everton FC at 0.933 ($5.00)
+- 2026-11-22 sure_thing: Al Quwa Al Jawiya vs. Al Gharafa SC: Neither team to score first? -> No at 0.971 ($4.86)
 - 2026-11-22 fade_move: Will NVIDIA (NVDA) close above $135 on November 23? -> No at 0.612 ($5.00)
-- 2026-11-22 safe_no_week: Will the price of XRP be between $1.10 and $1.20 on November 29? -> No at 0.980 ($5.00)
+- 2026-11-22 safe_no_week: Will the highest temperature in Dallas be between 46-47°F on November 24? -> No at 0.931 ($5.00)
 - 2026-11-22 follow_move_2: Will NVIDIA (NVDA) close above $135 on November 23? -> Yes at 0.462 ($5.00)
 - 2026-11-22 follow_move_big: Will "Flower In A Hurricane - Justice, Tame Impala, SZA, King Gizzard & the Lizard Wizard" be the #2 song this week? -> Yes at 0.402 ($5.00)
-- 2026-11-22 sports_underdog: Sabres vs. Lightning -> Sabres at 0.361 ($5.00)
+- 2026-11-22 sports_underdog: Blackhawks vs. Canucks: O/U 4.5 -> Under at 0.218 ($5.00)
 - 2026-11-22 weather_forecast: Will the lowest temperature in Denver be between 22-23°F on November 23? -> No at 0.792 ($5.00)
 - 2026-11-22 follow_move_crypto: Solana Up or Down on November 23? -> Down at 0.622 ($5.00)
 - 2026-11-22 move_ai: Will Alphabet Inc. (GOOGL) hit (HIGH) $290 Week of November 23 2026? -> No at 0.612 ($5.00)
@@ -72,15 +72,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## AI check (move_ai, move_ai_clean)
 
-Today: 8 checks, $0.73 of OpenAI credit (limit $1.00 a day). Since the start: 33 checks ($3.24 spent in all); on 20 the AI beat the price by 5c or more and 20 were bought (the rest found no seller at that price); 0 failed. The AI saw betting odds while searching on 9 of the 33 it answered. 3 checks from the first version (19 Nov) are left out here and in the AI strategies' results: a bug sent each of them another market's question.
+Today: 9 checks, $0.81 of OpenAI credit (limit $1.00 a day). Since the start: 34 checks ($3.32 spent in all); on 20 the AI beat the price by 5c or more and 20 were bought (the rest found no seller at that price); 0 failed. The AI saw betting odds while searching on 9 of the 34 it answered. 3 checks from the first version (19 Nov) are left out here and in the AI strategies' results: a bug sent each of them another market's question.
 - All checked markets, 11 with a result: AI error 0.305, market price 0.346 (lower is better; always saying 50% scores 0.250); the AI was closer on 7.
 - Checks where it saw no betting odds, 10 with a result: AI error 0.284, market price 0.297 (lower is better; always saying 50% scores 0.250); the AI was closer on 6.
-22 more checked markets are waiting for their result. A few dozen results say little; read this after 100 or more.
+23 more checked markets are waiting for their result. A few dozen results say little; read this after 100 or more.
 
 ## Price gaps seen today
 
 No near-gaps today.
 
-Runs in the last 24 hours: 36 (10 with a problem).
+Runs in the last 24 hours: 36 (9 with a problem).
 Latest problem: 39 position(s) still open more than 3 days after their market ended
 41 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
