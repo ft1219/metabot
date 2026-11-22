@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-22 22:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-22 23:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
 | 1 | follow_move_cheap | 90 | 34/90 | +1.7% | +$7.64 | 6 | 86 | too early |
-| 2 | follow_move | 615 | 383/615 | +0.1% | +$2.81 | 17 | 120 | FAIL |
-| 3 | sure_thing | 3289 | 3052/3289 | -0.9% | -$141.52 | 16 | 141 | FAIL |
-| 4 | fade_move | 669 | 220/669 | -1.7% | -$58.48 | 17 | 125 | FAIL |
-| 5 | safe_no_week | 1158 | 1076/1158 | -3.0% | -$173.43 | 17 | 307 | FAIL |
-| 6 | follow_move_2 | 194 | 117/194 | -4.3% | -$42.07 | 6 | 106 | too early |
-| 7 | follow_move_big | 160 | 98/160 | -11.2% | -$89.83 | 6 | 80 | too early |
-| 8 | sports_underdog | 2482 | 571/2482 | -14.4% | -$1772.97 | 15 | 79 | FAIL |
-| 9 | weather_forecast | 850 | 439/850 | -18.5% | -$777.86 | 15 | 155 | FAIL |
+| 2 | follow_move | 615 | 383/615 | +0.1% | +$2.81 | 17 | 121 | FAIL |
+| 3 | sure_thing | 3296 | 3059/3296 | -0.8% | -$139.35 | 16 | 142 | FAIL |
+| 4 | fade_move | 669 | 220/669 | -1.7% | -$58.48 | 17 | 126 | FAIL |
+| 5 | safe_no_week | 1162 | 1080/1162 | -3.0% | -$172.72 | 17 | 303 | FAIL |
+| 6 | follow_move_2 | 194 | 117/194 | -4.3% | -$42.07 | 6 | 107 | too early |
+| 7 | follow_move_big | 160 | 98/160 | -11.2% | -$89.83 | 6 | 82 | too early |
+| 8 | sports_underdog | 2487 | 571/2487 | -14.5% | -$1797.97 | 15 | 82 | FAIL |
+| 9 | weather_forecast | 855 | 441/855 | -18.6% | -$785.94 | 15 | 150 | FAIL |
 | 10 | follow_move_crypto | 69 | 34/69 | -21.0% | -$72.46 | 6 | 45 | too early |
 | 11 | move_ai | 5 | 4/5 | +257.2% | +$64.31 | 3 | 15 | too early |
 | 12 | move_ai_clean | 4 | 3/4 | +111.4% | +$22.27 | 3 | 10 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3479 | 1704/3479 | -6.4% | -$1113.06 | 17 | 238 | yardstick |
+| 14 | coin_flip | 3485 | 1707/3485 | -6.4% | -$1113.11 | 17 | 240 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | fade_move | safe_no_week | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-22 | -$13.94 | -$13.59 | -$16.74 | +$42.30 | +$9.10 | -$3.52 | -$26.18 | -$147.97 | -$50.93 | -$8.55 | -$3.95 | -$3.95 |  | -$214.39 |
+| 2026-11-22 | -$13.94 | -$13.59 | -$14.57 | +$42.30 | +$9.81 | -$3.52 | -$26.18 | -$172.97 | -$59.01 | -$8.55 | -$3.95 | -$3.95 |  | -$214.44 |
 | 2026-11-21 | +$19.46 | -$10.88 | -$28.79 | +$37.86 | -$3.69 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 | +$7.00 |  | -$197.98 |
 | 2026-11-20 | +$30.74 | +$40.01 | -$19.18 | +$18.12 | -$1.99 | +$49.66 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
 | 2026-11-19 | -$32.37 | -$76.17 | -$35.23 | +$186.86 | -$10.58 | -$96.44 | -$66.89 | -$302.39 | -$20.99 | -$16.30 |  |  |  | -$31.84 |
@@ -58,13 +58,13 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 ## Latest pretend buys (newest of each strategy first)
 
 - 2026-11-22 follow_move_cheap: Will NVIDIA (NVDA) close above $135 on November 23? -> Yes at 0.462 ($5.00)
-- 2026-11-22 follow_move: Will NVIDIA (NVDA) close above $135 on November 23? -> Yes at 0.462 ($5.00)
-- 2026-11-22 sure_thing: Counter-Strike: Detonate vs NXG Esports (BO3) - CROSSFIRE Playoffs -> Detonate at 0.933 ($5.00)
-- 2026-11-22 fade_move: Will NVIDIA (NVDA) close above $135 on November 23? -> No at 0.612 ($5.00)
+- 2026-11-22 follow_move: Will Gold (XAUUSD) hit (LOW) $3,450 Week of November 23 2026? -> No at 0.592 ($5.00)
+- 2026-11-22 sure_thing: Spread: Çorum FK (-1.5) -> Rams Başakşehir FK at 0.904 ($5.00)
+- 2026-11-22 fade_move: Will Gold (XAUUSD) hit (LOW) $3,450 Week of November 23 2026? -> Yes at 0.452 ($5.00)
 - 2026-11-22 safe_no_week: Will the lowest temperature in Tokyo be 8°C on November 24? -> No at 0.950 ($5.00)
-- 2026-11-22 follow_move_2: Will NVIDIA (NVDA) close above $135 on November 23? -> Yes at 0.462 ($5.00)
-- 2026-11-22 follow_move_big: Will Elon Musk post 320-339 tweets from November 17 to November 24, 2026? -> Yes at 0.282 ($5.00)
-- 2026-11-22 sports_underdog: Will Querétaro FC vs. Club Necaxa end in a draw? -> Yes at 0.270 ($5.00)
+- 2026-11-22 follow_move_2: Will Gold (XAUUSD) hit (LOW) $3,450 Week of November 23 2026? -> No at 0.592 ($5.00)
+- 2026-11-22 follow_move_big: Will NVIDIA (NVDA) close above $130 on November 23? -> Yes at 0.733 ($5.00)
+- 2026-11-22 sports_underdog: Mavericks vs. Jazz: O/U 218.5 -> Under at 0.351 ($5.00)
 - 2026-11-22 weather_forecast: Will the lowest temperature in Denver be between 22-23°F on November 23? -> No at 0.792 ($5.00)
 - 2026-11-22 follow_move_crypto: Solana Up or Down on November 23? -> Down at 0.622 ($5.00)
 - 2026-11-22 move_ai: Will Alphabet Inc. (GOOGL) hit (HIGH) $290 Week of November 23 2026? -> No at 0.612 ($5.00)
@@ -81,6 +81,6 @@ Today: 9 checks, $0.81 of OpenAI credit (limit $1.00 a day). Since the start: 34
 
 No near-gaps today.
 
-Runs in the last 24 hours: 36 (8 with a problem).
+Runs in the last 24 hours: 36 (7 with a problem).
 Latest problem: 39 position(s) still open more than 3 days after their market ended
 41 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
