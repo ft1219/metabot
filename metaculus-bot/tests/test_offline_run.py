@@ -433,7 +433,7 @@ def test_a_parser_on_openai_still_needs_money_for_its_openrouter_fallback(fake_m
     assert settings.parser_model == "openai/gpt-6-luna"
     assert main.models_to_call(settings, _questions(1), []) == [
         "openai/gpt-6-luna",
-        "openrouter/deepseek/deepseek-v3.2",
+        "openrouter/google/gemini-3.8-flash",
         OPENAI_FORECAST_MODEL,
     ]
     read = _money(0.0)

@@ -295,9 +295,11 @@ def test_already_forecasted_none_counts_as_not_forecasted():
     assert deferred == []
 
 
-def test_openai_key_moves_the_parser_to_luna_with_deepseek_as_its_fallback():
+def test_openai_key_moves_the_parser_to_luna_with_gemini_flash_as_its_fallback():
     plain = load_settings({})
-    assert plain.parser_model == PARSER_FALLBACK_MODEL == "openrouter/deepseek/deepseek-v3.2"
+    # Gemini 3.8 Flash: hosted only by Google on OpenRouter, so its requests
+    # never go to a small third-party host.
+    assert plain.parser_model == PARSER_FALLBACK_MODEL == "openrouter/google/gemini-3.8-flash"
     assert plain.parser_fallback_model is None
     keyed = load_settings({"OPENAI_API_KEY": "sk-test"})
     assert keyed.parser_model == OPENAI_PARSER_MODEL == "openai/gpt-6-luna"
@@ -339,7 +341,8 @@ def test_parser_request_options():
         "max_retries": 0,
         "extra_body": {"reasoning_effort": "low"},
     }
-    assert parser_kwargs(PARSER_FALLBACK_MODEL) == {"temperature": 0.0}
+    # Capped so what OpenRouter holds back for a parse stays at DeepSeek's cents.
+    assert parser_kwargs(PARSER_FALLBACK_MODEL) == {"temperature": 0.0, "max_tokens": 4000}
 
 
 @pytest.mark.parametrize(

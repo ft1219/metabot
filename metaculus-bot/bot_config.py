@@ -16,9 +16,9 @@ has free OpenAI credit), otherwise DeepSeek V3.2.
 The OpenAI key also moves two smaller jobs off paid services onto that free
 credit: a second news source next to AskNews (ChatGPT web search on GPT-6
 Sol, web_search.py) and the parser that turns each forecast's text into a
-number (GPT-6 Luna, with DeepSeek V3.2 on OpenRouter redoing any parse OpenAI
-cannot make, openai_credit.py). Without the key both stay as before: AskNews
-alone, and the parser on OpenRouter.
+number (GPT-6 Luna, with Gemini 3.8 Flash on OpenRouter redoing any parse
+OpenAI cannot make, openai_credit.py). Without the key: AskNews alone, and the
+parser on OpenRouter (Gemini 3.8 Flash).
 """
 from __future__ import annotations
 
@@ -79,7 +79,13 @@ DEFAULT_CLAUDE_MONTHLY_LIMIT_USD = 95.0
 DEFAULT_CLAUDE_CREDIT_RESET_DAY = 3
 # Claude API models whose default effort is already high (forecaster_kwargs).
 CLAUDE_API_HIGH_EFFORT_BY_DEFAULT = {"anthropic/claude-sonnet-5-5", "anthropic/claude-fable-5-2"}
-DEFAULT_PARSER_MODEL = "openrouter/deepseek/deepseek-v3.2"
+# The parser on OpenRouter. Gemini 3.8 Flash, not DeepSeek V3.2 as until
+# 22 November 2026: OpenRouter runs Google's models only on Google's own
+# servers, while it spreads DeepSeek over many small hosting companies. One of
+# those (GMI Cloud) had its stored requests read by an attacker between
+# October and November 2026; ours held only public questions and news, but
+# Google's servers are the safer place. About $0.0003 a parse.
+DEFAULT_PARSER_MODEL = "openrouter/google/gemini-3.8-flash"
 # Replaces DEFAULT_PARSER_MODEL when OPENAI_API_KEY is set, so parsing is paid
 # from the free OpenAI credit instead of OpenRouter cash. $0.10 / $0.50 per
 # million tokens: reading a forecast's answer needs no strong model.
@@ -234,7 +240,7 @@ def is_openai_reasoning_model(model: str) -> bool:
 def parser_fallback(parser_model: str) -> str | None:
     """
     The OpenRouter model that redoes the parse calls `parser_model` cannot
-    make: DeepSeek V3.2 for a parser on OpenAI (the default one with an
+    make: Gemini 3.8 Flash for a parser on OpenAI (the default one with an
     OPENAI_API_KEY, or one PARSER_MODEL names), None for any other parser,
     which runs as it always has.
     """
@@ -415,17 +421,19 @@ def parser_kwargs(model: str) -> dict:
     Request options for the parser, which copies the number out of each
     forecast's written answer. Any model off OpenAI, and an older OpenAI
     model that is not a reasoning model (gpt-4o-mini, say), parses at
-    temperature 0 as before. An OpenAI reasoning model such as GPT-6 Luna
+    temperature 0 as before; off OpenAI it may also write at most
+    PARSER_MAX_TOKENS, which keeps what OpenRouter holds back for a parse
+    call small (_parse_call_hold_usd). An OpenAI reasoning model such as GPT-6 Luna
     takes no temperature (one would cost a refused call first) and thinks
     little (PARSER_REASONING_EFFORT), set in the request body like
     forecaster_kwargs. Every OpenAI parser is tried once, without litellm's
     own retries, because a failed parse goes straight to the OpenRouter
     fallback: retrying a used-up credit would only delay it. 90 s, not
     GeneralLlm's 60 s default for models it does not know, leaves room for a
-    long answer; DeepSeek keeps its 210 s default.
+    long answer; an OpenRouter parser keeps GeneralLlm's default.
     """
     if not model.startswith("openai/"):
-        return {"temperature": 0.0}
+        return {"temperature": 0.0, "max_tokens": PARSER_MAX_TOKENS}
     tried_once = {"timeout": 90, "max_retries": 0}
     if not is_openai_reasoning_model(model):
         return {"temperature": 0.0, **tried_once}
@@ -445,6 +453,12 @@ def parser_kwargs(model: str) -> dict:
 # $0.38/M output, a few cents a call even at its largest.
 OPENROUTER_CALL_HOLD_USD = 0.20
 DEEPSEEK_CALL_HOLD_USD = 0.03
+# A parse call off OpenAI may write at most PARSER_MAX_TOKENS (parser_kwargs).
+# A parse is one short line, and the parser's thinking (Gemini 3.8 Flash
+# thinks a little) fits in this many with room to spare. 4,000 tokens at
+# Gemini 3.8 Flash's $3.75/M output plus a prompt of a few thousand tokens at
+# $0.75/M is under $0.02 held per call, inside DeepSeek's $0.03.
+PARSER_MAX_TOKENS = 4000
 # Always kept back for the parser's calls, which turn answers into numbers,
 # whenever any of them can reach OpenRouter.
 PARSER_HOLD_USD = 0.05
@@ -456,6 +470,18 @@ def _call_hold_usd(model: str) -> float:
     if model.startswith("openrouter/deepseek/"):
         return DEEPSEEK_CALL_HOLD_USD
     return OPENROUTER_CALL_HOLD_USD
+
+
+def _parse_call_hold_usd(model: str) -> float:
+    """
+    What OpenRouter holds back for one parse call on `model`: DeepSeek's
+    $0.03 for DeepSeek and for the default parser (Gemini 3.8 Flash, whose
+    parse calls write at most PARSER_MAX_TOKENS); any other OpenRouter model
+    is held like a forecast call.
+    """
+    if model == DEFAULT_PARSER_MODEL:
+        return DEEPSEEK_CALL_HOLD_USD
+    return _call_hold_usd(model)
 
 
 def parser_openrouter_model(settings: BotSettings) -> str | None:
@@ -484,8 +510,7 @@ def question_hold_usd(settings: BotSettings, model: str) -> float:
     fails every parse), so the hold stays that of the OpenRouter fallback:
     it is what may be in flight, not what is spent.
     """
-    parser_on_openrouter = parser_openrouter_model(settings) or ""
-    per_call = _call_hold_usd(model) or _call_hold_usd(parser_on_openrouter)
+    per_call = _call_hold_usd(model) or _parse_call_hold_usd(parser_openrouter_model(settings) or "")
     return per_call * settings.predictions_per_question
 
 
