@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-22 18:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-22 19:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move_cheap | 89 | 34/89 | +2.8% | +$12.64 | 6 | 85 | too early |
-| 2 | follow_move | 614 | 382/614 | -0.0% | -$0.23 | 17 | 118 | FAIL |
-| 3 | sure_thing | 3182 | 2951/3182 | -0.9% | -$141.50 | 16 | 201 | FAIL |
-| 4 | fade_move | 668 | 220/668 | -1.6% | -$53.48 | 17 | 123 | FAIL |
-| 5 | safe_no_week | 1144 | 1062/1144 | -3.1% | -$176.91 | 17 | 313 | FAIL |
-| 6 | follow_move_2 | 193 | 116/193 | -4.7% | -$45.11 | 6 | 104 | too early |
-| 7 | follow_move_big | 159 | 97/159 | -11.7% | -$92.87 | 6 | 79 | too early |
-| 8 | sports_underdog | 2434 | 563/2434 | -13.9% | -$1678.17 | 15 | 79 | FAIL |
-| 9 | weather_forecast | 837 | 433/837 | -18.6% | -$768.29 | 15 | 165 | FAIL |
-| 10 | follow_move_crypto | 69 | 34/69 | -21.0% | -$72.46 | 6 | 43 | too early |
+| 1 | follow_move_cheap | 89 | 34/89 | +2.8% | +$12.64 | 6 | 86 | too early |
+| 2 | follow_move | 614 | 382/614 | -0.0% | -$0.23 | 17 | 119 | FAIL |
+| 3 | sure_thing | 3205 | 2974/3205 | -0.8% | -$135.11 | 16 | 186 | FAIL |
+| 4 | fade_move | 668 | 220/668 | -1.6% | -$53.48 | 17 | 124 | FAIL |
+| 5 | safe_no_week | 1146 | 1064/1146 | -3.1% | -$176.40 | 17 | 312 | FAIL |
+| 6 | follow_move_2 | 193 | 116/193 | -4.7% | -$45.11 | 6 | 105 | too early |
+| 7 | follow_move_big | 159 | 97/159 | -11.7% | -$92.87 | 6 | 80 | too early |
+| 8 | sports_underdog | 2444 | 565/2444 | -14.0% | -$1695.93 | 15 | 77 | FAIL |
+| 9 | weather_forecast | 840 | 435/840 | -18.4% | -$764.78 | 15 | 162 | FAIL |
+| 10 | follow_move_crypto | 69 | 34/69 | -21.0% | -$72.46 | 6 | 44 | too early |
 | 11 | move_ai | 5 | 4/5 | +257.2% | +$64.31 | 3 | 15 | too early |
 | 12 | move_ai_clean | 4 | 3/4 | +111.4% | +$22.27 | 3 | 10 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3397 | 1666/3397 | -6.2% | -$1055.18 | 17 | 272 | yardstick |
+| 14 | coin_flip | 3412 | 1671/3412 | -6.5% | -$1095.37 | 17 | 265 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | fade_move | safe_no_week | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-22 | -$8.94 | -$16.63 | -$16.72 | +$47.30 | +$5.62 | -$6.56 | -$29.22 | -$53.16 | -$41.35 | -$8.55 | -$3.95 | -$3.95 |  | -$156.50 |
+| 2026-11-22 | -$8.94 | -$16.63 | -$10.33 | +$47.30 | +$6.13 | -$6.56 | -$29.22 | -$70.92 | -$37.85 | -$8.55 | -$3.95 | -$3.95 |  | -$196.70 |
 | 2026-11-21 | +$19.46 | -$10.88 | -$28.79 | +$37.86 | -$3.69 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 | +$7.00 |  | -$197.98 |
 | 2026-11-20 | +$30.74 | +$40.01 | -$19.18 | +$18.12 | -$1.99 | +$49.66 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
 | 2026-11-19 | -$32.37 | -$76.17 | -$35.23 | +$186.86 | -$10.58 | -$96.44 | -$66.89 | -$302.39 | -$20.99 | -$16.30 |  |  |  | -$31.84 |
@@ -57,16 +57,16 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-22 follow_move_cheap: Will "Stop The Wedding! - Ashe" be the #1 song this week? -> Yes at 0.472 ($5.00)
-- 2026-11-22 follow_move: Will the price of Ethereum be between $1,700 and $1,800 on November 28? -> No at 0.762 ($5.00)
-- 2026-11-22 sure_thing: PFC Ludogorets 1945 Razgrad vs. FC Dunav Ruse: O/U 0.5 -> Over at 0.971 ($5.00)
-- 2026-11-22 fade_move: Will the price of Ethereum be between $1,700 and $1,800 on November 28? -> Yes at 0.292 ($5.00)
-- 2026-11-22 safe_no_week: Will the lowest temperature in Beijing be -1°C on November 24? -> No at 0.980 ($5.00)
-- 2026-11-22 follow_move_2: Will the price of Ethereum be between $1,700 and $1,800 on November 28? -> No at 0.762 ($5.00)
-- 2026-11-22 follow_move_big: Will the price of Bitcoin be above $64,000 on November 28? -> No at 0.792 ($5.00)
-- 2026-11-22 sports_underdog: Will CP Cacereno SAD vs. UD Logrones end in a draw? -> Yes at 0.300 ($5.00)
+- 2026-11-22 follow_move_cheap: Will "Flower In A Hurricane - Justice, Tame Impala, SZA, King Gizzard & the Lizard Wizard" be the #2 song this week? -> Yes at 0.402 ($5.00)
+- 2026-11-22 follow_move: Bitcoin Up or Down on November 23? -> Down at 0.622 ($5.00)
+- 2026-11-22 sure_thing: Jack Bech: Anytime Touchdown -> No at 0.914 ($5.00)
+- 2026-11-22 fade_move: Bitcoin Up or Down on November 23? -> Up at 0.392 ($5.00)
+- 2026-11-22 safe_no_week: Will the highest temperature in Chicago be between 36-37°F on November 24? -> No at 0.968 ($5.00)
+- 2026-11-22 follow_move_2: Bitcoin Up or Down on November 23? -> Down at 0.622 ($5.00)
+- 2026-11-22 follow_move_big: Will "Flower In A Hurricane - Justice, Tame Impala, SZA, King Gizzard & the Lizard Wizard" be the #2 song this week? -> Yes at 0.402 ($5.00)
+- 2026-11-22 sports_underdog: Will Club Olimpia vs. Sportivo Trinidense end in a draw? -> Yes at 0.280 ($5.00)
 - 2026-11-22 weather_forecast: Will the lowest temperature in Moscow be -2°C on November 24? -> No at 0.495 ($5.00)
-- 2026-11-22 follow_move_crypto: Will the price of Ethereum be between $1,700 and $1,800 on November 28? -> No at 0.762 ($5.00)
+- 2026-11-22 follow_move_crypto: Bitcoin Up or Down on November 23? -> Down at 0.622 ($5.00)
 - 2026-11-22 move_ai: Will Alphabet Inc. (GOOGL) hit (HIGH) $290 Week of November 23 2026? -> No at 0.612 ($5.00)
 - 2026-11-22 move_ai_clean: Will Alphabet Inc. (GOOGL) hit (HIGH) $290 Week of November 23 2026? -> No at 0.612 ($5.00)
 
@@ -81,6 +81,6 @@ Today: 8 checks, $0.73 of OpenAI credit (limit $1.00 a day). Since the start: 33
 
 No near-gaps today.
 
-Runs in the last 24 hours: 36 (14 with a problem).
+Runs in the last 24 hours: 37 (14 with a problem).
 Latest problem: 39 position(s) still open more than 3 days after their market ended
 41 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
