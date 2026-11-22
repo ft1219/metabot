@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-22 10:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-22 10:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move_cheap | 81 | 32/81 | +4.1% | +$16.57 | 6 | 86 | too early |
-| 2 | follow_move | 600 | 374/600 | +0.4% | +$11.40 | 17 | 123 | FAIL |
-| 3 | sure_thing | 3074 | 2849/3074 | -0.9% | -$139.85 | 16 | 206 | FAIL |
-| 4 | fade_move | 654 | 214/654 | -3.0% | -$97.63 | 17 | 128 | FAIL |
-| 5 | safe_no_week | 1116 | 1034/1116 | -3.3% | -$182.64 | 17 | 313 | FAIL |
-| 6 | follow_move_2 | 179 | 109/179 | -4.7% | -$42.27 | 6 | 109 | too early |
-| 7 | follow_move_big | 146 | 92/146 | -8.5% | -$62.37 | 6 | 86 | too early |
-| 8 | sports_underdog | 2349 | 536/2349 | -15.2% | -$1778.15 | 15 | 60 | FAIL |
-| 9 | weather_forecast | 815 | 420/815 | -18.7% | -$751.10 | 15 | 172 | FAIL |
+| 1 | follow_move_cheap | 82 | 32/82 | +2.8% | +$11.57 | 6 | 86 | too early |
+| 2 | follow_move | 601 | 375/601 | +0.5% | +$14.60 | 17 | 123 | FAIL |
+| 3 | sure_thing | 3076 | 2850/3076 | -0.9% | -$144.65 | 16 | 212 | FAIL |
+| 4 | fade_move | 655 | 214/655 | -3.1% | -$102.63 | 17 | 128 | FAIL |
+| 5 | safe_no_week | 1116 | 1034/1116 | -3.3% | -$182.64 | 17 | 315 | FAIL |
+| 6 | follow_move_2 | 180 | 110/180 | -4.3% | -$39.07 | 6 | 109 | too early |
+| 7 | follow_move_big | 147 | 92/147 | -9.2% | -$67.37 | 6 | 86 | too early |
+| 8 | sports_underdog | 2350 | 537/2350 | -15.0% | -$1757.86 | 15 | 67 | FAIL |
+| 9 | weather_forecast | 815 | 420/815 | -18.7% | -$751.10 | 15 | 174 | FAIL |
 | 10 | follow_move_crypto | 57 | 29/57 | -22.4% | -$63.91 | 5 | 51 | too early |
 | 11 | move_ai | 4 | 4/4 | +346.6% | +$69.31 | 3 | 13 | too early |
 | 12 | move_ai_clean | 3 | 3/3 | +181.8% | +$27.27 | 3 | 9 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3273 | 1609/3273 | -5.8% | -$946.47 | 17 | 292 | yardstick |
+| 14 | coin_flip | 3274 | 1609/3274 | -5.8% | -$951.47 | 17 | 299 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | fade_move | safe_no_week | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-22 | -$5.00 | -$5.00 | -$15.07 | +$3.16 | -$0.11 | -$3.72 | +$1.28 | -$153.15 | -$24.17 |  | +$1.05 | +$1.05 |  | -$47.79 |
+| 2026-11-22 | -$10.00 | -$1.80 | -$19.87 | -$1.84 | -$0.11 | -$0.52 | -$3.72 | -$132.86 | -$24.17 |  | +$1.05 | +$1.05 |  | -$52.79 |
 | 2026-11-21 | +$19.46 | -$10.88 | -$28.79 | +$37.86 | -$3.69 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 | +$7.00 |  | -$197.98 |
 | 2026-11-20 | +$30.74 | +$40.01 | -$19.18 | +$18.12 | -$1.99 | +$49.66 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
 | 2026-11-19 | -$32.37 | -$76.17 | -$35.23 | +$186.86 | -$10.58 | -$96.44 | -$66.89 | -$302.39 | -$20.99 | -$16.30 |  |  |  | -$31.84 |
@@ -57,15 +57,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-22 follow_move_cheap: Will Trump's approval rating be between 37.0 and 37.4 on November 27, 2026? -> Yes at 0.272 ($5.00)
-- 2026-11-22 follow_move: Will Trump's approval rating be between 37.0 and 37.4 on November 27, 2026? -> Yes at 0.272 ($5.00)
-- 2026-11-22 sure_thing: Spread: Frosinone Calcio (-1.5) -> AC Milan at 0.943 ($5.00)
-- 2026-11-22 fade_move: Will the price of XRP be between $0.90 and $1.00 on November 25? -> No at 0.532 ($5.00)
-- 2026-11-22 safe_no_week: Will Meta Platforms, Inc. (META) hit (LOW) $500 Week of November 23 2026? -> No at 0.943 ($5.00)
-- 2026-11-22 follow_move_2: Will Trump's approval rating be between 37.0 and 37.4 on November 27, 2026? -> Yes at 0.272 ($5.00)
-- 2026-11-22 follow_move_big: Will Labor win the second-most seats in the next Victorian state election? -> No at 0.402 ($5.00)
-- 2026-11-22 sports_underdog: Spread: Esenler Erokspor (-1.5) -> Esenler Erokspor at 0.310 ($5.00)
-- 2026-11-22 weather_forecast: Will the highest temperature in Amsterdam be 4°C on November 24? -> No at 0.512 ($5.00)
+- 2026-11-22 follow_move_cheap: Will Dick's Sporting Goods (DKS) beat quarterly earnings? -> No at 0.402 ($5.00)
+- 2026-11-22 follow_move: Will MicroStrategy (MSTR) hit (HIGH) $90 Week of November 23 2026? -> Yes at 0.589 ($5.00)
+- 2026-11-22 sure_thing: Spread: Botev Plovdiv (-1.5) -> PFC CSKA Sofia at 0.943 ($5.00)
+- 2026-11-22 fade_move: Will MicroStrategy (MSTR) hit (HIGH) $90 Week of November 23 2026? -> No at 0.482 ($5.00)
+- 2026-11-22 safe_no_week: Will the highest temperature in Hong Kong be 25°C on November 24? -> No at 0.967 ($5.00)
+- 2026-11-22 follow_move_2: Will MicroStrategy (MSTR) hit (HIGH) $90 Week of November 23 2026? -> Yes at 0.589 ($5.00)
+- 2026-11-22 follow_move_big: Will Dick's Sporting Goods (DKS) beat quarterly earnings? -> No at 0.402 ($5.00)
+- 2026-11-22 sports_underdog: Will US Livorno 1915 win on 2026-11-22? -> Yes at 0.239 ($5.00)
+- 2026-11-22 weather_forecast: Will the lowest temperature in Helsinki be 0°C on November 24? -> No at 0.705 ($5.00)
 - 2026-11-22 follow_move_crypto: Will the price of XRP be between $0.90 and $1.00 on November 25? -> Yes at 0.522 ($5.00)
 - 2026-11-22 move_ai: Will White House post 180-199 posts from November 17 to November 24, 2026? -> Yes at 0.242 ($5.00)
 - 2026-11-22 move_ai_clean: Will the price of Bitcoin be above $58,000 on November 24? -> No at 0.319 ($5.00)
@@ -81,6 +81,6 @@ Today: 5 checks, $0.43 of OpenAI credit (limit $1.00 a day). Since the start: 30
 
 No near-gaps today.
 
-Runs in the last 24 hours: 37 (28 with a problem).
+Runs in the last 24 hours: 37 (27 with a problem).
 Latest problem: 39 position(s) still open more than 3 days after their market ended
 39 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
