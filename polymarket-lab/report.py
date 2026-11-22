@@ -29,6 +29,7 @@ JUDGE_DAYS = 14
 MIN_SETTLED = 30
 MIN_DAYS = 10  # finished trades on at least this many different days (one lucky day is not evidence)
 P_LUCK = 0.01  # a win count this likely by chance alone is not a pass
+STALE_DAYS = 3  # a position this long past its market's end is looked up on Polymarket (lab.stale_check)
 DAILY_ROWS = 10
 
 
@@ -319,8 +320,14 @@ def build(data: Path, now: float, state: dict | None = None, current: dict | Non
     lines += ["", f"Runs in the last 24 hours: {len(last_day)} ({len(bad)} with a problem)."]
     if bad:
         lines.append("Latest problem: " + str(bad[-1]["problems"][-1])[:200])
+    waiting = runs[-1].get("waiting_on_polymarket") if runs else None  # None: not looked up this run
+    if waiting:
+        lines.append(f"{waiting} open position(s) ended more than {STALE_DAYS} days ago, but Polymarket has not "
+                     "settled their markets yet (a result still being counted, or a postponed match). They are "
+                     "settled when it does.")
 
     summary = {"updated": int(now), "strategies": {k: {kk: (None if isinstance(vv, float) and math.isinf(vv) else vv)
                                                         for kk, vv in v.items()} for k, v in by_s.items()},
-               "runs_24h": len(last_day), "runs_with_problems_24h": len(bad), "ai_check": ai}
+               "runs_24h": len(last_day), "runs_with_problems_24h": len(bad), "ai_check": ai,
+               "waiting_on_polymarket": waiting}
     return "\n".join(lines) + "\n", summary
