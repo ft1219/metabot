@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-22 14:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-22 15:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move_cheap | 82 | 32/82 | +2.8% | +$11.57 | 6 | 88 | too early |
-| 2 | follow_move | 601 | 375/601 | +0.5% | +$14.60 | 17 | 125 | FAIL |
-| 3 | sure_thing | 3086 | 2860/3086 | -0.9% | -$142.42 | 16 | 250 | FAIL |
+| 1 | follow_move_cheap | 82 | 32/82 | +2.8% | +$11.57 | 6 | 89 | too early |
+| 2 | follow_move | 601 | 375/601 | +0.5% | +$14.60 | 17 | 126 | FAIL |
+| 3 | sure_thing | 3103 | 2876/3103 | -0.9% | -$142.86 | 16 | 240 | FAIL |
 | 4 | fade_move | 655 | 214/655 | -3.1% | -$102.63 | 17 | 130 | FAIL |
-| 5 | safe_no_week | 1118 | 1036/1118 | -3.3% | -$182.29 | 17 | 322 | FAIL |
-| 6 | follow_move_2 | 180 | 110/180 | -4.3% | -$39.07 | 6 | 111 | too early |
+| 5 | safe_no_week | 1123 | 1041/1123 | -3.2% | -$181.08 | 17 | 320 | FAIL |
+| 6 | follow_move_2 | 180 | 110/180 | -4.3% | -$39.07 | 6 | 112 | too early |
 | 7 | follow_move_big | 147 | 92/147 | -9.2% | -$67.37 | 6 | 87 | too early |
-| 8 | sports_underdog | 2370 | 544/2370 | -14.7% | -$1729.24 | 15 | 95 | FAIL |
-| 9 | weather_forecast | 816 | 420/816 | -18.8% | -$756.10 | 15 | 181 | FAIL |
+| 8 | sports_underdog | 2387 | 547/2387 | -14.9% | -$1763.85 | 15 | 86 | FAIL |
+| 9 | weather_forecast | 821 | 424/821 | -18.5% | -$750.95 | 15 | 177 | FAIL |
 | 10 | follow_move_crypto | 57 | 29/57 | -22.4% | -$63.91 | 5 | 51 | too early |
 | 11 | move_ai | 4 | 4/4 | +346.6% | +$69.31 | 3 | 14 | too early |
 | 12 | move_ai_clean | 3 | 3/3 | +181.8% | +$27.27 | 3 | 10 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3305 | 1617/3305 | -6.3% | -$1028.25 | 17 | 316 | yardstick |
+| 14 | coin_flip | 3320 | 1626/3320 | -6.2% | -$1025.87 | 17 | 309 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | fade_move | safe_no_week | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-22 | -$10.00 | -$1.80 | -$17.64 | -$1.84 | +$0.24 | -$0.52 | -$3.72 | -$104.23 | -$29.17 |  | +$1.05 | +$1.05 |  | -$129.57 |
+| 2026-11-22 | -$10.00 | -$1.80 | -$18.08 | -$1.84 | +$1.45 | -$0.52 | -$3.72 | -$138.85 | -$24.02 |  | +$1.05 | +$1.05 |  | -$127.20 |
 | 2026-11-21 | +$19.46 | -$10.88 | -$28.79 | +$37.86 | -$3.69 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 | +$7.00 |  | -$197.98 |
 | 2026-11-20 | +$30.74 | +$40.01 | -$19.18 | +$18.12 | -$1.99 | +$49.66 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
 | 2026-11-19 | -$32.37 | -$76.17 | -$35.23 | +$186.86 | -$10.58 | -$96.44 | -$66.89 | -$302.39 | -$20.99 | -$16.30 |  |  |  | -$31.84 |
@@ -57,15 +57,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-22 follow_move_cheap: Will the Popular initiative ‘For a restriction on fireworks’ be approved in Switzerland’s November 29, 2026 popular vote? -> No at 0.229 ($5.00)
-- 2026-11-22 follow_move: Will it rain in Seattle, WA on November 22? -> Yes at 0.662 ($5.00)
-- 2026-11-22 sure_thing: Real Sporting de Gijón vs. UD Las Palmas: Neither team to score first? -> No at 0.952 ($5.00)
+- 2026-11-22 follow_move_cheap: Will Microsoft Corporation (MSFT) hit (HIGH) $525 Week of November 23 2026? -> Yes at 0.458 ($5.00)
+- 2026-11-22 follow_move: Will Microsoft Corporation (MSFT) hit (HIGH) $525 Week of November 23 2026? -> Yes at 0.458 ($5.00)
+- 2026-11-22 sure_thing: Exact Score: CSD Municipal 0 - 0 Antigua GFC? -> No at 0.952 ($5.00)
 - 2026-11-22 fade_move: Will it rain in New Orleans, LA on November 22? -> Yes at 0.141 ($5.00)
-- 2026-11-22 safe_no_week: Will TheBurntPeanut finish GTA VI by November 28? -> Yes at 0.921 ($5.00)
-- 2026-11-22 follow_move_2: Will it rain in Seattle, WA on November 22? -> Yes at 0.662 ($5.00)
+- 2026-11-22 safe_no_week: Will the highest temperature in Chongqing be 13°C on November 24? -> No at 0.980 ($5.00)
+- 2026-11-22 follow_move_2: Will Microsoft Corporation (MSFT) hit (HIGH) $525 Week of November 23 2026? -> Yes at 0.458 ($5.00)
 - 2026-11-22 follow_move_big: Will it rain in Los Angeles, CA on November 22? -> No at 0.821 ($5.00)
-- 2026-11-22 sports_underdog: Spread: Go Ahead Eagles (-1.5) -> Go Ahead Eagles at 0.322 ($5.00)
-- 2026-11-22 weather_forecast: Will the highest temperature in Atlanta be between 62-63°F on November 24? -> No at 0.642 ($5.00)
+- 2026-11-22 sports_underdog: Spread: Bursaspor (-3.5) -> Bursaspor at 0.218 ($5.00)
+- 2026-11-22 weather_forecast: Will the highest temperature in Toronto be 4°C on November 24? -> No at 0.596 ($5.00)
 - 2026-11-22 follow_move_crypto: Will the price of XRP be between $0.90 and $1.00 on November 25? -> Yes at 0.522 ($5.00)
 - 2026-11-22 move_ai: Will the Popular initiative ‘For a restriction on fireworks’ be approved in Switzerland’s November 29, 2026 popular vote? -> Yes at 0.808 ($5.00)
 - 2026-11-22 move_ai_clean: Will the Popular initiative ‘For a restriction on fireworks’ be approved in Switzerland’s November 29, 2026 popular vote? -> Yes at 0.808 ($5.00)
@@ -81,6 +81,6 @@ Today: 6 checks, $0.55 of OpenAI credit (limit $1.00 a day). Since the start: 31
 
 No near-gaps today.
 
-Runs in the last 24 hours: 36 (20 with a problem).
+Runs in the last 24 hours: 37 (20 with a problem).
 Latest problem: 39 position(s) still open more than 3 days after their market ended
 42 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
