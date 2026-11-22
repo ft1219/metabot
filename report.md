@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-22 12:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-22 13:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-22 12:47 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | follow_move_cheap | 82 | 32/82 | +2.8% | +$11.57 | 6 | 88 | too early |
 | 2 | follow_move | 601 | 375/601 | +0.5% | +$14.60 | 17 | 125 | FAIL |
-| 3 | sure_thing | 3078 | 2852/3078 | -0.9% | -$143.98 | 16 | 234 | FAIL |
+| 3 | sure_thing | 3079 | 2853/3079 | -0.9% | -$143.83 | 16 | 241 | FAIL |
 | 4 | fade_move | 655 | 214/655 | -3.1% | -$102.63 | 17 | 130 | FAIL |
-| 5 | safe_no_week | 1117 | 1035/1117 | -3.3% | -$182.39 | 17 | 317 | FAIL |
+| 5 | safe_no_week | 1117 | 1035/1117 | -3.3% | -$182.39 | 17 | 319 | FAIL |
 | 6 | follow_move_2 | 180 | 110/180 | -4.3% | -$39.07 | 6 | 111 | too early |
-| 7 | follow_move_big | 147 | 92/147 | -9.2% | -$67.37 | 6 | 86 | too early |
-| 8 | sports_underdog | 2358 | 539/2358 | -15.0% | -$1763.47 | 15 | 83 | FAIL |
-| 9 | weather_forecast | 816 | 420/816 | -18.8% | -$756.10 | 15 | 176 | FAIL |
+| 7 | follow_move_big | 147 | 92/147 | -9.2% | -$67.37 | 6 | 87 | too early |
+| 8 | sports_underdog | 2361 | 539/2361 | -15.2% | -$1778.47 | 15 | 88 | FAIL |
+| 9 | weather_forecast | 816 | 420/816 | -18.8% | -$756.10 | 15 | 178 | FAIL |
 | 10 | follow_move_crypto | 57 | 29/57 | -22.4% | -$63.91 | 5 | 51 | too early |
 | 11 | move_ai | 4 | 4/4 | +346.6% | +$69.31 | 3 | 14 | too early |
 | 12 | move_ai_clean | 3 | 3/3 | +181.8% | +$27.27 | 3 | 10 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3290 | 1614/3290 | -6.0% | -$985.77 | 17 | 307 | yardstick |
+| 14 | coin_flip | 3293 | 1615/3293 | -6.0% | -$991.02 | 17 | 312 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | fade_move | safe_no_week | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-22 | -$10.00 | -$1.80 | -$19.20 | -$1.84 | +$0.14 | -$0.52 | -$3.72 | -$138.47 | -$29.17 |  | +$1.05 | +$1.05 |  | -$87.10 |
+| 2026-11-22 | -$10.00 | -$1.80 | -$19.05 | -$1.84 | +$0.14 | -$0.52 | -$3.72 | -$153.47 | -$29.17 |  | +$1.05 | +$1.05 |  | -$92.34 |
 | 2026-11-21 | +$19.46 | -$10.88 | -$28.79 | +$37.86 | -$3.69 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 | +$7.00 |  | -$197.98 |
 | 2026-11-20 | +$30.74 | +$40.01 | -$19.18 | +$18.12 | -$1.99 | +$49.66 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
 | 2026-11-19 | -$32.37 | -$76.17 | -$35.23 | +$186.86 | -$10.58 | -$96.44 | -$66.89 | -$302.39 | -$20.99 | -$16.30 |  |  |  | -$31.84 |
@@ -59,13 +59,13 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-22 follow_move_cheap: Will the Popular initiative ‘For a restriction on fireworks’ be approved in Switzerland’s November 29, 2026 popular vote? -> No at 0.229 ($5.00)
 - 2026-11-22 follow_move: Will it rain in Seattle, WA on November 22? -> Yes at 0.662 ($5.00)
-- 2026-11-22 sure_thing: Exact Score: CA River Plate 0 - 0 CA Lanús? -> No at 0.914 ($5.00)
+- 2026-11-22 sure_thing: Exact Score: NK Maribor 0 - 0 Nafta 1903 Lendava? -> No at 0.959 ($5.00)
 - 2026-11-22 fade_move: Will it rain in New Orleans, LA on November 22? -> Yes at 0.141 ($5.00)
-- 2026-11-22 safe_no_week: Will the highest temperature in Beijing be 6°C on November 24? -> No at 0.931 ($5.00)
+- 2026-11-22 safe_no_week: Will the highest temperature in Miami be between 76-77°F on November 24? -> No at 0.941 ($5.00)
 - 2026-11-22 follow_move_2: Will it rain in Seattle, WA on November 22? -> Yes at 0.662 ($5.00)
-- 2026-11-22 follow_move_big: Will Dick's Sporting Goods (DKS) beat quarterly earnings? -> No at 0.402 ($5.00)
-- 2026-11-22 sports_underdog: Spread: GKS Katowice (-1.5) -> GKS Katowice at 0.187 ($5.00)
-- 2026-11-22 weather_forecast: Will the highest temperature in Qingdao be 7°C on November 24? -> No at 0.582 ($5.00)
+- 2026-11-22 follow_move_big: Will it rain in Los Angeles, CA on November 22? -> No at 0.821 ($5.00)
+- 2026-11-22 sports_underdog: Will Bologna FC 1909 vs. Udinese Calcio end in a draw? -> Yes at 0.274 ($5.00)
+- 2026-11-22 weather_forecast: Will the highest temperature in Seattle be between 52-53°F on November 24? -> No at 0.752 ($5.00)
 - 2026-11-22 follow_move_crypto: Will the price of XRP be between $0.90 and $1.00 on November 25? -> Yes at 0.522 ($5.00)
 - 2026-11-22 move_ai: Will the Popular initiative ‘For a restriction on fireworks’ be approved in Switzerland’s November 29, 2026 popular vote? -> Yes at 0.808 ($5.00)
 - 2026-11-22 move_ai_clean: Will the Popular initiative ‘For a restriction on fireworks’ be approved in Switzerland’s November 29, 2026 popular vote? -> Yes at 0.808 ($5.00)
@@ -81,6 +81,6 @@ Today: 6 checks, $0.55 of OpenAI credit (limit $1.00 a day). Since the start: 31
 
 No near-gaps today.
 
-Runs in the last 24 hours: 36 (23 with a problem).
+Runs in the last 24 hours: 36 (22 with a problem).
 Latest problem: 39 position(s) still open more than 3 days after their market ended
-39 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
+42 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
