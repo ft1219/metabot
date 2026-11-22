@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-22 06:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-22 07:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move_cheap | 81 | 32/81 | +4.1% | +$16.57 | 6 | 81 | too early |
-| 2 | follow_move | 600 | 374/600 | +0.4% | +$11.40 | 17 | 117 | FAIL |
-| 3 | sure_thing | 3068 | 2843/3068 | -0.9% | -$141.24 | 16 | 172 | FAIL |
-| 4 | fade_move | 654 | 214/654 | -3.0% | -$97.63 | 17 | 123 | FAIL |
-| 5 | safe_no_week | 1109 | 1027/1109 | -3.3% | -$184.20 | 17 | 299 | FAIL |
-| 6 | follow_move_2 | 178 | 108/178 | -4.9% | -$43.55 | 6 | 104 | too early |
-| 7 | follow_move_big | 145 | 91/145 | -8.8% | -$63.65 | 5 | 84 | too early |
-| 8 | sports_underdog | 2318 | 529/2318 | -15.4% | -$1769.47 | 15 | 56 | FAIL |
-| 9 | weather_forecast | 802 | 411/802 | -18.9% | -$747.67 | 15 | 160 | FAIL |
+| 1 | follow_move_cheap | 81 | 32/81 | +4.1% | +$16.57 | 6 | 82 | too early |
+| 2 | follow_move | 600 | 374/600 | +0.4% | +$11.40 | 17 | 118 | FAIL |
+| 3 | sure_thing | 3070 | 2845/3070 | -0.9% | -$140.80 | 16 | 178 | FAIL |
+| 4 | fade_move | 654 | 214/654 | -3.0% | -$97.63 | 17 | 124 | FAIL |
+| 5 | safe_no_week | 1114 | 1032/1114 | -3.3% | -$182.94 | 17 | 299 | FAIL |
+| 6 | follow_move_2 | 179 | 109/179 | -4.7% | -$42.27 | 6 | 104 | too early |
+| 7 | follow_move_big | 146 | 92/146 | -8.5% | -$62.37 | 6 | 83 | too early |
+| 8 | sports_underdog | 2324 | 530/2324 | -15.4% | -$1780.92 | 15 | 53 | FAIL |
+| 9 | weather_forecast | 810 | 417/810 | -18.7% | -$747.73 | 15 | 160 | FAIL |
 | 10 | follow_move_crypto | 57 | 29/57 | -22.4% | -$63.91 | 5 | 50 | too early |
-| 11 | move_ai | 3 | 3/3 | +455.1% | +$68.26 | 2 | 13 | too early |
-| 12 | move_ai_clean | 2 | 2/2 | +262.2% | +$26.22 | 2 | 10 | too early |
+| 11 | move_ai | 4 | 4/4 | +346.6% | +$69.31 | 3 | 12 | too early |
+| 12 | move_ai_clean | 3 | 3/3 | +181.8% | +$27.27 | 3 | 9 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3247 | 1600/3247 | -5.7% | -$920.67 | 17 | 278 | yardstick |
+| 14 | coin_flip | 3252 | 1601/3252 | -5.8% | -$936.10 | 17 | 281 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | fade_move | safe_no_week | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-22 | -$5.00 | -$5.00 | -$16.46 | +$3.16 | -$1.67 | -$5.00 |  | -$144.46 | -$20.73 |  |  |  |  | -$22.00 |
+| 2026-11-22 | -$5.00 | -$5.00 | -$16.02 | +$3.16 | -$0.41 | -$3.72 | +$1.28 | -$155.92 | -$20.80 |  | +$1.05 | +$1.05 |  | -$37.43 |
 | 2026-11-21 | +$19.46 | -$10.88 | -$28.79 | +$37.86 | -$3.69 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 | +$7.00 |  | -$197.98 |
 | 2026-11-20 | +$30.74 | +$40.01 | -$19.18 | +$18.12 | -$1.99 | +$49.66 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
 | 2026-11-19 | -$32.37 | -$76.17 | -$35.23 | +$186.86 | -$10.58 | -$96.44 | -$66.89 | -$302.39 | -$20.99 | -$16.30 |  |  |  | -$31.84 |
@@ -57,15 +57,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-22 follow_move_cheap: Will Coinbase Global, Inc. (COIN) hit (LOW) $100 Week of November 23 2026? -> No at 0.270 ($5.00)
-- 2026-11-22 follow_move: Will Kuomintang (KMT) win the most head of local government elections in the 2026 Taiwan local elections? -> Yes at 0.798 ($5.00)
-- 2026-11-22 sure_thing: Spread: SSC Bari (-1.5) -> Catania FC at 0.933 ($5.00)
-- 2026-11-22 fade_move: Will Coinbase Global, Inc. (COIN) hit (LOW) $100 Week of November 23 2026? -> Yes at 0.798 ($5.00)
-- 2026-11-22 safe_no_week: Will the highest temperature in Wellington be 17°C on November 24? -> No at 0.960 ($5.00)
-- 2026-11-22 follow_move_2: Will Kuomintang (KMT) win the most head of local government elections in the 2026 Taiwan local elections? -> Yes at 0.798 ($5.00)
+- 2026-11-22 follow_move_cheap: Will Labor win the second-most seats in the next Victorian state election? -> No at 0.218 ($5.00)
+- 2026-11-22 follow_move: Will Labor win the second-most seats in the next Victorian state election? -> No at 0.218 ($5.00)
+- 2026-11-22 sure_thing: Juventus FC vs. Venezia FC: Neither team to score first? -> No at 0.968 ($5.00)
+- 2026-11-22 fade_move: Will Labor win the second-most seats in the next Victorian state election? -> Yes at 0.818 ($5.00)
+- 2026-11-22 safe_no_week: Will the lowest temperature in Miami be between 64-65°F on November 24? -> No at 0.950 ($5.00)
+- 2026-11-22 follow_move_2: Will Labor win the second-most seats in the next Victorian state election? -> No at 0.218 ($5.00)
 - 2026-11-22 follow_move_big: XRP Up or Down on November 22? -> Down at 0.812 ($5.00)
-- 2026-11-22 sports_underdog: Valorant: FunPlus Phoenix vs Unsettled Resentment (BO3) - China National Tournament Split Omega: Pro Division Group B -> Unsettled Resentment at 0.331 ($5.00)
-- 2026-11-22 weather_forecast: Will the lowest temperature in Tokyo be 8°C on November 24? -> No at 0.841 ($5.00)
+- 2026-11-22 sports_underdog: Ankara: Aaron Funk vs Cemil Tugra Duran -> Cemil Tugra Duran at 0.156 ($5.00)
+- 2026-11-22 weather_forecast: Will the highest temperature in New York City be between 50-51°F on November 24? -> No at 0.572 ($5.00)
 - 2026-11-22 follow_move_crypto: XRP Up or Down on November 22? -> Down at 0.722 ($5.00)
 - 2026-11-22 move_ai: Will the price of Bitcoin be above $58,000 on November 24? -> No at 0.319 ($5.00)
 - 2026-11-22 move_ai_clean: Will the price of Bitcoin be above $58,000 on November 24? -> No at 0.319 ($5.00)
@@ -81,6 +81,6 @@ Today: 4 checks, $0.34 of OpenAI credit (limit $1.00 a day). Since the start: 29
 
 No near-gaps today.
 
-Runs in the last 24 hours: 37 (33 with a problem).
+Runs in the last 24 hours: 37 (32 with a problem).
 Latest problem: 39 position(s) still open more than 3 days after their market ended
 39 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
