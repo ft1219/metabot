@@ -12,7 +12,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: OpenRouter requests by provider (read-only)
-        run: python3 -u probe/openrouter_activity.py
+      - name: Who hosts the parse-fallback candidates on OpenRouter
+        run: python3 -u probe/openrouter_hosts.py
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          TRY_MODELS: google/gemini-3.8-flash google/gemini-3.7-flash
