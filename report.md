@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-22 11:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-22 12:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-22 11:27 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | follow_move_cheap | 82 | 32/82 | +2.8% | +$11.57 | 6 | 88 | too early |
 | 2 | follow_move | 601 | 375/601 | +0.5% | +$14.60 | 17 | 124 | FAIL |
-| 3 | sure_thing | 3077 | 2851/3077 | -0.9% | -$144.18 | 16 | 219 | FAIL |
-| 4 | fade_move | 655 | 214/655 | -3.1% | -$102.63 | 17 | 129 | FAIL |
+| 3 | sure_thing | 3077 | 2851/3077 | -0.9% | -$144.18 | 16 | 227 | FAIL |
+| 4 | fade_move | 655 | 214/655 | -3.1% | -$102.63 | 17 | 130 | FAIL |
 | 5 | safe_no_week | 1117 | 1035/1117 | -3.3% | -$182.39 | 17 | 314 | FAIL |
 | 6 | follow_move_2 | 180 | 110/180 | -4.3% | -$39.07 | 6 | 110 | too early |
 | 7 | follow_move_big | 147 | 92/147 | -9.2% | -$67.37 | 6 | 86 | too early |
-| 8 | sports_underdog | 2352 | 538/2352 | -15.0% | -$1748.59 | 15 | 73 | FAIL |
+| 8 | sports_underdog | 2355 | 538/2355 | -15.1% | -$1763.59 | 15 | 78 | FAIL |
 | 9 | weather_forecast | 816 | 420/816 | -18.8% | -$756.10 | 15 | 175 | FAIL |
 | 10 | follow_move_crypto | 57 | 29/57 | -22.4% | -$63.91 | 5 | 51 | too early |
 | 11 | move_ai | 4 | 4/4 | +346.6% | +$69.31 | 3 | 13 | too early |
 | 12 | move_ai_clean | 3 | 3/3 | +181.8% | +$27.27 | 3 | 9 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3281 | 1612/3281 | -5.9% | -$960.29 | 17 | 300 | yardstick |
+| 14 | coin_flip | 3284 | 1612/3284 | -6.0% | -$975.29 | 17 | 305 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | fade_move | safe_no_week | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-22 | -$10.00 | -$1.80 | -$19.40 | -$1.84 | +$0.14 | -$0.52 | -$3.72 | -$123.58 | -$29.17 |  | +$1.05 | +$1.05 |  | -$61.61 |
+| 2026-11-22 | -$10.00 | -$1.80 | -$19.40 | -$1.84 | +$0.14 | -$0.52 | -$3.72 | -$138.58 | -$29.17 |  | +$1.05 | +$1.05 |  | -$76.61 |
 | 2026-11-21 | +$19.46 | -$10.88 | -$28.79 | +$37.86 | -$3.69 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 | +$7.00 |  | -$197.98 |
 | 2026-11-20 | +$30.74 | +$40.01 | -$19.18 | +$18.12 | -$1.99 | +$49.66 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
 | 2026-11-19 | -$32.37 | -$76.17 | -$35.23 | +$186.86 | -$10.58 | -$96.44 | -$66.89 | -$302.39 | -$20.99 | -$16.30 |  |  |  | -$31.84 |
@@ -59,12 +59,12 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-22 follow_move_cheap: Will the Popular initiative ‘For a restriction on fireworks’ be approved in Switzerland’s November 29, 2026 popular vote? -> No at 0.229 ($5.00)
 - 2026-11-22 follow_move: Will the Popular initiative ‘For a restriction on fireworks’ be approved in Switzerland’s November 29, 2026 popular vote? -> No at 0.229 ($5.00)
-- 2026-11-22 sure_thing: Dogecoin Up or Down - November 22, 4:00AM-8:00AM ET -> Up at 0.970 ($5.00)
-- 2026-11-22 fade_move: Will the Popular initiative ‘For a restriction on fireworks’ be approved in Switzerland’s November 29, 2026 popular vote? -> Yes at 0.808 ($5.00)
+- 2026-11-22 sure_thing: Exact Score: PFC Levski Sofia 0 - 0 FC Lokomotiv 1929 Sofia? -> No at 0.959 ($5.00)
+- 2026-11-22 fade_move: Will it rain in New Orleans, LA on November 22? -> Yes at 0.141 ($5.00)
 - 2026-11-22 safe_no_week: Will the highest temperature in Hong Kong be 25°C on November 24? -> No at 0.967 ($5.00)
 - 2026-11-22 follow_move_2: Will the Popular initiative ‘For a restriction on fireworks’ be approved in Switzerland’s November 29, 2026 popular vote? -> No at 0.229 ($5.00)
 - 2026-11-22 follow_move_big: Will Dick's Sporting Goods (DKS) beat quarterly earnings? -> No at 0.402 ($5.00)
-- 2026-11-22 sports_underdog: Spread: Lusitânia FC Lourosa (-1.5) -> Lusitânia FC Lourosa at 0.321 ($5.00)
+- 2026-11-22 sports_underdog: Will Karlsruher SC vs. VfL Osnabrück end in a draw? -> Yes at 0.280 ($5.00)
 - 2026-11-22 weather_forecast: Will the highest temperature in Cape Town be 22°C on November 24? -> No at 0.662 ($5.00)
 - 2026-11-22 follow_move_crypto: Will the price of XRP be between $0.90 and $1.00 on November 25? -> Yes at 0.522 ($5.00)
 - 2026-11-22 move_ai: Will White House post 180-199 posts from November 17 to November 24, 2026? -> Yes at 0.242 ($5.00)
@@ -81,6 +81,6 @@ Today: 5 checks, $0.43 of OpenAI credit (limit $1.00 a day). Since the start: 30
 
 No near-gaps today.
 
-Runs in the last 24 hours: 36 (25 with a problem).
+Runs in the last 24 hours: 37 (25 with a problem).
 Latest problem: 39 position(s) still open more than 3 days after their market ended
 39 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
