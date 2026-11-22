@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-22 16:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-22 16:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move_cheap | 82 | 32/82 | +2.8% | +$11.57 | 6 | 90 | too early |
+| 1 | follow_move_cheap | 82 | 32/82 | +2.8% | +$11.57 | 6 | 92 | too early |
 | 2 | follow_move | 601 | 375/601 | +0.5% | +$14.60 | 17 | 127 | FAIL |
-| 3 | sure_thing | 3118 | 2891/3118 | -0.9% | -$138.80 | 16 | 233 | FAIL |
+| 3 | sure_thing | 3130 | 2901/3130 | -0.9% | -$145.81 | 16 | 229 | FAIL |
 | 4 | fade_move | 655 | 214/655 | -3.1% | -$102.63 | 17 | 131 | FAIL |
-| 5 | safe_no_week | 1123 | 1041/1123 | -3.2% | -$181.08 | 17 | 321 | FAIL |
+| 5 | safe_no_week | 1136 | 1054/1136 | -3.1% | -$178.01 | 17 | 308 | FAIL |
 | 6 | follow_move_2 | 180 | 110/180 | -4.3% | -$39.07 | 6 | 113 | too early |
 | 7 | follow_move_big | 147 | 92/147 | -9.2% | -$67.37 | 6 | 88 | too early |
-| 8 | sports_underdog | 2396 | 548/2396 | -15.0% | -$1790.31 | 15 | 85 | FAIL |
-| 9 | weather_forecast | 821 | 424/821 | -18.5% | -$750.95 | 15 | 177 | FAIL |
+| 8 | sports_underdog | 2410 | 555/2410 | -14.3% | -$1708.76 | 15 | 79 | FAIL |
+| 9 | weather_forecast | 837 | 433/837 | -18.6% | -$768.29 | 15 | 162 | FAIL |
 | 10 | follow_move_crypto | 57 | 29/57 | -22.4% | -$63.91 | 5 | 51 | too early |
 | 11 | move_ai | 4 | 4/4 | +346.6% | +$69.31 | 3 | 15 | too early |
 | 12 | move_ai_clean | 3 | 3/3 | +181.8% | +$27.27 | 3 | 10 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3328 | 1630/3328 | -6.2% | -$1031.63 | 17 | 309 | yardstick |
+| 14 | coin_flip | 3346 | 1640/3346 | -6.2% | -$1031.74 | 17 | 299 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | fade_move | safe_no_week | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-22 | -$10.00 | -$1.80 | -$14.02 | -$1.84 | +$1.45 | -$0.52 | -$3.72 | -$165.30 | -$24.02 |  | +$1.05 | +$1.05 |  | -$132.96 |
+| 2026-11-22 | -$10.00 | -$1.80 | -$21.03 | -$1.84 | +$4.52 | -$0.52 | -$3.72 | -$83.76 | -$41.35 |  | +$1.05 | +$1.05 |  | -$133.07 |
 | 2026-11-21 | +$19.46 | -$10.88 | -$28.79 | +$37.86 | -$3.69 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 | +$7.00 |  | -$197.98 |
 | 2026-11-20 | +$30.74 | +$40.01 | -$19.18 | +$18.12 | -$1.99 | +$49.66 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
 | 2026-11-19 | -$32.37 | -$76.17 | -$35.23 | +$186.86 | -$10.58 | -$96.44 | -$66.89 | -$302.39 | -$20.99 | -$16.30 |  |  |  | -$31.84 |
@@ -57,15 +57,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-22 follow_move_cheap: Will Trump or Melania say "Border" during the Thanksgiving Turkey Pardon on November 24? -> No at 0.477 ($5.00)
+- 2026-11-22 follow_move_cheap: Will "Stop The Wedding! - Ashe" be the #1 song this week? -> Yes at 0.472 ($5.00)
 - 2026-11-22 follow_move: Will TikTok Pro - Events be #1 Free App in the US Apple App Store on November 27? -> Yes at 0.752 ($5.00)
-- 2026-11-22 sure_thing: Deportivo San Pedro leading at halftime? -> No at 0.905 ($5.00)
+- 2026-11-22 sure_thing: Pistons vs. Hawks: O/U 245.5 -> Under at 0.904 ($5.00)
 - 2026-11-22 fade_move: Will TikTok Pro - Events be #1 Free App in the US Apple App Store on November 27? -> No at 0.274 ($5.00)
 - 2026-11-22 safe_no_week: Will the highest temperature in Karachi be 30°C on November 24? -> No at 0.949 ($5.00)
 - 2026-11-22 follow_move_2: Will TikTok Pro - Events be #1 Free App in the US Apple App Store on November 27? -> Yes at 0.752 ($5.00)
 - 2026-11-22 follow_move_big: Will Elon Musk post 90-114 tweets from November 21 to November 23, 2026? -> Yes at 0.432 ($5.00)
-- 2026-11-22 sports_underdog: Spread: Bills (-3.5) -> Dolphins at 0.167 ($5.00)
-- 2026-11-22 weather_forecast: Will the highest temperature in Toronto be 4°C on November 24? -> No at 0.596 ($5.00)
+- 2026-11-22 sports_underdog: W75 Florianópolis: Luisa Hrda vs Catarina Melleiro -> Catarina Melleiro at 0.310 ($5.00)
+- 2026-11-22 weather_forecast: Will the lowest temperature in Shenzhen be 18°C on November 24? -> No at 0.622 ($5.00)
 - 2026-11-22 follow_move_crypto: Will the price of XRP be between $0.90 and $1.00 on November 25? -> Yes at 0.522 ($5.00)
 - 2026-11-22 move_ai: Will Elon Musk post 90-114 tweets from November 21 to November 23, 2026? -> No at 0.582 ($5.00)
 - 2026-11-22 move_ai_clean: Will the Popular initiative ‘For a restriction on fireworks’ be approved in Switzerland’s November 29, 2026 popular vote? -> Yes at 0.808 ($5.00)
@@ -81,6 +81,6 @@ Today: 7 checks, $0.64 of OpenAI credit (limit $1.00 a day). Since the start: 32
 
 No near-gaps today.
 
-Runs in the last 24 hours: 36 (18 with a problem).
+Runs in the last 24 hours: 37 (18 with a problem).
 Latest problem: 39 position(s) still open more than 3 days after their market ended
-42 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
+41 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
