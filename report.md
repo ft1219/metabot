@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-23 04:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-23 04:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
 | 1 | follow_move | 618 | 384/618 | -0.1% | -$2.19 | 18 | 137 | FAIL |
-| 2 | sure_thing | 3366 | 3125/3366 | -0.8% | -$136.89 | 17 | 127 | FAIL |
-| 3 | follow_move_cheap | 93 | 34/93 | -1.6% | -$7.36 | 7 | 91 | too early |
+| 2 | sure_thing | 3369 | 3128/3369 | -0.8% | -$135.59 | 17 | 132 | FAIL |
+| 3 | follow_move_cheap | 93 | 34/93 | -1.6% | -$7.36 | 7 | 92 | too early |
 | 4 | fade_move | 673 | 222/673 | -1.9% | -$65.05 | 18 | 142 | FAIL |
 | 5 | safe_no_week | 1178 | 1095/1178 | -3.0% | -$175.04 | 18 | 308 | FAIL |
 | 6 | follow_move_2 | 197 | 117/197 | -5.8% | -$57.07 | 7 | 123 | too early |
 | 7 | follow_move_big | 160 | 98/160 | -11.2% | -$89.83 | 6 | 95 | too early |
-| 8 | sports_underdog | 2549 | 583/2549 | -14.9% | -$1893.34 | 16 | 33 | FAIL |
+| 8 | sports_underdog | 2554 | 586/2554 | -14.7% | -$1865.56 | 16 | 29 | FAIL |
 | 9 | weather_forecast | 864 | 445/864 | -18.7% | -$798.88 | 16 | 149 | FAIL |
 | 10 | follow_move_crypto | 69 | 34/69 | -21.0% | -$72.46 | 6 | 48 | too early |
 | 11 | move_ai | 5 | 4/5 | +257.2% | +$64.31 | 3 | 16 | too early |
 | 12 | move_ai_clean | 4 | 3/4 | +111.4% | +$22.27 | 3 | 11 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3561 | 1746/3561 | -6.2% | -$1100.96 | 18 | 220 | yardstick |
+| 14 | coin_flip | 3563 | 1748/3563 | -6.2% | -$1094.94 | 18 | 226 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move | sure_thing | follow_move_cheap | fade_move | safe_no_week | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-23 | -$5.00 | +$2.46 | -$15.00 | -$6.56 | -$2.32 | -$15.00 |  | -$95.37 | -$12.94 |  |  |  |  | +$12.16 |
+| 2026-11-23 | -$5.00 | +$3.76 | -$15.00 | -$6.56 | -$2.32 | -$15.00 |  | -$67.59 | -$12.94 |  |  |  |  | +$18.18 |
 | 2026-11-22 | -$13.59 | -$14.57 | -$13.94 | +$42.30 | +$9.81 | -$3.52 | -$26.18 | -$172.97 | -$59.01 | -$8.55 | -$3.95 | -$3.95 |  | -$214.44 |
 | 2026-11-21 | -$10.88 | -$28.79 | +$19.46 | +$37.86 | -$3.69 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 | +$7.00 |  | -$197.98 |
 | 2026-11-20 | +$40.01 | -$19.18 | +$30.74 | +$18.12 | -$1.99 | +$49.66 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
@@ -58,13 +58,13 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 ## Latest pretend buys (newest of each strategy first)
 
 - 2026-11-23 follow_move: Will Palantir Technologies Inc. (PLTR) hit (LOW) $141 Week of November 23 2026? -> No at 0.512 ($5.00)
-- 2026-11-23 sure_thing: Exact Score: Hammarby IF 1 - 0 IFK Goteborg? -> No at 0.924 ($5.00)
-- 2026-11-23 follow_move_cheap: Will S&P 500 (SPY) hit (LOW) $690 Week of November 23 2026? -> No at 0.492 ($5.00)
+- 2026-11-23 sure_thing: Will Pakhtakor win on 2026-11-23? -> No at 0.904 ($5.00)
+- 2026-11-23 follow_move_cheap: Will MicroStrategy (MSTR) hit (HIGH) $95 Week of November 23 2026? -> Yes at 0.442 ($5.00)
 - 2026-11-23 fade_move: Will Palantir Technologies Inc. (PLTR) hit (LOW) $141 Week of November 23 2026? -> Yes at 0.562 ($5.00)
 - 2026-11-23 safe_no_week: Will the highest temperature in San Francisco be between 64-65°F on November 24? -> No at 0.941 ($5.00)
 - 2026-11-23 follow_move_2: Will Puerto Rico take second place in Miss Universe 2026? -> Yes at 0.287 ($5.00)
 - 2026-11-23 follow_move_big: Will NVIDIA (NVDA) hit (HIGH) $140 Week of November 23 2026? -> Yes at 0.681 ($5.00)
-- 2026-11-23 sports_underdog: Playford: Hiroki Moriya vs Daniel Jovanovski -> Daniel Jovanovski at 0.156 ($5.00)
+- 2026-11-23 sports_underdog: Yokohama: Ryo Ono vs Lennon Roark Jones -> Ryo Ono at 0.249 ($5.00)
 - 2026-11-23 weather_forecast: Will the highest temperature in Toronto be 13°C on November 23? -> No at 0.616 ($5.00)
 - 2026-11-23 follow_move_crypto: Will the price of Solana be between $60 and $70 on November 26? -> No at 0.642 ($5.00)
 - 2026-11-23 move_ai: Will the price of Ethereum be above $1,600 on November 26? -> No at 0.161 ($5.00)
@@ -81,5 +81,5 @@ Today: 2 checks, $0.23 of OpenAI credit (limit $1.00 a day). Since the start: 36
 
 No near-gaps today.
 
-Runs in the last 24 hours: 36 (0 with a problem).
+Runs in the last 24 hours: 37 (0 with a problem).
 40 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
