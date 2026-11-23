@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-23 22:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-23 23:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 10 | 4/10 | +78.6% | +$39.31 | 4 | 15 | too early |
-| 2 | sure_thing | 3508 | 3262/3508 | -0.7% | -$114.56 | 17 | 182 | FAIL |
-| 3 | follow_move | 664 | 409/664 | -1.2% | -$39.17 | 18 | 136 | FAIL |
+| 2 | sure_thing | 3515 | 3269/3515 | -0.6% | -$111.90 | 17 | 183 | FAIL |
+| 3 | follow_move | 664 | 409/664 | -1.2% | -$39.17 | 18 | 137 | FAIL |
 | 4 | follow_move_cheap | 121 | 43/121 | -2.0% | -$12.09 | 7 | 88 | too early |
-| 5 | safe_no_week | 1259 | 1173/1259 | -2.7% | -$171.33 | 18 | 367 | FAIL |
-| 6 | fade_move | 724 | 238/724 | -4.7% | -$168.69 | 18 | 149 | FAIL |
-| 7 | follow_move_2 | 241 | 141/241 | -7.4% | -$89.29 | 7 | 124 | too early |
+| 5 | safe_no_week | 1265 | 1179/1265 | -2.7% | -$170.25 | 18 | 365 | FAIL |
+| 6 | fade_move | 724 | 238/724 | -4.7% | -$168.69 | 18 | 150 | FAIL |
+| 7 | follow_move_2 | 241 | 141/241 | -7.4% | -$89.29 | 7 | 125 | too early |
 | 8 | follow_move_big | 201 | 127/201 | -8.8% | -$87.98 | 7 | 95 | too early |
-| 9 | sports_underdog | 2647 | 611/2647 | -14.1% | -$1857.08 | 16 | 86 | FAIL |
-| 10 | weather_forecast | 919 | 472/919 | -19.3% | -$875.18 | 16 | 162 | FAIL |
+| 9 | sports_underdog | 2654 | 613/2654 | -14.1% | -$1857.95 | 16 | 87 | FAIL |
+| 10 | weather_forecast | 925 | 475/925 | -19.2% | -$877.47 | 16 | 156 | FAIL |
 | 11 | follow_move_crypto | 84 | 39/84 | -26.3% | -$110.63 | 7 | 42 | too early |
 | 12 | move_ai_clean | 7 | 3/7 | +20.8% | +$7.27 | 4 | 10 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3730 | 1843/3730 | -5.6% | -$1032.79 | 18 | 275 | yardstick |
+| 14 | coin_flip | 3738 | 1847/3738 | -5.5% | -$1030.52 | 18 | 275 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | sure_thing | follow_move | follow_move_cheap | safe_no_week | fade_move | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-23 | -$25.00 | +$24.79 | -$41.97 | -$19.72 | +$1.39 | -$110.21 | -$47.22 | +$1.85 | -$59.11 | -$89.24 | -$38.17 | -$15.00 |  | +$80.32 |
+| 2026-11-23 | -$25.00 | +$27.45 | -$41.97 | -$19.72 | +$2.47 | -$110.21 | -$47.22 | +$1.85 | -$59.98 | -$91.52 | -$38.17 | -$15.00 |  | +$82.59 |
 | 2026-11-22 | -$3.95 | -$14.57 | -$13.59 | -$13.94 | +$9.81 | +$42.30 | -$3.52 | -$26.18 | -$172.97 | -$59.01 | -$8.55 | -$3.95 |  | -$214.44 |
 | 2026-11-21 | +$7.00 | -$28.79 | -$10.88 | +$19.46 | -$3.69 | +$37.86 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 |  | -$197.98 |
 | 2026-11-20 | +$61.26 | -$19.18 | +$40.01 | +$30.74 | -$1.99 | +$18.12 | +$49.66 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$19.22 |  | -$51.48 |
@@ -58,14 +58,14 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 ## Latest pretend buys (newest of each strategy first)
 
 - 2026-11-23 move_ai: Will Elon Musk post 300-319 tweets from November 17 to November 24, 2026? -> No at 0.582 ($5.00)
-- 2026-11-23 sure_thing: Loyola Chicago Ramblers vs. Seattle Redhawks: O/U 165.5 -> Under at 0.962 ($5.00)
-- 2026-11-23 follow_move: Will 200+ ships transit the Panama Canal week of November 23? -> No at 0.782 ($5.00)
+- 2026-11-23 sure_thing: James Madison Dukes vs. Winthrop Eagles (W) -> James Madison Dukes at 0.933 ($4.67)
+- 2026-11-23 follow_move: Will Vox win fewer than 56 seats in the 2026 Spanish general election? -> No at 0.809 ($5.00)
 - 2026-11-23 follow_move_cheap: Will PSOE win the most seats in the Basque Country in the 2026 Spanish general election? -> Yes at 0.310 ($5.00)
-- 2026-11-23 safe_no_week: Will the highest temperature in Los Angeles be between 76-77°F on November 25? -> No at 0.931 ($5.00)
-- 2026-11-23 fade_move: Will PSOE win the most seats in the Basque Country in the 2026 Spanish general election? -> No at 0.750 ($5.00)
-- 2026-11-23 follow_move_2: Will "Hexed" 5-Day Opening Weekend Box Office be between 32m and 36m? -> No at 0.831 ($5.00)
+- 2026-11-23 safe_no_week: Will Canada win the 2026 Davis Cup Finals? -> No at 0.971 ($5.00)
+- 2026-11-23 fade_move: Will Vox win fewer than 56 seats in the 2026 Spanish general election? -> Yes at 0.240 ($5.00)
+- 2026-11-23 follow_move_2: Will Vox win fewer than 56 seats in the 2026 Spanish general election? -> No at 0.809 ($5.00)
 - 2026-11-23 follow_move_big: Will Google (GOOGL) close above $280 end of November? -> Yes at 0.652 ($5.00)
-- 2026-11-23 sports_underdog: San Salvador: Cesar Cruz vs Joaquin Guilleme -> Cesar Cruz at 0.218 ($5.00)
+- 2026-11-23 sports_underdog: Clippers vs. Rockets -> Clippers at 0.167 ($5.00)
 - 2026-11-23 weather_forecast: Will the lowest temperature in Seoul (Incheon) be -1°C on November 25? -> No at 0.666 ($5.00)
 - 2026-11-23 follow_move_crypto: Bitcoin Up or Down on November 24? -> Down at 0.632 ($5.00)
 - 2026-11-23 move_ai_clean: Will the price of Solana be between $70 and $80 on November 24? -> No at 0.282 ($5.00)
