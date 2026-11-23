@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-23 09:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-23 10:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move_cheap | 101 | 37/101 | +0.4% | +$1.83 | 7 | 92 | too early |
-| 2 | follow_move | 626 | 386/626 | -0.7% | -$20.44 | 18 | 142 | FAIL |
-| 3 | sure_thing | 3384 | 3143/3384 | -0.8% | -$130.96 | 17 | 170 | FAIL |
-| 4 | fade_move | 681 | 227/681 | -1.8% | -$60.14 | 18 | 150 | FAIL |
-| 5 | safe_no_week | 1201 | 1118/1201 | -2.8% | -$169.17 | 18 | 341 | FAIL |
-| 6 | follow_move_2 | 205 | 120/205 | -6.8% | -$69.33 | 7 | 128 | too early |
-| 7 | follow_move_big | 167 | 101/167 | -11.9% | -$99.42 | 7 | 99 | too early |
-| 8 | sports_underdog | 2569 | 591/2569 | -14.5% | -$1851.50 | 16 | 27 | FAIL |
-| 9 | weather_forecast | 885 | 459/885 | -18.4% | -$802.42 | 16 | 158 | FAIL |
+| 1 | follow_move_cheap | 101 | 37/101 | +0.4% | +$1.83 | 7 | 93 | too early |
+| 2 | follow_move | 626 | 386/626 | -0.7% | -$20.44 | 18 | 144 | FAIL |
+| 3 | sure_thing | 3386 | 3145/3386 | -0.8% | -$130.57 | 17 | 175 | FAIL |
+| 4 | fade_move | 681 | 227/681 | -1.8% | -$60.14 | 18 | 153 | FAIL |
+| 5 | safe_no_week | 1201 | 1118/1201 | -2.8% | -$169.17 | 18 | 349 | FAIL |
+| 6 | follow_move_2 | 205 | 120/205 | -6.8% | -$69.33 | 7 | 130 | too early |
+| 7 | follow_move_big | 167 | 101/167 | -11.9% | -$99.42 | 7 | 100 | too early |
+| 8 | sports_underdog | 2570 | 591/2570 | -14.5% | -$1856.50 | 16 | 28 | FAIL |
+| 9 | weather_forecast | 885 | 459/885 | -18.4% | -$802.42 | 16 | 160 | FAIL |
 | 10 | follow_move_crypto | 72 | 34/72 | -24.3% | -$87.46 | 7 | 46 | too early |
-| 11 | move_ai | 7 | 4/7 | +155.2% | +$54.31 | 4 | 15 | too early |
-| 12 | move_ai_clean | 6 | 3/6 | +40.9% | +$12.27 | 4 | 10 | too early |
+| 11 | move_ai | 7 | 4/7 | +155.2% | +$54.31 | 4 | 16 | too early |
+| 12 | move_ai_clean | 6 | 3/6 | +40.9% | +$12.27 | 4 | 11 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3614 | 1775/3614 | -6.1% | -$1087.59 | 18 | 231 | yardstick |
+| 14 | coin_flip | 3617 | 1777/3617 | -6.0% | -$1082.49 | 18 | 236 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | fade_move | safe_no_week | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-23 | -$5.81 | -$23.25 | +$8.40 | -$1.66 | +$3.56 | -$27.26 | -$9.58 | -$53.53 | -$16.48 | -$15.00 | -$10.00 | -$10.00 |  | +$25.52 |
+| 2026-11-23 | -$5.81 | -$23.25 | +$8.78 | -$1.66 | +$3.56 | -$27.26 | -$9.58 | -$58.53 | -$16.48 | -$15.00 | -$10.00 | -$10.00 |  | +$30.62 |
 | 2026-11-22 | -$13.94 | -$13.59 | -$14.57 | +$42.30 | +$9.81 | -$3.52 | -$26.18 | -$172.97 | -$59.01 | -$8.55 | -$3.95 | -$3.95 |  | -$214.44 |
 | 2026-11-21 | +$19.46 | -$10.88 | -$28.79 | +$37.86 | -$3.69 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 | +$7.00 |  | -$197.98 |
 | 2026-11-20 | +$30.74 | +$40.01 | -$19.18 | +$18.12 | -$1.99 | +$49.66 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
@@ -57,29 +57,29 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-23 follow_move_cheap: Will the price of Solana be above $75 on November 27? -> Yes at 0.342 ($5.00)
-- 2026-11-23 follow_move: Will Tesla (TSLA) close above $360 on November 23? -> Yes at 0.622 ($5.00)
-- 2026-11-23 sure_thing: Bitcoin above 62,000 on November 23, 5AM ET? -> No at 0.948 ($5.00)
-- 2026-11-23 fade_move: Will Tesla (TSLA) close above $360 on November 23? -> No at 0.452 ($5.00)
-- 2026-11-23 safe_no_week: Will the highest temperature in Beijing be 7°C on November 25? -> No at 0.921 ($5.00)
-- 2026-11-23 follow_move_2: Will Tesla (TSLA) close above $360 on November 23? -> Yes at 0.622 ($5.00)
-- 2026-11-23 follow_move_big: Will Alphabet Inc. (GOOGL) hit (HIGH) $285 Week of November 23 2026? -> Yes at 0.642 ($5.00)
-- 2026-11-23 sports_underdog: Ankara: Denis Klok vs Oliver Okonkwo -> Denis Klok at 0.190 ($5.00)
-- 2026-11-23 weather_forecast: Will the lowest temperature in Tokyo be 9°C on November 25? -> No at 0.772 ($5.00)
+- 2026-11-23 follow_move_cheap: Will Rocket Lab USA, Inc. (RKLB) hit (HIGH) $54 Week of November 23 2026? -> Yes at 0.482 ($5.00)
+- 2026-11-23 follow_move: SpaceX (SPCX) Up or Down on November 23? -> Up at 0.847 ($5.00)
+- 2026-11-23 sure_thing: Spread: FC Pohang Steelers (-1.5) -> Kyoto Sanga FC at 0.962 ($5.00)
+- 2026-11-23 fade_move: SpaceX (SPCX) Up or Down on November 23? -> Down at 0.218 ($5.00)
+- 2026-11-23 safe_no_week: Will ChatGPT be #1 Free App in the US Apple App Store on November 27? -> No at 0.980 ($5.00)
+- 2026-11-23 follow_move_2: SpaceX (SPCX) Up or Down on November 23? -> Up at 0.847 ($5.00)
+- 2026-11-23 follow_move_big: SpaceX (SPCX) Up or Down on November 23? -> Up at 0.847 ($5.00)
+- 2026-11-23 sports_underdog: W15 Lousada: Georgina Hays vs Yeva Galiievska -> Yeva Galiievska at 0.347 ($5.00)
+- 2026-11-23 weather_forecast: Will the lowest temperature in Jeddah be 25°C on November 25? -> No at 0.642 ($5.00)
 - 2026-11-23 follow_move_crypto: Will the price of Solana be above $75 on November 27? -> Yes at 0.342 ($5.00)
-- 2026-11-23 move_ai: Will Palantir Technologies Inc. (PLTR) hit (LOW) $141 Week of November 23 2026? -> Yes at 0.532 ($5.00)
-- 2026-11-23 move_ai_clean: Will Palantir Technologies Inc. (PLTR) hit (LOW) $141 Week of November 23 2026? -> Yes at 0.532 ($5.00)
+- 2026-11-23 move_ai: Will the price of Solana be between $70 and $80 on November 24? -> No at 0.282 ($5.00)
+- 2026-11-23 move_ai_clean: Will the price of Solana be between $70 and $80 on November 24? -> No at 0.282 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
 
-Today: 3 checks, $0.35 of OpenAI credit (limit $1.00 a day). Since the start: 37 checks ($3.67 spent in all); on 22 the AI beat the price by 5c or more and 22 were bought (the rest found no seller at that price); 0 failed. The AI saw betting odds while searching on 9 of the 37 it answered. 3 checks from the first version (19 Nov) are left out here and in the AI strategies' results: a bug sent each of them another market's question.
+Today: 4 checks, $0.43 of OpenAI credit (limit $1.00 a day). Since the start: 38 checks ($3.75 spent in all); on 23 the AI beat the price by 5c or more and 23 were bought (the rest found no seller at that price); 0 failed. The AI saw betting odds while searching on 9 of the 38 it answered. 3 checks from the first version (19 Nov) are left out here and in the AI strategies' results: a bug sent each of them another market's question.
 - All checked markets, 14 with a result: AI error 0.307, market price 0.295 (lower is better; always saying 50% scores 0.250); the AI was closer on 8.
 - Checks where it saw no betting odds, 13 with a result: AI error 0.290, market price 0.254 (lower is better; always saying 50% scores 0.250); the AI was closer on 7.
-23 more checked markets are waiting for their result. A few dozen results say little; read this after 100 or more.
+24 more checked markets are waiting for their result. A few dozen results say little; read this after 100 or more.
 
 ## Price gaps seen today
 
 No near-gaps today.
 
-Runs in the last 24 hours: 37 (0 with a problem).
+Runs in the last 24 hours: 36 (0 with a problem).
 40 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
