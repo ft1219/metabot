@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-23 06:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-23 07:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move_cheap | 101 | 37/101 | +0.4% | +$1.83 | 7 | 89 | too early |
-| 2 | follow_move | 625 | 386/625 | -0.5% | -$15.44 | 18 | 137 | FAIL |
-| 3 | sure_thing | 3381 | 3140/3381 | -0.8% | -$131.80 | 17 | 143 | FAIL |
-| 4 | fade_move | 680 | 226/680 | -2.0% | -$69.47 | 18 | 145 | FAIL |
-| 5 | safe_no_week | 1193 | 1110/1193 | -2.9% | -$171.28 | 18 | 317 | FAIL |
-| 6 | follow_move_2 | 205 | 120/205 | -6.8% | -$69.33 | 7 | 122 | too early |
-| 7 | follow_move_big | 167 | 101/167 | -11.9% | -$99.42 | 7 | 92 | too early |
-| 8 | sports_underdog | 2565 | 589/2565 | -14.6% | -$1861.33 | 16 | 21 | FAIL |
-| 9 | weather_forecast | 871 | 449/871 | -18.8% | -$808.13 | 16 | 155 | FAIL |
+| 1 | follow_move_cheap | 101 | 37/101 | +0.4% | +$1.83 | 7 | 90 | too early |
+| 2 | follow_move | 626 | 386/626 | -0.7% | -$20.44 | 18 | 138 | FAIL |
+| 3 | sure_thing | 3382 | 3141/3382 | -0.8% | -$131.37 | 17 | 149 | FAIL |
+| 4 | fade_move | 681 | 227/681 | -1.8% | -$60.14 | 18 | 146 | FAIL |
+| 5 | safe_no_week | 1198 | 1115/1198 | -2.8% | -$170.03 | 18 | 320 | FAIL |
+| 6 | follow_move_2 | 205 | 120/205 | -6.8% | -$69.33 | 7 | 124 | too early |
+| 7 | follow_move_big | 167 | 101/167 | -11.9% | -$99.42 | 7 | 93 | too early |
+| 8 | sports_underdog | 2567 | 590/2567 | -14.5% | -$1855.73 | 16 | 20 | FAIL |
+| 9 | weather_forecast | 878 | 453/878 | -18.8% | -$814.90 | 16 | 155 | FAIL |
 | 10 | follow_move_crypto | 72 | 34/72 | -24.3% | -$87.46 | 7 | 45 | too early |
 | 11 | move_ai | 7 | 4/7 | +155.2% | +$54.31 | 4 | 15 | too early |
 | 12 | move_ai_clean | 6 | 3/6 | +40.9% | +$12.27 | 4 | 10 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3588 | 1763/3588 | -6.0% | -$1074.66 | 18 | 225 | yardstick |
+| 14 | coin_flip | 3593 | 1766/3593 | -6.0% | -$1070.40 | 18 | 228 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | fade_move | safe_no_week | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-23 | -$5.81 | -$18.25 | +$7.56 | -$10.98 | +$1.45 | -$27.26 | -$9.58 | -$63.35 | -$22.19 | -$15.00 | -$10.00 | -$10.00 |  | +$38.45 |
+| 2026-11-23 | -$5.81 | -$23.25 | +$7.98 | -$1.66 | +$2.69 | -$27.26 | -$9.58 | -$57.76 | -$28.96 | -$15.00 | -$10.00 | -$10.00 |  | +$42.72 |
 | 2026-11-22 | -$13.94 | -$13.59 | -$14.57 | +$42.30 | +$9.81 | -$3.52 | -$26.18 | -$172.97 | -$59.01 | -$8.55 | -$3.95 | -$3.95 |  | -$214.44 |
 | 2026-11-21 | +$19.46 | -$10.88 | -$28.79 | +$37.86 | -$3.69 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 | +$7.00 |  | -$197.98 |
 | 2026-11-20 | +$30.74 | +$40.01 | -$19.18 | +$18.12 | -$1.99 | +$49.66 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
@@ -57,15 +57,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-23 follow_move_cheap: Will EH Bildu win exactly 6 seats in the 2026 Spanish general election? -> Yes at 0.259 ($5.00)
-- 2026-11-23 follow_move: Will PP win the most seats in Santa Cruz de Tenerife in the 2026 Spanish general election? -> No at 0.730 ($5.00)
-- 2026-11-23 sure_thing: Thunder vs. Pacers: O/U 203.5 -> Over at 0.904 ($5.00)
-- 2026-11-23 fade_move: Will Vox win the second-most seats in Toledo in the 2026 Spanish general election? -> Yes at 0.300 ($5.00)
-- 2026-11-23 safe_no_week: Will Podemos win exactly 2 seats in the 2026 Spanish general election? -> No at 0.981 ($5.00)
-- 2026-11-23 follow_move_2: Will Dell say "Shortage" during earnings call? -> No at 0.272 ($5.00)
-- 2026-11-23 follow_move_big: Will the price of Solana be between $70 and $80 on November 26? -> Yes at 0.592 ($5.00)
-- 2026-11-23 sports_underdog: M25 Bhopal: Aryan Lakshmanan vs Kazuki Nakajima -> Kazuki Nakajima at 0.249 ($5.00)
-- 2026-11-23 weather_forecast: Will the highest temperature in Busan be 9°C on November 25? -> No at 0.482 ($5.00)
+- 2026-11-23 follow_move_cheap: Will NVIDIA (NVDA) hit (HIGH) $148 Week of November 23 2026? -> Yes at 0.392 ($5.00)
+- 2026-11-23 follow_move: Will NVIDIA (NVDA) finish week of November 23 above $125? -> Yes at 0.779 ($5.00)
+- 2026-11-23 sure_thing: Exact Score: CA Juventud de Las Piedras 0 - 0 Defensor Sporting? -> No at 0.933 ($5.00)
+- 2026-11-23 fade_move: Will NVIDIA (NVDA) finish week of November 23 above $125? -> No at 0.280 ($5.00)
+- 2026-11-23 safe_no_week: Will Junts win 8 or more seats in the 2026 Spanish general election? -> No at 0.962 ($5.00)
+- 2026-11-23 follow_move_2: Spain General Election: CCa wins a seat? -> Yes at 0.800 ($5.00)
+- 2026-11-23 follow_move_big: Will NVIDIA (NVDA) finish week of November 23 above $125? -> Yes at 0.779 ($5.00)
+- 2026-11-23 sports_underdog: Ankara: Joshua Sheehy vs Melih Anavatan -> Melih Anavatan at 0.321 ($5.00)
+- 2026-11-23 weather_forecast: Will the lowest temperature in Karachi be 15°C on November 25? -> No at 0.762 ($5.00)
 - 2026-11-23 follow_move_crypto: Will the price of Solana be between $60 and $70 on November 26? -> No at 0.642 ($5.00)
 - 2026-11-23 move_ai: Will Palantir Technologies Inc. (PLTR) hit (LOW) $141 Week of November 23 2026? -> Yes at 0.532 ($5.00)
 - 2026-11-23 move_ai_clean: Will Palantir Technologies Inc. (PLTR) hit (LOW) $141 Week of November 23 2026? -> Yes at 0.532 ($5.00)
