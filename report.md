@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-23 15:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-23 16:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | follow_move_cheap | 102 | 38/102 | +1.9% | +$9.57 | 7 | 97 | too early |
-| 2 | follow_move | 628 | 388/628 | -0.4% | -$13.22 | 18 | 152 | FAIL |
-| 3 | sure_thing | 3397 | 3154/3397 | -0.8% | -$137.11 | 17 | 217 | FAIL |
-| 4 | fade_move | 683 | 227/683 | -2.1% | -$70.14 | 18 | 164 | FAIL |
-| 5 | safe_no_week | 1208 | 1125/1208 | -2.8% | -$167.38 | 18 | 381 | FAIL |
-| 6 | follow_move_2 | 207 | 122/207 | -6.0% | -$62.10 | 7 | 138 | too early |
-| 7 | follow_move_big | 171 | 105/171 | -10.8% | -$92.10 | 7 | 106 | too early |
-| 8 | sports_underdog | 2579 | 592/2579 | -14.7% | -$1882.22 | 16 | 67 | FAIL |
-| 9 | weather_forecast | 890 | 460/890 | -18.7% | -$820.86 | 16 | 179 | FAIL |
-| 10 | follow_move_crypto | 72 | 34/72 | -24.3% | -$87.46 | 7 | 47 | too early |
+| 1 | follow_move_cheap | 103 | 38/103 | +0.9% | +$4.57 | 7 | 96 | too early |
+| 2 | follow_move | 630 | 389/630 | -0.5% | -$16.95 | 18 | 151 | FAIL |
+| 3 | sure_thing | 3398 | 3155/3398 | -0.8% | -$136.94 | 17 | 221 | FAIL |
+| 4 | fade_move | 684 | 228/684 | -2.0% | -$69.21 | 18 | 164 | FAIL |
+| 5 | safe_no_week | 1209 | 1126/1209 | -2.8% | -$167.13 | 18 | 380 | FAIL |
+| 6 | follow_move_2 | 209 | 123/209 | -6.3% | -$65.84 | 7 | 137 | too early |
+| 7 | follow_move_big | 171 | 105/171 | -10.8% | -$92.10 | 7 | 109 | too early |
+| 8 | sports_underdog | 2581 | 592/2581 | -14.7% | -$1892.22 | 16 | 73 | FAIL |
+| 9 | weather_forecast | 890 | 460/890 | -18.7% | -$820.86 | 16 | 180 | FAIL |
+| 10 | follow_move_crypto | 72 | 34/72 | -24.3% | -$87.46 | 7 | 48 | too early |
 | 11 | move_ai | 7 | 4/7 | +155.2% | +$54.31 | 4 | 17 | too early |
 | 12 | move_ai_clean | 6 | 3/6 | +40.9% | +$12.27 | 4 | 11 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3661 | 1800/3661 | -5.9% | -$1078.42 | 18 | 256 | yardstick |
+| 14 | coin_flip | 3664 | 1801/3664 | -5.9% | -$1083.85 | 18 | 261 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | fade_move | safe_no_week | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-23 | +$1.94 | -$16.02 | +$2.24 | -$11.66 | +$5.34 | -$20.04 | -$2.27 | -$84.25 | -$34.92 | -$15.00 | -$10.00 | -$10.00 |  | +$34.69 |
+| 2026-11-23 | -$3.06 | -$19.76 | +$2.41 | -$10.72 | +$5.60 | -$23.77 | -$2.27 | -$94.25 | -$34.92 | -$15.00 | -$10.00 | -$10.00 |  | +$29.26 |
 | 2026-11-22 | -$13.94 | -$13.59 | -$14.57 | +$42.30 | +$9.81 | -$3.52 | -$26.18 | -$172.97 | -$59.01 | -$8.55 | -$3.95 | -$3.95 |  | -$214.44 |
 | 2026-11-21 | +$19.46 | -$10.88 | -$28.79 | +$37.86 | -$3.69 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 | +$7.00 |  | -$197.98 |
 | 2026-11-20 | +$30.74 | +$40.01 | -$19.18 | +$18.12 | -$1.99 | +$49.66 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
@@ -58,15 +58,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 ## Latest pretend buys (newest of each strategy first)
 
 - 2026-11-23 follow_move_cheap: Will Netflix, Inc. (NFLX) hit (HIGH) $60 Week of November 23 2026? -> Yes at 0.462 ($5.00)
-- 2026-11-23 follow_move: Will NVIDIA (NVDA) close at >$150 on the final day of trading of the week of Nov 23 – Nov 27? -> Yes at 0.827 ($5.00)
-- 2026-11-23 sure_thing: IU-South Bend Titans vs. Eastern Illinois Panthers -> Eastern Illinois Panthers at 0.965 ($5.00)
-- 2026-11-23 fade_move: Will NVIDIA (NVDA) close at >$150 on the final day of trading of the week of Nov 23 – Nov 27? -> No at 0.239 ($5.00)
+- 2026-11-23 follow_move: Will the price of Solana be above $70 on November 28? -> Yes at 0.833 ($5.00)
+- 2026-11-23 sure_thing: Spread: Oregon State Beavers (-18.5) -> Tulsa Golden Hurricane at 0.896 ($5.00)
+- 2026-11-23 fade_move: Will the price of Solana be above $70 on November 28? -> No at 0.202 ($5.00)
 - 2026-11-23 safe_no_week: Will "Focker-In-Law" score at least 70 on the Rotten Tomatoes Tomatometer? -> No at 0.921 ($5.00)
-- 2026-11-23 follow_move_2: Will NVIDIA (NVDA) close at >$150 on the final day of trading of the week of Nov 23 – Nov 27? -> Yes at 0.827 ($5.00)
-- 2026-11-23 follow_move_big: Will Microsoft Corporation (MSFT) hit (LOW) $480 Week of November 23 2026? -> No at 0.759 ($5.00)
-- 2026-11-23 sports_underdog: Will Al Quwa Al Jawiya vs. Al Gharafa SC end in a draw? -> Yes at 0.290 ($5.00)
-- 2026-11-23 weather_forecast: Will the lowest temperature in Amsterdam be -1°C on November 24? -> Yes at 0.172 ($4.09)
-- 2026-11-23 follow_move_crypto: Will the price of Solana be between $70 and $80 on November 28? -> Yes at 0.632 ($5.00)
+- 2026-11-23 follow_move_2: Will the price of Solana be above $70 on November 28? -> Yes at 0.833 ($5.00)
+- 2026-11-23 follow_move_big: Will Apple (AAPL) hit (HIGH) $360 Week of November 23 2026? -> No at 0.759 ($5.00)
+- 2026-11-23 sports_underdog: Spread: Al-Ittihad Club (-2.5) -> Al-Ittihad Club at 0.321 ($5.00)
+- 2026-11-23 weather_forecast: Will the lowest temperature in Ankara be -4°C on November 25? -> No at 0.752 ($5.00)
+- 2026-11-23 follow_move_crypto: Will the price of Solana be above $70 on November 28? -> Yes at 0.833 ($5.00)
 - 2026-11-23 move_ai: Will "Focker-In-Law" 5-Day Opening Weekend Box Office be between 45m and 50m? -> No at 0.742 ($5.00)
 - 2026-11-23 move_ai_clean: Will the price of Solana be between $70 and $80 on November 24? -> No at 0.282 ($5.00)
 
