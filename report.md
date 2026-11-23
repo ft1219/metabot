@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-23 10:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-23 11:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-23 10:47 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | follow_move_cheap | 101 | 37/101 | +0.4% | +$1.83 | 7 | 94 | too early |
 | 2 | follow_move | 626 | 386/626 | -0.7% | -$20.44 | 18 | 146 | FAIL |
-| 3 | sure_thing | 3387 | 3146/3387 | -0.8% | -$130.29 | 17 | 182 | FAIL |
+| 3 | sure_thing | 3387 | 3146/3387 | -0.8% | -$130.29 | 17 | 188 | FAIL |
 | 4 | fade_move | 681 | 227/681 | -1.8% | -$60.14 | 18 | 155 | FAIL |
-| 5 | safe_no_week | 1201 | 1118/1201 | -2.8% | -$169.17 | 18 | 357 | FAIL |
+| 5 | safe_no_week | 1202 | 1119/1202 | -2.8% | -$169.05 | 18 | 360 | FAIL |
 | 6 | follow_move_2 | 205 | 120/205 | -6.8% | -$69.33 | 7 | 132 | too early |
-| 7 | follow_move_big | 167 | 101/167 | -11.9% | -$99.42 | 7 | 101 | too early |
-| 8 | sports_underdog | 2571 | 591/2571 | -14.6% | -$1861.50 | 16 | 30 | FAIL |
-| 9 | weather_forecast | 885 | 459/885 | -18.4% | -$802.42 | 16 | 163 | FAIL |
+| 7 | follow_move_big | 167 | 101/167 | -11.9% | -$99.42 | 7 | 102 | too early |
+| 8 | sports_underdog | 2572 | 591/2572 | -14.6% | -$1866.50 | 16 | 31 | FAIL |
+| 9 | weather_forecast | 886 | 459/886 | -18.5% | -$807.42 | 16 | 164 | FAIL |
 | 10 | follow_move_crypto | 72 | 34/72 | -24.3% | -$87.46 | 7 | 46 | too early |
 | 11 | move_ai | 7 | 4/7 | +155.2% | +$54.31 | 4 | 16 | too early |
 | 12 | move_ai_clean | 6 | 3/6 | +40.9% | +$12.27 | 4 | 11 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3626 | 1781/3626 | -6.0% | -$1088.53 | 18 | 235 | yardstick |
+| 14 | coin_flip | 3636 | 1788/3636 | -5.9% | -$1070.24 | 18 | 233 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | follow_move_cheap | follow_move | sure_thing | fade_move | safe_no_week | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-23 | -$5.81 | -$23.25 | +$9.06 | -$1.66 | +$3.56 | -$27.26 | -$9.58 | -$63.53 | -$16.48 | -$15.00 | -$10.00 | -$10.00 |  | +$24.58 |
+| 2026-11-23 | -$5.81 | -$23.25 | +$9.06 | -$1.66 | +$3.67 | -$27.26 | -$9.58 | -$68.53 | -$21.48 | -$15.00 | -$10.00 | -$10.00 |  | +$42.87 |
 | 2026-11-22 | -$13.94 | -$13.59 | -$14.57 | +$42.30 | +$9.81 | -$3.52 | -$26.18 | -$172.97 | -$59.01 | -$8.55 | -$3.95 | -$3.95 |  | -$214.44 |
 | 2026-11-21 | +$19.46 | -$10.88 | -$28.79 | +$37.86 | -$3.69 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 | +$7.00 |  | -$197.98 |
 | 2026-11-20 | +$30.74 | +$40.01 | -$19.18 | +$18.12 | -$1.99 | +$49.66 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$61.26 | +$19.22 |  | -$51.48 |
@@ -59,13 +59,13 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-23 follow_move_cheap: Will Meta (META) close above $590 on November 23? -> Yes at 0.432 ($5.00)
 - 2026-11-23 follow_move: Will Microsoft (MSFT) close above $500 on November 23? -> Yes at 0.642 ($5.00)
-- 2026-11-23 sure_thing: Spread: CA Juventud de Las Piedras (-2.5) -> Defensor Sporting at 0.933 ($5.00)
+- 2026-11-23 sure_thing: NVIDIA (NVDA) Up or Down on November 23? -> Up at 0.924 ($5.00)
 - 2026-11-23 fade_move: Will Microsoft (MSFT) close above $500 on November 23? -> No at 0.432 ($5.00)
-- 2026-11-23 safe_no_week: Will PP win the most seats in Álava in the 2026 Spanish general election? -> No at 0.983 ($5.00)
+- 2026-11-23 safe_no_week: Will PP win the most seats in Zamora in the 2026 Spanish general election? -> Yes at 0.972 ($5.00)
 - 2026-11-23 follow_move_2: Will Microsoft (MSFT) close above $500 on November 23? -> Yes at 0.642 ($5.00)
-- 2026-11-23 follow_move_big: Will Rocket Lab USA, Inc. (RKLB) hit (LOW) $46 Week of November 23 2026? -> No at 0.512 ($5.00)
-- 2026-11-23 sports_underdog: Spread: Al Hilal SFC (-2.5) -> Al Hilal SFC at 0.310 ($5.00)
-- 2026-11-23 weather_forecast: Will the highest temperature in Toronto be 5°C on November 25? -> No at 0.725 ($5.00)
+- 2026-11-23 follow_move_big: Will MicroStrategy (MSTR) hit (HIGH) $90 Week of November 23 2026? -> Yes at 0.711 ($5.00)
+- 2026-11-23 sports_underdog: W15 Lousada: Claudia Ferrer Perez vs Marina Quesada Oyonarte -> Marina Quesada Oyonarte at 0.333 ($5.00)
+- 2026-11-23 weather_forecast: Will the highest temperature in Cape Town be 25°C on November 25? -> No at 0.722 ($5.00)
 - 2026-11-23 follow_move_crypto: Will the price of Solana be above $75 on November 27? -> Yes at 0.342 ($5.00)
 - 2026-11-23 move_ai: Will the price of Solana be between $70 and $80 on November 24? -> No at 0.282 ($5.00)
 - 2026-11-23 move_ai_clean: Will the price of Solana be between $70 and $80 on November 24? -> No at 0.282 ($5.00)
