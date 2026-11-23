@@ -245,14 +245,15 @@ def openai_models(key: str, env=None) -> dict[str, list[str]]:
 
 def check_openai(key: str | None, get=None, env=None) -> tuple[str, str]:
     """
-    OPENAI_API_KEY is optional: without it MiniBench and the parser use
-    DeepSeek through OpenRouter and AskNews is the only news source. With it,
+    OPENAI_API_KEY is optional: without it MiniBench uses DeepSeek and the
+    parser Gemini 3.8 Flash, both through OpenRouter, and AskNews is the only
+    news source. With it,
     every OpenAI model the bot will use is looked up (free).
     """
     get = get or http
     if not key:
         return OK, (
-            "OPENAI_API_KEY is not set, so MiniBench and the parser use DeepSeek through OpenRouter and there is "
+            "OPENAI_API_KEY is not set, so MiniBench and the parser run through OpenRouter and there is "
             "no ChatGPT web search next to AskNews (that is fine)."
         )
     try:
@@ -266,14 +267,14 @@ def check_openai(key: str | None, get=None, env=None) -> tuple[str, str]:
         if status in (403, 404):
             return BAD, (
                 f"OPENAI_API_KEY works but cannot use {model} for {' and '.join(jobs)} (HTTP {status}). Check the "
-                "key's project permissions at platform.openai.com, or delete the secret to go back to DeepSeek "
+                "key's project permissions at platform.openai.com, or delete the secret to go back to OpenRouter "
                 "and AskNews alone."
             )
         if status != 200:
             return UNSURE, f"OpenAI did not answer normally (HTTP {status}). Try again later."
     listed = "; ".join(f"{model} ({' and '.join(jobs)})" for model, jobs in uses.items())
     fallback = (
-        " A parse OpenAI cannot make is redone on DeepSeek through OpenRouter."
+        " A parse OpenAI cannot make is redone on Gemini 3.8 Flash through OpenRouter."
         if any("the parser" in jobs for jobs in uses.values())
         else ""
     )

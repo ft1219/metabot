@@ -160,7 +160,7 @@ def test_key_limit_left():
 
 def test_openai_key_is_optional():
     verdict, message = check_keys.check_openai(None, env={})
-    assert verdict == OK and "DeepSeek" in message and "web search" in message
+    assert verdict == OK and "OpenRouter" in message and "web search" in message
     seen = []
 
     def get(url, headers, *rest):
@@ -170,7 +170,7 @@ def test_openai_key_is_optional():
     verdict, message = check_keys.check_openai("k", get, env={})
     assert verdict == OK
     assert "gpt-6-sol (MiniBench forecasts and ChatGPT web search)" in message
-    assert "gpt-6-luna (the parser)" in message and "redone on DeepSeek" in message
+    assert "gpt-6-luna (the parser)" in message and "redone on Gemini 3.8 Flash" in message
     # Each model the key will use is looked up once.
     assert seen == ["https://api.openai.com/v1/models/gpt-6-sol", "https://api.openai.com/v1/models/gpt-6-luna"]
     assert check_keys.check_openai("k", _answer(401), env={})[0] == BAD

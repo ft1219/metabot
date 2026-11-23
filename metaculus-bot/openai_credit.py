@@ -9,7 +9,7 @@ GPT-6 Luna by default). Neither may cost a forecast:
 
 - a parse OpenAI cannot make (credit used up, key missing or rejected, model
   not available, an outage, a timeout) is redone at once on the OpenRouter
-  fallback (DeepSeek V3.2), as every parse was before;
+  fallback (Gemini 3.8 Flash, bot_config.PARSER_FALLBACK_MODEL);
 - a web search that fails leaves the question with AskNews alone.
 
 A problem with the account (credit, key, access), or three failures in a

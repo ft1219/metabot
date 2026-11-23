@@ -1,5 +1,5 @@
 """
-The parser on the free OpenAI credit (GPT-6 Luna) with DeepSeek on
+The parser on the free OpenAI credit (GPT-6 Luna) with Gemini 3.8 Flash on
 OpenRouter redoing every parse OpenAI cannot make, and the cost of OpenAI
 calls in the run budget.
 
@@ -88,7 +88,7 @@ def test_openai_key_puts_the_parser_on_luna_with_an_openrouter_fallback():
     parser, _ = _parser()
     assert isinstance(parser, openai_credit.OpenAiParserLlm)
     assert parser.model == OPENAI_PARSER_MODEL
-    assert parser.fallback.model == PARSER_FALLBACK_MODEL == "openrouter/deepseek/deepseek-v3.2"
+    assert parser.fallback.model == PARSER_FALLBACK_MODEL == "openrouter/google/gemini-3.8-flash"
     # GPT-6 takes no temperature; the least thinking, in the body (litellm
     # drops a top-level reasoning_effort for models it does not know); one
     # try, so a used-up credit goes to the fallback at once.
@@ -99,11 +99,12 @@ def test_openai_key_puts_the_parser_on_luna_with_an_openrouter_fallback():
     assert parser.allowed_tries == 1
     # The fallback is the parser as it was before the key.
     assert parser.fallback.litellm_kwargs["temperature"] == 0.0
-    assert "extra_body" not in parser.fallback.litellm_kwargs
+    assert parser.fallback.litellm_kwargs["max_tokens"] == 4000
+    assert parser.fallback.litellm_kwargs["extra_body"] == {"reasoning": {"effort": "low"}}
     # The request options are published in every Metaculus comment: the
     # fallback and the run status stay out of them.
     published = str(parser.to_dict())
-    assert "deepseek" not in published and "status" not in published
+    assert "gemini" not in published and "status" not in published
 
 
 def test_without_the_key_the_parser_stays_on_openrouter():
