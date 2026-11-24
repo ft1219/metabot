@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-24 04:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-24 05:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 11 | 4/11 | +62.4% | +$34.31 | 5 | 17 | too early |
-| 2 | sure_thing | 3585 | 3335/3585 | -0.6% | -$108.37 | 18 | 176 | FAIL |
-| 3 | follow_move | 668 | 413/668 | -1.0% | -$32.84 | 19 | 142 | FAIL |
-| 4 | safe_no_week | 1273 | 1187/1273 | -2.7% | -$168.80 | 19 | 366 | FAIL |
-| 5 | follow_move_cheap | 122 | 43/122 | -2.8% | -$17.09 | 8 | 92 | too early |
-| 6 | fade_move | 729 | 238/729 | -5.3% | -$193.69 | 19 | 150 | FAIL |
-| 7 | follow_move_2 | 245 | 145/245 | -6.8% | -$82.96 | 8 | 130 | too early |
-| 8 | follow_move_big | 205 | 131/205 | -7.9% | -$80.79 | 8 | 92 | too early |
-| 9 | sports_underdog | 2732 | 634/2732 | -13.6% | -$1854.58 | 17 | 42 | FAIL |
-| 10 | weather_forecast | 933 | 480/933 | -19.1% | -$879.87 | 17 | 154 | FAIL |
-| 11 | follow_move_crypto | 84 | 39/84 | -26.3% | -$110.63 | 7 | 44 | too early |
+| 2 | sure_thing | 3593 | 3343/3593 | -0.6% | -$106.15 | 18 | 176 | FAIL |
+| 3 | follow_move | 668 | 413/668 | -1.0% | -$32.84 | 19 | 150 | FAIL |
+| 4 | safe_no_week | 1274 | 1187/1274 | -2.7% | -$173.80 | 19 | 373 | FAIL |
+| 5 | follow_move_cheap | 122 | 43/122 | -2.8% | -$17.09 | 8 | 96 | too early |
+| 6 | fade_move | 729 | 238/729 | -5.3% | -$193.69 | 19 | 158 | FAIL |
+| 7 | follow_move_2 | 245 | 145/245 | -6.8% | -$82.96 | 8 | 138 | too early |
+| 8 | follow_move_big | 205 | 131/205 | -7.9% | -$80.79 | 8 | 99 | too early |
+| 9 | sports_underdog | 2736 | 636/2736 | -13.5% | -$1842.88 | 17 | 39 | FAIL |
+| 10 | weather_forecast | 934 | 480/934 | -19.2% | -$884.87 | 17 | 156 | FAIL |
+| 11 | follow_move_crypto | 84 | 39/84 | -26.3% | -$110.63 | 7 | 47 | too early |
 | 12 | move_ai_clean | 7 | 3/7 | +20.8% | +$7.27 | 4 | 12 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3807 | 1884/3807 | -5.3% | -$1008.82 | 19 | 269 | yardstick |
+| 14 | coin_flip | 3813 | 1887/3813 | -5.3% | -$1011.52 | 19 | 271 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | sure_thing | follow_move | safe_no_week | follow_move_cheap | fade_move | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-24 | -$5.00 | +$3.53 | +$6.33 | +$1.45 | -$5.00 | -$25.00 | +$6.33 | +$7.19 | +$3.37 | -$2.41 |  |  |  | +$21.69 |
+| 2026-11-24 | -$5.00 | +$5.75 | +$6.33 | -$3.55 | -$5.00 | -$25.00 | +$6.33 | +$7.19 | +$15.07 | -$7.41 |  |  |  | +$18.99 |
 | 2026-11-23 | -$25.00 | +$27.45 | -$41.97 | +$2.47 | -$19.72 | -$110.21 | -$47.22 | +$1.85 | -$59.98 | -$91.52 | -$38.17 | -$15.00 |  | +$82.59 |
 | 2026-11-22 | -$3.95 | -$14.57 | -$13.59 | +$9.81 | -$13.94 | +$42.30 | -$3.52 | -$26.18 | -$172.97 | -$59.01 | -$8.55 | -$3.95 |  | -$214.44 |
 | 2026-11-21 | +$7.00 | -$28.79 | -$10.88 | -$3.69 | +$19.46 | +$37.86 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 |  | -$197.98 |
@@ -58,16 +58,16 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 ## Latest pretend buys (newest of each strategy first)
 
 - 2026-11-24 move_ai: Will Rocket Lab USA, Inc. (RKLB) hit (LOW) $42 Week of November 23 2026? -> Yes at 0.125 ($5.00)
-- 2026-11-24 sure_thing: Spread: Galatasaray SK (-2.5) -> Aston Villa FC at 0.952 ($5.00)
-- 2026-11-24 follow_move: Will 185+ ships transit the Bab el-Mandeb Strait week of November 23? -> Yes at 0.482 ($5.00)
-- 2026-11-24 safe_no_week: Will EH Bildu win the most seats in Gipuzkoa in the 2026 Spanish general election? -> Yes at 0.985 ($5.00)
-- 2026-11-24 follow_move_cheap: Will 185+ ships transit the Bab el-Mandeb Strait week of November 23? -> Yes at 0.482 ($5.00)
-- 2026-11-24 fade_move: Will 185+ ships transit the Bab el-Mandeb Strait week of November 23? -> No at 0.572 ($5.00)
-- 2026-11-24 follow_move_2: Will PSOE win the second-most seats in Toledo in the 2026 Spanish general election? -> No at 0.341 ($5.00)
-- 2026-11-24 follow_move_big: XRP Up or Down on November 24? -> Down at 0.792 ($5.00)
-- 2026-11-24 sports_underdog: Will Newcastle United Jets vs. Kashiwa Reysol end in a draw? -> Yes at 0.167 ($5.00)
-- 2026-11-24 weather_forecast: Will the lowest temperature in Mexico City be 13°C on November 25? -> No at 0.821 ($5.00)
-- 2026-11-24 follow_move_crypto: Will the price of Ethereum be above $1,800 on November 29? -> No at 0.823 ($5.00)
+- 2026-11-24 sure_thing: Will a turkey audibly gobble during the Thanksgiving Turkey Pardon on November 24? -> Yes at 0.901 ($5.00)
+- 2026-11-24 follow_move: Will Claude go down fewer than 5 times in November 2026? -> No at 0.798 ($5.00)
+- 2026-11-24 safe_no_week: Will NVIDIA (NVDA) hit (HIGH) $224 in November? -> No at 0.985 ($5.00)
+- 2026-11-24 follow_move_cheap: Will WTI Crude Oil (WTI) hit (LOW) $75 in November? -> Yes at 0.315 ($5.00)
+- 2026-11-24 fade_move: Will the Ornn B200 Index be at least $9.00 on November 30, 2026? -> Yes at 0.575 ($5.00)
+- 2026-11-24 follow_move_2: Will ohnePixel finish GTA VI by November 28? -> No at 0.821 ($5.00)
+- 2026-11-24 follow_move_big: Will Claude go down fewer than 5 times in November 2026? -> No at 0.798 ($5.00)
+- 2026-11-24 sports_underdog: Hersonissos 4: Gabriel Ghetu vs Ioannis Kountourakis -> Ioannis Kountourakis at 0.259 ($5.00)
+- 2026-11-24 weather_forecast: Will the highest temperature in Wellington be 20°C on November 26? -> No at 0.742 ($5.00)
+- 2026-11-24 follow_move_crypto: Will Bitcoin dip to $58,000 November 23-29? -> Yes at 0.512 ($5.00)
 - 2026-11-24 move_ai_clean: Will Rocket Lab USA, Inc. (RKLB) hit (LOW) $42 Week of November 23 2026? -> Yes at 0.125 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
@@ -82,4 +82,4 @@ Today: 3 checks, $0.29 of OpenAI credit (limit $1.00 a day). Since the start: 45
 2 near-gaps recorded (full sets within a few cents of their payout). Cheapest: Democratic 2028 presidential odds on November 27? (yes), 1.005 for a $1 payout.
 
 Runs in the last 24 hours: 37 (0 with a problem).
-41 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
+42 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
