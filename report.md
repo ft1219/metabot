@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-24 17:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-24 18:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-24 17:27 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 16 | 5/16 | +33.8% | +$27.04 | 5 | 15 | too early |
 | 2 | move_ai_clean | 10 | 4/10 | +20.0% | +$10.00 | 5 | 12 | too early |
-| 3 | sure_thing | 3646 | 3394/3646 | -0.5% | -$100.06 | 18 | 264 | FAIL |
-| 4 | follow_move_cheap | 138 | 50/138 | -0.6% | -$3.95 | 8 | 121 | too early |
-| 5 | follow_move | 689 | 428/689 | -0.9% | -$32.70 | 19 | 188 | FAIL |
-| 6 | safe_no_week | 1325 | 1234/1325 | -2.8% | -$183.59 | 19 | 464 | FAIL |
-| 7 | fade_move | 752 | 245/752 | -4.9% | -$182.83 | 19 | 209 | FAIL |
-| 8 | follow_move_2 | 266 | 160/266 | -6.1% | -$80.48 | 8 | 176 | too early |
-| 9 | follow_move_big | 227 | 144/227 | -8.5% | -$96.56 | 8 | 120 | too early |
-| 10 | sports_underdog | 2820 | 652/2820 | -14.0% | -$1959.10 | 17 | 85 | FAIL |
+| 3 | sure_thing | 3649 | 3397/3649 | -0.5% | -$99.36 | 18 | 269 | FAIL |
+| 4 | follow_move_cheap | 138 | 50/138 | -0.6% | -$3.95 | 8 | 124 | too early |
+| 5 | follow_move | 689 | 428/689 | -0.9% | -$32.70 | 19 | 196 | FAIL |
+| 6 | safe_no_week | 1325 | 1234/1325 | -2.8% | -$183.59 | 19 | 471 | FAIL |
+| 7 | fade_move | 752 | 245/752 | -4.9% | -$182.83 | 19 | 217 | FAIL |
+| 8 | follow_move_2 | 266 | 160/266 | -6.1% | -$80.48 | 8 | 184 | too early |
+| 9 | follow_move_big | 227 | 144/227 | -8.5% | -$96.56 | 8 | 124 | too early |
+| 10 | sports_underdog | 2828 | 655/2828 | -13.8% | -$1941.63 | 17 | 85 | FAIL |
 | 11 | weather_forecast | 975 | 503/975 | -19.0% | -$912.48 | 17 | 162 | FAIL |
-| 12 | follow_move_crypto | 96 | 48/96 | -22.0% | -$105.72 | 8 | 43 | too early |
+| 12 | follow_move_crypto | 96 | 48/96 | -22.0% | -$105.72 | 8 | 50 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3927 | 1938/3927 | -5.5% | -$1082.17 | 19 | 301 | yardstick |
+| 14 | coin_flip | 3932 | 1940/3932 | -5.6% | -$1090.83 | 19 | 304 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | sure_thing | follow_move_cheap | follow_move | safe_no_week | fade_move | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-24 | -$12.27 | +$2.73 | +$11.84 | +$8.14 | +$6.47 | -$13.34 | -$14.14 | +$8.81 | -$8.58 | -$101.15 | -$35.01 | +$4.91 |  | -$51.66 |
+| 2026-11-24 | -$12.27 | +$2.73 | +$12.54 | +$8.14 | +$6.47 | -$13.34 | -$14.14 | +$8.81 | -$8.58 | -$83.68 | -$35.01 | +$4.91 |  | -$60.32 |
 | 2026-11-23 | -$25.00 | -$15.00 | +$27.45 | -$19.72 | -$41.97 | +$2.47 | -$110.21 | -$47.22 | +$1.85 | -$59.98 | -$91.52 | -$38.17 |  | +$82.59 |
 | 2026-11-22 | -$3.95 | -$3.95 | -$14.57 | -$13.94 | -$13.59 | +$9.81 | +$42.30 | -$3.52 | -$26.18 | -$172.97 | -$59.01 | -$8.55 |  | -$214.44 |
 | 2026-11-21 | +$7.00 | +$7.00 | -$28.79 | +$19.46 | -$10.88 | -$3.69 | +$37.86 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 |  | -$197.98 |
@@ -59,16 +59,16 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-24 move_ai: Will Alphabet’s market capitalization be between $3.50T and $4.00T at the end of November 2026? -> Yes at 0.341 ($5.00)
 - 2026-11-24 move_ai_clean: Will Alphabet’s market capitalization be between $3.50T and $4.00T at the end of November 2026? -> Yes at 0.341 ($5.00)
-- 2026-11-24 sure_thing: Which turkey will Trump pardon? -> Freedom at 0.907 ($5.00)
-- 2026-11-24 follow_move_cheap: Will Apple (AAPL) hit (HIGH) $360 in November? -> Yes at 0.502 ($5.00)
-- 2026-11-24 follow_move: Will Elon Musk post 40-64 tweets from November 26 to November 28, 2026? -> No at 0.802 ($5.00)
-- 2026-11-24 safe_no_week: Will Donald Trump post 20-39 Truth Social posts from November 24 to December 1, 2026? -> No at 0.983 ($5.00)
-- 2026-11-24 fade_move: Will Amazon (AMZN) close above $270 end of November? -> Yes at 0.112 ($5.00)
-- 2026-11-24 follow_move_2: Will the price of Bitcoin be above $62,000 on November 30? -> No at 0.722 ($5.00)
-- 2026-11-24 follow_move_big: Will Elon Musk post 40-64 tweets from November 26 to November 28, 2026? -> No at 0.802 ($5.00)
-- 2026-11-24 sports_underdog: Will Torquay United vs. Chesham United end in a draw? -> Yes at 0.234 ($5.00)
+- 2026-11-24 sure_thing: SK Slavia Praha vs. Villarreal CF: Neither team to score first? -> No at 0.968 ($5.00)
+- 2026-11-24 follow_move_cheap: Will SpaceX (SPCX) hit (LOW) $120 in November? -> Yes at 0.512 ($5.00)
+- 2026-11-24 follow_move: Bitcoin Up or Down on November 25? -> Up at 0.652 ($5.00)
+- 2026-11-24 safe_no_week: Will EH Bildu win exactly 6 seats in the 2026 Spanish general election? -> No at 0.943 ($5.00)
+- 2026-11-24 fade_move: Will XRP reach $1.00 in November? -> Yes at 0.432 ($5.00)
+- 2026-11-24 follow_move_2: Will the price of Bitcoin be between $62,000 and $64,000 on November 30? -> No at 0.851 ($5.00)
+- 2026-11-24 follow_move_big: Will the price of Solana be above $70 on November 30? -> No at 0.557 ($5.00)
+- 2026-11-24 sports_underdog: Spread: Hednesford Town (-1.5) -> Hednesford Town at 0.218 ($5.00)
 - 2026-11-24 weather_forecast: Will the highest temperature in Denver be between 48-49°F on November 25? -> No at 0.662 ($5.00)
-- 2026-11-24 follow_move_crypto: Will the price of Ethereum be above $1,600 on November 30? -> No at 0.292 ($5.00)
+- 2026-11-24 follow_move_crypto: Bitcoin Up or Down on November 25? -> Up at 0.652 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
 
