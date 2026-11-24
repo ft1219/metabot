@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-24 22:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-24 22:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-24 22:07 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 18 | 6/18 | +28.5% | +$25.63 | 5 | 14 | too early |
 | 2 | move_ai_clean | 11 | 4/11 | +9.1% | +$5.00 | 5 | 12 | too early |
-| 3 | sure_thing | 3710 | 3455/3710 | -0.5% | -$96.96 | 18 | 253 | FAIL |
-| 4 | follow_move | 712 | 445/712 | -0.9% | -$33.09 | 19 | 184 | FAIL |
-| 5 | safe_no_week | 1347 | 1256/1347 | -2.7% | -$179.29 | 19 | 475 | FAIL |
-| 6 | follow_move_cheap | 149 | 52/149 | -4.3% | -$32.15 | 8 | 118 | too early |
-| 7 | fade_move | 780 | 252/780 | -5.3% | -$206.30 | 19 | 201 | FAIL |
-| 8 | follow_move_2 | 289 | 177/289 | -5.7% | -$81.78 | 8 | 172 | too early |
+| 3 | sure_thing | 3746 | 3487/3746 | -0.6% | -$105.86 | 18 | 224 | FAIL |
+| 4 | follow_move | 712 | 445/712 | -0.9% | -$33.09 | 19 | 186 | FAIL |
+| 5 | safe_no_week | 1351 | 1260/1351 | -2.6% | -$178.53 | 19 | 475 | FAIL |
+| 6 | follow_move_cheap | 149 | 52/149 | -4.3% | -$32.15 | 8 | 119 | too early |
+| 7 | fade_move | 780 | 252/780 | -5.3% | -$206.30 | 19 | 203 | FAIL |
+| 8 | follow_move_2 | 289 | 177/289 | -5.7% | -$81.78 | 8 | 174 | too early |
 | 9 | follow_move_big | 247 | 161/247 | -6.8% | -$84.42 | 8 | 113 | too early |
-| 10 | sports_underdog | 2864 | 664/2864 | -13.7% | -$1956.09 | 17 | 97 | FAIL |
-| 11 | weather_forecast | 984 | 505/984 | -19.5% | -$944.25 | 17 | 160 | FAIL |
-| 12 | follow_move_crypto | 96 | 48/96 | -22.0% | -$105.72 | 8 | 52 | too early |
+| 10 | sports_underdog | 2869 | 666/2869 | -13.7% | -$1952.05 | 17 | 100 | FAIL |
+| 11 | weather_forecast | 989 | 505/989 | -19.9% | -$969.25 | 17 | 156 | FAIL |
+| 12 | follow_move_crypto | 96 | 48/96 | -22.0% | -$105.72 | 8 | 54 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3979 | 1962/3979 | -5.6% | -$1106.74 | 19 | 305 | yardstick |
+| 14 | coin_flip | 4005 | 1977/4005 | -5.3% | -$1052.77 | 19 | 287 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | sure_thing | follow_move | safe_no_week | follow_move_cheap | fade_move | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-24 | -$13.69 | -$2.27 | +$14.94 | +$6.07 | -$9.03 | -$20.06 | -$37.61 | +$7.51 | +$3.56 | -$98.14 | -$66.78 | +$4.91 |  | -$76.22 |
+| 2026-11-24 | -$13.69 | -$2.27 | +$6.04 | +$6.07 | -$8.28 | -$20.06 | -$37.61 | +$7.51 | +$3.56 | -$94.11 | -$91.78 | +$4.91 |  | -$22.25 |
 | 2026-11-23 | -$25.00 | -$15.00 | +$27.45 | -$41.97 | +$2.47 | -$19.72 | -$110.21 | -$47.22 | +$1.85 | -$59.98 | -$91.52 | -$38.17 |  | +$82.59 |
 | 2026-11-22 | -$3.95 | -$3.95 | -$14.57 | -$13.59 | +$9.81 | -$13.94 | +$42.30 | -$3.52 | -$26.18 | -$172.97 | -$59.01 | -$8.55 |  | -$214.44 |
 | 2026-11-21 | +$7.00 | +$7.00 | -$28.79 | -$10.88 | -$3.69 | +$19.46 | +$37.86 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 |  | -$197.98 |
@@ -59,16 +59,16 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-24 move_ai: Will Meta Platforms, Inc. (META) hit (HIGH) $630 Week of November 23 2026? -> Yes at 0.114 ($5.00)
 - 2026-11-24 move_ai_clean: Will Meta Platforms, Inc. (META) hit (HIGH) $630 Week of November 23 2026? -> Yes at 0.114 ($5.00)
-- 2026-11-24 sure_thing: Exact Score: Watford FC 0 - 0 Blackburn Rovers FC? -> No at 0.933 ($5.00)
-- 2026-11-24 follow_move: Ethereum Up or Down on November 25? -> Up at 0.612 ($5.00)
-- 2026-11-24 safe_no_week: Will the highest temperature in Amsterdam be -1°C on November 26? -> No at 0.983 ($5.00)
-- 2026-11-24 follow_move_cheap: Will Microsoft be the second-largest company in the world by market cap on November 30, 2026? -> Yes at 0.455 ($5.00)
-- 2026-11-24 fade_move: Will Moonshot be the third-best Chinese AI company at the end of November 2026? -> No at 0.759 ($5.00)
-- 2026-11-24 follow_move_2: Will Moonshot be the third-best Chinese AI company at the end of November 2026? -> Yes at 0.730 ($5.00)
+- 2026-11-24 sure_thing: Will Amazon (AMZN) close above $245 on November 25? -> Yes at 0.895 ($5.00)
+- 2026-11-24 follow_move: Solana Up or Down on November 25? -> Up at 0.662 ($5.00)
+- 2026-11-24 safe_no_week: Will the highest temperature in Moscow be 0°C on November 26? -> No at 0.931 ($5.00)
+- 2026-11-24 follow_move_cheap: Will the price of Solana be between $60 and $70 on November 29? -> Yes at 0.502 ($5.00)
+- 2026-11-24 fade_move: Solana Up or Down on November 25? -> Down at 0.382 ($5.00)
+- 2026-11-24 follow_move_2: Will the price of Solana be between $60 and $70 on November 29? -> Yes at 0.502 ($5.00)
 - 2026-11-24 follow_move_big: Will Moonshot be the third-best Chinese AI company at the end of November 2026? -> Yes at 0.730 ($5.00)
-- 2026-11-24 sports_underdog: DePaul Blue Demons vs. Loyola Chicago Ramblers (W) -> Loyola Chicago Ramblers at 0.204 ($5.00)
-- 2026-11-24 weather_forecast: Will the lowest temperature in Madrid be 0°C on November 26? -> No at 0.863 ($5.00)
-- 2026-11-24 follow_move_crypto: XRP Up or Down on November 25? -> Up at 0.652 ($5.00)
+- 2026-11-24 sports_underdog: Spread: América de Cali (-1.5) -> América de Cali at 0.187 ($5.00)
+- 2026-11-24 weather_forecast: Will the lowest temperature in Helsinki be -6°C on November 26? -> No at 0.725 ($5.00)
+- 2026-11-24 follow_move_crypto: Will the price of Solana be between $60 and $70 on November 29? -> Yes at 0.502 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
 
