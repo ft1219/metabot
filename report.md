@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-24 14:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-24 14:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 11 | 4/11 | +62.4% | +$34.31 | 5 | 19 | too early |
-| 2 | sure_thing | 3623 | 3373/3623 | -0.5% | -$97.37 | 18 | 249 | FAIL |
-| 3 | follow_move | 670 | 414/670 | -1.0% | -$34.93 | 19 | 190 | FAIL |
-| 4 | safe_no_week | 1291 | 1201/1291 | -2.9% | -$185.20 | 19 | 460 | FAIL |
-| 5 | follow_move_cheap | 124 | 43/124 | -4.4% | -$27.09 | 8 | 110 | too early |
-| 6 | fade_move | 732 | 239/732 | -5.5% | -$199.64 | 19 | 207 | FAIL |
-| 7 | follow_move_2 | 247 | 146/247 | -6.9% | -$85.05 | 8 | 178 | too early |
-| 8 | follow_move_big | 207 | 131/207 | -8.8% | -$90.79 | 8 | 128 | too early |
-| 9 | sports_underdog | 2788 | 645/2788 | -13.9% | -$1923.28 | 17 | 77 | FAIL |
-| 10 | weather_forecast | 954 | 491/954 | -18.9% | -$890.21 | 17 | 176 | FAIL |
+| 2 | sure_thing | 3623 | 3373/3623 | -0.5% | -$97.37 | 18 | 257 | FAIL |
+| 3 | follow_move | 670 | 414/670 | -1.0% | -$34.93 | 19 | 194 | FAIL |
+| 4 | safe_no_week | 1291 | 1201/1291 | -2.9% | -$185.20 | 19 | 468 | FAIL |
+| 5 | follow_move_cheap | 124 | 43/124 | -4.4% | -$27.09 | 8 | 113 | too early |
+| 6 | fade_move | 732 | 239/732 | -5.5% | -$199.64 | 19 | 212 | FAIL |
+| 7 | follow_move_2 | 247 | 146/247 | -6.9% | -$85.05 | 8 | 182 | too early |
+| 8 | follow_move_big | 207 | 131/207 | -8.8% | -$90.79 | 8 | 129 | too early |
+| 9 | sports_underdog | 2795 | 648/2795 | -13.7% | -$1904.07 | 17 | 78 | FAIL |
+| 10 | weather_forecast | 954 | 491/954 | -18.9% | -$890.21 | 17 | 178 | FAIL |
 | 11 | follow_move_crypto | 84 | 39/84 | -26.3% | -$110.63 | 7 | 50 | too early |
 | 12 | move_ai_clean | 7 | 3/7 | +20.8% | +$7.27 | 4 | 14 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3897 | 1924/3897 | -5.6% | -$1080.81 | 19 | 291 | yardstick |
+| 14 | coin_flip | 3900 | 1926/3900 | -5.6% | -$1076.30 | 19 | 296 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | sure_thing | follow_move | safe_no_week | follow_move_cheap | fade_move | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-24 | -$5.00 | +$14.53 | +$4.23 | -$14.95 | -$15.00 | -$30.95 | +$4.23 | -$2.81 | -$65.33 | -$12.74 |  |  |  | -$50.29 |
+| 2026-11-24 | -$5.00 | +$14.53 | +$4.23 | -$14.95 | -$15.00 | -$30.95 | +$4.23 | -$2.81 | -$46.12 | -$12.74 |  |  |  | -$45.78 |
 | 2026-11-23 | -$25.00 | +$27.45 | -$41.97 | +$2.47 | -$19.72 | -$110.21 | -$47.22 | +$1.85 | -$59.98 | -$91.52 | -$38.17 | -$15.00 |  | +$82.59 |
 | 2026-11-22 | -$3.95 | -$14.57 | -$13.59 | +$9.81 | -$13.94 | +$42.30 | -$3.52 | -$26.18 | -$172.97 | -$59.01 | -$8.55 | -$3.95 |  | -$214.44 |
 | 2026-11-21 | +$7.00 | -$28.79 | -$10.88 | -$3.69 | +$19.46 | +$37.86 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 |  | -$197.98 |
@@ -58,15 +58,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 ## Latest pretend buys (newest of each strategy first)
 
 - 2026-11-24 move_ai: Will Microsoft Corporation (MSFT) hit (HIGH) $510 in November? -> Yes at 0.434 ($5.00)
-- 2026-11-24 sure_thing: Will Core PCE MoM be 0.4% in October? -> No at 0.954 ($5.00)
-- 2026-11-24 follow_move: Rocket Lab (RKLB) Up or Down on November 24? -> Down at 0.837 ($5.00)
-- 2026-11-24 safe_no_week: Will the highest temperature in Paris be 4°C on November 26? -> No at 0.941 ($5.00)
-- 2026-11-24 follow_move_cheap: Will the price of Ethereum be above $1,600 on November 29? -> No at 0.232 ($5.00)
-- 2026-11-24 fade_move: Tesla (TSLA) Up or Down on November 24? -> Up at 0.412 ($5.00)
-- 2026-11-24 follow_move_2: Will the price of Bitcoin be between $58,000 and $60,000 on November 29? -> Yes at 0.222 ($5.00)
-- 2026-11-24 follow_move_big: Will Ethereum reach $1,900 November 23-29? -> No at 0.851 ($5.00)
-- 2026-11-24 sports_underdog: W75 Florianópolis: Valeriya Strakhova vs Martina Colmegna -> Martina Colmegna at 0.341 ($5.00)
-- 2026-11-24 weather_forecast: Will the highest temperature in Houston be between 60-61°F on November 26? -> No at 0.732 ($5.00)
+- 2026-11-24 sure_thing: Vanraure Hachinohe FC vs. Albirex Niigata: 1st Half O/U 2.5 -> Under at 0.905 ($5.00)
+- 2026-11-24 follow_move: Will South Korea ETF (EWY) hit (HIGH) $144 in November? -> No at 0.701 ($5.00)
+- 2026-11-24 safe_no_week: Will Meta Platforms, Inc. (META) hit (HIGH) $720 in November? -> No at 0.979 ($5.00)
+- 2026-11-24 follow_move_cheap: Will Elon Musk post 240-259 tweets from November 20 to November 27, 2026? -> Yes at 0.192 ($5.00)
+- 2026-11-24 fade_move: Will the 30-year Treasury yield dip below 5.20% in November? -> No at 0.802 ($5.00)
+- 2026-11-24 follow_move_2: Will Elon Musk post 240-259 tweets from November 20 to November 27, 2026? -> Yes at 0.192 ($5.00)
+- 2026-11-24 follow_move_big: Will Ethereum reach $1,900 in November? -> No at 0.841 ($5.00)
+- 2026-11-24 sports_underdog: Spread: Akron Zips (-9.5) -> Akron Zips at 0.290 ($5.00)
+- 2026-11-24 weather_forecast: Will the highest temperature in Los Angeles be between 80-81°F on November 26? -> No at 0.672 ($5.00)
 - 2026-11-24 follow_move_crypto: Will the price of Bitcoin be between $58,000 and $60,000 on November 29? -> Yes at 0.222 ($5.00)
 - 2026-11-24 move_ai_clean: Will Microsoft Corporation (MSFT) hit (HIGH) $510 in November? -> Yes at 0.434 ($5.00)
 
