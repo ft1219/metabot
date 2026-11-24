@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-24 02:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-24 03:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 11 | 4/11 | +62.4% | +$34.31 | 5 | 16 | too early |
-| 2 | sure_thing | 3551 | 3303/3551 | -0.6% | -$109.72 | 18 | 186 | FAIL |
-| 3 | follow_move | 668 | 413/668 | -1.0% | -$32.84 | 19 | 139 | FAIL |
-| 4 | safe_no_week | 1270 | 1184/1270 | -2.7% | -$169.45 | 19 | 363 | FAIL |
-| 5 | follow_move_cheap | 122 | 43/122 | -2.8% | -$17.09 | 8 | 89 | too early |
+| 2 | sure_thing | 3563 | 3315/3563 | -0.6% | -$105.24 | 18 | 182 | FAIL |
+| 3 | follow_move | 668 | 413/668 | -1.0% | -$32.84 | 19 | 140 | FAIL |
+| 4 | safe_no_week | 1273 | 1187/1273 | -2.7% | -$168.80 | 19 | 361 | FAIL |
+| 5 | follow_move_cheap | 122 | 43/122 | -2.8% | -$17.09 | 8 | 90 | too early |
 | 6 | fade_move | 729 | 238/729 | -5.3% | -$193.69 | 19 | 149 | FAIL |
-| 7 | follow_move_2 | 245 | 145/245 | -6.8% | -$82.96 | 8 | 127 | too early |
+| 7 | follow_move_2 | 245 | 145/245 | -6.8% | -$82.96 | 8 | 128 | too early |
 | 8 | follow_move_big | 205 | 131/205 | -7.9% | -$80.79 | 8 | 92 | too early |
-| 9 | sports_underdog | 2693 | 619/2693 | -14.5% | -$1940.12 | 17 | 72 | FAIL |
-| 10 | weather_forecast | 931 | 478/931 | -19.3% | -$884.36 | 17 | 154 | FAIL |
-| 11 | follow_move_crypto | 84 | 39/84 | -26.3% | -$110.63 | 7 | 43 | too early |
+| 9 | sports_underdog | 2704 | 626/2704 | -13.8% | -$1851.71 | 17 | 62 | FAIL |
+| 10 | weather_forecast | 933 | 480/933 | -19.1% | -$879.87 | 17 | 153 | FAIL |
+| 11 | follow_move_crypto | 84 | 39/84 | -26.3% | -$110.63 | 7 | 44 | too early |
 | 12 | move_ai_clean | 7 | 3/7 | +20.8% | +$7.27 | 4 | 11 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3775 | 1868/3775 | -5.4% | -$1012.44 | 19 | 277 | yardstick |
+| 14 | coin_flip | 3788 | 1875/3788 | -5.3% | -$997.21 | 19 | 272 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | sure_thing | follow_move | safe_no_week | follow_move_cheap | fade_move | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-24 | -$5.00 | +$2.18 | +$6.33 | +$0.80 | -$5.00 | -$25.00 | +$6.33 | +$7.19 | -$82.17 | -$6.89 |  |  |  | +$18.08 |
+| 2026-11-24 | -$5.00 | +$6.66 | +$6.33 | +$1.45 | -$5.00 | -$25.00 | +$6.33 | +$7.19 | +$6.24 | -$2.41 |  |  |  | +$33.31 |
 | 2026-11-23 | -$25.00 | +$27.45 | -$41.97 | +$2.47 | -$19.72 | -$110.21 | -$47.22 | +$1.85 | -$59.98 | -$91.52 | -$38.17 | -$15.00 |  | +$82.59 |
 | 2026-11-22 | -$3.95 | -$14.57 | -$13.59 | +$9.81 | -$13.94 | +$42.30 | -$3.52 | -$26.18 | -$172.97 | -$59.01 | -$8.55 | -$3.95 |  | -$214.44 |
 | 2026-11-21 | +$7.00 | -$28.79 | -$10.88 | -$3.69 | +$19.46 | +$37.86 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 |  | -$197.98 |
@@ -58,16 +58,16 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 ## Latest pretend buys (newest of each strategy first)
 
 - 2026-11-24 move_ai: Will SpaceX (SPCX) hit (LOW) $120 Week of November 23 2026? -> Yes at 0.117 ($5.00)
-- 2026-11-24 sure_thing: S&P 500 (SPY) closes above $710 on November 24? -> Yes at 0.962 ($5.00)
-- 2026-11-24 follow_move: Will Okta (OKTA) Q3 cRPO growth be 13.5% to under 14.5%? -> No at 0.681 ($5.00)
-- 2026-11-24 safe_no_week: Will PP win the most seats in Ávila in the 2026 Spanish general election? -> Yes at 0.977 ($5.00)
-- 2026-11-24 follow_move_cheap: Will PP win the most seats in Albacete in the 2026 Spanish general election? -> No at 0.331 ($5.00)
+- 2026-11-24 sure_thing: Exact Score: SS Juve Stabia 0 - 0 US Catanzaro 1929? -> No at 0.943 ($5.00)
+- 2026-11-24 follow_move: Will the price of Ethereum be above $1,800 on November 29? -> No at 0.823 ($5.00)
+- 2026-11-24 safe_no_week: Will 32+ ships transit the Strait of Hormuz week of November 23? -> No at 0.960 ($5.00)
+- 2026-11-24 follow_move_cheap: Will the price of Bitcoin be above $60,000 on November 29? -> No at 0.502 ($5.00)
 - 2026-11-24 fade_move: Will Okta (OKTA) Q3 cRPO growth be 13.5% to under 14.5%? -> Yes at 0.372 ($5.00)
-- 2026-11-24 follow_move_2: Will Okta (OKTA) Q3 cRPO growth be 13.5% to under 14.5%? -> No at 0.681 ($5.00)
+- 2026-11-24 follow_move_2: Will the price of Ethereum be above $1,800 on November 29? -> No at 0.823 ($5.00)
 - 2026-11-24 follow_move_big: XRP Up or Down on November 24? -> Down at 0.792 ($5.00)
-- 2026-11-24 sports_underdog: W75 Playford: Ava Beck vs Chengyiyi Yuan -> Ava Beck at 0.208 ($5.00)
-- 2026-11-24 weather_forecast: Will the lowest temperature in Shenzhen be 15°C on November 25? -> Yes at 0.175 ($4.14)
-- 2026-11-24 follow_move_crypto: XRP Up or Down on November 24? -> Down at 0.792 ($5.00)
+- 2026-11-24 sports_underdog: Yokohama: Rio Noguchi vs Maximus Jones -> Maximus Jones at 0.300 ($5.00)
+- 2026-11-24 weather_forecast: Will the lowest temperature in Seattle be between 48-49°F on November 25? -> No at 0.602 ($5.00)
+- 2026-11-24 follow_move_crypto: Will the price of Ethereum be above $1,800 on November 29? -> No at 0.823 ($5.00)
 - 2026-11-24 move_ai_clean: Will SpaceX (SPCX) hit (LOW) $120 Week of November 23 2026? -> Yes at 0.117 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
@@ -81,5 +81,5 @@ Today: 2 checks, $0.20 of OpenAI credit (limit $1.00 a day). Since the start: 44
 
 1 near-gaps recorded (full sets within a few cents of their payout). Cheapest: Democratic 2028 presidential odds on November 27? (yes), 1.005 for a $1 payout.
 
-Runs in the last 24 hours: 36 (0 with a problem).
+Runs in the last 24 hours: 37 (0 with a problem).
 41 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
