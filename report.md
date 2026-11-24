@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-24 11:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-24 12:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 11 | 4/11 | +62.4% | +$34.31 | 5 | 19 | too early |
-| 2 | sure_thing | 3611 | 3361/3611 | -0.6% | -$101.07 | 18 | 229 | FAIL |
-| 3 | follow_move | 669 | 413/669 | -1.1% | -$37.84 | 19 | 170 | FAIL |
-| 4 | safe_no_week | 1289 | 1199/1289 | -2.9% | -$185.84 | 19 | 430 | FAIL |
+| 2 | sure_thing | 3613 | 3363/3613 | -0.6% | -$100.62 | 18 | 235 | FAIL |
+| 3 | follow_move | 669 | 413/669 | -1.1% | -$37.84 | 19 | 173 | FAIL |
+| 4 | safe_no_week | 1289 | 1199/1289 | -2.9% | -$185.84 | 19 | 438 | FAIL |
 | 5 | follow_move_cheap | 123 | 43/123 | -3.6% | -$22.09 | 8 | 103 | too early |
-| 6 | fade_move | 730 | 239/730 | -5.2% | -$189.64 | 19 | 187 | FAIL |
-| 7 | follow_move_2 | 246 | 145/246 | -7.2% | -$87.96 | 8 | 158 | too early |
-| 8 | follow_move_big | 206 | 131/206 | -8.3% | -$85.79 | 8 | 110 | too early |
-| 9 | sports_underdog | 2769 | 643/2769 | -13.5% | -$1862.59 | 17 | 64 | FAIL |
-| 10 | weather_forecast | 954 | 491/954 | -18.9% | -$890.21 | 17 | 162 | FAIL |
+| 6 | fade_move | 730 | 239/730 | -5.2% | -$189.64 | 19 | 191 | FAIL |
+| 7 | follow_move_2 | 246 | 145/246 | -7.2% | -$87.96 | 8 | 161 | too early |
+| 8 | follow_move_big | 206 | 131/206 | -8.3% | -$85.79 | 8 | 111 | too early |
+| 9 | sports_underdog | 2772 | 644/2772 | -13.5% | -$1859.32 | 17 | 69 | FAIL |
+| 10 | weather_forecast | 954 | 491/954 | -18.9% | -$890.21 | 17 | 163 | FAIL |
 | 11 | follow_move_crypto | 84 | 39/84 | -26.3% | -$110.63 | 7 | 49 | too early |
 | 12 | move_ai_clean | 7 | 3/7 | +20.8% | +$7.27 | 4 | 14 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3873 | 1913/3873 | -5.5% | -$1064.51 | 19 | 283 | yardstick |
+| 14 | coin_flip | 3879 | 1915/3879 | -5.6% | -$1075.00 | 19 | 285 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | sure_thing | follow_move | safe_no_week | follow_move_cheap | fade_move | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-24 | -$5.00 | +$10.83 | +$1.33 | -$15.59 | -$10.00 | -$20.95 | +$1.33 | +$2.19 | -$4.64 | -$12.74 |  |  |  | -$33.99 |
+| 2026-11-24 | -$5.00 | +$11.28 | +$1.33 | -$15.59 | -$10.00 | -$20.95 | +$1.33 | +$2.19 | -$1.37 | -$12.74 |  |  |  | -$44.48 |
 | 2026-11-23 | -$25.00 | +$27.45 | -$41.97 | +$2.47 | -$19.72 | -$110.21 | -$47.22 | +$1.85 | -$59.98 | -$91.52 | -$38.17 | -$15.00 |  | +$82.59 |
 | 2026-11-22 | -$3.95 | -$14.57 | -$13.59 | +$9.81 | -$13.94 | +$42.30 | -$3.52 | -$26.18 | -$172.97 | -$59.01 | -$8.55 | -$3.95 |  | -$214.44 |
 | 2026-11-21 | +$7.00 | -$28.79 | -$10.88 | -$3.69 | +$19.46 | +$37.86 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 |  | -$197.98 |
@@ -58,15 +58,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 ## Latest pretend buys (newest of each strategy first)
 
 - 2026-11-24 move_ai: Will Microsoft Corporation (MSFT) hit (HIGH) $510 in November? -> Yes at 0.434 ($5.00)
-- 2026-11-24 sure_thing: Spread: V-Varen Nagasaki (-1.5) -> Kawasaki Frontale at 0.904 ($5.00)
-- 2026-11-24 follow_move: Will Space Exploration Technologies’ market capitalization be between $1.50T and $1.75T at the end of November 2026? -> Yes at 0.338 ($5.00)
-- 2026-11-24 safe_no_week: Will the highest temperature in Hong Kong be 24°C on November 26? -> No at 0.931 ($5.00)
+- 2026-11-24 sure_thing: Will NVIDIA (NVDA) close above $145 on November 24? -> Yes at 0.959 ($5.00)
+- 2026-11-24 follow_move: Will a 7.0+ earthquake occur worldwide by November 30? -> No at 0.732 ($5.00)
+- 2026-11-24 safe_no_week: Will the highest temperature in Wellington be 22°C on November 26? -> No at 0.984 ($5.00)
 - 2026-11-24 follow_move_cheap: Will Space Exploration Technologies’ market capitalization be between $1.50T and $1.75T at the end of November 2026? -> Yes at 0.338 ($5.00)
-- 2026-11-24 fade_move: Will Hyperliquid reach $76 in November? -> Yes at 0.141 ($5.00)
-- 2026-11-24 follow_move_2: Will the Ornn RTX 5090 Index be between $0.60 and $0.65 on November 30, 2026? -> Yes at 0.315 ($5.00)
-- 2026-11-24 follow_move_big: Will the Ornn RTX 5090 Index be between $0.60 and $0.65 on November 30, 2026? -> Yes at 0.315 ($5.00)
-- 2026-11-24 sports_underdog: Will North East United FC vs. SC Delhi end in a draw? -> Yes at 0.239 ($5.00)
-- 2026-11-24 weather_forecast: Will the highest temperature in Beijing be 13°C on November 26? -> No at 0.802 ($5.00)
+- 2026-11-24 fade_move: Will 22+ ships transit the Strait of Hormuz week of November 23? -> Yes at 0.332 ($5.00)
+- 2026-11-24 follow_move_2: Will 22+ ships transit the Strait of Hormuz week of November 23? -> No at 0.692 ($5.00)
+- 2026-11-24 follow_move_big: Will a 7.0+ earthquake occur worldwide by November 30? -> No at 0.732 ($5.00)
+- 2026-11-24 sports_underdog: Hersonissos 4: Ioannis Xilas vs Sergey Fomin -> Sergey Fomin at 0.341 ($5.00)
+- 2026-11-24 weather_forecast: Will the lowest temperature in Munich be -6°C on November 25? -> No at 0.882 ($5.00)
 - 2026-11-24 follow_move_crypto: Will Solana reach $80 in November? -> No at 0.772 ($5.00)
 - 2026-11-24 move_ai_clean: Will Microsoft Corporation (MSFT) hit (HIGH) $510 in November? -> Yes at 0.434 ($5.00)
 
@@ -81,5 +81,5 @@ Today: 5 checks, $0.52 of OpenAI credit (limit $1.00 a day). Since the start: 47
 
 5 near-gaps recorded (full sets within a few cents of their payout). Cheapest: Democratic 2028 presidential odds on November 27? (yes), 0.995 for a $1 payout.
 
-Runs in the last 24 hours: 37 (0 with a problem).
+Runs in the last 24 hours: 36 (0 with a problem).
 45 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
