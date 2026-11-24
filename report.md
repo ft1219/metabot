@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-24 10:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-24 10:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 11 | 4/11 | +62.4% | +$34.31 | 5 | 18 | too early |
-| 2 | sure_thing | 3610 | 3360/3610 | -0.6% | -$101.56 | 18 | 214 | FAIL |
-| 3 | follow_move | 669 | 413/669 | -1.1% | -$37.84 | 19 | 165 | FAIL |
-| 4 | safe_no_week | 1288 | 1198/1288 | -2.9% | -$186.05 | 19 | 415 | FAIL |
-| 5 | follow_move_cheap | 123 | 43/123 | -3.6% | -$22.09 | 8 | 99 | too early |
-| 6 | fade_move | 730 | 239/730 | -5.2% | -$189.64 | 19 | 182 | FAIL |
-| 7 | follow_move_2 | 246 | 145/246 | -7.2% | -$87.96 | 8 | 153 | too early |
-| 8 | follow_move_big | 206 | 131/206 | -8.3% | -$85.79 | 8 | 108 | too early |
-| 9 | sports_underdog | 2762 | 642/2762 | -13.5% | -$1849.05 | 17 | 55 | FAIL |
-| 10 | weather_forecast | 952 | 490/952 | -18.9% | -$888.77 | 17 | 161 | FAIL |
+| 2 | sure_thing | 3610 | 3360/3610 | -0.6% | -$101.56 | 18 | 222 | FAIL |
+| 3 | follow_move | 669 | 413/669 | -1.1% | -$37.84 | 19 | 168 | FAIL |
+| 4 | safe_no_week | 1288 | 1198/1288 | -2.9% | -$186.05 | 19 | 423 | FAIL |
+| 5 | follow_move_cheap | 123 | 43/123 | -3.6% | -$22.09 | 8 | 101 | too early |
+| 6 | fade_move | 730 | 239/730 | -5.2% | -$189.64 | 19 | 185 | FAIL |
+| 7 | follow_move_2 | 246 | 145/246 | -7.2% | -$87.96 | 8 | 156 | too early |
+| 8 | follow_move_big | 206 | 131/206 | -8.3% | -$85.79 | 8 | 109 | too early |
+| 9 | sports_underdog | 2766 | 642/2766 | -13.6% | -$1867.66 | 17 | 59 | FAIL |
+| 10 | weather_forecast | 952 | 490/952 | -18.9% | -$888.77 | 17 | 162 | FAIL |
 | 11 | follow_move_crypto | 84 | 39/84 | -26.3% | -$110.63 | 7 | 49 | too early |
 | 12 | move_ai_clean | 7 | 3/7 | +20.8% | +$7.27 | 4 | 13 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3862 | 1909/3862 | -5.5% | -$1048.53 | 19 | 278 | yardstick |
+| 14 | coin_flip | 3867 | 1911/3867 | -5.5% | -$1054.02 | 19 | 281 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | sure_thing | follow_move | safe_no_week | follow_move_cheap | fade_move | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-24 | -$5.00 | +$10.34 | +$1.33 | -$15.80 | -$10.00 | -$20.95 | +$1.33 | +$2.19 | +$8.90 | -$11.31 |  |  |  | -$18.02 |
+| 2026-11-24 | -$5.00 | +$10.34 | +$1.33 | -$15.80 | -$10.00 | -$20.95 | +$1.33 | +$2.19 | -$9.71 | -$11.31 |  |  |  | -$23.50 |
 | 2026-11-23 | -$25.00 | +$27.45 | -$41.97 | +$2.47 | -$19.72 | -$110.21 | -$47.22 | +$1.85 | -$59.98 | -$91.52 | -$38.17 | -$15.00 |  | +$82.59 |
 | 2026-11-22 | -$3.95 | -$14.57 | -$13.59 | +$9.81 | -$13.94 | +$42.30 | -$3.52 | -$26.18 | -$172.97 | -$59.01 | -$8.55 | -$3.95 |  | -$214.44 |
 | 2026-11-21 | +$7.00 | -$28.79 | -$10.88 | -$3.69 | +$19.46 | +$37.86 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 |  | -$197.98 |
@@ -58,15 +58,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 ## Latest pretend buys (newest of each strategy first)
 
 - 2026-11-24 move_ai: Will Claude go down fewer than 5 times in November 2026? -> No at 0.711 ($5.00)
-- 2026-11-24 sure_thing: Spread: Port FC (-1.5) -> Gamba Osaka at 0.971 ($5.00)
-- 2026-11-24 follow_move: Will voter turnout be between 68% and 70% in the 2026 Spanish general election? -> No at 0.798 ($5.00)
-- 2026-11-24 safe_no_week: Will the total domestic gross for "You Can See Everything" be between $75M and $100M by November 30? -> Yes at 0.976 ($5.00)
-- 2026-11-24 follow_move_cheap: Will Bitcoin dip to $56,000 November 23-29? -> Yes at 0.352 ($5.00)
-- 2026-11-24 fade_move: Will voter turnout be between 68% and 70% in the 2026 Spanish general election? -> Yes at 0.229 ($5.00)
-- 2026-11-24 follow_move_2: Will voter turnout be between 68% and 70% in the 2026 Spanish general election? -> No at 0.798 ($5.00)
-- 2026-11-24 follow_move_big: Will PSOE win the most seats in the Basque Country in the 2026 Spanish general election? -> Yes at 0.402 ($5.00)
-- 2026-11-24 sports_underdog: Spread: Vissel Kobe (-1.5) -> Vissel Kobe at 0.321 ($5.00)
-- 2026-11-24 weather_forecast: Will the highest temperature in Karachi be 30°C on November 25? -> No at 0.632 ($5.00)
+- 2026-11-24 sure_thing: Spread: Iwaki FC (-2.5) -> Kataller Toyama at 0.933 ($5.00)
+- 2026-11-24 follow_move: Will Kuomintang (KMT) win the most mayoral elections in the 2026 Taiwan local elections? -> Yes at 0.462 ($5.00)
+- 2026-11-24 safe_no_week: All-time Pacific Category 5 hurricane record broken in 2026? -> No at 0.960 ($5.00)
+- 2026-11-24 follow_move_cheap: Will Kuomintang (KMT) win the most mayoral elections in the 2026 Taiwan local elections? -> Yes at 0.462 ($5.00)
+- 2026-11-24 fade_move: Will Microsoft Corporation (MSFT) hit (HIGH) $510 in November? -> Yes at 0.448 ($5.00)
+- 2026-11-24 follow_move_2: Will Kuomintang (KMT) win the most mayoral elections in the 2026 Taiwan local elections? -> Yes at 0.462 ($5.00)
+- 2026-11-24 follow_move_big: Will Microsoft Corporation (MSFT) hit (HIGH) $510 in November? -> No at 0.632 ($5.00)
+- 2026-11-24 sports_underdog: Florianopolis: Lucio Ratti vs Joaquin Aguilar -> Lucio Ratti at 0.229 ($5.00)
+- 2026-11-24 weather_forecast: Will the lowest temperature in Los Angeles be between 56-57°F on November 26? -> No at 0.871 ($5.00)
 - 2026-11-24 follow_move_crypto: Will Solana reach $80 in November? -> No at 0.772 ($5.00)
 - 2026-11-24 move_ai_clean: Will Claude go down fewer than 5 times in November 2026? -> No at 0.711 ($5.00)
 
@@ -81,5 +81,5 @@ Today: 4 checks, $0.40 of OpenAI credit (limit $1.00 a day). Since the start: 46
 
 5 near-gaps recorded (full sets within a few cents of their payout). Cheapest: Democratic 2028 presidential odds on November 27? (yes), 0.995 for a $1 payout.
 
-Runs in the last 24 hours: 36 (0 with a problem).
+Runs in the last 24 hours: 37 (0 with a problem).
 42 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
