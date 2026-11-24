@@ -1,33 +1,33 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-24 06:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-24 07:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 11 | 4/11 | +62.4% | +$34.31 | 5 | 17 | too early |
-| 2 | sure_thing | 3603 | 3353/3603 | -0.6% | -$103.35 | 18 | 182 | FAIL |
+| 2 | sure_thing | 3606 | 3356/3606 | -0.6% | -$102.45 | 18 | 187 | FAIL |
 | 3 | follow_move | 668 | 413/668 | -1.0% | -$32.84 | 19 | 159 | FAIL |
-| 4 | safe_no_week | 1279 | 1191/1279 | -2.8% | -$178.14 | 19 | 384 | FAIL |
-| 5 | follow_move_cheap | 122 | 43/122 | -2.8% | -$17.09 | 8 | 98 | too early |
-| 6 | fade_move | 729 | 238/729 | -5.3% | -$193.69 | 19 | 171 | FAIL |
+| 4 | follow_move_cheap | 122 | 43/122 | -2.8% | -$17.09 | 8 | 99 | too early |
+| 5 | safe_no_week | 1284 | 1195/1284 | -2.8% | -$182.10 | 19 | 387 | FAIL |
+| 6 | fade_move | 729 | 238/729 | -5.3% | -$193.69 | 19 | 172 | FAIL |
 | 7 | follow_move_2 | 245 | 145/245 | -6.8% | -$82.96 | 8 | 147 | too early |
 | 8 | follow_move_big | 205 | 131/205 | -7.9% | -$80.79 | 8 | 103 | too early |
-| 9 | sports_underdog | 2750 | 636/2750 | -14.0% | -$1912.88 | 17 | 34 | FAIL |
-| 10 | weather_forecast | 939 | 483/939 | -18.9% | -$873.15 | 17 | 158 | FAIL |
+| 9 | sports_underdog | 2755 | 638/2755 | -13.8% | -$1889.97 | 17 | 34 | FAIL |
+| 10 | weather_forecast | 945 | 485/945 | -19.1% | -$888.27 | 17 | 160 | FAIL |
 | 11 | follow_move_crypto | 84 | 39/84 | -26.3% | -$110.63 | 7 | 47 | too early |
 | 12 | move_ai_clean | 7 | 3/7 | +20.8% | +$7.27 | 4 | 12 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3826 | 1891/3826 | -5.5% | -$1038.94 | 19 | 274 | yardstick |
+| 14 | coin_flip | 3834 | 1893/3834 | -5.6% | -$1059.43 | 19 | 274 | yardstick |
 
 What each one does:
 
 - **move_ai**: After a traded 10c+ move in a day, an AI model reads the news and gives its own chance (it is not told the price); buy whichever side it rates at least 5c above the price (a random sample of moves, about $1 of AI a day; judged at 150 finished trades).
 - **sure_thing**: Buy the almost-sure side (90-97c) in the last 24 hours (sports and other markets).
 - **follow_move**: After a traded 10c+ move in a day, buy the side that went up.
-- **safe_no_week**: Buy the almost-sure side (92-98.5c), 1-7 days before the end, no sports.
 - **follow_move_cheap**: follow_move, only when the side that went up costs 50c or less (from 17 Nov).
+- **safe_no_week**: Buy the almost-sure side (92-98.5c), 1-7 days before the end, no sports.
 - **fade_move**: After a traded 10c+ move in a day, buy the side that went down.
 - **follow_move_2**: Same as follow_move, restarted on 17 Nov so it is judged on new trades only.
 - **follow_move_big**: follow_move, only after a 20c+ move in a day (from 17 Nov).
@@ -42,31 +42,31 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Profit by day (trades that finished that day)
 
-| Day | move_ai | sure_thing | follow_move | safe_no_week | follow_move_cheap | fade_move | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai_clean | price_gap | coin_flip |
+| Day | move_ai | sure_thing | follow_move | follow_move_cheap | safe_no_week | fade_move | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-24 | -$5.00 | +$8.56 | +$6.33 | -$7.89 | -$5.00 | -$25.00 | +$6.33 | +$7.19 | -$54.93 | +$4.31 |  |  |  | -$8.43 |
-| 2026-11-23 | -$25.00 | +$27.45 | -$41.97 | +$2.47 | -$19.72 | -$110.21 | -$47.22 | +$1.85 | -$59.98 | -$91.52 | -$38.17 | -$15.00 |  | +$82.59 |
-| 2026-11-22 | -$3.95 | -$14.57 | -$13.59 | +$9.81 | -$13.94 | +$42.30 | -$3.52 | -$26.18 | -$172.97 | -$59.01 | -$8.55 | -$3.95 |  | -$214.44 |
-| 2026-11-21 | +$7.00 | -$28.79 | -$10.88 | -$3.69 | +$19.46 | +$37.86 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 |  | -$197.98 |
-| 2026-11-20 | +$61.26 | -$19.18 | +$40.01 | -$1.99 | +$30.74 | +$18.12 | +$49.66 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$19.22 |  | -$51.48 |
-| 2026-11-19 |  | -$35.23 | -$76.17 | -$10.58 | -$32.37 | +$186.86 | -$96.44 | -$66.89 | -$302.39 | -$20.99 | -$16.30 |  |  | -$31.84 |
-| 2026-11-18 |  | +$1.67 | -$38.68 | -$18.18 | +$1.98 | +$13.07 | -$32.52 | -$14.72 | -$43.96 | -$60.57 | -$18.73 |  |  | -$25.46 |
-| 2026-11-17 |  | +$4.02 | -$26.56 | -$6.81 | +$1.77 | -$62.15 | +$29.40 | +$4.87 | -$26.19 | -$31.10 | +$8.64 |  |  | -$62.47 |
-| 2026-11-16 |  | -$6.40 | +$11.58 | -$11.02 |  | -$17.46 |  |  | +$21.94 |  |  |  | +$0.08 | -$21.29 |
-| 2026-11-15 |  | +$0.34 | +$17.97 | -$26.64 |  | +$30.37 |  |  |  | -$0.94 |  |  |  | -$47.97 |
+| 2026-11-24 | -$5.00 | +$9.45 | +$6.33 | -$5.00 | -$11.85 | -$25.00 | +$6.33 | +$7.19 | -$32.02 | -$10.81 |  |  |  | -$28.91 |
+| 2026-11-23 | -$25.00 | +$27.45 | -$41.97 | -$19.72 | +$2.47 | -$110.21 | -$47.22 | +$1.85 | -$59.98 | -$91.52 | -$38.17 | -$15.00 |  | +$82.59 |
+| 2026-11-22 | -$3.95 | -$14.57 | -$13.59 | -$13.94 | +$9.81 | +$42.30 | -$3.52 | -$26.18 | -$172.97 | -$59.01 | -$8.55 | -$3.95 |  | -$214.44 |
+| 2026-11-21 | +$7.00 | -$28.79 | -$10.88 | +$19.46 | -$3.69 | +$37.86 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 |  | -$197.98 |
+| 2026-11-20 | +$61.26 | -$19.18 | +$40.01 | +$30.74 | -$1.99 | +$18.12 | +$49.66 | +$26.21 | -$79.83 | -$72.63 | -$28.74 | +$19.22 |  | -$51.48 |
+| 2026-11-19 |  | -$35.23 | -$76.17 | -$32.37 | -$10.58 | +$186.86 | -$96.44 | -$66.89 | -$302.39 | -$20.99 | -$16.30 |  |  | -$31.84 |
+| 2026-11-18 |  | +$1.67 | -$38.68 | +$1.98 | -$18.18 | +$13.07 | -$32.52 | -$14.72 | -$43.96 | -$60.57 | -$18.73 |  |  | -$25.46 |
+| 2026-11-17 |  | +$4.02 | -$26.56 | +$1.77 | -$6.81 | -$62.15 | +$29.40 | +$4.87 | -$26.19 | -$31.10 | +$8.64 |  |  | -$62.47 |
+| 2026-11-16 |  | -$6.40 | +$11.58 |  | -$11.02 | -$17.46 |  |  | +$21.94 |  |  |  | +$0.08 | -$21.29 |
+| 2026-11-15 |  | +$0.34 | +$17.97 |  | -$26.64 | +$30.37 |  |  |  | -$0.94 |  |  |  | -$47.97 |
 
 ## Latest pretend buys (newest of each strategy first)
 
 - 2026-11-24 move_ai: Will Rocket Lab USA, Inc. (RKLB) hit (LOW) $42 Week of November 23 2026? -> Yes at 0.125 ($5.00)
-- 2026-11-24 sure_thing: Spread: Harborough Town FC (-2.5) -> Chester FC at 0.971 ($5.00)
+- 2026-11-24 sure_thing: Real Madrid CF vs. PSV: Real Madrid CF O/U 2.5 Corners -> Over at 0.971 ($5.00)
 - 2026-11-24 follow_move: Will the Ornn A100 Index be between $0.75 and $1.00 on November 30, 2026? -> Yes at 0.661 ($5.00)
-- 2026-11-24 safe_no_week: Will the highest temperature in Istanbul be 8°C on November 25? -> No at 0.970 ($5.00)
-- 2026-11-24 follow_move_cheap: Will NVIDIA (NVDA) hit (HIGH) $176 in November? -> Yes at 0.475 ($5.00)
-- 2026-11-24 fade_move: Will Gold (XAUUSD) hit (LOW) $3,500 in November? -> Yes at 0.353 ($5.00)
+- 2026-11-24 follow_move_cheap: Will Gold (XAUUSD) hit (HIGH) $3,700 in November? -> No at 0.502 ($5.00)
+- 2026-11-24 safe_no_week: Over $250k committed to the over.computer public sale? -> No at 0.924 ($5.00)
+- 2026-11-24 fade_move: Will Trump say "Peace in the Middle East" in November? -> Yes at 0.101 ($5.00)
 - 2026-11-24 follow_move_2: Will Silver (XAGUSD) hit (HIGH) $46 in November? -> No at 0.856 ($5.00)
 - 2026-11-24 follow_move_big: Will NVIDIA be the second-largest company in the world by market cap on November 30, 2026? -> Yes at 0.836 ($5.00)
-- 2026-11-24 sports_underdog: M15 Antalya: Alessandro Bellifemine vs Egor Khotchenkov -> Egor Khotchenkov at 0.163 ($5.00)
-- 2026-11-24 weather_forecast: Will the highest temperature in London be 6°C on November 26? -> No at 0.552 ($5.00)
+- 2026-11-24 sports_underdog: Spread: Kyoto Sanga FC (-1.5) -> Kyoto Sanga FC at 0.331 ($5.00)
+- 2026-11-24 weather_forecast: Will the highest temperature in Paris be 5°C on November 26? -> No at 0.622 ($5.00)
 - 2026-11-24 follow_move_crypto: Will Bitcoin dip to $58,000 November 23-29? -> Yes at 0.512 ($5.00)
 - 2026-11-24 move_ai_clean: Will Rocket Lab USA, Inc. (RKLB) hit (LOW) $42 Week of November 23 2026? -> Yes at 0.125 ($5.00)
 
@@ -79,7 +79,7 @@ Today: 3 checks, $0.29 of OpenAI credit (limit $1.00 a day). Since the start: 45
 
 ## Price gaps seen today
 
-4 near-gaps recorded (full sets within a few cents of their payout). Cheapest: Democratic 2028 presidential odds on November 27? (yes), 0.995 for a $1 payout.
+5 near-gaps recorded (full sets within a few cents of their payout). Cheapest: Democratic 2028 presidential odds on November 27? (yes), 0.995 for a $1 payout.
 
 Runs in the last 24 hours: 36 (0 with a problem).
 42 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
