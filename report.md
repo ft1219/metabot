@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-24 20:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-24 20:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-24 20:07 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 17 | 6/17 | +36.0% | +$30.63 | 5 | 14 | too early |
 | 2 | move_ai_clean | 10 | 4/10 | +20.0% | +$10.00 | 5 | 12 | too early |
-| 3 | sure_thing | 3670 | 3416/3670 | -0.6% | -$104.55 | 18 | 269 | FAIL |
-| 4 | follow_move | 693 | 430/693 | -1.0% | -$36.09 | 19 | 200 | FAIL |
-| 5 | follow_move_cheap | 142 | 51/142 | -1.9% | -$13.80 | 8 | 123 | too early |
-| 6 | safe_no_week | 1331 | 1240/1331 | -2.7% | -$181.91 | 19 | 485 | FAIL |
-| 7 | fade_move | 756 | 247/756 | -4.5% | -$170.97 | 19 | 221 | FAIL |
-| 8 | follow_move_2 | 270 | 162/270 | -6.3% | -$84.75 | 8 | 189 | too early |
-| 9 | follow_move_big | 230 | 146/230 | -8.2% | -$94.05 | 8 | 128 | too early |
-| 10 | sports_underdog | 2851 | 661/2851 | -13.7% | -$1947.47 | 17 | 86 | FAIL |
-| 11 | weather_forecast | 978 | 503/978 | -19.2% | -$927.48 | 17 | 161 | FAIL |
+| 3 | sure_thing | 3672 | 3417/3672 | -0.6% | -$109.23 | 18 | 275 | FAIL |
+| 4 | follow_move | 693 | 430/693 | -1.0% | -$36.09 | 19 | 201 | FAIL |
+| 5 | follow_move_cheap | 142 | 51/142 | -1.9% | -$13.80 | 8 | 124 | too early |
+| 6 | safe_no_week | 1331 | 1240/1331 | -2.7% | -$181.91 | 19 | 486 | FAIL |
+| 7 | fade_move | 756 | 247/756 | -4.5% | -$170.97 | 19 | 222 | FAIL |
+| 8 | follow_move_2 | 270 | 162/270 | -6.3% | -$84.75 | 8 | 190 | too early |
+| 9 | follow_move_big | 230 | 146/230 | -8.2% | -$94.05 | 8 | 129 | too early |
+| 10 | sports_underdog | 2852 | 661/2852 | -13.8% | -$1952.47 | 17 | 93 | FAIL |
+| 11 | weather_forecast | 978 | 503/978 | -19.2% | -$927.48 | 17 | 163 | FAIL |
 | 12 | follow_move_crypto | 96 | 48/96 | -22.0% | -$105.72 | 8 | 52 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3951 | 1949/3951 | -5.5% | -$1087.72 | 19 | 309 | yardstick |
+| 14 | coin_flip | 3956 | 1951/3956 | -5.6% | -$1093.40 | 19 | 312 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | sure_thing | follow_move | follow_move_cheap | safe_no_week | fade_move | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-24 | -$8.69 | +$2.73 | +$7.35 | +$3.08 | -$1.71 | -$11.66 | -$2.28 | +$4.54 | -$6.07 | -$89.53 | -$50.01 | +$4.91 |  | -$57.20 |
+| 2026-11-24 | -$8.69 | +$2.73 | +$2.67 | +$3.08 | -$1.71 | -$11.66 | -$2.28 | +$4.54 | -$6.07 | -$94.53 | -$50.01 | +$4.91 |  | -$62.88 |
 | 2026-11-23 | -$25.00 | -$15.00 | +$27.45 | -$41.97 | -$19.72 | +$2.47 | -$110.21 | -$47.22 | +$1.85 | -$59.98 | -$91.52 | -$38.17 |  | +$82.59 |
 | 2026-11-22 | -$3.95 | -$3.95 | -$14.57 | -$13.59 | -$13.94 | +$9.81 | +$42.30 | -$3.52 | -$26.18 | -$172.97 | -$59.01 | -$8.55 |  | -$214.44 |
 | 2026-11-21 | +$7.00 | +$7.00 | -$28.79 | -$10.88 | +$19.46 | -$3.69 | +$37.86 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 |  | -$197.98 |
@@ -59,15 +59,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-24 move_ai: Will Alphabet’s market capitalization be between $3.50T and $4.00T at the end of November 2026? -> Yes at 0.341 ($5.00)
 - 2026-11-24 move_ai_clean: Will Alphabet’s market capitalization be between $3.50T and $4.00T at the end of November 2026? -> Yes at 0.341 ($5.00)
-- 2026-11-24 sure_thing: Spread: Tokushima Vortis (-1.5) -> RB Ōmiya Ardija at 0.933 ($5.00)
-- 2026-11-24 follow_move: Will the 7-day average ship traffic through the Panama Canal be 27+ on November 30? -> No at 0.392 ($5.00)
-- 2026-11-24 follow_move_cheap: Will the price of Bitcoin be above $58,000 on November 30? -> No at 0.332 ($5.00)
-- 2026-11-24 safe_no_week: Will PP receive between 34% and 36% of the vote in the 2026 Spanish general election? -> No at 0.958 ($5.00)
-- 2026-11-24 fade_move: Will the 7-day average ship traffic through the Panama Canal be 27+ on November 30? -> Yes at 0.662 ($5.00)
-- 2026-11-24 follow_move_2: Will the 7-day average ship traffic through the Panama Canal be 27+ on November 30? -> No at 0.392 ($5.00)
-- 2026-11-24 follow_move_big: Will the price of Ethereum be between $1,500 and $1,600 on November 30? -> No at 0.851 ($5.00)
-- 2026-11-24 sports_underdog: San Diego State Aztecs vs. Iowa State Cyclones -> San Diego State Aztecs at 0.218 ($5.00)
-- 2026-11-24 weather_forecast: Will the lowest temperature in Milan be 6°C on November 25? -> No at 0.596 ($5.00)
+- 2026-11-24 sure_thing: Spread: Ōita Trinita (-1.5) -> Sagan Tosu at 0.971 ($5.00)
+- 2026-11-24 follow_move: Will Micron (MU) finish week of November 23 above $630? -> No at 0.522 ($5.00)
+- 2026-11-24 follow_move_cheap: Will there be exactly 2 North Korea tests in November 2026? -> Yes at 0.364 ($5.00)
+- 2026-11-24 safe_no_week: Will Microsoft (MSFT) close above $480 on November 25? -> Yes at 0.924 ($5.00)
+- 2026-11-24 fade_move: Will Micron (MU) finish week of November 23 above $630? -> Yes at 0.552 ($5.00)
+- 2026-11-24 follow_move_2: Will Micron (MU) finish week of November 23 above $630? -> No at 0.522 ($5.00)
+- 2026-11-24 follow_move_big: Will Micron (MU) finish week of November 23 above $630? -> No at 0.522 ($5.00)
+- 2026-11-24 sports_underdog: Will Millonarios FC vs. CA Bucaramanga end in a draw? -> Yes at 0.259 ($5.00)
+- 2026-11-24 weather_forecast: Will the lowest temperature in Sao Paulo be 18°C on November 26? -> No at 0.666 ($5.00)
 - 2026-11-24 follow_move_crypto: XRP Up or Down on November 25? -> Up at 0.652 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
@@ -81,5 +81,5 @@ Today: 7 checks, $0.72 of OpenAI credit (limit $1.00 a day). Since the start: 49
 
 5 near-gaps recorded (full sets within a few cents of their payout). Cheapest: Democratic 2028 presidential odds on November 27? (yes), 0.995 for a $1 payout.
 
-Runs in the last 24 hours: 37 (0 with a problem).
+Runs in the last 24 hours: 36 (0 with a problem).
 45 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
