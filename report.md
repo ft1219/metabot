@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-24 12:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-24 13:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 11 | 4/11 | +62.4% | +$34.31 | 5 | 19 | too early |
-| 2 | sure_thing | 3613 | 3363/3613 | -0.6% | -$100.62 | 18 | 243 | FAIL |
-| 3 | follow_move | 669 | 413/669 | -1.1% | -$37.84 | 19 | 176 | FAIL |
-| 4 | safe_no_week | 1289 | 1199/1289 | -2.9% | -$185.84 | 19 | 446 | FAIL |
+| 2 | sure_thing | 3616 | 3366/3616 | -0.5% | -$99.15 | 18 | 248 | FAIL |
+| 3 | follow_move | 669 | 413/669 | -1.1% | -$37.84 | 19 | 184 | FAIL |
+| 4 | safe_no_week | 1289 | 1199/1289 | -2.9% | -$185.84 | 19 | 454 | FAIL |
 | 5 | follow_move_cheap | 123 | 43/123 | -3.6% | -$22.09 | 8 | 105 | too early |
-| 6 | fade_move | 730 | 239/730 | -5.2% | -$189.64 | 19 | 193 | FAIL |
-| 7 | follow_move_2 | 246 | 145/246 | -7.2% | -$87.96 | 8 | 164 | too early |
-| 8 | follow_move_big | 206 | 131/206 | -8.3% | -$85.79 | 8 | 113 | too early |
-| 9 | sports_underdog | 2778 | 645/2778 | -13.6% | -$1873.28 | 17 | 71 | FAIL |
-| 10 | weather_forecast | 954 | 491/954 | -18.9% | -$890.21 | 17 | 169 | FAIL |
+| 6 | fade_move | 730 | 239/730 | -5.2% | -$189.64 | 19 | 201 | FAIL |
+| 7 | follow_move_2 | 246 | 145/246 | -7.2% | -$87.96 | 8 | 172 | too early |
+| 8 | follow_move_big | 206 | 131/206 | -8.3% | -$85.79 | 8 | 121 | too early |
+| 9 | sports_underdog | 2779 | 645/2779 | -13.6% | -$1878.28 | 17 | 78 | FAIL |
+| 10 | weather_forecast | 954 | 491/954 | -18.9% | -$890.21 | 17 | 170 | FAIL |
 | 11 | follow_move_crypto | 84 | 39/84 | -26.3% | -$110.63 | 7 | 49 | too early |
 | 12 | move_ai_clean | 7 | 3/7 | +20.8% | +$7.27 | 4 | 14 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3885 | 1919/3885 | -5.5% | -$1065.97 | 19 | 287 | yardstick |
+| 14 | coin_flip | 3887 | 1919/3887 | -5.6% | -$1075.97 | 19 | 293 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | sure_thing | follow_move | safe_no_week | follow_move_cheap | fade_move | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-24 | -$5.00 | +$11.28 | +$1.33 | -$15.59 | -$10.00 | -$20.95 | +$1.33 | +$2.19 | -$15.33 | -$12.74 |  |  |  | -$35.46 |
+| 2026-11-24 | -$5.00 | +$12.76 | +$1.33 | -$15.59 | -$10.00 | -$20.95 | +$1.33 | +$2.19 | -$20.33 | -$12.74 |  |  |  | -$45.46 |
 | 2026-11-23 | -$25.00 | +$27.45 | -$41.97 | +$2.47 | -$19.72 | -$110.21 | -$47.22 | +$1.85 | -$59.98 | -$91.52 | -$38.17 | -$15.00 |  | +$82.59 |
 | 2026-11-22 | -$3.95 | -$14.57 | -$13.59 | +$9.81 | -$13.94 | +$42.30 | -$3.52 | -$26.18 | -$172.97 | -$59.01 | -$8.55 | -$3.95 |  | -$214.44 |
 | 2026-11-21 | +$7.00 | -$28.79 | -$10.88 | -$3.69 | +$19.46 | +$37.86 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 |  | -$197.98 |
@@ -58,15 +58,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 ## Latest pretend buys (newest of each strategy first)
 
 - 2026-11-24 move_ai: Will Microsoft Corporation (MSFT) hit (HIGH) $510 in November? -> Yes at 0.434 ($5.00)
-- 2026-11-24 sure_thing: Spread: FC Mito Holly Hock (-1.5) -> Tōkyō Verdy at 0.904 ($5.00)
-- 2026-11-24 follow_move: Will S&P 500 (SPY) hit (LOW) $680 in November? -> No at 0.849 ($5.00)
-- 2026-11-24 safe_no_week: Will Anthropic be the #2 AI lab at the end of November 2026? -> No at 0.962 ($5.00)
+- 2026-11-24 sure_thing: Spread: AD Cali (-1.5) -> América de Cali at 0.933 ($5.00)
+- 2026-11-24 follow_move: S&P 500 (SPY) closes above $705 on November 24? -> Yes at 0.818 ($5.00)
+- 2026-11-24 safe_no_week: Will "Hershey" 5-Day Opening Weekend Box Office be between 7m and 8m? -> No at 0.969 ($5.00)
 - 2026-11-24 follow_move_cheap: Will Core PCE MoM be 0.3% in October? -> No at 0.222 ($5.00)
-- 2026-11-24 fade_move: Will Core PCE MoM be 0.3% in October? -> Yes at 0.831 ($5.00)
-- 2026-11-24 follow_move_2: Will Core PCE MoM be 0.3% in October? -> No at 0.222 ($5.00)
-- 2026-11-24 follow_move_big: Will there be exactly 3 North Korea tests in November 2026? -> No at 0.800 ($5.00)
-- 2026-11-24 sports_underdog: Smouha SC vs. National Bank of Egypt Club: O/U 0.5 -> Under at 0.156 ($5.00)
-- 2026-11-24 weather_forecast: Will the highest temperature in Qingdao be 16°C on November 26? -> No at 0.572 ($5.00)
+- 2026-11-24 fade_move: S&P 500 (SPY) closes above $725 on November 24? -> Yes at 0.146 ($5.00)
+- 2026-11-24 follow_move_2: SPY (SPY) Up or Down on November 24? -> Down at 0.827 ($5.00)
+- 2026-11-24 follow_move_big: Will Meta (META) close above $600 on November 24? -> No at 0.847 ($5.00)
+- 2026-11-24 sports_underdog: Florianopolis: Andrey Chepelev vs Eduardo Ribeiro -> Andrey Chepelev at 0.290 ($5.00)
+- 2026-11-24 weather_forecast: Will the lowest temperature in Denver be 25°F or below on November 26? -> No at 0.792 ($3.96)
 - 2026-11-24 follow_move_crypto: Will Solana reach $80 in November? -> No at 0.772 ($5.00)
 - 2026-11-24 move_ai_clean: Will Microsoft Corporation (MSFT) hit (HIGH) $510 in November? -> Yes at 0.434 ($5.00)
 
@@ -81,5 +81,5 @@ Today: 5 checks, $0.52 of OpenAI credit (limit $1.00 a day). Since the start: 47
 
 5 near-gaps recorded (full sets within a few cents of their payout). Cheapest: Democratic 2028 presidential odds on November 27? (yes), 0.995 for a $1 payout.
 
-Runs in the last 24 hours: 37 (0 with a problem).
+Runs in the last 24 hours: 36 (0 with a problem).
 45 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
