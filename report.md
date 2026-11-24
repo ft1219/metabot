@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-24 00:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-24 00:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 11 | 4/11 | +62.4% | +$34.31 | 5 | 15 | too early |
-| 2 | sure_thing | 3533 | 3287/3533 | -0.6% | -$105.43 | 18 | 173 | FAIL |
+| 2 | sure_thing | 3534 | 3288/3534 | -0.6% | -$104.90 | 18 | 180 | FAIL |
 | 3 | follow_move | 668 | 413/668 | -1.0% | -$32.84 | 19 | 134 | FAIL |
-| 4 | safe_no_week | 1268 | 1182/1268 | -2.7% | -$169.81 | 19 | 362 | FAIL |
-| 5 | follow_move_cheap | 122 | 43/122 | -2.8% | -$17.09 | 8 | 87 | too early |
-| 6 | fade_move | 729 | 238/729 | -5.3% | -$193.69 | 19 | 145 | FAIL |
+| 4 | safe_no_week | 1270 | 1184/1270 | -2.7% | -$169.45 | 19 | 362 | FAIL |
+| 5 | follow_move_cheap | 122 | 43/122 | -2.8% | -$17.09 | 8 | 88 | too early |
+| 6 | fade_move | 729 | 238/729 | -5.3% | -$193.69 | 19 | 146 | FAIL |
 | 7 | follow_move_2 | 245 | 145/245 | -6.8% | -$82.96 | 8 | 122 | too early |
 | 8 | follow_move_big | 205 | 131/205 | -7.9% | -$80.79 | 8 | 91 | too early |
-| 9 | sports_underdog | 2669 | 613/2669 | -14.6% | -$1932.95 | 17 | 80 | FAIL |
-| 10 | weather_forecast | 929 | 477/929 | -19.3% | -$882.14 | 17 | 154 | FAIL |
+| 9 | sports_underdog | 2671 | 613/2671 | -14.6% | -$1942.95 | 17 | 86 | FAIL |
+| 10 | weather_forecast | 931 | 478/931 | -19.3% | -$884.36 | 17 | 152 | FAIL |
 | 11 | follow_move_crypto | 84 | 39/84 | -26.3% | -$110.63 | 7 | 42 | too early |
 | 12 | move_ai_clean | 7 | 3/7 | +20.8% | +$7.27 | 4 | 10 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 3747 | 1851/3747 | -5.6% | -$1034.14 | 19 | 273 | yardstick |
+| 14 | coin_flip | 3749 | 1852/3749 | -5.5% | -$1034.39 | 19 | 279 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | sure_thing | follow_move | safe_no_week | follow_move_cheap | fade_move | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | move_ai_clean | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-24 | -$5.00 | +$6.47 | +$6.33 | +$0.44 | -$5.00 | -$25.00 | +$6.33 | +$7.19 | -$75.00 | -$4.68 |  |  |  | -$3.63 |
+| 2026-11-24 | -$5.00 | +$7.00 | +$6.33 | +$0.80 | -$5.00 | -$25.00 | +$6.33 | +$7.19 | -$85.00 | -$6.89 |  |  |  | -$3.87 |
 | 2026-11-23 | -$25.00 | +$27.45 | -$41.97 | +$2.47 | -$19.72 | -$110.21 | -$47.22 | +$1.85 | -$59.98 | -$91.52 | -$38.17 | -$15.00 |  | +$82.59 |
 | 2026-11-22 | -$3.95 | -$14.57 | -$13.59 | +$9.81 | -$13.94 | +$42.30 | -$3.52 | -$26.18 | -$172.97 | -$59.01 | -$8.55 | -$3.95 |  | -$214.44 |
 | 2026-11-21 | +$7.00 | -$28.79 | -$10.88 | -$3.69 | +$19.46 | +$37.86 | +$11.35 | -$13.12 | -$332.62 | -$52.17 | -$8.79 | +$7.00 |  | -$197.98 |
@@ -58,14 +58,14 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 ## Latest pretend buys (newest of each strategy first)
 
 - 2026-11-24 move_ai: Ethereum Up or Down on November 24? -> Up at 0.133 ($5.00)
-- 2026-11-24 sure_thing: Al Nassr Club vs. Al Sadd SC: O/U 1.5 -> Over at 0.914 ($5.00)
+- 2026-11-24 sure_thing: Crawley Town FC vs. Barnet FC: Barnet FC O/U 2.5 Corners -> Over at 0.952 ($5.00)
 - 2026-11-24 follow_move: Will Tesla (TSLA) close above $370 end of November? -> Yes at 0.789 ($5.00)
-- 2026-11-23 safe_no_week: Will Canada win the 2026 Davis Cup Finals? -> No at 0.971 ($5.00)
-- 2026-11-23 follow_move_cheap: Will PSOE win the most seats in the Basque Country in the 2026 Spanish general election? -> Yes at 0.310 ($5.00)
-- 2026-11-23 fade_move: Will Vox win fewer than 56 seats in the 2026 Spanish general election? -> Yes at 0.240 ($5.00)
+- 2026-11-24 safe_no_week: Will Junts win the most seats in Girona in the 2026 Spanish general election? -> No at 0.982 ($5.00)
+- 2026-11-24 follow_move_cheap: Will Gold (XAUUSD) hit (HIGH) $3,750 Week of November 23 2026? -> Yes at 0.462 ($5.00)
+- 2026-11-24 fade_move: XRP Up or Down on November 24? -> Up at 0.171 ($5.00)
 - 2026-11-24 follow_move_2: Will Tesla (TSLA) close above $370 end of November? -> Yes at 0.789 ($5.00)
 - 2026-11-23 follow_move_big: Will Google (GOOGL) close above $280 end of November? -> Yes at 0.652 ($5.00)
-- 2026-11-24 sports_underdog: Counter-Strike: Villainous vs Wanted Goons (BO3) - CROSSFIRE Playoffs -> Wanted Goons at 0.280 ($5.00)
+- 2026-11-24 sports_underdog: Playford: Edward Winter vs Li Tu -> Edward Winter at 0.361 ($5.00)
 - 2026-11-24 weather_forecast: Will the lowest temperature in Wellington be 16°C on November 25? -> No at 0.382 ($3.09)
 - 2026-11-23 follow_move_crypto: Bitcoin Up or Down on November 24? -> Down at 0.632 ($5.00)
 - 2026-11-23 move_ai_clean: Will the price of Solana be between $70 and $80 on November 24? -> No at 0.282 ($5.00)
