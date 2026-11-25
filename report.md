@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-25 06:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-25 06:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | move_ai | 18 | 6/18 | +28.5% | +$25.63 | 5 | 14 | too early |
-| 2 | move_ai_clean | 11 | 4/11 | +9.1% | +$5.00 | 5 | 12 | too early |
-| 3 | sure_thing | 3881 | 3613/3881 | -0.6% | -$107.23 | 19 | 174 | FAIL |
-| 4 | follow_move | 718 | 449/718 | -0.7% | -$25.25 | 20 | 194 | FAIL |
-| 5 | safe_no_week | 1373 | 1279/1373 | -2.7% | -$188.33 | 20 | 485 | FAIL |
-| 6 | follow_move_cheap | 152 | 53/152 | -3.8% | -$28.76 | 9 | 126 | too early |
-| 7 | follow_move_2 | 295 | 181/295 | -5.0% | -$73.94 | 9 | 182 | too early |
+| 1 | move_ai | 18 | 6/18 | +28.5% | +$25.63 | 5 | 15 | too early |
+| 2 | move_ai_clean | 11 | 4/11 | +9.1% | +$5.00 | 5 | 13 | too early |
+| 3 | sure_thing | 3882 | 3614/3882 | -0.6% | -$107.08 | 19 | 181 | FAIL |
+| 4 | follow_move | 718 | 449/718 | -0.7% | -$25.25 | 20 | 195 | FAIL |
+| 5 | safe_no_week | 1378 | 1284/1378 | -2.7% | -$187.03 | 20 | 484 | FAIL |
+| 6 | follow_move_cheap | 152 | 53/152 | -3.8% | -$28.76 | 9 | 128 | too early |
+| 7 | follow_move_2 | 295 | 181/295 | -5.0% | -$73.94 | 9 | 183 | too early |
 | 8 | fade_move | 787 | 254/787 | -5.8% | -$228.13 | 20 | 211 | FAIL |
-| 9 | follow_move_big | 250 | 163/250 | -7.0% | -$86.82 | 9 | 120 | too early |
-| 10 | sports_underdog | 2978 | 696/2978 | -13.1% | -$1941.61 | 18 | 34 | FAIL |
-| 11 | weather_forecast | 1005 | 517/1005 | -19.3% | -$955.97 | 18 | 158 | FAIL |
+| 9 | follow_move_big | 250 | 163/250 | -7.0% | -$86.82 | 9 | 121 | too early |
+| 10 | sports_underdog | 2980 | 697/2980 | -13.0% | -$1930.68 | 18 | 39 | FAIL |
+| 11 | weather_forecast | 1010 | 520/1010 | -19.3% | -$958.62 | 18 | 155 | FAIL |
 | 12 | follow_move_crypto | 96 | 48/96 | -22.0% | -$105.72 | 8 | 56 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4135 | 2043/4135 | -5.2% | -$1071.02 | 20 | 244 | yardstick |
+| 14 | coin_flip | 4142 | 2047/4142 | -5.2% | -$1069.43 | 20 | 245 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | sure_thing | follow_move | safe_no_week | follow_move_cheap | follow_move_2 | fade_move | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-25 |  |  | +$9.47 | +$7.84 | -$11.50 | +$3.38 | +$7.84 | -$21.83 | -$2.39 | -$44.59 | +$8.30 |  |  | -$16.34 |
+| 2026-11-25 |  |  | +$9.63 | +$7.84 | -$10.19 | +$3.38 | +$7.84 | -$21.83 | -$2.39 | -$33.66 | +$5.65 |  |  | -$14.75 |
 | 2026-11-24 | -$13.69 | -$2.27 | -$4.80 | +$6.07 | -$6.58 | -$20.06 | +$7.51 | -$37.61 | +$3.56 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
 | 2026-11-23 | -$25.00 | -$15.00 | +$27.45 | -$41.97 | +$2.47 | -$19.72 | -$47.22 | -$110.21 | +$1.85 | -$59.98 | -$91.52 | -$38.17 |  | +$82.59 |
 | 2026-11-22 | -$3.95 | -$3.95 | -$14.57 | -$13.59 | +$9.81 | -$13.94 | -$3.52 | +$42.30 | -$26.18 | -$172.97 | -$59.01 | -$8.55 |  | -$214.44 |
@@ -57,25 +57,25 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-24 move_ai: Will Meta Platforms, Inc. (META) hit (HIGH) $630 Week of November 23 2026? -> Yes at 0.114 ($5.00)
-- 2026-11-24 move_ai_clean: Will Meta Platforms, Inc. (META) hit (HIGH) $630 Week of November 23 2026? -> Yes at 0.114 ($5.00)
-- 2026-11-25 sure_thing: Spread: Lille OSC (-1.5) -> FC Bayern München at 0.956 ($5.00)
-- 2026-11-25 follow_move: Will PP win the Spanish election by 15-21 seats over PSOE? -> Yes at 0.294 ($5.00)
-- 2026-11-25 safe_no_week: Will Russia target Kyiv on November 27, 2026? -> Yes at 0.940 ($5.00)
-- 2026-11-25 follow_move_cheap: Will Jensen Huang say "AI" 30+ times during his GTC Washington, D.C. keynote? -> No at 0.452 ($5.00)
-- 2026-11-25 follow_move_2: Will Matevž Frangež win the 2026 Maribor mayoral election? -> Yes at 0.622 ($5.00)
+- 2026-11-25 move_ai: Will Bitcoin dip to $58,000 November 23-29? -> Yes at 0.712 ($5.00)
+- 2026-11-25 move_ai_clean: Will Bitcoin dip to $58,000 November 23-29? -> Yes at 0.712 ($5.00)
+- 2026-11-25 sure_thing: Will Apple (AAPL) close above $345 on November 25? -> Yes at 0.953 ($5.00)
+- 2026-11-25 follow_move: Will US gas hit $3.50 (Low) in November? -> Yes at 0.550 ($5.00)
+- 2026-11-25 safe_no_week: Will the highest temperature in Shanghai be 19°C on November 27? -> No at 0.960 ($5.00)
+- 2026-11-25 follow_move_cheap: Will Brazil's Q3 2026 GDP growth rate (QoQ) be between 0.0% and 0.2%? -> Yes at 0.249 ($5.00)
+- 2026-11-25 follow_move_2: Will US gas hit $3.50 (Low) in November? -> Yes at 0.550 ($5.00)
 - 2026-11-25 fade_move: Will the Ornn H200 Index be at least $6.50 on November 30, 2026? -> No at 0.502 ($5.00)
-- 2026-11-25 follow_move_big: Will the Ornn H200 Index be at least $6.50 on November 30, 2026? -> Yes at 0.562 ($5.00)
-- 2026-11-25 sports_underdog: Will Reilac Shiga FC vs. Kochi United SC end in a draw? -> Yes at 0.310 ($5.00)
-- 2026-11-25 weather_forecast: Will the highest temperature in Seoul (Incheon) be 16°C on November 27? -> No at 0.682 ($5.00)
+- 2026-11-25 follow_move_big: Will Xiaomi have the best Chinese AI model at the end of November 2026? -> Yes at 0.749 ($5.00)
+- 2026-11-25 sports_underdog: Will SC Sagamihara vs. Ehime FC end in a draw? -> Yes at 0.259 ($5.00)
+- 2026-11-25 weather_forecast: Will the highest temperature in Manila be 34°C on November 27? -> No at 0.742 ($5.00)
 - 2026-11-25 follow_move_crypto: Will the price of Solana be between $60 and $70 on November 30? -> Yes at 0.512 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
 
-Today: 2 checks, $0.26 of OpenAI credit (limit $1.00 a day). Since the start: 52 checks ($5.25 spent in all); on 32 the AI beat the price by 5c or more and 32 were bought (the rest found no seller at that price); 0 failed. The AI saw betting odds while searching on 13 of the 52 it answered. 3 checks from the first version (19 Nov) are left out here and in the AI strategies' results: a bug sent each of them another market's question.
+Today: 3 checks, $0.36 of OpenAI credit (limit $1.00 a day). Since the start: 53 checks ($5.35 spent in all); on 33 the AI beat the price by 5c or more and 33 were bought (the rest found no seller at that price); 0 failed. The AI saw betting odds while searching on 13 of the 53 it answered. 3 checks from the first version (19 Nov) are left out here and in the AI strategies' results: a bug sent each of them another market's question.
 - All checked markets, 33 with a result: AI error 0.297, market price 0.253 (lower is better; always saying 50% scores 0.250); the AI was closer on 11.
 - Checks where it saw no betting odds, 23 with a result: AI error 0.272, market price 0.224 (lower is better; always saying 50% scores 0.250); the AI was closer on 8.
-19 more checked markets are waiting for their result. A few dozen results say little; read this after 100 or more.
+20 more checked markets are waiting for their result. A few dozen results say little; read this after 100 or more.
 
 ## Price gaps seen today
 
