@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-25 00:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-25 00:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-25 00:07 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 18 | 6/18 | +28.5% | +$25.63 | 5 | 14 | too early |
 | 2 | move_ai_clean | 11 | 4/11 | +9.1% | +$5.00 | 5 | 12 | too early |
-| 3 | sure_thing | 3828 | 3563/3828 | -0.6% | -$112.70 | 19 | 158 | FAIL |
-| 4 | follow_move | 714 | 447/714 | -0.8% | -$30.20 | 20 | 185 | FAIL |
-| 5 | safe_no_week | 1361 | 1269/1361 | -2.7% | -$180.75 | 20 | 469 | FAIL |
-| 6 | follow_move_cheap | 149 | 52/149 | -4.3% | -$32.15 | 8 | 122 | too early |
-| 7 | follow_move_2 | 291 | 179/291 | -5.4% | -$78.88 | 9 | 173 | too early |
-| 8 | fade_move | 783 | 252/783 | -5.7% | -$221.30 | 20 | 202 | FAIL |
+| 3 | sure_thing | 3831 | 3565/3831 | -0.6% | -$117.13 | 19 | 163 | FAIL |
+| 4 | follow_move | 714 | 447/714 | -0.8% | -$30.20 | 20 | 187 | FAIL |
+| 5 | safe_no_week | 1363 | 1269/1363 | -2.8% | -$190.75 | 20 | 472 | FAIL |
+| 6 | follow_move_cheap | 149 | 52/149 | -4.3% | -$32.15 | 8 | 123 | too early |
+| 7 | follow_move_2 | 291 | 179/291 | -5.4% | -$78.88 | 9 | 175 | too early |
+| 8 | fade_move | 783 | 252/783 | -5.7% | -$221.30 | 20 | 206 | FAIL |
 | 9 | follow_move_big | 248 | 162/248 | -6.7% | -$83.38 | 9 | 114 | too early |
-| 10 | sports_underdog | 2899 | 678/2899 | -13.1% | -$1889.08 | 18 | 86 | FAIL |
-| 11 | weather_forecast | 999 | 512/999 | -19.6% | -$966.08 | 18 | 151 | FAIL |
+| 10 | sports_underdog | 2911 | 681/2911 | -13.1% | -$1894.07 | 18 | 82 | FAIL |
+| 11 | weather_forecast | 1001 | 514/1001 | -19.5% | -$961.09 | 18 | 150 | FAIL |
 | 12 | follow_move_crypto | 96 | 48/96 | -22.0% | -$105.72 | 8 | 54 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4055 | 2002/4055 | -5.3% | -$1072.36 | 20 | 253 | yardstick |
+| 14 | coin_flip | 4068 | 2009/4068 | -5.2% | -$1057.16 | 20 | 248 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | sure_thing | follow_move | safe_no_week | follow_move_cheap | follow_move_2 | fade_move | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-25 |  |  | +$4.00 | +$2.89 | -$3.91 |  | +$2.89 | -$15.00 | +$1.04 | +$7.94 | -$1.81 |  |  | -$17.69 |
+| 2026-11-25 |  |  | -$0.42 | +$2.89 | -$13.91 |  | +$2.89 | -$15.00 | +$1.04 | +$2.95 | +$3.18 |  |  | -$2.48 |
 | 2026-11-24 | -$13.69 | -$2.27 | -$4.80 | +$6.07 | -$6.58 | -$20.06 | +$7.51 | -$37.61 | +$3.56 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
 | 2026-11-23 | -$25.00 | -$15.00 | +$27.45 | -$41.97 | +$2.47 | -$19.72 | -$47.22 | -$110.21 | +$1.85 | -$59.98 | -$91.52 | -$38.17 |  | +$82.59 |
 | 2026-11-22 | -$3.95 | -$3.95 | -$14.57 | -$13.59 | +$9.81 | -$13.94 | -$3.52 | +$42.30 | -$26.18 | -$172.97 | -$59.01 | -$8.55 |  | -$214.44 |
@@ -59,15 +59,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-24 move_ai: Will Meta Platforms, Inc. (META) hit (HIGH) $630 Week of November 23 2026? -> Yes at 0.114 ($5.00)
 - 2026-11-24 move_ai_clean: Will Meta Platforms, Inc. (META) hit (HIGH) $630 Week of November 23 2026? -> Yes at 0.114 ($5.00)
-- 2026-11-25 sure_thing: Jets vs. Bruins: O/U 3.5 -> Over at 0.914 ($5.00)
-- 2026-11-24 follow_move: Will PP win the most seats in Navarre in the 2026 Spanish general election? -> No at 0.331 ($5.00)
-- 2026-11-25 safe_no_week: Will the highest temperature in Chicago be between 48-49°F on November 26? -> No at 0.978 ($5.00)
-- 2026-11-25 follow_move_cheap: Will PP win the most seats in Santa Cruz de Tenerife in the 2026 Spanish general election? -> Yes at 0.372 ($5.00)
-- 2026-11-24 follow_move_2: Will PP win the most seats in Navarre in the 2026 Spanish general election? -> No at 0.331 ($5.00)
-- 2026-11-24 fade_move: Will PP win the most seats in Navarre in the 2026 Spanish general election? -> Yes at 0.740 ($5.00)
+- 2026-11-25 sure_thing: Exact Score: FC Internazionale Milano 1 - 0 VfB Stuttgart? -> No at 0.959 ($5.00)
+- 2026-11-25 follow_move: Will the 7-day average ship traffic through the Malacca Strait be 230+ on November 30? -> No at 0.742 ($5.00)
+- 2026-11-25 safe_no_week: Will the highest temperature in Los Angeles be between 76-77°F on November 26? -> No at 0.931 ($5.00)
+- 2026-11-25 follow_move_cheap: Will Ukraine target Moscow on November 26, 2026? -> Yes at 0.490 ($5.00)
+- 2026-11-25 follow_move_2: Will Ukraine target Moscow on November 26, 2026? -> Yes at 0.490 ($5.00)
+- 2026-11-25 fade_move: Will "Hexed" score at least 60 on the Rotten Tomatoes Tomatometer? -> No at 0.131 ($5.00)
 - 2026-11-25 follow_move_big: Will 1600+ ships transit the Malacca Strait week of November 23? -> No at 0.632 ($5.00)
-- 2026-11-25 sports_underdog: Spread: Tennessee Tech Golden Eagles (-23.5) -> Tennessee Tech Golden Eagles at 0.259 ($5.00)
-- 2026-11-25 weather_forecast: Will the lowest temperature in Paris be -1°C on November 26? -> No at 0.672 ($5.00)
+- 2026-11-25 sports_underdog: Celtics vs. Wizards -> Wizards at 0.229 ($5.00)
+- 2026-11-25 weather_forecast: Will the lowest temperature in Shanghai be 10°C on November 26? -> No at 0.774 ($5.00)
 - 2026-11-24 follow_move_crypto: Will the price of Solana be between $60 and $70 on November 29? -> Yes at 0.502 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
