@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-25 18:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-25 18:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-25 18:07 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 21 | 8/21 | +57.4% | +$60.29 | 6 | 15 | too early |
 | 2 | move_ai_clean | 14 | 6/14 | +56.7% | +$39.67 | 6 | 13 | too early |
-| 3 | sure_thing | 3980 | 3706/3980 | -0.5% | -$104.44 | 19 | 186 | FAIL |
-| 4 | safe_no_week | 1418 | 1323/1418 | -2.6% | -$182.07 | 20 | 508 | FAIL |
+| 3 | sure_thing | 3980 | 3706/3980 | -0.5% | -$104.44 | 19 | 194 | FAIL |
+| 4 | safe_no_week | 1418 | 1323/1418 | -2.6% | -$182.07 | 20 | 509 | FAIL |
 | 5 | follow_move | 748 | 459/748 | -2.6% | -$96.94 | 20 | 201 | FAIL |
 | 6 | fade_move | 816 | 272/816 | -3.8% | -$154.71 | 20 | 223 | FAIL |
-| 7 | follow_move_cheap | 172 | 60/172 | -5.9% | -$50.50 | 9 | 136 | too early |
+| 7 | follow_move_cheap | 172 | 60/172 | -5.9% | -$50.50 | 9 | 137 | too early |
 | 8 | follow_move_2 | 325 | 192/325 | -8.4% | -$135.86 | 9 | 190 | too early |
-| 9 | follow_move_big | 277 | 176/277 | -8.7% | -$120.57 | 9 | 120 | too early |
-| 10 | sports_underdog | 3062 | 722/3062 | -12.5% | -$1911.22 | 18 | 74 | FAIL |
+| 9 | follow_move_big | 277 | 176/277 | -8.7% | -$120.57 | 9 | 121 | too early |
+| 10 | sports_underdog | 3066 | 723/3066 | -12.5% | -$1906.94 | 18 | 78 | FAIL |
 | 11 | weather_forecast | 1046 | 538/1046 | -19.2% | -$988.96 | 18 | 164 | FAIL |
 | 12 | follow_move_crypto | 110 | 55/110 | -22.2% | -$121.97 | 9 | 47 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4254 | 2100/4254 | -5.4% | -$1136.03 | 20 | 261 | yardstick |
+| 14 | coin_flip | 4258 | 2101/4258 | -5.4% | -$1146.27 | 20 | 265 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | sure_thing | safe_no_week | follow_move | fade_move | follow_move_cheap | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-25 | +$34.67 | +$34.67 | +$12.27 | -$5.23 | -$63.84 | +$51.58 | -$18.35 | -$54.09 | -$36.15 | -$14.20 | -$24.69 | -$16.25 |  | -$81.35 |
+| 2026-11-25 | +$34.67 | +$34.67 | +$12.27 | -$5.23 | -$63.84 | +$51.58 | -$18.35 | -$54.09 | -$36.15 | -$9.92 | -$24.69 | -$16.25 |  | -$91.60 |
 | 2026-11-24 | -$13.69 | -$2.27 | -$4.80 | -$6.58 | +$6.07 | -$37.61 | -$20.06 | +$7.51 | +$3.56 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
 | 2026-11-23 | -$25.00 | -$15.00 | +$27.45 | +$2.47 | -$41.97 | -$110.21 | -$19.72 | -$47.22 | +$1.85 | -$59.98 | -$91.52 | -$38.17 |  | +$82.59 |
 | 2026-11-22 | -$3.95 | -$3.95 | -$14.57 | +$9.81 | -$13.59 | +$42.30 | -$13.94 | -$3.52 | -$26.18 | -$172.97 | -$59.01 | -$8.55 |  | -$214.44 |
@@ -59,14 +59,14 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-25 move_ai: Will Microsoft Corporation (MSFT) hit (LOW) $472.50 Week of November 23 2026? -> Yes at 0.596 ($5.00)
 - 2026-11-25 move_ai_clean: Will Microsoft Corporation (MSFT) hit (LOW) $472.50 Week of November 23 2026? -> Yes at 0.596 ($5.00)
-- 2026-11-25 sure_thing: FC Red Bull Salzburg vs. Ararat-Armenia FA: O/U 1.5 -> Over at 0.914 ($5.00)
-- 2026-11-25 safe_no_week: Will the price of Ethereum be above $1,400 on December 2? -> Yes at 0.970 ($5.00)
+- 2026-11-25 sure_thing: Exact Score: PKR Svay Rieng 0 - 0 Machida Zelvia? -> No at 0.943 ($5.00)
+- 2026-11-25 safe_no_week: Will the highest temperature in Jeddah be 36°C on November 27? -> No at 0.960 ($5.00)
 - 2026-11-25 follow_move: Will Trump meet with Elon Musk by November 30, 2026? -> Yes at 0.424 ($5.00)
 - 2026-11-25 fade_move: Will Trump meet with Elon Musk by November 30, 2026? -> No at 0.607 ($5.00)
-- 2026-11-25 follow_move_cheap: Will Trump meet with Elon Musk by November 30, 2026? -> Yes at 0.424 ($5.00)
+- 2026-11-25 follow_move_cheap: Will the 7-day average ship traffic through the Malacca Strait be 230+ on November 30? -> Yes at 0.432 ($5.00)
 - 2026-11-25 follow_move_2: Solana Up or Down on November 26? -> Up at 0.722 ($5.00)
-- 2026-11-25 follow_move_big: Will the 10-year Treasury yield dip below 4.82% in November? -> Yes at 0.502 ($5.00)
-- 2026-11-25 sports_underdog: Spread: Georgia State Panthers (-9.5) -> Georgia State Panthers at 0.259 ($5.00)
+- 2026-11-25 follow_move_big: Solana Up or Down on November 26? -> Up at 0.742 ($5.00)
+- 2026-11-25 sports_underdog: Will CF Fuenlabrada win on 2026-11-25? -> Yes at 0.310 ($5.00)
 - 2026-11-25 weather_forecast: Will the highest temperature in Shenzhen be 24°C on November 27? -> No at 0.652 ($5.00)
 - 2026-11-25 follow_move_crypto: Solana Up or Down on November 26? -> Up at 0.722 ($5.00)
 
@@ -81,5 +81,5 @@ Today: 6 checks, $0.66 of OpenAI credit (limit $1.00 a day). Since the start: 56
 
 No near-gaps today.
 
-Runs in the last 24 hours: 36 (0 with a problem).
+Runs in the last 24 hours: 35 (0 with a problem).
 42 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
