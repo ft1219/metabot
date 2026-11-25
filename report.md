@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-25 14:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-25 14:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-25 14:07 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 19 | 7/19 | +29.1% | +$27.65 | 6 | 16 | too early |
 | 2 | move_ai_clean | 12 | 5/12 | +11.7% | +$7.03 | 6 | 14 | too early |
-| 3 | sure_thing | 3954 | 3681/3954 | -0.6% | -$110.71 | 19 | 179 | FAIL |
-| 4 | follow_move | 724 | 451/724 | -1.1% | -$38.04 | 20 | 208 | FAIL |
-| 5 | safe_no_week | 1389 | 1294/1389 | -2.7% | -$189.52 | 20 | 520 | FAIL |
-| 6 | follow_move_cheap | 155 | 54/155 | -4.2% | -$32.71 | 9 | 134 | too early |
-| 7 | follow_move_2 | 301 | 184/301 | -5.1% | -$76.97 | 9 | 196 | too early |
-| 8 | fade_move | 793 | 257/793 | -5.6% | -$221.66 | 20 | 226 | FAIL |
-| 9 | follow_move_big | 257 | 167/257 | -7.0% | -$89.69 | 9 | 128 | too early |
-| 10 | sports_underdog | 3028 | 712/3028 | -12.7% | -$1915.08 | 18 | 68 | FAIL |
+| 3 | sure_thing | 3956 | 3683/3956 | -0.6% | -$109.96 | 19 | 185 | FAIL |
+| 4 | follow_move | 724 | 451/724 | -1.1% | -$38.04 | 20 | 210 | FAIL |
+| 5 | safe_no_week | 1389 | 1294/1389 | -2.7% | -$189.52 | 20 | 523 | FAIL |
+| 6 | follow_move_cheap | 155 | 54/155 | -4.2% | -$32.71 | 9 | 141 | too early |
+| 7 | follow_move_2 | 301 | 184/301 | -5.1% | -$76.97 | 9 | 199 | too early |
+| 8 | fade_move | 793 | 257/793 | -5.6% | -$221.66 | 20 | 230 | FAIL |
+| 9 | follow_move_big | 257 | 167/257 | -7.0% | -$89.69 | 9 | 133 | too early |
+| 10 | sports_underdog | 3032 | 712/3032 | -12.8% | -$1935.08 | 18 | 72 | FAIL |
 | 11 | weather_forecast | 1024 | 526/1024 | -19.5% | -$983.72 | 18 | 177 | FAIL |
 | 12 | follow_move_crypto | 98 | 50/98 | -20.4% | -$99.80 | 9 | 54 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4230 | 2089/4230 | -5.4% | -$1125.15 | 20 | 245 | yardstick |
+| 14 | coin_flip | 4232 | 2090/4232 | -5.4% | -$1125.40 | 20 | 251 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | sure_thing | follow_move | safe_no_week | follow_move_cheap | follow_move_2 | fade_move | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-25 | +$2.02 | +$2.02 | +$5.99 | -$4.95 | -$12.68 | -$0.57 | +$4.81 | -$15.36 | -$5.26 | -$18.06 | -$19.45 | +$5.92 |  | -$70.48 |
+| 2026-11-25 | +$2.02 | +$2.02 | +$6.74 | -$4.95 | -$12.68 | -$0.57 | +$4.81 | -$15.36 | -$5.26 | -$38.06 | -$19.45 | +$5.92 |  | -$70.72 |
 | 2026-11-24 | -$13.69 | -$2.27 | -$4.80 | +$6.07 | -$6.58 | -$20.06 | +$7.51 | -$37.61 | +$3.56 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
 | 2026-11-23 | -$25.00 | -$15.00 | +$27.45 | -$41.97 | +$2.47 | -$19.72 | -$47.22 | -$110.21 | +$1.85 | -$59.98 | -$91.52 | -$38.17 |  | +$82.59 |
 | 2026-11-22 | -$3.95 | -$3.95 | -$14.57 | -$13.59 | +$9.81 | -$13.94 | -$3.52 | +$42.30 | -$26.18 | -$172.97 | -$59.01 | -$8.55 |  | -$214.44 |
@@ -59,14 +59,14 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-25 move_ai: Will the price of Bitcoin be above $56,000 on November 30? -> No at 0.302 ($5.00)
 - 2026-11-25 move_ai_clean: Will the price of Bitcoin be above $56,000 on November 30? -> No at 0.302 ($5.00)
-- 2026-11-25 sure_thing: Middle Tennessee Blue Raiders vs. Montana State Bobcats (W) -> Montana State Bobcats at 0.904 ($5.00)
-- 2026-11-25 follow_move: Apple (AAPL) Up or Down on November 25? -> Down at 0.711 ($5.00)
-- 2026-11-25 safe_no_week: Will it rain in Atlanta, GA on November 26? -> Yes at 0.950 ($5.00)
-- 2026-11-25 follow_move_cheap: Military action against King Khalid International Airport (RUH) by November 30? -> Yes at 0.370 ($5.00)
-- 2026-11-25 follow_move_2: Netflix (NFLX) Up or Down on November 25? -> Down at 0.808 ($5.00)
-- 2026-11-25 fade_move: Meta (META) Up or Down on November 25? -> Up at 0.277 ($5.00)
-- 2026-11-25 follow_move_big: Will Apple (AAPL) close above $350 on November 25? -> Yes at 0.701 ($5.00)
-- 2026-11-25 sports_underdog: Spread: Al-Muharraq SC (-1.5) -> Al-Muharraq SC at 0.341 ($5.00)
+- 2026-11-25 sure_thing: Meta (META) Up or Down on November 25? -> Down at 0.933 ($5.00)
+- 2026-11-25 follow_move: Will the 5-year Treasury yield dip below 4.56% in November? -> Yes at 0.359 ($5.00)
+- 2026-11-25 safe_no_week: Will Micron (MU) finish week of November 23 above $630? -> No at 0.914 ($5.00)
+- 2026-11-25 follow_move_cheap: Will Microsoft (MSFT) close above $470 on November 25? -> No at 0.188 ($5.00)
+- 2026-11-25 follow_move_2: Will the 5-year Treasury yield dip below 4.56% in November? -> Yes at 0.359 ($5.00)
+- 2026-11-25 fade_move: Will SpaceX (SPCX) close above $120 end of November? -> Yes at 0.422 ($5.00)
+- 2026-11-25 follow_move_big: Will OpenAI’s valuation be between $1.20T and $1.30T at the end of November 2026? -> Yes at 0.402 ($5.00)
+- 2026-11-25 sports_underdog: Dota 2: V vs Amaru Gaming (BO3) - Esports Pro Circuit  Group A -> Amaru Gaming at 0.341 ($3.41)
 - 2026-11-25 weather_forecast: Will the highest temperature in Buenos Aires be 33°C on November 27? -> No at 0.682 ($5.00)
 - 2026-11-25 follow_move_crypto: Will the price of Solana be between $60 and $70 on November 30? -> Yes at 0.512 ($5.00)
 
