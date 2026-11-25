@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-25 20:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-25 20:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-25 20:07 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 21 | 8/21 | +57.4% | +$60.29 | 6 | 16 | too early |
 | 2 | move_ai_clean | 14 | 6/14 | +56.7% | +$39.67 | 6 | 14 | too early |
-| 3 | sure_thing | 4003 | 3728/4003 | -0.5% | -$102.46 | 19 | 187 | FAIL |
-| 4 | safe_no_week | 1421 | 1326/1421 | -2.6% | -$181.66 | 20 | 514 | FAIL |
-| 5 | follow_move | 748 | 459/748 | -2.6% | -$96.94 | 20 | 201 | FAIL |
+| 3 | sure_thing | 4003 | 3728/4003 | -0.5% | -$102.46 | 19 | 195 | FAIL |
+| 4 | safe_no_week | 1421 | 1326/1421 | -2.6% | -$181.66 | 20 | 516 | FAIL |
+| 5 | follow_move | 748 | 459/748 | -2.6% | -$96.94 | 20 | 202 | FAIL |
 | 6 | fade_move | 816 | 272/816 | -3.8% | -$154.71 | 20 | 223 | FAIL |
 | 7 | follow_move_cheap | 172 | 60/172 | -5.9% | -$50.50 | 9 | 138 | too early |
-| 8 | follow_move_2 | 325 | 192/325 | -8.4% | -$135.86 | 9 | 190 | too early |
-| 9 | follow_move_big | 277 | 176/277 | -8.7% | -$120.57 | 9 | 122 | too early |
-| 10 | sports_underdog | 3082 | 725/3082 | -12.6% | -$1937.76 | 18 | 78 | FAIL |
+| 8 | follow_move_2 | 325 | 192/325 | -8.4% | -$135.86 | 9 | 191 | too early |
+| 9 | follow_move_big | 277 | 176/277 | -8.7% | -$120.57 | 9 | 123 | too early |
+| 10 | sports_underdog | 3083 | 725/3083 | -12.7% | -$1942.76 | 18 | 85 | FAIL |
 | 11 | weather_forecast | 1049 | 538/1049 | -19.4% | -$1003.96 | 18 | 166 | FAIL |
 | 12 | follow_move_crypto | 110 | 55/110 | -22.2% | -$121.97 | 9 | 47 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4271 | 2110/4271 | -5.3% | -$1118.64 | 20 | 268 | yardstick |
+| 14 | coin_flip | 4276 | 2113/4276 | -5.2% | -$1113.09 | 20 | 271 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | sure_thing | safe_no_week | follow_move | fade_move | follow_move_cheap | follow_move_2 | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-25 | +$34.67 | +$34.67 | +$14.24 | -$4.82 | -$63.84 | +$51.58 | -$18.35 | -$54.09 | -$36.15 | -$40.75 | -$39.69 | -$16.25 |  | -$63.96 |
+| 2026-11-25 | +$34.67 | +$34.67 | +$14.24 | -$4.82 | -$63.84 | +$51.58 | -$18.35 | -$54.09 | -$36.15 | -$45.75 | -$39.69 | -$16.25 |  | -$58.41 |
 | 2026-11-24 | -$13.69 | -$2.27 | -$4.80 | -$6.58 | +$6.07 | -$37.61 | -$20.06 | +$7.51 | +$3.56 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
 | 2026-11-23 | -$25.00 | -$15.00 | +$27.45 | +$2.47 | -$41.97 | -$110.21 | -$19.72 | -$47.22 | +$1.85 | -$59.98 | -$91.52 | -$38.17 |  | +$82.59 |
 | 2026-11-22 | -$3.95 | -$3.95 | -$14.57 | +$9.81 | -$13.59 | +$42.30 | -$13.94 | -$3.52 | -$26.18 | -$172.97 | -$59.01 | -$8.55 |  | -$214.44 |
@@ -59,14 +59,14 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-25 move_ai: Will Okta (OKTA) Q3 cRPO growth be 14.5% to under 15.5%? -> No at 0.661 ($5.00)
 - 2026-11-25 move_ai_clean: Will Okta (OKTA) Q3 cRPO growth be 14.5% to under 15.5%? -> No at 0.661 ($5.00)
-- 2026-11-25 sure_thing: Exact Score: PFK CSKA Sofia 0 - 0 Trabzonspor? -> No at 0.971 ($5.00)
-- 2026-11-25 safe_no_week: Will the price of Ethereum be between $1,400 and $1,500 on December 2? -> No at 0.960 ($5.00)
-- 2026-11-25 follow_move: Will Trump meet with Elon Musk by November 30, 2026? -> Yes at 0.424 ($5.00)
+- 2026-11-25 sure_thing: Spread: Getafe CF (-3.5) -> SK Iberia 1999 at 0.943 ($5.00)
+- 2026-11-25 safe_no_week: Will NVIDIA (NVDA) close above $135 on November 27? -> Yes at 0.971 ($5.00)
+- 2026-11-25 follow_move: Will Hyperliquid dip to $52 in November? -> No at 0.851 ($5.00)
 - 2026-11-25 fade_move: Will Trump meet with Elon Musk by November 30, 2026? -> No at 0.607 ($5.00)
 - 2026-11-25 follow_move_cheap: Will Micron (MU) finish week of November 23 above $570? -> No at 0.331 ($5.00)
-- 2026-11-25 follow_move_2: Solana Up or Down on November 26? -> Up at 0.722 ($5.00)
-- 2026-11-25 follow_move_big: Will US gas hit $3.50 (Low) in November? -> Yes at 0.818 ($5.00)
-- 2026-11-25 sports_underdog: Campbell Fighting Camels vs. Mercer Bears (W) -> Campbell Fighting Camels at 0.326 ($5.00)
+- 2026-11-25 follow_move_2: Will Hyperliquid dip to $52 in November? -> No at 0.851 ($5.00)
+- 2026-11-25 follow_move_big: Will Brazil's Q3 2026 GDP growth rate (QoQ) be between -0.3% and -0.1%? -> No at 0.772 ($5.00)
+- 2026-11-25 sports_underdog: Portland State Vikings vs. UC Riverside Highlanders: O/U 159.5 -> Over at 0.361 ($5.00)
 - 2026-11-25 weather_forecast: Will the lowest temperature in Tel Aviv be 14°C on November 27? -> No at 0.744 ($5.00)
 - 2026-11-25 follow_move_crypto: Solana Up or Down on November 26? -> Up at 0.722 ($5.00)
 
