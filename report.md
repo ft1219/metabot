@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-25 01:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-25 02:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-25 01:27 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 18 | 6/18 | +28.5% | +$25.63 | 5 | 14 | too early |
 | 2 | move_ai_clean | 11 | 4/11 | +9.1% | +$5.00 | 5 | 12 | too early |
-| 3 | follow_move | 715 | 448/715 | -0.5% | -$16.82 | 20 | 187 | FAIL |
-| 4 | sure_thing | 3835 | 3568/3835 | -0.6% | -$121.18 | 19 | 165 | FAIL |
-| 5 | follow_move_cheap | 150 | 53/150 | -2.5% | -$18.76 | 9 | 122 | too early |
-| 6 | safe_no_week | 1363 | 1269/1363 | -2.8% | -$190.75 | 20 | 473 | FAIL |
-| 7 | follow_move_2 | 292 | 180/292 | -4.5% | -$65.50 | 9 | 175 | too early |
-| 8 | fade_move | 784 | 252/784 | -5.8% | -$226.30 | 20 | 206 | FAIL |
+| 3 | follow_move | 715 | 448/715 | -0.5% | -$16.82 | 20 | 189 | FAIL |
+| 4 | sure_thing | 3837 | 3570/3837 | -0.6% | -$120.83 | 19 | 170 | FAIL |
+| 5 | follow_move_cheap | 150 | 53/150 | -2.5% | -$18.76 | 9 | 123 | too early |
+| 6 | safe_no_week | 1363 | 1269/1363 | -2.8% | -$190.75 | 20 | 475 | FAIL |
+| 7 | follow_move_2 | 292 | 180/292 | -4.5% | -$65.50 | 9 | 177 | too early |
+| 8 | fade_move | 784 | 252/784 | -5.8% | -$226.30 | 20 | 207 | FAIL |
 | 9 | follow_move_big | 248 | 162/248 | -6.7% | -$83.38 | 9 | 114 | too early |
-| 10 | sports_underdog | 2912 | 681/2912 | -13.1% | -$1899.07 | 18 | 89 | FAIL |
-| 11 | weather_forecast | 1001 | 514/1001 | -19.5% | -$961.09 | 18 | 150 | FAIL |
+| 10 | sports_underdog | 2914 | 682/2914 | -13.0% | -$1890.53 | 18 | 89 | FAIL |
+| 11 | weather_forecast | 1001 | 514/1001 | -19.5% | -$961.09 | 18 | 151 | FAIL |
 | 12 | follow_move_crypto | 96 | 48/96 | -22.0% | -$105.72 | 8 | 54 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4076 | 2012/4076 | -5.3% | -$1067.89 | 20 | 248 | yardstick |
+| 14 | coin_flip | 4081 | 2015/4081 | -5.2% | -$1060.10 | 20 | 251 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | follow_move | sure_thing | follow_move_cheap | safe_no_week | follow_move_2 | fade_move | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-25 |  |  | +$16.28 | -$4.47 | +$13.38 | -$13.91 | +$16.28 | -$20.00 | +$1.04 | -$2.05 | +$3.18 |  |  | -$13.21 |
+| 2026-11-25 |  |  | +$16.28 | -$4.13 | +$13.38 | -$13.91 | +$16.28 | -$20.00 | +$1.04 | +$6.49 | +$3.18 |  |  | -$5.43 |
 | 2026-11-24 | -$13.69 | -$2.27 | +$6.07 | -$4.80 | -$20.06 | -$6.58 | +$7.51 | -$37.61 | +$3.56 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
 | 2026-11-23 | -$25.00 | -$15.00 | -$41.97 | +$27.45 | -$19.72 | +$2.47 | -$47.22 | -$110.21 | +$1.85 | -$59.98 | -$91.52 | -$38.17 |  | +$82.59 |
 | 2026-11-22 | -$3.95 | -$3.95 | -$13.59 | -$14.57 | -$13.94 | +$9.81 | -$3.52 | +$42.30 | -$26.18 | -$172.97 | -$59.01 | -$8.55 |  | -$214.44 |
@@ -59,15 +59,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-24 move_ai: Will Meta Platforms, Inc. (META) hit (HIGH) $630 Week of November 23 2026? -> Yes at 0.114 ($5.00)
 - 2026-11-24 move_ai_clean: Will Meta Platforms, Inc. (META) hit (HIGH) $630 Week of November 23 2026? -> Yes at 0.114 ($5.00)
-- 2026-11-25 follow_move: Will Alibaba have the best Chinese AI model at the end of November 2026? -> No at 0.818 ($5.00)
-- 2026-11-25 sure_thing: Exact Score: Al Faisaly (JOR) 0 - 0 Al Rayyan SC? -> No at 0.962 ($5.00)
-- 2026-11-25 follow_move_cheap: Will Ukraine target Moscow on November 26, 2026? -> Yes at 0.490 ($5.00)
-- 2026-11-25 safe_no_week: Will PHIVOLCS raise Mayon to Alert Level 4 by November 30? -> No at 0.970 ($5.00)
-- 2026-11-25 follow_move_2: Will Alibaba have the best Chinese AI model at the end of November 2026? -> No at 0.818 ($5.00)
-- 2026-11-25 fade_move: Will Alibaba have the best Chinese AI model at the end of November 2026? -> Yes at 0.229 ($5.00)
+- 2026-11-25 follow_move: Will Alexandr Stoianoglo win the 2026 Gagauzia gubernatorial election? -> Yes at 0.752 ($5.00)
+- 2026-11-25 sure_thing: Exact Score: Hartlepool United FC 0 - 0 Solihull Moors FC? -> No at 0.952 ($5.00)
+- 2026-11-25 follow_move_cheap: Will the price of Ethereum be between $1,600 and $1,700 on November 29? -> Yes at 0.362 ($5.00)
+- 2026-11-25 safe_no_week: Will the highest temperature in Miami be between 76-77°F on November 26? -> No at 0.921 ($5.00)
+- 2026-11-25 follow_move_2: Will Alexandr Stoianoglo win the 2026 Gagauzia gubernatorial election? -> Yes at 0.752 ($5.00)
+- 2026-11-25 fade_move: Will Alexandr Stoianoglo win the 2026 Gagauzia gubernatorial election? -> No at 0.302 ($5.00)
 - 2026-11-25 follow_move_big: Will 1600+ ships transit the Malacca Strait week of November 23? -> No at 0.632 ($5.00)
-- 2026-11-25 sports_underdog: Spread: Missouri Tigers (-19.5) -> Evansville Purple Aces at 0.239 ($5.00)
-- 2026-11-25 weather_forecast: Will the lowest temperature in Shanghai be 10°C on November 26? -> No at 0.774 ($5.00)
+- 2026-11-25 sports_underdog: Will Giravanz Kitakyushu win on 2026-11-25? -> Yes at 0.351 ($5.00)
+- 2026-11-25 weather_forecast: Will the highest temperature in Helsinki be -1°C on November 26? -> No at 0.562 ($5.00)
 - 2026-11-24 follow_move_crypto: Will the price of Solana be between $60 and $70 on November 29? -> Yes at 0.502 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
@@ -81,5 +81,5 @@ Today: 1 checks, $0.13 of OpenAI credit (limit $1.00 a day). Since the start: 51
 
 No near-gaps today.
 
-Runs in the last 24 hours: 36 (0 with a problem).
+Runs in the last 24 hours: 37 (0 with a problem).
 45 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
