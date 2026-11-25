@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-25 12:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-25 13:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-25 12:47 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 18 | 6/18 | +28.5% | +$25.63 | 5 | 16 | too early |
 | 2 | move_ai_clean | 11 | 4/11 | +9.1% | +$5.00 | 5 | 14 | too early |
-| 3 | sure_thing | 3911 | 3639/3911 | -0.6% | -$118.90 | 19 | 213 | FAIL |
-| 4 | follow_move | 720 | 450/720 | -0.7% | -$24.20 | 20 | 199 | FAIL |
-| 5 | safe_no_week | 1389 | 1294/1389 | -2.7% | -$189.52 | 20 | 514 | FAIL |
+| 3 | sure_thing | 3923 | 3651/3923 | -0.6% | -$114.64 | 19 | 205 | FAIL |
+| 4 | follow_move | 720 | 450/720 | -0.7% | -$24.20 | 20 | 205 | FAIL |
+| 5 | safe_no_week | 1389 | 1294/1389 | -2.7% | -$189.52 | 20 | 520 | FAIL |
 | 6 | follow_move_cheap | 154 | 54/154 | -3.6% | -$27.71 | 9 | 134 | too early |
-| 7 | follow_move_2 | 297 | 182/297 | -4.9% | -$72.89 | 9 | 187 | too early |
-| 8 | fade_move | 789 | 255/789 | -5.8% | -$230.34 | 20 | 214 | FAIL |
-| 9 | follow_move_big | 252 | 164/252 | -6.8% | -$85.77 | 9 | 124 | too early |
-| 10 | sports_underdog | 3003 | 704/3003 | -13.0% | -$1939.15 | 18 | 77 | FAIL |
-| 11 | weather_forecast | 1024 | 526/1024 | -19.5% | -$983.72 | 18 | 165 | FAIL |
+| 7 | follow_move_2 | 297 | 182/297 | -4.9% | -$72.89 | 9 | 193 | too early |
+| 8 | fade_move | 789 | 255/789 | -5.8% | -$230.34 | 20 | 222 | FAIL |
+| 9 | follow_move_big | 252 | 164/252 | -6.8% | -$85.77 | 9 | 128 | too early |
+| 10 | sports_underdog | 3011 | 706/3011 | -13.0% | -$1953.69 | 18 | 77 | FAIL |
+| 11 | weather_forecast | 1024 | 526/1024 | -19.5% | -$983.72 | 18 | 172 | FAIL |
 | 12 | follow_move_crypto | 96 | 48/96 | -22.0% | -$105.72 | 8 | 56 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4207 | 2079/4207 | -5.2% | -$1090.99 | 20 | 252 | yardstick |
+| 14 | coin_flip | 4213 | 2083/4213 | -5.2% | -$1084.26 | 20 | 254 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | sure_thing | follow_move | safe_no_week | follow_move_cheap | follow_move_2 | fade_move | follow_move_big | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-25 |  |  | -$2.20 | +$8.89 | -$12.68 | +$4.43 | +$8.89 | -$24.04 | -$1.34 | -$42.13 | -$19.45 |  |  | -$36.31 |
+| 2026-11-25 |  |  | +$2.06 | +$8.89 | -$12.68 | +$4.43 | +$8.89 | -$24.04 | -$1.34 | -$56.67 | -$19.45 |  |  | -$29.58 |
 | 2026-11-24 | -$13.69 | -$2.27 | -$4.80 | +$6.07 | -$6.58 | -$20.06 | +$7.51 | -$37.61 | +$3.56 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
 | 2026-11-23 | -$25.00 | -$15.00 | +$27.45 | -$41.97 | +$2.47 | -$19.72 | -$47.22 | -$110.21 | +$1.85 | -$59.98 | -$91.52 | -$38.17 |  | +$82.59 |
 | 2026-11-22 | -$3.95 | -$3.95 | -$14.57 | -$13.59 | +$9.81 | -$13.94 | -$3.52 | +$42.30 | -$26.18 | -$172.97 | -$59.01 | -$8.55 |  | -$214.44 |
@@ -59,15 +59,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-25 move_ai: Will NVIDIA (NVDA) close above $160 end of November? -> Yes at 0.229 ($5.00)
 - 2026-11-25 move_ai_clean: Will NVIDIA (NVDA) close above $160 end of November? -> Yes at 0.229 ($5.00)
-- 2026-11-25 sure_thing: Solana Up or Down - November 25, 7:00AM-8:00AM ET -> Up at 0.921 ($5.00)
-- 2026-11-25 follow_move: Will Donald Trump publicly insult someone on November 26, 2026? -> Yes at 0.742 ($5.00)
-- 2026-11-25 safe_no_week: Will the highest temperature in Buenos Aires be 29°C on November 27? -> No at 0.980 ($5.00)
+- 2026-11-25 sure_thing: Bitcoin above 58,000 on November 25, 9AM ET? -> Yes at 0.950 ($5.00)
+- 2026-11-25 follow_move: Will NVIDIA (NVDA) close above $145 on November 25? -> Yes at 0.671 ($5.00)
+- 2026-11-25 safe_no_week: Will it rain in Atlanta, GA on November 26? -> Yes at 0.950 ($5.00)
 - 2026-11-25 follow_move_cheap: Will PSOE win the second-most seats in Madrid in the 2026 Spanish general election? -> No at 0.198 ($5.00)
-- 2026-11-25 follow_move_2: Will Donald Trump publicly insult someone on November 26, 2026? -> Yes at 0.742 ($5.00)
-- 2026-11-25 fade_move: Will Donald Trump publicly insult someone on November 26, 2026? -> No at 0.442 ($5.00)
-- 2026-11-25 follow_move_big: Bitcoin Up or Down on November 25? -> Down at 0.682 ($5.00)
-- 2026-11-25 sports_underdog: Tala'ea El Gaish SC vs. Modern SC: O/U 0.5 -> Under at 0.177 ($5.00)
-- 2026-11-25 weather_forecast: Will the highest temperature in Istanbul be 17°C on November 27? -> No at 0.602 ($5.00)
+- 2026-11-25 follow_move_2: Rocket Lab (RKLB) Up or Down on November 25? -> Down at 0.810 ($5.00)
+- 2026-11-25 fade_move: Micron (MU) Up or Down on November 25? -> Up at 0.136 ($5.00)
+- 2026-11-25 follow_move_big: Rocket Lab (RKLB) Up or Down on November 25? -> Down at 0.810 ($5.00)
+- 2026-11-25 sports_underdog: Spread: Al Jazira (UAE) (-2.5) -> Al Jazira (UAE) at 0.244 ($5.00)
+- 2026-11-25 weather_forecast: Will the highest temperature in Toronto be 4°C on November 27? -> No at 0.662 ($5.00)
 - 2026-11-25 follow_move_crypto: Will the price of Solana be between $60 and $70 on November 30? -> Yes at 0.512 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
@@ -82,4 +82,4 @@ Today: 4 checks, $0.48 of OpenAI credit (limit $1.00 a day). Since the start: 54
 No near-gaps today.
 
 Runs in the last 24 hours: 36 (0 with a problem).
-45 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
+42 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
