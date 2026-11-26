@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-26 18:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-26 18:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-26 18:07 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 24 | 8/24 | +37.7% | +$45.29 | 7 | 18 | too early |
 | 2 | move_ai_clean | 17 | 6/17 | +29.0% | +$24.67 | 7 | 16 | too early |
-| 3 | sure_thing | 4218 | 3918/4218 | -0.8% | -$163.30 | 20 | 218 | FAIL |
-| 4 | fade_move | 846 | 286/846 | -1.9% | -$81.44 | 21 | 232 | FAIL |
+| 3 | sure_thing | 4219 | 3919/4219 | -0.8% | -$162.75 | 20 | 223 | FAIL |
+| 4 | fade_move | 846 | 286/846 | -1.9% | -$81.44 | 21 | 234 | FAIL |
 | 5 | safe_no_week | 1488 | 1388/1488 | -2.6% | -$192.36 | 21 | 538 | FAIL |
 | 6 | follow_move | 772 | 469/772 | -3.8% | -$145.55 | 21 | 214 | FAIL |
 | 7 | follow_move_big | 299 | 187/299 | -10.4% | -$155.00 | 10 | 130 | too early |
 | 8 | follow_move_cheap | 181 | 60/181 | -10.6% | -$95.50 | 10 | 150 | too early |
 | 9 | follow_move_2 | 350 | 202/350 | -10.8% | -$189.66 | 10 | 202 | too early |
-| 10 | sports_underdog | 3274 | 781/3274 | -11.7% | -$1905.09 | 19 | 70 | FAIL |
-| 11 | weather_forecast | 1115 | 577/1115 | -18.8% | -$1036.18 | 19 | 168 | FAIL |
+| 10 | sports_underdog | 3275 | 781/3275 | -11.7% | -$1910.09 | 19 | 77 | FAIL |
+| 11 | weather_forecast | 1115 | 577/1115 | -18.8% | -$1036.18 | 19 | 169 | FAIL |
 | 12 | follow_move_crypto | 121 | 60/121 | -23.3% | -$140.67 | 10 | 45 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4487 | 2218/4487 | -5.1% | -$1137.02 | 21 | 316 | yardstick |
+| 14 | coin_flip | 4488 | 2218/4488 | -5.1% | -$1142.02 | 21 | 323 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | sure_thing | fade_move | safe_no_week | follow_move | follow_move_big | follow_move_cheap | follow_move_2 | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-26 | -$15.00 | -$15.00 | -$34.27 | +$17.37 | +$0.38 | -$15.99 | -$13.20 | -$35.00 | -$15.99 | -$25.65 | -$23.00 | -$18.70 |  | -$67.41 |
+| 2026-11-26 | -$15.00 | -$15.00 | -$33.72 | +$17.37 | +$0.38 | -$15.99 | -$13.20 | -$35.00 | -$15.99 | -$30.65 | -$23.00 | -$18.70 |  | -$72.41 |
 | 2026-11-25 | +$34.67 | +$34.67 | -$12.33 | +$107.49 | -$15.90 | -$96.47 | -$57.38 | -$28.35 | -$91.89 | +$17.58 | -$48.91 | -$16.25 |  | -$14.93 |
 | 2026-11-24 | -$13.69 | -$2.27 | -$4.80 | -$37.61 | -$6.58 | +$6.07 | +$3.56 | -$20.06 | +$7.51 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
 | 2026-11-23 | -$25.00 | -$15.00 | +$27.45 | -$110.21 | +$2.47 | -$41.97 | +$1.85 | -$19.72 | -$47.22 | -$59.98 | -$91.52 | -$38.17 |  | +$82.59 |
@@ -59,15 +59,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-26 move_ai: Will Hyperliquid dip to $52 in November? -> Yes at 0.141 ($5.00)
 - 2026-11-26 move_ai_clean: Will Hyperliquid dip to $52 in November? -> Yes at 0.141 ($5.00)
-- 2026-11-26 sure_thing: Utah vs. Predators: O/U 3.5 -> Over at 0.914 ($5.00)
-- 2026-11-26 fade_move: Will the price of Ethereum be above $1,800 on December 2? -> Yes at 0.212 ($5.00)
+- 2026-11-26 sure_thing: Exact Score: Stellenbosch FC 0 - 1 TS Galaxy FC? -> No at 0.962 ($5.00)
+- 2026-11-26 fade_move: Will Five Below (FIVE) beat quarterly earnings? -> No at 0.136 ($5.00)
 - 2026-11-26 safe_no_week: Will Elon Musk post <40 tweets from November 28 to November 30, 2026? -> No at 0.960 ($5.00)
 - 2026-11-26 follow_move: Will the price of Ethereum be above $1,800 on December 2? -> No at 0.812 ($5.00)
 - 2026-11-26 follow_move_big: Will the price of Ethereum be above $1,800 on December 2? -> No at 0.812 ($5.00)
 - 2026-11-26 follow_move_cheap: Will the price of Ethereum be between $1,600 and $1,700 on December 1? -> Yes at 0.362 ($5.00)
 - 2026-11-26 follow_move_2: Will the Ornn H100 Index be between $2.75 and $3.00 on November 30, 2026? -> No at 0.652 ($5.00)
-- 2026-11-26 sports_underdog: Will AC Sparta Praha win on 2026-11-26? -> Yes at 0.351 ($5.00)
-- 2026-11-26 weather_forecast: Will the highest temperature in Denver be between 58-59°F on November 27? -> Yes at 0.099 ($2.47)
+- 2026-11-26 sports_underdog: Kansas Jayhawks vs. Washington State Cougars (W) -> Washington State Cougars at 0.249 ($5.00)
+- 2026-11-26 weather_forecast: Will the lowest temperature in Miami be between 62-63°F on November 28? -> No at 0.666 ($5.00)
 - 2026-11-26 follow_move_crypto: Will the price of Ethereum be between $1,600 and $1,700 on December 1? -> Yes at 0.362 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
