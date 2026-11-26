@@ -1,25 +1,25 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-26 13:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-26 14:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | move_ai | 21 | 8/21 | +57.4% | +$60.29 | 6 | 20 | too early |
-| 2 | move_ai_clean | 14 | 6/14 | +56.7% | +$39.67 | 6 | 18 | too early |
-| 3 | sure_thing | 4181 | 3886/4181 | -0.7% | -$148.48 | 20 | 200 | FAIL |
+| 1 | move_ai | 21 | 8/21 | +57.4% | +$60.29 | 6 | 21 | too early |
+| 2 | move_ai_clean | 14 | 6/14 | +56.7% | +$39.67 | 6 | 19 | too early |
+| 3 | sure_thing | 4190 | 3895/4190 | -0.7% | -$145.78 | 20 | 199 | FAIL |
 | 4 | fade_move | 834 | 281/834 | -1.6% | -$68.48 | 21 | 235 | FAIL |
-| 5 | safe_no_week | 1464 | 1365/1464 | -2.6% | -$192.31 | 21 | 544 | FAIL |
+| 5 | safe_no_week | 1464 | 1365/1464 | -2.6% | -$192.31 | 21 | 546 | FAIL |
 | 6 | follow_move | 760 | 463/760 | -3.4% | -$127.82 | 21 | 216 | FAIL |
-| 7 | follow_move_cheap | 174 | 60/174 | -7.0% | -$60.50 | 9 | 152 | too early |
-| 8 | follow_move_big | 287 | 180/287 | -9.9% | -$141.80 | 9 | 131 | too early |
+| 7 | follow_move_cheap | 174 | 60/174 | -7.0% | -$60.50 | 9 | 153 | too early |
+| 8 | follow_move_big | 287 | 180/287 | -9.9% | -$141.80 | 9 | 134 | too early |
 | 9 | follow_move_2 | 338 | 196/338 | -10.2% | -$171.93 | 10 | 204 | too early |
-| 10 | sports_underdog | 3239 | 774/3239 | -11.5% | -$1853.79 | 19 | 49 | FAIL |
-| 11 | weather_forecast | 1095 | 566/1095 | -18.9% | -$1017.44 | 19 | 177 | FAIL |
+| 10 | sports_underdog | 3248 | 776/3248 | -11.5% | -$1860.82 | 19 | 48 | FAIL |
+| 11 | weather_forecast | 1095 | 566/1095 | -18.9% | -$1017.44 | 19 | 179 | FAIL |
 | 12 | follow_move_crypto | 110 | 55/110 | -22.2% | -$121.97 | 9 | 52 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4451 | 2199/4451 | -5.1% | -$1136.86 | 21 | 296 | yardstick |
+| 14 | coin_flip | 4457 | 2202/4457 | -5.1% | -$1137.59 | 21 | 298 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | sure_thing | fade_move | safe_no_week | follow_move | follow_move_cheap | follow_move_big | follow_move_2 | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-26 |  |  | -$19.45 | +$30.33 | +$0.43 | +$1.74 |  |  | +$1.74 | +$25.65 | -$4.26 |  |  | -$67.25 |
+| 2026-11-26 |  |  | -$16.74 | +$30.33 | +$0.43 | +$1.74 |  |  | +$1.74 | +$18.62 | -$4.26 |  |  | -$67.98 |
 | 2026-11-25 | +$34.67 | +$34.67 | -$12.33 | +$107.49 | -$15.90 | -$96.47 | -$28.35 | -$57.38 | -$91.89 | +$17.58 | -$48.91 | -$16.25 |  | -$14.93 |
 | 2026-11-24 | -$13.69 | -$2.27 | -$4.80 | -$37.61 | -$6.58 | +$6.07 | -$20.06 | +$3.56 | +$7.51 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
 | 2026-11-23 | -$25.00 | -$15.00 | +$27.45 | -$110.21 | +$2.47 | -$41.97 | -$19.72 | +$1.85 | -$47.22 | -$59.98 | -$91.52 | -$38.17 |  | +$82.59 |
@@ -57,25 +57,25 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-26 move_ai: Will Silver (XAGUSD) hit (LOW) $38 in November? -> Yes at 0.155 ($5.00)
-- 2026-11-26 move_ai_clean: Will Silver (XAGUSD) hit (LOW) $38 in November? -> Yes at 0.155 ($5.00)
-- 2026-11-26 sure_thing: Olympique de Marseille vs. PFK Levski Sofia: Neither team to score first? -> No at 0.962 ($5.00)
+- 2026-11-26 move_ai: Will Hyperliquid dip to $52 in November? -> Yes at 0.141 ($5.00)
+- 2026-11-26 move_ai_clean: Will Hyperliquid dip to $52 in November? -> Yes at 0.141 ($5.00)
+- 2026-11-26 sure_thing: Spread: Maccabi Petah Tikva FC (-1.5) -> Hapoel Tel Aviv FC at 0.971 ($5.00)
 - 2026-11-26 fade_move: Will "Hershey" 5-Day Opening Weekend Box Office be between 5m and 6m? -> No at 0.612 ($5.00)
-- 2026-11-26 safe_no_week: Will MiniMax have the best Image-to-Video AI at the end of November 2026? -> No at 0.924 ($5.00)
+- 2026-11-26 safe_no_week: Will Alphabet be the third-largest company in the world by market cap on November 30, 2026? -> No at 0.942 ($5.00)
 - 2026-11-26 follow_move: Will "Hershey" 5-Day Opening Weekend Box Office be between 5m and 6m? -> Yes at 0.442 ($5.00)
-- 2026-11-26 follow_move_cheap: Will "The Body: Season 1" be the #2 global Netflix show this week? -> No at 0.452 ($5.00)
-- 2026-11-26 follow_move_big: Will the price of XRP be between $0.90 and $1.00 on November 27? -> Yes at 0.812 ($5.00)
+- 2026-11-26 follow_move_cheap: Will Alibaba have the best Chinese AI model at the end of November 2026? -> Yes at 0.331 ($5.00)
+- 2026-11-26 follow_move_big: Will the price of Ethereum be above $1,600 on December 1? -> Yes at 0.831 ($5.00)
 - 2026-11-26 follow_move_2: Will "Hershey" 5-Day Opening Weekend Box Office be between 5m and 6m? -> Yes at 0.442 ($5.00)
-- 2026-11-26 sports_underdog: Spread: Cincinnati Bearcats (-7.5) -> Cincinnati Bearcats at 0.348 ($5.00)
-- 2026-11-26 weather_forecast: Will the highest temperature in Buenos Aires be 35°C on November 28? -> No at 0.632 ($5.00)
+- 2026-11-26 sports_underdog: W50 Ortisei: Alessandra Mazzola vs Weronika Ewald -> Alessandra Mazzola at 0.229 ($5.00)
+- 2026-11-26 weather_forecast: Will the highest temperature in Wuhan be 20°C on November 28? -> No at 0.792 ($5.00)
 - 2026-11-26 follow_move_crypto: Will the price of XRP be between $0.90 and $1.00 on November 30? -> Yes at 0.532 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
 
-Today: 4 checks, $0.48 of OpenAI credit (limit $1.00 a day). Since the start: 62 checks ($6.32 spent in all); on 41 the AI beat the price by 5c or more and 41 were bought (the rest found no seller at that price); 0 failed. The AI saw betting odds while searching on 14 of the 62 it answered. 3 checks from the first version (19 Nov) are left out here and in the AI strategies' results: a bug sent each of them another market's question.
+Today: 5 checks, $0.59 of OpenAI credit (limit $1.00 a day). Since the start: 63 checks ($6.43 spent in all); on 42 the AI beat the price by 5c or more and 42 were bought (the rest found no seller at that price); 0 failed. The AI saw betting odds while searching on 14 of the 63 it answered. 3 checks from the first version (19 Nov) are left out here and in the AI strategies' results: a bug sent each of them another market's question.
 - All checked markets, 34 with a result: AI error 0.292, market price 0.247 (lower is better; always saying 50% scores 0.250); the AI was closer on 11.
 - Checks where it saw no betting odds, 24 with a result: AI error 0.266, market price 0.216 (lower is better; always saying 50% scores 0.250); the AI was closer on 8.
-28 more checked markets are waiting for their result. A few dozen results say little; read this after 100 or more.
+29 more checked markets are waiting for their result. A few dozen results say little; read this after 100 or more.
 
 ## Price gaps seen today
 
