@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-26 10:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-26 10:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-26 10:07 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 21 | 8/21 | +57.4% | +$60.29 | 6 | 20 | too early |
 | 2 | move_ai_clean | 14 | 6/14 | +56.7% | +$39.67 | 6 | 18 | too early |
-| 3 | sure_thing | 4164 | 3871/4164 | -0.7% | -$143.17 | 20 | 185 | FAIL |
-| 4 | fade_move | 834 | 281/834 | -1.6% | -$68.48 | 21 | 234 | FAIL |
-| 5 | safe_no_week | 1461 | 1362/1461 | -2.6% | -$192.97 | 21 | 530 | FAIL |
-| 6 | follow_move | 760 | 463/760 | -3.4% | -$127.82 | 21 | 215 | FAIL |
-| 7 | follow_move_cheap | 174 | 60/174 | -7.0% | -$60.50 | 9 | 148 | too early |
+| 3 | sure_thing | 4166 | 3873/4166 | -0.7% | -$142.47 | 20 | 186 | FAIL |
+| 4 | fade_move | 834 | 281/834 | -1.6% | -$68.48 | 21 | 235 | FAIL |
+| 5 | safe_no_week | 1461 | 1362/1461 | -2.6% | -$192.97 | 21 | 537 | FAIL |
+| 6 | follow_move | 760 | 463/760 | -3.4% | -$127.82 | 21 | 216 | FAIL |
+| 7 | follow_move_cheap | 174 | 60/174 | -7.0% | -$60.50 | 9 | 149 | too early |
 | 8 | follow_move_big | 287 | 180/287 | -9.9% | -$141.80 | 9 | 131 | too early |
-| 9 | follow_move_2 | 338 | 196/338 | -10.2% | -$171.93 | 10 | 203 | too early |
-| 10 | sports_underdog | 3221 | 769/3221 | -11.6% | -$1861.10 | 19 | 50 | FAIL |
-| 11 | weather_forecast | 1094 | 565/1094 | -18.9% | -$1019.18 | 19 | 174 | FAIL |
+| 9 | follow_move_2 | 338 | 196/338 | -10.2% | -$171.93 | 10 | 204 | too early |
+| 10 | sports_underdog | 3225 | 771/3225 | -11.4% | -$1835.00 | 19 | 48 | FAIL |
+| 11 | weather_forecast | 1094 | 565/1094 | -18.9% | -$1019.18 | 19 | 177 | FAIL |
 | 12 | follow_move_crypto | 110 | 55/110 | -22.2% | -$121.97 | 9 | 52 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4429 | 2187/4429 | -5.2% | -$1150.80 | 21 | 278 | yardstick |
+| 14 | coin_flip | 4433 | 2188/4433 | -5.3% | -$1161.05 | 21 | 282 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | sure_thing | fade_move | safe_no_week | follow_move | follow_move_cheap | follow_move_big | follow_move_2 | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-26 |  |  | -$14.13 | +$30.33 | -$0.24 | +$1.74 |  |  | +$1.74 | +$18.34 | -$6.00 |  |  | -$81.19 |
+| 2026-11-26 |  |  | -$13.44 | +$30.33 | -$0.24 | +$1.74 |  |  | +$1.74 | +$44.44 | -$6.00 |  |  | -$91.44 |
 | 2026-11-25 | +$34.67 | +$34.67 | -$12.33 | +$107.49 | -$15.90 | -$96.47 | -$28.35 | -$57.38 | -$91.89 | +$17.58 | -$48.91 | -$16.25 |  | -$14.93 |
 | 2026-11-24 | -$13.69 | -$2.27 | -$4.80 | -$37.61 | -$6.58 | +$6.07 | -$20.06 | +$3.56 | +$7.51 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
 | 2026-11-23 | -$25.00 | -$15.00 | +$27.45 | -$110.21 | +$2.47 | -$41.97 | -$19.72 | +$1.85 | -$47.22 | -$59.98 | -$91.52 | -$38.17 |  | +$82.59 |
@@ -59,15 +59,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-26 move_ai: Will Silver (XAGUSD) hit (LOW) $38 in November? -> Yes at 0.155 ($5.00)
 - 2026-11-26 move_ai_clean: Will Silver (XAGUSD) hit (LOW) $38 in November? -> Yes at 0.155 ($5.00)
-- 2026-11-26 sure_thing: BNB Up or Down - November 26, 5:00AM-5:15AM ET -> Down at 0.911 ($5.00)
-- 2026-11-26 fade_move: Will the price of XRP be between $0.90 and $1.00 on November 30? -> No at 0.516 ($5.00)
-- 2026-11-26 safe_no_week: Will Anthropic have the best AI model on LiveBench (Coding) at the end of November 2026? -> No at 0.962 ($5.00)
-- 2026-11-26 follow_move: Will the price of XRP be between $0.90 and $1.00 on November 30? -> Yes at 0.532 ($5.00)
-- 2026-11-26 follow_move_cheap: Will Johnny Chiang win the next Taichung Mayor election? -> No at 0.361 ($5.00)
+- 2026-11-26 sure_thing: BNB Up or Down - November 26, 4:00AM-8:00AM ET -> Down at 0.931 ($5.00)
+- 2026-11-26 fade_move: Will "Hershey" 5-Day Opening Weekend Box Office be between 5m and 6m? -> No at 0.612 ($5.00)
+- 2026-11-26 safe_no_week: Will the highest temperature in Miami be between 70-71°F on November 28? -> No at 0.921 ($5.00)
+- 2026-11-26 follow_move: Will "Hershey" 5-Day Opening Weekend Box Office be between 5m and 6m? -> Yes at 0.442 ($5.00)
+- 2026-11-26 follow_move_cheap: Will "Hershey" 5-Day Opening Weekend Box Office be between 5m and 6m? -> Yes at 0.442 ($5.00)
 - 2026-11-26 follow_move_big: Will the price of XRP be between $0.90 and $1.00 on November 27? -> Yes at 0.812 ($5.00)
-- 2026-11-26 follow_move_2: Will the price of XRP be between $0.90 and $1.00 on November 30? -> Yes at 0.532 ($5.00)
-- 2026-11-26 sports_underdog: Will Tai Po FC vs. Adelaide United FC end in a draw? -> Yes at 0.177 ($5.00)
-- 2026-11-26 weather_forecast: Will the highest temperature in Munich be 1°C on November 28? -> No at 0.572 ($5.00)
+- 2026-11-26 follow_move_2: Will "Hershey" 5-Day Opening Weekend Box Office be between 5m and 6m? -> Yes at 0.442 ($5.00)
+- 2026-11-26 sports_underdog: Dota 2: Team Allied vs Zero Tenacity (BO3) - Esports Pro Circuit  Group A -> Team Allied at 0.310 ($5.00)
+- 2026-11-26 weather_forecast: Will the highest temperature in Warsaw be 0°C on November 28? -> Yes at 0.111 ($5.00)
 - 2026-11-26 follow_move_crypto: Will the price of XRP be between $0.90 and $1.00 on November 30? -> Yes at 0.532 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
