@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-26 00:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-26 01:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-26 00:47 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 21 | 8/21 | +57.4% | +$60.29 | 6 | 18 | too early |
 | 2 | move_ai_clean | 14 | 6/14 | +56.7% | +$39.67 | 6 | 16 | too early |
-| 3 | sure_thing | 4092 | 3806/4092 | -0.6% | -$130.52 | 20 | 153 | FAIL |
-| 4 | fade_move | 833 | 281/833 | -1.5% | -$63.48 | 21 | 221 | FAIL |
+| 3 | sure_thing | 4099 | 3812/4099 | -0.7% | -$133.50 | 20 | 154 | FAIL |
+| 4 | fade_move | 833 | 281/833 | -1.5% | -$63.48 | 21 | 222 | FAIL |
 | 5 | safe_no_week | 1446 | 1348/1446 | -2.6% | -$191.45 | 21 | 499 | FAIL |
-| 6 | follow_move | 759 | 462/759 | -3.4% | -$129.56 | 20 | 202 | FAIL |
-| 7 | follow_move_cheap | 174 | 60/174 | -7.0% | -$60.50 | 9 | 140 | too early |
+| 6 | follow_move | 759 | 462/759 | -3.4% | -$129.56 | 20 | 204 | FAIL |
+| 7 | follow_move_cheap | 174 | 60/174 | -7.0% | -$60.50 | 9 | 141 | too early |
 | 8 | follow_move_big | 287 | 180/287 | -9.9% | -$141.80 | 9 | 118 | too early |
-| 9 | follow_move_2 | 337 | 195/337 | -10.3% | -$173.67 | 9 | 190 | too early |
-| 10 | sports_underdog | 3137 | 743/3137 | -12.1% | -$1882.62 | 19 | 79 | FAIL |
-| 11 | weather_forecast | 1069 | 550/1069 | -19.1% | -$1008.55 | 19 | 153 | FAIL |
-| 12 | follow_move_crypto | 110 | 55/110 | -22.2% | -$121.97 | 9 | 48 | too early |
+| 9 | follow_move_2 | 337 | 195/337 | -10.3% | -$173.67 | 9 | 192 | too early |
+| 10 | sports_underdog | 3144 | 747/3144 | -11.9% | -$1858.33 | 19 | 80 | FAIL |
+| 11 | weather_forecast | 1069 | 550/1069 | -19.1% | -$1008.55 | 19 | 154 | FAIL |
+| 12 | follow_move_crypto | 110 | 55/110 | -22.2% | -$121.97 | 9 | 49 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4338 | 2143/4338 | -5.1% | -$1105.79 | 21 | 257 | yardstick |
+| 14 | coin_flip | 4345 | 2147/4345 | -5.1% | -$1101.95 | 21 | 258 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | sure_thing | fade_move | safe_no_week | follow_move | follow_move_cheap | follow_move_big | follow_move_2 | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-26 |  |  | -$1.49 | +$35.33 | +$1.29 |  |  |  |  | -$3.18 | +$4.63 |  |  | -$36.17 |
+| 2026-11-26 |  |  | -$4.46 | +$35.33 | +$1.29 |  |  |  |  | +$21.11 | +$4.63 |  |  | -$32.34 |
 | 2026-11-25 | +$34.67 | +$34.67 | -$12.33 | +$107.49 | -$15.90 | -$96.47 | -$28.35 | -$57.38 | -$91.89 | +$17.58 | -$48.91 | -$16.25 |  | -$14.93 |
 | 2026-11-24 | -$13.69 | -$2.27 | -$4.80 | -$37.61 | -$6.58 | +$6.07 | -$20.06 | +$3.56 | +$7.51 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
 | 2026-11-23 | -$25.00 | -$15.00 | +$27.45 | -$110.21 | +$2.47 | -$41.97 | -$19.72 | +$1.85 | -$47.22 | -$59.98 | -$91.52 | -$38.17 |  | +$82.59 |
@@ -59,16 +59,16 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-26 move_ai: Will "Steps" be the top US Netflix movie this week? -> No at 0.712 ($5.00)
 - 2026-11-26 move_ai_clean: Will "Steps" be the top US Netflix movie this week? -> No at 0.712 ($5.00)
-- 2026-11-26 sure_thing: Spread: São Paulo FC (-3.5) -> Clube do Remo at 0.904 ($5.00)
-- 2026-11-26 fade_move: Will "Steps" be the #2 global Netflix movie this week? -> No at 0.452 ($5.00)
+- 2026-11-26 sure_thing: Spread: FK Borac Banja Luka (-1.5) -> Atalanta BC at 0.962 ($5.00)
+- 2026-11-26 fade_move: Will Marvell (MRVL) beat quarterly earnings? -> Yes at 0.442 ($5.00)
 - 2026-11-26 safe_no_week: Will the highest temperature in Mexico City be 18°C on November 27? -> No at 0.954 ($5.00)
-- 2026-11-26 follow_move: Will "Steps" be the #2 global Netflix movie this week? -> Yes at 0.602 ($5.00)
-- 2026-11-26 follow_move_cheap: Will "Focker-In-Law" 5-Day Opening Weekend Box Office be less than 40m? -> Yes at 0.372 ($5.00)
+- 2026-11-26 follow_move: Will the price of XRP be above $0.90 on November 29? -> Yes at 0.782 ($5.00)
+- 2026-11-26 follow_move_cheap: Will the price of Bitcoin be above $62,000 on December 1? -> Yes at 0.371 ($5.00)
 - 2026-11-26 follow_move_big: Will "Steps" be the #2 global Netflix movie this week? -> Yes at 0.602 ($5.00)
-- 2026-11-26 follow_move_2: Will "Steps" be the #2 global Netflix movie this week? -> Yes at 0.602 ($5.00)
-- 2026-11-26 sports_underdog: Spread: Spurs (-7.5) -> Spurs at 0.361 ($5.00)
-- 2026-11-26 weather_forecast: Will the highest temperature in Warsaw be 0°C on November 27? -> Yes at 0.061 ($2.63)
-- 2026-11-26 follow_move_crypto: Will the price of Bitcoin be above $58,000 on December 1? -> Yes at 0.753 ($5.00)
+- 2026-11-26 follow_move_2: Will Marvell (MRVL) beat quarterly earnings? -> No at 0.612 ($5.00)
+- 2026-11-26 sports_underdog: Will CSD Municipal win on 2026-11-07? -> No at 0.270 ($5.00)
+- 2026-11-26 weather_forecast: Will the highest temperature in New York City be between 56-57°F on November 27? -> No at 0.582 ($5.00)
+- 2026-11-26 follow_move_crypto: Will the price of XRP be above $0.90 on November 29? -> Yes at 0.782 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
 
@@ -81,5 +81,5 @@ Today: 1 checks, $0.13 of OpenAI credit (limit $1.00 a day). Since the start: 59
 
 No near-gaps today.
 
-Runs in the last 24 hours: 35 (0 with a problem).
+Runs in the last 24 hours: 36 (0 with a problem).
 43 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
