@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-26 05:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-26 06:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-26 05:27 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 21 | 8/21 | +57.4% | +$60.29 | 6 | 18 | too early |
 | 2 | move_ai_clean | 14 | 6/14 | +56.7% | +$39.67 | 6 | 16 | too early |
-| 3 | sure_thing | 4144 | 3855/4144 | -0.6% | -$128.05 | 20 | 156 | FAIL |
+| 3 | sure_thing | 4150 | 3860/4150 | -0.6% | -$131.30 | 20 | 158 | FAIL |
 | 4 | fade_move | 833 | 281/833 | -1.5% | -$63.48 | 21 | 226 | FAIL |
-| 5 | safe_no_week | 1451 | 1353/1451 | -2.6% | -$190.25 | 21 | 511 | FAIL |
-| 6 | follow_move | 759 | 462/759 | -3.4% | -$129.56 | 20 | 208 | FAIL |
+| 5 | safe_no_week | 1451 | 1353/1451 | -2.6% | -$190.25 | 21 | 514 | FAIL |
+| 6 | follow_move | 759 | 462/759 | -3.4% | -$129.56 | 20 | 209 | FAIL |
 | 7 | follow_move_cheap | 174 | 60/174 | -7.0% | -$60.50 | 9 | 145 | too early |
 | 8 | follow_move_big | 287 | 180/287 | -9.9% | -$141.80 | 9 | 121 | too early |
-| 9 | follow_move_2 | 337 | 195/337 | -10.3% | -$173.67 | 9 | 196 | too early |
-| 10 | sports_underdog | 3201 | 763/3201 | -11.7% | -$1869.36 | 19 | 32 | FAIL |
-| 11 | weather_forecast | 1074 | 553/1074 | -19.1% | -$1012.70 | 19 | 162 | FAIL |
+| 9 | follow_move_2 | 337 | 195/337 | -10.3% | -$173.67 | 9 | 197 | too early |
+| 10 | sports_underdog | 3209 | 765/3209 | -11.7% | -$1871.34 | 19 | 32 | FAIL |
+| 11 | weather_forecast | 1074 | 553/1074 | -19.1% | -$1012.70 | 19 | 170 | FAIL |
 | 12 | follow_move_crypto | 110 | 55/110 | -22.2% | -$121.97 | 9 | 49 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4399 | 2170/4399 | -5.3% | -$1164.36 | 21 | 252 | yardstick |
+| 14 | coin_flip | 4409 | 2176/4409 | -5.3% | -$1156.20 | 21 | 250 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | sure_thing | fade_move | safe_no_week | follow_move | follow_move_cheap | follow_move_big | follow_move_2 | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-26 |  |  | +$0.98 | +$35.33 | +$2.48 |  |  |  |  | +$10.08 | +$0.48 |  |  | -$94.75 |
+| 2026-11-26 |  |  | -$2.27 | +$35.33 | +$2.48 |  |  |  |  | +$8.10 | +$0.48 |  |  | -$86.59 |
 | 2026-11-25 | +$34.67 | +$34.67 | -$12.33 | +$107.49 | -$15.90 | -$96.47 | -$28.35 | -$57.38 | -$91.89 | +$17.58 | -$48.91 | -$16.25 |  | -$14.93 |
 | 2026-11-24 | -$13.69 | -$2.27 | -$4.80 | -$37.61 | -$6.58 | +$6.07 | -$20.06 | +$3.56 | +$7.51 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
 | 2026-11-23 | -$25.00 | -$15.00 | +$27.45 | -$110.21 | +$2.47 | -$41.97 | -$19.72 | +$1.85 | -$47.22 | -$59.98 | -$91.52 | -$38.17 |  | +$82.59 |
@@ -59,15 +59,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-26 move_ai: Will "Steps" be the top US Netflix movie this week? -> No at 0.712 ($5.00)
 - 2026-11-26 move_ai_clean: Will "Steps" be the top US Netflix movie this week? -> No at 0.712 ($5.00)
-- 2026-11-26 sure_thing: Will the price of XRP be above $1.00 on November 26? -> No at 0.913 ($5.00)
+- 2026-11-26 sure_thing: AC Sparta Praha vs. AZ: Neither team to score first? -> No at 0.952 ($5.00)
 - 2026-11-26 fade_move: Will "Guarding Stars" be the #2 US Netflix movie this week? -> Yes at 0.292 ($5.00)
-- 2026-11-26 safe_no_week: Will the lowest temperature in Seoul (Incheon) be 1°C on November 28? -> No at 0.983 ($5.00)
-- 2026-11-26 follow_move: Will Lee Shu-chuan win the next New Taipei Mayor election? -> No at 0.759 ($5.00)
+- 2026-11-26 safe_no_week: Will the highest temperature in New York City be between 60-61°F on November 27? -> No at 0.970 ($5.00)
+- 2026-11-26 follow_move: Will "The Hunger Games: Sunrise on the Reaping" 2nd Weekend Box Office be between 65m and 70m? -> No at 0.851 ($5.00)
 - 2026-11-26 follow_move_cheap: Will the price of Ethereum be above $1,700 on December 1? -> Yes at 0.502 ($5.00)
 - 2026-11-26 follow_move_big: Will it be confirmed that a software or configuration error caused the FAA's nationwide ground stop on November 13? -> No at 0.622 ($5.00)
-- 2026-11-26 follow_move_2: Will Lee Shu-chuan win the next New Taipei Mayor election? -> No at 0.759 ($5.00)
-- 2026-11-26 sports_underdog: Ankara: Matisse Bobichon vs Daniel Rincon -> Matisse Bobichon at 0.280 ($5.00)
-- 2026-11-26 weather_forecast: Will the lowest temperature in Tokyo be 11°C on November 28? -> No at 0.672 ($5.00)
+- 2026-11-26 follow_move_2: Will "The Hunger Games: Sunrise on the Reaping" 2nd Weekend Box Office be between 65m and 70m? -> No at 0.851 ($5.00)
+- 2026-11-26 sports_underdog: Will Borneo Samarinda vs. Persita Tangerang end in a draw? -> Yes at 0.280 ($5.00)
+- 2026-11-26 weather_forecast: Will the highest temperature in Helsinki be 1°C or higher on November 28? -> Yes at 0.502 ($5.00)
 - 2026-11-26 follow_move_crypto: Will the price of XRP be above $0.90 on November 29? -> Yes at 0.782 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
