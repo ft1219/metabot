@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-26 12:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-26 13:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-26 12:47 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 21 | 8/21 | +57.4% | +$60.29 | 6 | 20 | too early |
 | 2 | move_ai_clean | 14 | 6/14 | +56.7% | +$39.67 | 6 | 18 | too early |
-| 3 | sure_thing | 4173 | 3878/4173 | -0.7% | -$151.10 | 20 | 200 | FAIL |
+| 3 | sure_thing | 4181 | 3886/4181 | -0.7% | -$148.48 | 20 | 200 | FAIL |
 | 4 | fade_move | 834 | 281/834 | -1.6% | -$68.48 | 21 | 235 | FAIL |
-| 5 | safe_no_week | 1463 | 1364/1463 | -2.6% | -$192.74 | 21 | 542 | FAIL |
+| 5 | safe_no_week | 1464 | 1365/1464 | -2.6% | -$192.31 | 21 | 544 | FAIL |
 | 6 | follow_move | 760 | 463/760 | -3.4% | -$127.82 | 21 | 216 | FAIL |
-| 7 | follow_move_cheap | 174 | 60/174 | -7.0% | -$60.50 | 9 | 151 | too early |
+| 7 | follow_move_cheap | 174 | 60/174 | -7.0% | -$60.50 | 9 | 152 | too early |
 | 8 | follow_move_big | 287 | 180/287 | -9.9% | -$141.80 | 9 | 131 | too early |
 | 9 | follow_move_2 | 338 | 196/338 | -10.2% | -$171.93 | 10 | 204 | too early |
-| 10 | sports_underdog | 3232 | 774/3232 | -11.3% | -$1818.79 | 19 | 51 | FAIL |
-| 11 | weather_forecast | 1095 | 566/1095 | -18.9% | -$1017.44 | 19 | 176 | FAIL |
+| 10 | sports_underdog | 3239 | 774/3239 | -11.5% | -$1853.79 | 19 | 49 | FAIL |
+| 11 | weather_forecast | 1095 | 566/1095 | -18.9% | -$1017.44 | 19 | 177 | FAIL |
 | 12 | follow_move_crypto | 110 | 55/110 | -22.2% | -$121.97 | 9 | 52 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4445 | 2195/4445 | -5.2% | -$1142.80 | 21 | 294 | yardstick |
+| 14 | coin_flip | 4451 | 2199/4451 | -5.1% | -$1136.86 | 21 | 296 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | sure_thing | fade_move | safe_no_week | follow_move | follow_move_cheap | follow_move_big | follow_move_2 | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-26 |  |  | -$22.07 | +$30.33 | -$0.00 | +$1.74 |  |  | +$1.74 | +$60.65 | -$4.26 |  |  | -$73.19 |
+| 2026-11-26 |  |  | -$19.45 | +$30.33 | +$0.43 | +$1.74 |  |  | +$1.74 | +$25.65 | -$4.26 |  |  | -$67.25 |
 | 2026-11-25 | +$34.67 | +$34.67 | -$12.33 | +$107.49 | -$15.90 | -$96.47 | -$28.35 | -$57.38 | -$91.89 | +$17.58 | -$48.91 | -$16.25 |  | -$14.93 |
 | 2026-11-24 | -$13.69 | -$2.27 | -$4.80 | -$37.61 | -$6.58 | +$6.07 | -$20.06 | +$3.56 | +$7.51 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
 | 2026-11-23 | -$25.00 | -$15.00 | +$27.45 | -$110.21 | +$2.47 | -$41.97 | -$19.72 | +$1.85 | -$47.22 | -$59.98 | -$91.52 | -$38.17 |  | +$82.59 |
@@ -59,15 +59,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-26 move_ai: Will Silver (XAGUSD) hit (LOW) $38 in November? -> Yes at 0.155 ($5.00)
 - 2026-11-26 move_ai_clean: Will Silver (XAGUSD) hit (LOW) $38 in November? -> Yes at 0.155 ($5.00)
-- 2026-11-26 sure_thing: Spread: Utah State Aggies (-12.5) -> USC Trojans at 0.924 ($5.00)
+- 2026-11-26 sure_thing: Olympique de Marseille vs. PFK Levski Sofia: Neither team to score first? -> No at 0.962 ($5.00)
 - 2026-11-26 fade_move: Will "Hershey" 5-Day Opening Weekend Box Office be between 5m and 6m? -> No at 0.612 ($5.00)
-- 2026-11-26 safe_no_week: Will N3on finish GTA VI by December 1? -> No at 0.982 ($5.00)
+- 2026-11-26 safe_no_week: Will MiniMax have the best Image-to-Video AI at the end of November 2026? -> No at 0.924 ($5.00)
 - 2026-11-26 follow_move: Will "Hershey" 5-Day Opening Weekend Box Office be between 5m and 6m? -> Yes at 0.442 ($5.00)
-- 2026-11-26 follow_move_cheap: Will Robinhood Markets, Inc. (HOOD) hit (HIGH) $70 in November? -> Yes at 0.502 ($5.00)
+- 2026-11-26 follow_move_cheap: Will "The Body: Season 1" be the #2 global Netflix show this week? -> No at 0.452 ($5.00)
 - 2026-11-26 follow_move_big: Will the price of XRP be between $0.90 and $1.00 on November 27? -> Yes at 0.812 ($5.00)
 - 2026-11-26 follow_move_2: Will "Hershey" 5-Day Opening Weekend Box Office be between 5m and 6m? -> Yes at 0.442 ($5.00)
-- 2026-11-26 sports_underdog: W15 Lousada: Sarah Iliev vs Anna Shkutova -> Anna Shkutova at 0.341 ($5.00)
-- 2026-11-26 weather_forecast: Will the highest temperature in Warsaw be 0°C on November 28? -> Yes at 0.111 ($5.00)
+- 2026-11-26 sports_underdog: Spread: Cincinnati Bearcats (-7.5) -> Cincinnati Bearcats at 0.348 ($5.00)
+- 2026-11-26 weather_forecast: Will the highest temperature in Buenos Aires be 35°C on November 28? -> No at 0.632 ($5.00)
 - 2026-11-26 follow_move_crypto: Will the price of XRP be between $0.90 and $1.00 on November 30? -> Yes at 0.532 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
