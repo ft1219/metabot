@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-26 14:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-26 14:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-26 14:07 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 21 | 8/21 | +57.4% | +$60.29 | 6 | 21 | too early |
 | 2 | move_ai_clean | 14 | 6/14 | +56.7% | +$39.67 | 6 | 19 | too early |
-| 3 | sure_thing | 4190 | 3895/4190 | -0.7% | -$145.78 | 20 | 199 | FAIL |
-| 4 | fade_move | 834 | 281/834 | -1.6% | -$68.48 | 21 | 235 | FAIL |
-| 5 | safe_no_week | 1464 | 1365/1464 | -2.6% | -$192.31 | 21 | 546 | FAIL |
-| 6 | follow_move | 760 | 463/760 | -3.4% | -$127.82 | 21 | 216 | FAIL |
-| 7 | follow_move_cheap | 174 | 60/174 | -7.0% | -$60.50 | 9 | 153 | too early |
-| 8 | follow_move_big | 287 | 180/287 | -9.9% | -$141.80 | 9 | 134 | too early |
-| 9 | follow_move_2 | 338 | 196/338 | -10.2% | -$171.93 | 10 | 204 | too early |
-| 10 | sports_underdog | 3248 | 776/3248 | -11.5% | -$1860.82 | 19 | 48 | FAIL |
-| 11 | weather_forecast | 1095 | 566/1095 | -18.9% | -$1017.44 | 19 | 179 | FAIL |
+| 3 | sure_thing | 4191 | 3896/4191 | -0.7% | -$145.57 | 20 | 206 | FAIL |
+| 4 | fade_move | 834 | 281/834 | -1.6% | -$68.48 | 21 | 237 | FAIL |
+| 5 | safe_no_week | 1464 | 1365/1464 | -2.6% | -$192.31 | 21 | 550 | FAIL |
+| 6 | follow_move | 760 | 463/760 | -3.4% | -$127.82 | 21 | 217 | FAIL |
+| 7 | follow_move_cheap | 174 | 60/174 | -7.0% | -$60.50 | 9 | 154 | too early |
+| 8 | follow_move_big | 287 | 180/287 | -9.9% | -$141.80 | 9 | 135 | too early |
+| 9 | follow_move_2 | 338 | 196/338 | -10.2% | -$171.93 | 10 | 205 | too early |
+| 10 | sports_underdog | 3250 | 777/3250 | -11.5% | -$1856.58 | 19 | 54 | FAIL |
+| 11 | weather_forecast | 1095 | 566/1095 | -18.9% | -$1017.44 | 19 | 181 | FAIL |
 | 12 | follow_move_crypto | 110 | 55/110 | -22.2% | -$121.97 | 9 | 52 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4457 | 2202/4457 | -5.1% | -$1137.59 | 21 | 298 | yardstick |
+| 14 | coin_flip | 4463 | 2206/4463 | -5.1% | -$1123.66 | 21 | 300 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | sure_thing | fade_move | safe_no_week | follow_move | follow_move_cheap | follow_move_big | follow_move_2 | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-26 |  |  | -$16.74 | +$30.33 | +$0.43 | +$1.74 |  |  | +$1.74 | +$18.62 | -$4.26 |  |  | -$67.98 |
+| 2026-11-26 |  |  | -$16.54 | +$30.33 | +$0.43 | +$1.74 |  |  | +$1.74 | +$22.86 | -$4.26 |  |  | -$54.05 |
 | 2026-11-25 | +$34.67 | +$34.67 | -$12.33 | +$107.49 | -$15.90 | -$96.47 | -$28.35 | -$57.38 | -$91.89 | +$17.58 | -$48.91 | -$16.25 |  | -$14.93 |
 | 2026-11-24 | -$13.69 | -$2.27 | -$4.80 | -$37.61 | -$6.58 | +$6.07 | -$20.06 | +$3.56 | +$7.51 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
 | 2026-11-23 | -$25.00 | -$15.00 | +$27.45 | -$110.21 | +$2.47 | -$41.97 | -$19.72 | +$1.85 | -$47.22 | -$59.98 | -$91.52 | -$38.17 |  | +$82.59 |
@@ -59,15 +59,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-26 move_ai: Will Hyperliquid dip to $52 in November? -> Yes at 0.141 ($5.00)
 - 2026-11-26 move_ai_clean: Will Hyperliquid dip to $52 in November? -> Yes at 0.141 ($5.00)
-- 2026-11-26 sure_thing: Spread: Maccabi Petah Tikva FC (-1.5) -> Hapoel Tel Aviv FC at 0.971 ($5.00)
-- 2026-11-26 fade_move: Will "Hershey" 5-Day Opening Weekend Box Office be between 5m and 6m? -> No at 0.612 ($5.00)
-- 2026-11-26 safe_no_week: Will Alphabet be the third-largest company in the world by market cap on November 30, 2026? -> No at 0.942 ($5.00)
-- 2026-11-26 follow_move: Will "Hershey" 5-Day Opening Weekend Box Office be between 5m and 6m? -> Yes at 0.442 ($5.00)
-- 2026-11-26 follow_move_cheap: Will Alibaba have the best Chinese AI model at the end of November 2026? -> Yes at 0.331 ($5.00)
-- 2026-11-26 follow_move_big: Will the price of Ethereum be above $1,600 on December 1? -> Yes at 0.831 ($5.00)
-- 2026-11-26 follow_move_2: Will "Hershey" 5-Day Opening Weekend Box Office be between 5m and 6m? -> Yes at 0.442 ($5.00)
-- 2026-11-26 sports_underdog: W50 Ortisei: Alessandra Mazzola vs Weronika Ewald -> Alessandra Mazzola at 0.229 ($5.00)
-- 2026-11-26 weather_forecast: Will the highest temperature in Wuhan be 20°C on November 28? -> No at 0.792 ($5.00)
+- 2026-11-26 sure_thing: Exact Score: Al-Sailiya SC 0 - 1 Al Gharafa SC? -> No at 0.943 ($5.00)
+- 2026-11-26 fade_move: Will the Ornn RTX 6000 Index be between $1.25 and $1.50 on November 30, 2026? -> Yes at 0.104 ($5.00)
+- 2026-11-26 safe_no_week: Will the highest temperature in Buenos Aires be 33°C on November 28? -> No at 0.960 ($5.00)
+- 2026-11-26 follow_move: Will Jensen Huang post again on X by November 30? -> No at 0.412 ($5.00)
+- 2026-11-26 follow_move_cheap: Will Jensen Huang post again on X by November 30? -> No at 0.412 ($5.00)
+- 2026-11-26 follow_move_big: Will the price of Bitcoin be between $60,000 and $62,000 on November 29? -> Yes at 0.362 ($5.00)
+- 2026-11-26 follow_move_2: Will Jensen Huang post again on X by November 30? -> No at 0.412 ($5.00)
+- 2026-11-26 sports_underdog: Will Cabrayil vs. Moik Baku end in a draw? -> Yes at 0.280 ($5.00)
+- 2026-11-26 weather_forecast: Will the highest temperature in Milan be 10°C on November 28? -> No at 0.672 ($5.00)
 - 2026-11-26 follow_move_crypto: Will the price of XRP be between $0.90 and $1.00 on November 30? -> Yes at 0.532 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
@@ -81,5 +81,6 @@ Today: 5 checks, $0.59 of OpenAI credit (limit $1.00 a day). Since the start: 63
 
 No near-gaps today.
 
-Runs in the last 24 hours: 36 (0 with a problem).
+Runs in the last 24 hours: 35 (1 with a problem).
+Latest problem: weather: Open-Meteo failed for UUWW, no more forecasts fetched this run: https://ensemble-api.open-meteo.com/v1/ensemble?latitude=55.592&longitude=37.261&models=ecmwf_ifs025%2Cgfs_seamless&timezone=au
 43 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
