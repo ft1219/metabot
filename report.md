@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-26 21:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-26 22:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-26 21:27 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 24 | 8/24 | +37.7% | +$45.29 | 7 | 19 | too early |
 | 2 | move_ai_clean | 17 | 6/17 | +29.0% | +$24.67 | 7 | 16 | too early |
-| 3 | sure_thing | 4229 | 3928/4229 | -0.8% | -$164.92 | 20 | 244 | FAIL |
-| 4 | fade_move | 846 | 286/846 | -1.9% | -$81.44 | 21 | 240 | FAIL |
-| 5 | safe_no_week | 1494 | 1394/1494 | -2.6% | -$190.63 | 21 | 540 | FAIL |
-| 6 | follow_move | 772 | 469/772 | -3.8% | -$145.55 | 21 | 219 | FAIL |
+| 3 | sure_thing | 4289 | 3984/4289 | -0.8% | -$167.61 | 20 | 190 | FAIL |
+| 4 | fade_move | 846 | 286/846 | -1.9% | -$81.44 | 21 | 241 | FAIL |
+| 5 | safe_no_week | 1496 | 1396/1496 | -2.5% | -$190.10 | 21 | 539 | FAIL |
+| 6 | follow_move | 772 | 469/772 | -3.8% | -$145.55 | 21 | 220 | FAIL |
 | 7 | follow_move_big | 299 | 187/299 | -10.4% | -$155.00 | 10 | 131 | too early |
-| 8 | follow_move_cheap | 181 | 60/181 | -10.6% | -$95.50 | 10 | 152 | too early |
-| 9 | follow_move_2 | 350 | 202/350 | -10.8% | -$189.66 | 10 | 207 | too early |
-| 10 | sports_underdog | 3291 | 787/3291 | -11.5% | -$1883.59 | 19 | 82 | FAIL |
-| 11 | weather_forecast | 1122 | 583/1122 | -18.4% | -$1020.01 | 19 | 165 | FAIL |
-| 12 | follow_move_crypto | 121 | 60/121 | -23.3% | -$140.67 | 10 | 48 | too early |
+| 8 | follow_move_cheap | 181 | 60/181 | -10.6% | -$95.50 | 10 | 153 | too early |
+| 9 | follow_move_2 | 350 | 202/350 | -10.8% | -$189.66 | 10 | 208 | too early |
+| 10 | sports_underdog | 3314 | 789/3314 | -11.9% | -$1967.28 | 19 | 64 | FAIL |
+| 11 | weather_forecast | 1124 | 584/1124 | -18.4% | -$1020.06 | 19 | 163 | FAIL |
+| 12 | follow_move_crypto | 121 | 60/121 | -23.3% | -$140.67 | 10 | 49 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4511 | 2235/4511 | -4.9% | -$1089.55 | 21 | 332 | yardstick |
+| 14 | coin_flip | 4536 | 2242/4536 | -5.0% | -$1130.16 | 21 | 315 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | sure_thing | fade_move | safe_no_week | follow_move | follow_move_big | follow_move_cheap | follow_move_2 | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-26 | -$15.00 | -$15.00 | -$35.88 | +$17.37 | +$2.11 | -$15.99 | -$13.20 | -$35.00 | -$15.99 | -$4.15 | -$6.82 | -$18.70 |  | -$19.93 |
+| 2026-11-26 | -$15.00 | -$15.00 | -$38.58 | +$17.37 | +$2.63 | -$15.99 | -$13.20 | -$35.00 | -$15.99 | -$87.84 | -$6.87 | -$18.70 |  | -$60.55 |
 | 2026-11-25 | +$34.67 | +$34.67 | -$12.33 | +$107.49 | -$15.90 | -$96.47 | -$57.38 | -$28.35 | -$91.89 | +$17.58 | -$48.91 | -$16.25 |  | -$14.93 |
 | 2026-11-24 | -$13.69 | -$2.27 | -$4.80 | -$37.61 | -$6.58 | +$6.07 | +$3.56 | -$20.06 | +$7.51 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
 | 2026-11-23 | -$25.00 | -$15.00 | +$27.45 | -$110.21 | +$2.47 | -$41.97 | +$1.85 | -$19.72 | -$47.22 | -$59.98 | -$91.52 | -$38.17 |  | +$82.59 |
@@ -59,16 +59,16 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-26 move_ai: Will Elon Musk’s net worth be between $700B and $800B on November 30? -> No at 0.612 ($5.00)
 - 2026-11-26 move_ai_clean: Will Hyperliquid dip to $52 in November? -> Yes at 0.141 ($5.00)
-- 2026-11-26 sure_thing: FC Dordrecht vs. Vitesse Arnhem: O/U 0.5 -> Over at 0.952 ($5.00)
-- 2026-11-26 fade_move: Anthropic reports another AI sandbox escape by November 30? -> Yes at 0.104 ($5.00)
-- 2026-11-26 safe_no_week: Will Macy's (M) beat quarterly earnings? -> Yes at 0.980 ($5.00)
-- 2026-11-26 follow_move: Bitcoin Up or Down on November 27? -> Up at 0.622 ($5.00)
+- 2026-11-26 sure_thing: Spread: Jong PSV Eindhoven (-2.5) -> MVV Maastricht at 0.962 ($5.00)
+- 2026-11-26 fade_move: Will the price of Solana be between $60 and $70 on December 1? -> No at 0.622 ($5.00)
+- 2026-11-26 safe_no_week: Will the price of Solana be above $85 on December 3? -> No at 0.961 ($5.00)
+- 2026-11-26 follow_move: Will the price of Solana be between $60 and $70 on December 1? -> Yes at 0.432 ($5.00)
 - 2026-11-26 follow_move_big: Will Jensen Huang post again on X by November 30? -> No at 0.582 ($5.00)
-- 2026-11-26 follow_move_cheap: Will the price of Bitcoin be above $62,000 on December 2? -> Yes at 0.362 ($5.00)
-- 2026-11-26 follow_move_2: Bitcoin Up or Down on November 27? -> Up at 0.622 ($5.00)
-- 2026-11-26 sports_underdog: LSU Tigers vs. SMU Mustangs -> SMU Mustangs at 0.270 ($5.00)
+- 2026-11-26 follow_move_cheap: Will the price of Solana be between $60 and $70 on December 1? -> Yes at 0.432 ($5.00)
+- 2026-11-26 follow_move_2: Will the price of Solana be between $60 and $70 on December 1? -> Yes at 0.432 ($5.00)
+- 2026-11-26 sports_underdog: TCU vs. Texas Tech -> TCU at 0.177 ($5.00)
 - 2026-11-26 weather_forecast: Will the lowest temperature in Ankara be -1°C on November 28? -> No at 0.774 ($5.00)
-- 2026-11-26 follow_move_crypto: Bitcoin Up or Down on November 27? -> Up at 0.622 ($5.00)
+- 2026-11-26 follow_move_crypto: Will the price of Solana be between $60 and $70 on December 1? -> Yes at 0.432 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
 
@@ -81,6 +81,6 @@ Today: 7 checks, $0.82 of OpenAI credit (limit $1.00 a day). Since the start: 65
 
 No near-gaps today.
 
-Runs in the last 24 hours: 36 (1 with a problem).
+Runs in the last 24 hours: 37 (1 with a problem).
 Latest problem: weather: Open-Meteo failed for UUWW, no more forecasts fetched this run: https://ensemble-api.open-meteo.com/v1/ensemble?latitude=55.592&longitude=37.261&models=ecmwf_ifs025%2Cgfs_seamless&timezone=au
 43 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
