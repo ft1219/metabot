@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-27 12:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-27 12:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-27 12:07 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 24 | 8/24 | +37.7% | +$45.29 | 7 | 23 | too early |
 | 2 | move_ai_clean | 17 | 6/17 | +29.0% | +$24.67 | 7 | 18 | too early |
-| 3 | fade_move | 855 | 291/855 | -0.3% | -$13.76 | 22 | 253 | FAIL |
-| 4 | sure_thing | 4408 | 4093/4408 | -0.8% | -$183.91 | 21 | 236 | FAIL |
-| 5 | safe_no_week | 1540 | 1437/1540 | -2.5% | -$195.53 | 22 | 553 | FAIL |
+| 3 | fade_move | 855 | 291/855 | -0.3% | -$13.76 | 22 | 254 | FAIL |
+| 4 | sure_thing | 4411 | 4095/4411 | -0.9% | -$188.29 | 21 | 241 | FAIL |
+| 5 | safe_no_week | 1540 | 1437/1540 | -2.5% | -$195.53 | 22 | 554 | FAIL |
 | 6 | follow_move | 780 | 471/780 | -4.3% | -$168.98 | 22 | 228 | FAIL |
-| 7 | follow_move_big | 299 | 187/299 | -10.4% | -$155.00 | 10 | 148 | too early |
-| 8 | follow_move_cheap | 181 | 60/181 | -10.6% | -$95.50 | 10 | 165 | too early |
+| 7 | follow_move_big | 299 | 187/299 | -10.4% | -$155.00 | 10 | 149 | too early |
+| 8 | follow_move_cheap | 181 | 60/181 | -10.6% | -$95.50 | 10 | 166 | too early |
 | 9 | follow_move_2 | 350 | 202/350 | -10.8% | -$189.66 | 10 | 224 | too early |
-| 10 | sports_underdog | 3392 | 811/3392 | -11.5% | -$1938.98 | 20 | 54 | FAIL |
-| 11 | weather_forecast | 1161 | 603/1161 | -18.6% | -$1065.33 | 20 | 180 | FAIL |
+| 10 | sports_underdog | 3394 | 813/3394 | -11.3% | -$1904.75 | 20 | 57 | FAIL |
+| 11 | weather_forecast | 1161 | 603/1161 | -18.6% | -$1065.33 | 20 | 183 | FAIL |
 | 12 | follow_move_crypto | 121 | 60/121 | -23.3% | -$140.67 | 10 | 53 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4661 | 2307/4661 | -4.9% | -$1133.17 | 22 | 357 | yardstick |
+| 14 | coin_flip | 4664 | 2308/4664 | -4.9% | -$1138.42 | 22 | 362 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | fade_move | sure_thing | safe_no_week | follow_move | follow_move_big | follow_move_cheap | follow_move_2 | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-27 |  |  | +$67.67 | -$14.26 | -$2.22 | -$23.43 |  |  |  | +$47.15 | -$14.61 |  |  | -$22.02 |
+| 2026-11-27 |  |  | +$67.67 | -$18.63 | -$2.22 | -$23.43 |  |  |  | +$81.38 | -$14.61 |  |  | -$27.26 |
 | 2026-11-26 | -$15.00 | -$15.00 | +$17.37 | -$40.62 | -$0.57 | -$15.99 | -$13.20 | -$35.00 | -$15.99 | -$106.69 | -$37.54 | -$18.70 |  | -$41.54 |
 | 2026-11-25 | +$34.67 | +$34.67 | +$107.49 | -$12.33 | -$15.90 | -$96.47 | -$57.38 | -$28.35 | -$91.89 | +$17.58 | -$48.91 | -$16.25 |  | -$14.93 |
 | 2026-11-24 | -$13.69 | -$2.27 | -$37.61 | -$4.80 | -$6.58 | +$6.07 | +$3.56 | -$20.06 | +$7.51 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
@@ -59,15 +59,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-27 move_ai: Will the price of Solana be above $70 on November 30? -> No at 0.222 ($1.11)
 - 2026-11-27 move_ai_clean: Will the price of Solana be above $70 on November 30? -> No at 0.222 ($1.11)
-- 2026-11-27 fade_move: Will PNV win exactly 4 seats in the 2026 Spanish general election? -> Yes at 0.290 ($5.00)
-- 2026-11-27 sure_thing: Exact Score: Sønderjyske Fodbold 0 - 0 Brøndby IF? -> No at 0.952 ($5.00)
-- 2026-11-27 safe_no_week: Will the highest temperature in Lucknow be 27°C on November 29? -> No at 0.981 ($5.00)
+- 2026-11-27 fade_move: Will Microsoft (MSFT) close above $480 on November 27? -> No at 0.153 ($5.00)
+- 2026-11-27 sure_thing: Exact Score: Persija Jakarta 0 - 0 Garuda Yaksa? -> No at 0.971 ($5.00)
+- 2026-11-27 safe_no_week: Will the highest temperature in Moscow be -5°C on November 29? -> No at 0.970 ($5.00)
 - 2026-11-27 follow_move: Will PNV win exactly 4 seats in the 2026 Spanish general election? -> No at 0.740 ($5.00)
-- 2026-11-27 follow_move_big: Will Tesla (TSLA) close above $390 on November 27? -> Yes at 0.492 ($5.00)
-- 2026-11-27 follow_move_cheap: Will Vox win fewer than 56 seats in the 2026 Spanish general election? -> Yes at 0.480 ($5.00)
+- 2026-11-27 follow_move_big: Will "The Mosquito Bowl" be the #2 US Netflix movie this week? -> Yes at 0.666 ($5.00)
+- 2026-11-27 follow_move_cheap: Will UKMTO publish 4-7 notices between November 23-November 29? -> Yes at 0.440 ($5.00)
 - 2026-11-27 follow_move_2: Will PNV win exactly 4 seats in the 2026 Spanish general election? -> No at 0.740 ($5.00)
-- 2026-11-27 sports_underdog: Vermont Catamounts vs. George Mason Patriots (W) -> Vermont Catamounts at 0.302 ($5.00)
-- 2026-11-27 weather_forecast: Will the highest temperature in Austin be between 64-65°F on November 29? -> No at 0.582 ($5.00)
+- 2026-11-27 sports_underdog: Will FC Universitatea Cluj vs. Sepsi OSK end in a draw? -> Yes at 0.239 ($5.00)
+- 2026-11-27 weather_forecast: Will the highest temperature in Toronto be 9°C on November 29? -> No at 0.692 ($5.00)
 - 2026-11-27 follow_move_crypto: Will the price of Solana be above $70 on December 2? -> Yes at 0.744 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
@@ -81,6 +81,6 @@ Today: 5 checks, $0.47 of OpenAI credit (limit $1.00 a day). Since the start: 70
 
 No near-gaps today.
 
-Runs in the last 24 hours: 36 (1 with a problem).
+Runs in the last 24 hours: 37 (1 with a problem).
 Latest problem: weather: Open-Meteo failed for UUWW, no more forecasts fetched this run: https://ensemble-api.open-meteo.com/v1/ensemble?latitude=55.592&longitude=37.261&models=ecmwf_ifs025%2Cgfs_seamless&timezone=au
 21 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
