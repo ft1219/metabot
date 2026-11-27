@@ -1,32 +1,32 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-27 18:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-27 18:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
 | # | Strategy | Finished | Won | Per $1 | Profit | Days | Open | Verdict |
 |---|---|---|---|---|---|---|---|---|
-| 1 | move_ai_clean | 18 | 7/18 | +70.7% | +$63.64 | 8 | 18 | too early |
-| 2 | move_ai | 25 | 9/25 | +67.4% | +$84.26 | 8 | 23 | too early |
-| 3 | fade_move | 873 | 298/873 | -0.4% | -$16.01 | 22 | 254 | FAIL |
-| 4 | sure_thing | 4437 | 4119/4437 | -0.9% | -$191.93 | 21 | 279 | FAIL |
-| 5 | safe_no_week | 1570 | 1466/1570 | -2.5% | -$194.25 | 22 | 544 | FAIL |
-| 6 | follow_move | 796 | 479/796 | -4.7% | -$186.73 | 22 | 223 | FAIL |
-| 7 | follow_move_2 | 365 | 210/365 | -11.1% | -$202.41 | 11 | 220 | too early |
-| 8 | sports_underdog | 3434 | 824/3434 | -11.2% | -$1916.53 | 20 | 79 | FAIL |
-| 9 | follow_move_big | 316 | 194/316 | -12.3% | -$194.13 | 11 | 139 | too early |
-| 10 | follow_move_cheap | 194 | 63/194 | -12.7% | -$123.08 | 11 | 157 | too early |
+| 1 | move_ai | 29 | 10/29 | +50.0% | +$72.43 | 8 | 19 | too early |
+| 2 | move_ai_clean | 22 | 8/22 | +47.1% | +$51.81 | 8 | 14 | too early |
+| 3 | sure_thing | 4444 | 4126/4444 | -0.9% | -$190.45 | 21 | 280 | FAIL |
+| 4 | fade_move | 905 | 306/905 | -1.8% | -$79.37 | 22 | 222 | FAIL |
+| 5 | safe_no_week | 1611 | 1503/1611 | -2.6% | -$205.36 | 22 | 504 | FAIL |
+| 6 | follow_move | 820 | 495/820 | -4.7% | -$192.04 | 22 | 199 | FAIL |
+| 7 | follow_move_2 | 389 | 226/389 | -10.7% | -$207.72 | 11 | 196 | too early |
+| 8 | sports_underdog | 3435 | 824/3435 | -11.3% | -$1921.53 | 20 | 86 | FAIL |
+| 9 | follow_move_big | 337 | 210/337 | -11.3% | -$190.19 | 11 | 118 | too early |
+| 10 | follow_move_cheap | 213 | 69/213 | -14.1% | -$149.79 | 11 | 138 | too early |
 | 11 | weather_forecast | 1181 | 611/1181 | -19.0% | -$1106.67 | 20 | 174 | FAIL |
 | 12 | follow_move_crypto | 133 | 65/133 | -24.2% | -$161.00 | 11 | 46 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4690 | 2320/4690 | -5.0% | -$1158.17 | 22 | 400 | yardstick |
+| 14 | coin_flip | 4695 | 2324/4695 | -4.9% | -$1144.15 | 22 | 403 | yardstick |
 
 What each one does:
 
-- **move_ai_clean**: Same buys as move_ai, but only when the AI saw no betting or prediction-market odds while searching, so the record is its own reading (judged at 150 finished trades).
 - **move_ai**: After a traded 10c+ move in a day, an AI model reads the news and gives its own chance (it is not told the price); buy whichever side it rates at least 5c above the price (a random sample of moves, about $1 of AI a day; judged at 150 finished trades).
-- **fade_move**: After a traded 10c+ move in a day, buy the side that went down.
+- **move_ai_clean**: Same buys as move_ai, but only when the AI saw no betting or prediction-market odds while searching, so the record is its own reading (judged at 150 finished trades).
 - **sure_thing**: Buy the almost-sure side (90-97c) in the last 24 hours (sports and other markets).
+- **fade_move**: After a traded 10c+ move in a day, buy the side that went down.
 - **safe_no_week**: Buy the almost-sure side (92-98.5c), 1-7 days before the end, no sports.
 - **follow_move**: After a traded 10c+ move in a day, buy the side that went up.
 - **follow_move_2**: Same as follow_move, restarted on 17 Nov so it is judged on new trades only.
@@ -42,29 +42,29 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Profit by day (trades that finished that day)
 
-| Day | move_ai_clean | move_ai | fade_move | sure_thing | safe_no_week | follow_move | follow_move_2 | sports_underdog | follow_move_big | follow_move_cheap | weather_forecast | follow_move_crypto | price_gap | coin_flip |
+| Day | move_ai | move_ai_clean | sure_thing | fade_move | safe_no_week | follow_move | follow_move_2 | sports_underdog | follow_move_big | follow_move_cheap | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-27 | +$38.97 | +$38.97 | +$65.42 | -$22.27 | -$0.94 | -$41.19 | -$12.75 | +$69.60 | -$39.13 | -$27.59 | -$55.96 | -$20.34 |  | -$47.02 |
-| 2026-11-26 | -$15.00 | -$15.00 | +$17.37 | -$40.62 | -$0.57 | -$15.99 | -$15.99 | -$106.69 | -$13.20 | -$35.00 | -$37.54 | -$18.70 |  | -$41.54 |
-| 2026-11-25 | +$34.67 | +$34.67 | +$107.49 | -$12.33 | -$15.90 | -$96.47 | -$91.89 | +$17.58 | -$57.38 | -$28.35 | -$48.91 | -$16.25 |  | -$14.93 |
-| 2026-11-24 | -$2.27 | -$13.69 | -$37.61 | -$4.80 | -$6.58 | +$6.07 | +$7.51 | -$39.07 | +$3.56 | -$20.06 | -$86.80 | +$4.91 |  | -$24.16 |
-| 2026-11-23 | -$15.00 | -$25.00 | -$110.21 | +$27.45 | +$2.47 | -$41.97 | -$47.22 | -$59.98 | +$1.85 | -$19.72 | -$91.52 | -$38.17 |  | +$82.59 |
-| 2026-11-22 | -$3.95 | -$3.95 | +$42.30 | -$14.57 | +$9.81 | -$13.59 | -$3.52 | -$172.97 | -$26.18 | -$13.94 | -$59.01 | -$8.55 |  | -$214.44 |
-| 2026-11-21 | +$7.00 | +$7.00 | +$37.86 | -$28.79 | -$3.69 | -$10.88 | +$11.35 | -$332.62 | -$13.12 | +$19.46 | -$52.17 | -$8.79 |  | -$197.98 |
-| 2026-11-20 | +$19.22 | +$61.26 | +$18.12 | -$19.18 | -$1.99 | +$40.01 | +$49.66 | -$79.83 | +$26.21 | +$30.74 | -$72.63 | -$28.74 |  | -$51.48 |
-| 2026-11-19 |  |  | +$186.86 | -$35.23 | -$10.58 | -$76.17 | -$96.44 | -$302.39 | -$66.89 | -$32.37 | -$20.99 | -$16.30 |  | -$31.84 |
-| 2026-11-18 |  |  | +$13.07 | +$1.67 | -$18.18 | -$38.68 | -$32.52 | -$43.96 | -$14.72 | +$1.98 | -$60.57 | -$18.73 |  | -$25.46 |
+| 2026-11-27 | +$27.14 | +$27.14 | -$20.79 | +$2.06 | -$12.06 | -$46.50 | -$18.07 | +$64.60 | -$35.19 | -$54.29 | -$55.96 | -$20.34 |  | -$32.99 |
+| 2026-11-26 | -$15.00 | -$15.00 | -$40.62 | +$17.37 | -$0.57 | -$15.99 | -$15.99 | -$106.69 | -$13.20 | -$35.00 | -$37.54 | -$18.70 |  | -$41.54 |
+| 2026-11-25 | +$34.67 | +$34.67 | -$12.33 | +$107.49 | -$15.90 | -$96.47 | -$91.89 | +$17.58 | -$57.38 | -$28.35 | -$48.91 | -$16.25 |  | -$14.93 |
+| 2026-11-24 | -$13.69 | -$2.27 | -$4.80 | -$37.61 | -$6.58 | +$6.07 | +$7.51 | -$39.07 | +$3.56 | -$20.06 | -$86.80 | +$4.91 |  | -$24.16 |
+| 2026-11-23 | -$25.00 | -$15.00 | +$27.45 | -$110.21 | +$2.47 | -$41.97 | -$47.22 | -$59.98 | +$1.85 | -$19.72 | -$91.52 | -$38.17 |  | +$82.59 |
+| 2026-11-22 | -$3.95 | -$3.95 | -$14.57 | +$42.30 | +$9.81 | -$13.59 | -$3.52 | -$172.97 | -$26.18 | -$13.94 | -$59.01 | -$8.55 |  | -$214.44 |
+| 2026-11-21 | +$7.00 | +$7.00 | -$28.79 | +$37.86 | -$3.69 | -$10.88 | +$11.35 | -$332.62 | -$13.12 | +$19.46 | -$52.17 | -$8.79 |  | -$197.98 |
+| 2026-11-20 | +$61.26 | +$19.22 | -$19.18 | +$18.12 | -$1.99 | +$40.01 | +$49.66 | -$79.83 | +$26.21 | +$30.74 | -$72.63 | -$28.74 |  | -$51.48 |
+| 2026-11-19 |  |  | -$35.23 | +$186.86 | -$10.58 | -$76.17 | -$96.44 | -$302.39 | -$66.89 | -$32.37 | -$20.99 | -$16.30 |  | -$31.84 |
+| 2026-11-18 |  |  | +$1.67 | +$13.07 | -$18.18 | -$38.68 | -$32.52 | -$43.96 | -$14.72 | +$1.98 | -$60.57 | -$18.73 |  | -$25.46 |
 
 ## Latest pretend buys (newest of each strategy first)
 
-- 2026-11-27 move_ai_clean: Will the price of Solana be between $60 and $70 on November 29? -> Yes at 0.151 ($4.54)
 - 2026-11-27 move_ai: Will the price of Solana be between $60 and $70 on November 29? -> Yes at 0.151 ($4.54)
+- 2026-11-27 move_ai_clean: Will the price of Solana be between $60 and $70 on November 29? -> Yes at 0.151 ($4.54)
+- 2026-11-27 sure_thing: Will FC Villefranche-Beaujolais win on 2026-11-28? -> No at 0.952 ($5.00)
 - 2026-11-27 fade_move: Will "Focker-In-Law" score at least 30 on the Rotten Tomatoes Tomatometer? -> No at 0.106 ($2.45)
-- 2026-11-27 sure_thing: Exact Score: Sivasspor 0 - 0 Bodrum FK? -> No at 0.962 ($5.00)
-- 2026-11-27 safe_no_week: Will Bruno Mars have the greatest number of monthly Spotify listeners this month? -> Yes at 0.982 ($5.00)
+- 2026-11-27 safe_no_week: Will Neuralink's valuation hit (LOW) $51.5B by November 30? -> No at 0.971 ($5.00)
 - 2026-11-27 follow_move: Will the price of Ethereum be above $1,700 on December 3? -> No at 0.612 ($5.00)
 - 2026-11-27 follow_move_2: Will the price of Ethereum be above $1,700 on December 3? -> No at 0.612 ($5.00)
-- 2026-11-27 sports_underdog: DEL: Bremerhaven vs. Schwenninger Wild Wings -> Schwenninger Wild Wings at 0.361 ($5.00)
+- 2026-11-27 sports_underdog: Stars vs. Blues: O/U 4.5 -> Under at 0.259 ($5.00)
 - 2026-11-27 follow_move_big: Will the price of Bitcoin be above $56,000 on December 3? -> Yes at 0.851 ($5.00)
 - 2026-11-27 follow_move_cheap: Will "The Mosquito Bowl" be the #2 global Netflix movie this week? -> Yes at 0.282 ($5.00)
 - 2026-11-27 weather_forecast: Will the highest temperature in Mexico City be 20°C on November 29? -> No at 0.642 ($5.00)
