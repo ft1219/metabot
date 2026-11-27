@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-27 03:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-27 04:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,25 +8,25 @@ Updated 2026-11-27 03:27 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 24 | 8/24 | +37.7% | +$45.29 | 7 | 20 | too early |
 | 2 | move_ai_clean | 17 | 6/17 | +29.0% | +$24.67 | 7 | 16 | too early |
-| 3 | sure_thing | 4381 | 4066/4381 | -0.9% | -$191.01 | 21 | 160 | FAIL |
-| 4 | fade_move | 849 | 288/849 | -1.9% | -$80.29 | 22 | 249 | FAIL |
-| 5 | safe_no_week | 1517 | 1416/1517 | -2.5% | -$190.51 | 22 | 526 | FAIL |
-| 6 | follow_move | 777 | 470/777 | -4.2% | -$162.60 | 22 | 224 | FAIL |
+| 3 | fade_move | 854 | 291/854 | -0.2% | -$8.76 | 22 | 244 | FAIL |
+| 4 | sure_thing | 4381 | 4066/4381 | -0.9% | -$191.01 | 21 | 168 | FAIL |
+| 5 | safe_no_week | 1519 | 1417/1519 | -2.6% | -$195.23 | 22 | 524 | FAIL |
+| 6 | follow_move | 780 | 471/780 | -4.3% | -$168.98 | 22 | 221 | FAIL |
 | 7 | follow_move_big | 299 | 187/299 | -10.4% | -$155.00 | 10 | 142 | too early |
-| 8 | follow_move_cheap | 181 | 60/181 | -10.6% | -$95.50 | 10 | 155 | too early |
+| 8 | follow_move_cheap | 181 | 60/181 | -10.6% | -$95.50 | 10 | 156 | too early |
 | 9 | follow_move_2 | 350 | 202/350 | -10.8% | -$189.66 | 10 | 217 | too early |
 | 10 | sports_underdog | 3367 | 806/3367 | -11.4% | -$1903.06 | 20 | 26 | FAIL |
 | 11 | weather_forecast | 1141 | 590/1141 | -18.9% | -$1062.76 | 20 | 151 | FAIL |
 | 12 | follow_move_crypto | 121 | 60/121 | -23.3% | -$140.67 | 10 | 52 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4605 | 2277/4605 | -5.0% | -$1141.15 | 22 | 310 | yardstick |
+| 14 | coin_flip | 4607 | 2278/4607 | -5.0% | -$1142.42 | 22 | 316 | yardstick |
 
 What each one does:
 
 - **move_ai**: After a traded 10c+ move in a day, an AI model reads the news and gives its own chance (it is not told the price); buy whichever side it rates at least 5c above the price (a random sample of moves, about $1 of AI a day; judged at 150 finished trades).
 - **move_ai_clean**: Same buys as move_ai, but only when the AI saw no betting or prediction-market odds while searching, so the record is its own reading (judged at 150 finished trades).
-- **sure_thing**: Buy the almost-sure side (90-97c) in the last 24 hours (sports and other markets).
 - **fade_move**: After a traded 10c+ move in a day, buy the side that went down.
+- **sure_thing**: Buy the almost-sure side (90-97c) in the last 24 hours (sports and other markets).
 - **safe_no_week**: Buy the almost-sure side (92-98.5c), 1-7 days before the end, no sports.
 - **follow_move**: After a traded 10c+ move in a day, buy the side that went up.
 - **follow_move_big**: follow_move, only after a 20c+ move in a day (from 17 Nov).
@@ -42,29 +42,29 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 ## Profit by day (trades that finished that day)
 
-| Day | move_ai | move_ai_clean | sure_thing | fade_move | safe_no_week | follow_move | follow_move_big | follow_move_cheap | follow_move_2 | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
+| Day | move_ai | move_ai_clean | fade_move | sure_thing | safe_no_week | follow_move | follow_move_big | follow_move_cheap | follow_move_2 | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-27 |  |  | -$21.35 | +$1.15 | +$2.80 | -$17.06 |  |  |  | +$83.08 | -$12.04 |  |  | -$30.00 |
-| 2026-11-26 | -$15.00 | -$15.00 | -$40.62 | +$17.37 | -$0.57 | -$15.99 | -$13.20 | -$35.00 | -$15.99 | -$106.69 | -$37.54 | -$18.70 |  | -$41.54 |
-| 2026-11-25 | +$34.67 | +$34.67 | -$12.33 | +$107.49 | -$15.90 | -$96.47 | -$57.38 | -$28.35 | -$91.89 | +$17.58 | -$48.91 | -$16.25 |  | -$14.93 |
-| 2026-11-24 | -$13.69 | -$2.27 | -$4.80 | -$37.61 | -$6.58 | +$6.07 | +$3.56 | -$20.06 | +$7.51 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
-| 2026-11-23 | -$25.00 | -$15.00 | +$27.45 | -$110.21 | +$2.47 | -$41.97 | +$1.85 | -$19.72 | -$47.22 | -$59.98 | -$91.52 | -$38.17 |  | +$82.59 |
-| 2026-11-22 | -$3.95 | -$3.95 | -$14.57 | +$42.30 | +$9.81 | -$13.59 | -$26.18 | -$13.94 | -$3.52 | -$172.97 | -$59.01 | -$8.55 |  | -$214.44 |
-| 2026-11-21 | +$7.00 | +$7.00 | -$28.79 | +$37.86 | -$3.69 | -$10.88 | -$13.12 | +$19.46 | +$11.35 | -$332.62 | -$52.17 | -$8.79 |  | -$197.98 |
-| 2026-11-20 | +$61.26 | +$19.22 | -$19.18 | +$18.12 | -$1.99 | +$40.01 | +$26.21 | +$30.74 | +$49.66 | -$79.83 | -$72.63 | -$28.74 |  | -$51.48 |
-| 2026-11-19 |  |  | -$35.23 | +$186.86 | -$10.58 | -$76.17 | -$66.89 | -$32.37 | -$96.44 | -$302.39 | -$20.99 | -$16.30 |  | -$31.84 |
-| 2026-11-18 |  |  | +$1.67 | +$13.07 | -$18.18 | -$38.68 | -$14.72 | +$1.98 | -$32.52 | -$43.96 | -$60.57 | -$18.73 |  | -$25.46 |
+| 2026-11-27 |  |  | +$72.67 | -$21.35 | -$1.93 | -$23.43 |  |  |  | +$83.08 | -$12.04 |  |  | -$31.26 |
+| 2026-11-26 | -$15.00 | -$15.00 | +$17.37 | -$40.62 | -$0.57 | -$15.99 | -$13.20 | -$35.00 | -$15.99 | -$106.69 | -$37.54 | -$18.70 |  | -$41.54 |
+| 2026-11-25 | +$34.67 | +$34.67 | +$107.49 | -$12.33 | -$15.90 | -$96.47 | -$57.38 | -$28.35 | -$91.89 | +$17.58 | -$48.91 | -$16.25 |  | -$14.93 |
+| 2026-11-24 | -$13.69 | -$2.27 | -$37.61 | -$4.80 | -$6.58 | +$6.07 | +$3.56 | -$20.06 | +$7.51 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
+| 2026-11-23 | -$25.00 | -$15.00 | -$110.21 | +$27.45 | +$2.47 | -$41.97 | +$1.85 | -$19.72 | -$47.22 | -$59.98 | -$91.52 | -$38.17 |  | +$82.59 |
+| 2026-11-22 | -$3.95 | -$3.95 | +$42.30 | -$14.57 | +$9.81 | -$13.59 | -$26.18 | -$13.94 | -$3.52 | -$172.97 | -$59.01 | -$8.55 |  | -$214.44 |
+| 2026-11-21 | +$7.00 | +$7.00 | +$37.86 | -$28.79 | -$3.69 | -$10.88 | -$13.12 | +$19.46 | +$11.35 | -$332.62 | -$52.17 | -$8.79 |  | -$197.98 |
+| 2026-11-20 | +$61.26 | +$19.22 | +$18.12 | -$19.18 | -$1.99 | +$40.01 | +$26.21 | +$30.74 | +$49.66 | -$79.83 | -$72.63 | -$28.74 |  | -$51.48 |
+| 2026-11-19 |  |  | +$186.86 | -$35.23 | -$10.58 | -$76.17 | -$66.89 | -$32.37 | -$96.44 | -$302.39 | -$20.99 | -$16.30 |  | -$31.84 |
+| 2026-11-18 |  |  | +$13.07 | +$1.67 | -$18.18 | -$38.68 | -$14.72 | +$1.98 | -$32.52 | -$43.96 | -$60.57 | -$18.73 |  | -$25.46 |
 
 ## Latest pretend buys (newest of each strategy first)
 
 - 2026-11-27 move_ai: Will the price of Bitcoin be between $60,000 and $62,000 on November 29? -> No at 0.612 ($5.00)
 - 2026-11-26 move_ai_clean: Will Hyperliquid dip to $52 in November? -> Yes at 0.141 ($5.00)
-- 2026-11-27 sure_thing: Will Gold (XAUUSD) hit (HIGH) $3,750 Week of November 23 2026? -> No at 0.960 ($5.00)
 - 2026-11-27 fade_move: NVIDIA (NVDA) Up or Down on November 27? -> Down at 0.290 ($5.00)
+- 2026-11-27 sure_thing: SV Werder Bremen vs. Borussia Mönchengladbach: Neither team to score first? -> No at 0.965 ($4.82)
 - 2026-11-27 safe_no_week: Will the lowest temperature in Miami be between 58-59°F on November 28? -> No at 0.970 ($5.00)
 - 2026-11-27 follow_move: Tesla (TSLA) Up or Down on November 27? -> Up at 0.791 ($5.00)
 - 2026-11-27 follow_move_big: Will the price of Solana be between $70 and $80 on November 30? -> Yes at 0.631 ($5.00)
-- 2026-11-27 follow_move_cheap: Will the KMT win New Taipei and the DPP win Kaohsiung? -> Yes at 0.321 ($5.00)
+- 2026-11-27 follow_move_cheap: Will Lee Shu-chuan win the next New Taipei Mayor election? -> Yes at 0.422 ($5.00)
 - 2026-11-27 follow_move_2: Tesla (TSLA) Up or Down on November 27? -> Up at 0.791 ($5.00)
 - 2026-11-27 sports_underdog: Counter-Strike: Lynn Vision vs Heroic (BO3) - PGL Major Singapore Stage 1 -> Lynn Vision at 0.239 ($5.00)
 - 2026-11-27 weather_forecast: Will the highest temperature in San Francisco be between 64-65°F on November 28? -> No at 0.642 ($5.00)
@@ -81,6 +81,6 @@ Today: 2 checks, $0.19 of OpenAI credit (limit $1.00 a day). Since the start: 67
 
 No near-gaps today.
 
-Runs in the last 24 hours: 36 (1 with a problem).
+Runs in the last 24 hours: 37 (1 with a problem).
 Latest problem: weather: Open-Meteo failed for UUWW, no more forecasts fetched this run: https://ensemble-api.open-meteo.com/v1/ensemble?latitude=55.592&longitude=37.261&models=ecmwf_ifs025%2Cgfs_seamless&timezone=au
-30 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
+22 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
