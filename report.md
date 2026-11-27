@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-27 02:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-27 02:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-27 02:07 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 24 | 8/24 | +37.7% | +$45.29 | 7 | 20 | too early |
 | 2 | move_ai_clean | 17 | 6/17 | +29.0% | +$24.67 | 7 | 16 | too early |
-| 3 | sure_thing | 4372 | 4058/4372 | -0.9% | -$190.69 | 21 | 153 | FAIL |
+| 3 | sure_thing | 4374 | 4059/4374 | -0.9% | -$195.55 | 21 | 159 | FAIL |
 | 4 | fade_move | 846 | 286/846 | -1.9% | -$81.44 | 21 | 248 | FAIL |
-| 5 | safe_no_week | 1508 | 1407/1508 | -2.6% | -$192.42 | 22 | 533 | FAIL |
+| 5 | safe_no_week | 1508 | 1407/1508 | -2.6% | -$192.42 | 22 | 534 | FAIL |
 | 6 | follow_move | 772 | 469/772 | -3.8% | -$145.55 | 21 | 226 | FAIL |
-| 7 | follow_move_big | 299 | 187/299 | -10.4% | -$155.00 | 10 | 135 | too early |
-| 8 | follow_move_cheap | 181 | 60/181 | -10.6% | -$95.50 | 10 | 154 | too early |
+| 7 | follow_move_big | 299 | 187/299 | -10.4% | -$155.00 | 10 | 138 | too early |
+| 8 | follow_move_cheap | 181 | 60/181 | -10.6% | -$95.50 | 10 | 155 | too early |
 | 9 | follow_move_2 | 350 | 202/350 | -10.8% | -$189.66 | 10 | 214 | too early |
-| 10 | sports_underdog | 3360 | 803/3360 | -11.5% | -$1922.77 | 20 | 32 | FAIL |
+| 10 | sports_underdog | 3362 | 804/3362 | -11.4% | -$1914.23 | 20 | 30 | FAIL |
 | 11 | weather_forecast | 1138 | 588/1138 | -18.9% | -$1062.20 | 20 | 153 | FAIL |
 | 12 | follow_move_crypto | 121 | 60/121 | -23.3% | -$140.67 | 10 | 51 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4593 | 2272/4593 | -5.0% | -$1132.28 | 22 | 306 | yardstick |
+| 14 | coin_flip | 4598 | 2274/4598 | -5.0% | -$1137.95 | 22 | 309 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | sure_thing | fade_move | safe_no_week | follow_move | follow_move_big | follow_move_cheap | follow_move_2 | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-27 |  |  | -$21.04 |  | +$0.89 |  |  |  |  | +$63.36 | -$11.49 |  |  | -$21.12 |
+| 2026-11-27 |  |  | -$25.89 |  | +$0.89 |  |  |  |  | +$71.90 | -$11.49 |  |  | -$26.80 |
 | 2026-11-26 | -$15.00 | -$15.00 | -$40.62 | +$17.37 | -$0.57 | -$15.99 | -$13.20 | -$35.00 | -$15.99 | -$106.69 | -$37.54 | -$18.70 |  | -$41.54 |
 | 2026-11-25 | +$34.67 | +$34.67 | -$12.33 | +$107.49 | -$15.90 | -$96.47 | -$57.38 | -$28.35 | -$91.89 | +$17.58 | -$48.91 | -$16.25 |  | -$14.93 |
 | 2026-11-24 | -$13.69 | -$2.27 | -$4.80 | -$37.61 | -$6.58 | +$6.07 | +$3.56 | -$20.06 | +$7.51 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
@@ -59,12 +59,12 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-27 move_ai: Will the price of Bitcoin be between $60,000 and $62,000 on November 29? -> No at 0.612 ($5.00)
 - 2026-11-26 move_ai_clean: Will Hyperliquid dip to $52 in November? -> Yes at 0.141 ($5.00)
-- 2026-11-27 sure_thing: Marquette Golden Eagles vs. Illinois Fighting Illini (W) -> Illinois Fighting Illini at 0.918 ($5.00)
+- 2026-11-27 sure_thing: Spread: Grizzlies (-12.5) -> Timberwolves at 0.904 ($5.00)
 - 2026-11-27 fade_move: Military action against King Khalid International Airport (RUH) by November 30? -> Yes at 0.100 ($5.00)
-- 2026-11-27 safe_no_week: Military action against King Khalid International Airport (RUH) by November 30? -> No at 0.940 ($5.00)
+- 2026-11-27 safe_no_week: Will the price of Ethereum be between $1,500 and $1,600 on December 3? -> No at 0.921 ($5.00)
 - 2026-11-27 follow_move: Solana Up or Down on November 27? -> Up at 0.612 ($5.00)
-- 2026-11-27 follow_move_big: SPY (SPY) Up or Down on November 27? -> Up at 0.818 ($5.00)
-- 2026-11-27 follow_move_cheap: Will the Ornn H100 Index be at least $3.25 on November 30, 2026? -> Yes at 0.420 ($5.00)
+- 2026-11-27 follow_move_big: Bitcoin Up or Down on November 27? -> Up at 0.752 ($5.00)
+- 2026-11-27 follow_move_cheap: Will the KMT win New Taipei and the DPP win Kaohsiung? -> Yes at 0.321 ($5.00)
 - 2026-11-27 follow_move_2: Solana Up or Down on November 27? -> Up at 0.612 ($5.00)
 - 2026-11-27 sports_underdog: Texas Tech Red Raiders vs. Oregon Ducks -> Oregon Ducks at 0.177 ($5.00)
 - 2026-11-27 weather_forecast: Will the lowest temperature in Seattle be between 42-43°F on November 28? -> No at 0.784 ($5.00)
@@ -81,6 +81,6 @@ Today: 2 checks, $0.19 of OpenAI credit (limit $1.00 a day). Since the start: 67
 
 No near-gaps today.
 
-Runs in the last 24 hours: 36 (1 with a problem).
+Runs in the last 24 hours: 37 (1 with a problem).
 Latest problem: weather: Open-Meteo failed for UUWW, no more forecasts fetched this run: https://ensemble-api.open-meteo.com/v1/ensemble?latitude=55.592&longitude=37.261&models=ecmwf_ifs025%2Cgfs_seamless&timezone=au
 43 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
