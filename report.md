@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-27 19:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-27 20:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-27 19:27 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai_clean | 22 | 8/22 | +47.1% | +$51.81 | 8 | 15 | too early |
 | 2 | move_ai | 30 | 10/30 | +45.0% | +$67.43 | 8 | 19 | too early |
-| 3 | sure_thing | 4448 | 4130/4448 | -0.9% | -$189.16 | 21 | 284 | FAIL |
+| 3 | sure_thing | 4455 | 4136/4455 | -0.9% | -$192.46 | 21 | 285 | FAIL |
 | 4 | fade_move | 912 | 307/912 | -2.3% | -$106.58 | 22 | 216 | FAIL |
-| 5 | safe_no_week | 1616 | 1508/1616 | -2.5% | -$204.45 | 22 | 501 | FAIL |
+| 5 | safe_no_week | 1616 | 1508/1616 | -2.5% | -$204.45 | 22 | 503 | FAIL |
 | 6 | follow_move | 826 | 500/826 | -4.1% | -$168.79 | 22 | 194 | FAIL |
 | 7 | follow_move_2 | 395 | 231/395 | -9.3% | -$184.47 | 11 | 191 | too early |
-| 8 | sports_underdog | 3439 | 824/3439 | -11.4% | -$1941.53 | 20 | 90 | FAIL |
+| 8 | sports_underdog | 3450 | 826/3450 | -11.4% | -$1959.79 | 20 | 87 | FAIL |
 | 9 | follow_move_big | 341 | 212/341 | -11.6% | -$197.37 | 11 | 114 | too early |
-| 10 | follow_move_cheap | 215 | 70/215 | -12.4% | -$133.68 | 11 | 137 | too early |
-| 11 | weather_forecast | 1184 | 614/1184 | -18.8% | -$1099.82 | 20 | 171 | FAIL |
+| 10 | follow_move_cheap | 215 | 70/215 | -12.4% | -$133.68 | 11 | 138 | too early |
+| 11 | weather_forecast | 1184 | 614/1184 | -18.8% | -$1099.82 | 20 | 172 | FAIL |
 | 12 | follow_move_crypto | 133 | 65/133 | -24.2% | -$161.00 | 11 | 46 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4698 | 2325/4698 | -4.9% | -$1149.39 | 22 | 408 | yardstick |
+| 14 | coin_flip | 4705 | 2328/4705 | -4.9% | -$1156.71 | 22 | 409 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai_clean | move_ai | sure_thing | fade_move | safe_no_week | follow_move | follow_move_2 | sports_underdog | follow_move_big | follow_move_cheap | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-27 | +$27.14 | +$22.14 | -$19.50 | -$25.15 | -$11.15 | -$23.25 | +$5.18 | +$44.60 | -$42.37 | -$38.18 | -$49.10 | -$20.34 |  | -$38.24 |
+| 2026-11-27 | +$27.14 | +$22.14 | -$22.80 | -$25.15 | -$11.15 | -$23.25 | +$5.18 | +$26.34 | -$42.37 | -$38.18 | -$49.10 | -$20.34 |  | -$45.56 |
 | 2026-11-26 | -$15.00 | -$15.00 | -$40.62 | +$17.37 | -$0.57 | -$15.99 | -$15.99 | -$106.69 | -$13.20 | -$35.00 | -$37.54 | -$18.70 |  | -$41.54 |
 | 2026-11-25 | +$34.67 | +$34.67 | -$12.33 | +$107.49 | -$15.90 | -$96.47 | -$91.89 | +$17.58 | -$57.38 | -$28.35 | -$48.91 | -$16.25 |  | -$14.93 |
 | 2026-11-24 | -$2.27 | -$13.69 | -$4.80 | -$37.61 | -$6.58 | +$6.07 | +$7.51 | -$39.07 | +$3.56 | -$20.06 | -$86.80 | +$4.91 |  | -$24.16 |
@@ -59,15 +59,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-27 move_ai_clean: Will Gold (XAUUSD) hit (LOW) $3,500 in November? -> Yes at 0.146 ($5.00)
 - 2026-11-27 move_ai: Will Gold (XAUUSD) hit (LOW) $3,500 in November? -> Yes at 0.146 ($5.00)
-- 2026-11-27 sure_thing: KVC Westerlo vs. RAAL La Louviere: O/U 0.5 -> Over at 0.971 ($5.00)
+- 2026-11-27 sure_thing: Exact Score: ŠK Slovan Bratislava 1 - 0 FC Košice? -> No at 0.952 ($5.00)
 - 2026-11-27 fade_move: Will "I Play Rocky" 2nd Weekend Box Office be between 6.5m and 7m? -> No at 0.752 ($5.00)
-- 2026-11-27 safe_no_week: Will the highest temperature in Karachi be 32°C on November 29? -> No at 0.950 ($5.00)
+- 2026-11-27 safe_no_week: Will the highest temperature in Istanbul be 14°C on November 29? -> No at 0.941 ($5.00)
 - 2026-11-27 follow_move: Will "I Play Rocky" 2nd Weekend Box Office be between 6.5m and 7m? -> Yes at 0.282 ($5.00)
 - 2026-11-27 follow_move_2: Will "I Play Rocky" 2nd Weekend Box Office be between 6.5m and 7m? -> Yes at 0.282 ($5.00)
-- 2026-11-27 sports_underdog: Will Cavese 1919 vs. Scafatese Calcio 1922 end in a draw? -> Yes at 0.310 ($5.00)
+- 2026-11-27 sports_underdog: Will Vila Nova FC vs. AC Goianiense end in a draw? -> Yes at 0.351 ($5.00)
 - 2026-11-27 follow_move_big: Will the price of Bitcoin be above $56,000 on December 3? -> Yes at 0.851 ($5.00)
-- 2026-11-27 follow_move_cheap: Will "I Play Rocky" 2nd Weekend Box Office be between 6.5m and 7m? -> Yes at 0.282 ($5.00)
-- 2026-11-27 weather_forecast: Will the highest temperature in Mexico City be 20°C on November 29? -> No at 0.642 ($5.00)
+- 2026-11-27 follow_move_cheap: Will there be 8 earthquakes of 5.5 or above magnitude worldwide? -> Yes at 0.252 ($5.00)
+- 2026-11-27 weather_forecast: Will the lowest temperature in Amsterdam be -2°C on November 28? -> Yes at 0.161 ($5.00)
 - 2026-11-27 follow_move_crypto: Will the price of Ethereum be above $1,700 on December 3? -> No at 0.612 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
@@ -81,5 +81,5 @@ Today: 8 checks, $0.77 of OpenAI credit (limit $1.00 a day). Since the start: 73
 
 1 near-gaps recorded (full sets within a few cents of their payout). Cheapest: Elon Musk Net Worth on November 30? (yes), 1.002 for a $1 payout.
 
-Runs in the last 24 hours: 36 (0 with a problem).
+Runs in the last 24 hours: 37 (0 with a problem).
 18 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
