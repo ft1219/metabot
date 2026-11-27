@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-27 20:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-27 21:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-27 20:47 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai_clean | 22 | 8/22 | +47.1% | +$51.81 | 8 | 15 | too early |
 | 2 | move_ai | 30 | 10/30 | +45.0% | +$67.43 | 8 | 19 | too early |
-| 3 | sure_thing | 4461 | 4141/4461 | -0.9% | -$195.49 | 21 | 287 | FAIL |
-| 4 | fade_move | 912 | 307/912 | -2.3% | -$106.58 | 22 | 216 | FAIL |
-| 5 | safe_no_week | 1616 | 1508/1616 | -2.5% | -$204.45 | 22 | 503 | FAIL |
-| 6 | follow_move | 826 | 500/826 | -4.1% | -$168.79 | 22 | 194 | FAIL |
-| 7 | follow_move_2 | 395 | 231/395 | -9.3% | -$184.47 | 11 | 191 | too early |
-| 8 | sports_underdog | 3456 | 827/3456 | -11.4% | -$1962.83 | 20 | 89 | FAIL |
-| 9 | follow_move_big | 341 | 212/341 | -11.6% | -$197.37 | 11 | 114 | too early |
-| 10 | follow_move_cheap | 215 | 70/215 | -12.4% | -$133.68 | 11 | 138 | too early |
-| 11 | weather_forecast | 1184 | 614/1184 | -18.8% | -$1099.82 | 20 | 173 | FAIL |
+| 3 | sure_thing | 4484 | 4163/4484 | -0.9% | -$193.73 | 21 | 272 | FAIL |
+| 4 | fade_move | 912 | 307/912 | -2.3% | -$106.58 | 22 | 217 | FAIL |
+| 5 | safe_no_week | 1619 | 1511/1619 | -2.5% | -$203.61 | 22 | 501 | FAIL |
+| 6 | follow_move | 826 | 500/826 | -4.1% | -$168.79 | 22 | 196 | FAIL |
+| 7 | follow_move_2 | 395 | 231/395 | -9.3% | -$184.47 | 11 | 193 | too early |
+| 8 | sports_underdog | 3479 | 832/3479 | -11.6% | -$2002.12 | 20 | 74 | FAIL |
+| 9 | follow_move_big | 341 | 212/341 | -11.6% | -$197.37 | 11 | 115 | too early |
+| 10 | follow_move_cheap | 215 | 70/215 | -12.4% | -$133.68 | 11 | 139 | too early |
+| 11 | weather_forecast | 1188 | 615/1188 | -19.0% | -$1112.63 | 20 | 170 | FAIL |
 | 12 | follow_move_crypto | 133 | 65/133 | -24.2% | -$161.00 | 11 | 46 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4712 | 2331/4712 | -4.9% | -$1154.96 | 22 | 410 | yardstick |
+| 14 | coin_flip | 4727 | 2341/4727 | -4.9% | -$1143.42 | 22 | 403 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai_clean | move_ai | sure_thing | fade_move | safe_no_week | follow_move | follow_move_2 | sports_underdog | follow_move_big | follow_move_cheap | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-27 | +$27.14 | +$22.14 | -$25.84 | -$25.15 | -$11.15 | -$23.25 | +$5.18 | +$23.30 | -$42.37 | -$38.18 | -$49.10 | -$20.34 |  | -$43.81 |
+| 2026-11-27 | +$27.14 | +$22.14 | -$24.07 | -$25.15 | -$10.31 | -$23.25 | +$5.18 | -$15.99 | -$42.37 | -$38.18 | -$61.91 | -$20.34 |  | -$32.26 |
 | 2026-11-26 | -$15.00 | -$15.00 | -$40.62 | +$17.37 | -$0.57 | -$15.99 | -$15.99 | -$106.69 | -$13.20 | -$35.00 | -$37.54 | -$18.70 |  | -$41.54 |
 | 2026-11-25 | +$34.67 | +$34.67 | -$12.33 | +$107.49 | -$15.90 | -$96.47 | -$91.89 | +$17.58 | -$57.38 | -$28.35 | -$48.91 | -$16.25 |  | -$14.93 |
 | 2026-11-24 | -$2.27 | -$13.69 | -$4.80 | -$37.61 | -$6.58 | +$6.07 | +$7.51 | -$39.07 | +$3.56 | -$20.06 | -$86.80 | +$4.91 |  | -$24.16 |
@@ -59,23 +59,23 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-27 move_ai_clean: Will Gold (XAUUSD) hit (LOW) $3,500 in November? -> Yes at 0.146 ($5.00)
 - 2026-11-27 move_ai: Will Gold (XAUUSD) hit (LOW) $3,500 in November? -> Yes at 0.146 ($5.00)
-- 2026-11-27 sure_thing: Exact Score: Servette Geneva 0 - 0 Lausanne-Sport? -> No at 0.952 ($5.00)
-- 2026-11-27 fade_move: Will "I Play Rocky" 2nd Weekend Box Office be between 6.5m and 7m? -> No at 0.752 ($5.00)
-- 2026-11-27 safe_no_week: Will the highest temperature in Istanbul be 14°C on November 29? -> No at 0.941 ($5.00)
-- 2026-11-27 follow_move: Will "I Play Rocky" 2nd Weekend Box Office be between 6.5m and 7m? -> Yes at 0.282 ($5.00)
-- 2026-11-27 follow_move_2: Will "I Play Rocky" 2nd Weekend Box Office be between 6.5m and 7m? -> Yes at 0.282 ($5.00)
-- 2026-11-27 sports_underdog: Will CA Atlanta vs. Club Ciudad de Bolivar end in a draw? -> Yes at 0.351 ($5.00)
-- 2026-11-27 follow_move_big: Will the price of Bitcoin be above $56,000 on December 3? -> Yes at 0.851 ($5.00)
-- 2026-11-27 follow_move_cheap: Will there be 8 earthquakes of 5.5 or above magnitude worldwide? -> Yes at 0.252 ($5.00)
-- 2026-11-27 weather_forecast: Will the lowest temperature in Seattle be between 44-45°F on November 29? -> No at 0.715 ($5.00)
+- 2026-11-27 sure_thing: Tennessee Volunteers vs. Florida Gulf Coast Eagles (W) -> Tennessee Volunteers at 0.962 ($5.00)
+- 2026-11-27 fade_move: Will BNG win exactly 2 seats in the 2026 Spanish general election? -> No at 0.452 ($5.00)
+- 2026-11-27 safe_no_week: Will the highest temperature in Jeddah be 33°C on November 29? -> No at 0.921 ($5.00)
+- 2026-11-27 follow_move: Will BNG win exactly 2 seats in the 2026 Spanish general election? -> Yes at 0.592 ($5.00)
+- 2026-11-27 follow_move_2: Will BNG win exactly 2 seats in the 2026 Spanish general election? -> Yes at 0.592 ($5.00)
+- 2026-11-27 sports_underdog: Club ABB vs. CD Real Tomayapo: O/U 1.5 -> Under at 0.196 ($5.00)
+- 2026-11-27 follow_move_big: Will "Ebenezer" 3rd Weekend Box Office be at least 8.5m? -> Yes at 0.402 ($5.00)
+- 2026-11-27 follow_move_cheap: Will "Ebenezer" 3rd Weekend Box Office be at least 8.5m? -> Yes at 0.402 ($5.00)
+- 2026-11-27 weather_forecast: Will the lowest temperature in Moscow be -5°C on November 29? -> No at 0.881 ($5.00)
 - 2026-11-27 follow_move_crypto: Will the price of Ethereum be above $1,700 on December 3? -> No at 0.612 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
 
 Today: 8 checks, $0.77 of OpenAI credit (limit $1.00 a day). Since the start: 73 checks ($7.42 spent in all); on 49 the AI beat the price by 5c or more and 49 were bought (the rest found no seller at that price); 0 failed. The AI saw betting odds while searching on 19 of the 73 it answered. 3 checks from the first version (19 Nov) are left out here and in the AI strategies' results: a bug sent each of them another market's question.
-- All checked markets, 39 with a result: AI error 0.276, market price 0.228 (lower is better; always saying 50% scores 0.250); the AI was closer on 12.
-- Checks where it saw no betting odds, 27 with a result: AI error 0.249, market price 0.199 (lower is better; always saying 50% scores 0.250); the AI was closer on 8.
-34 more checked markets are waiting for their result. A few dozen results say little; read this after 100 or more.
+- All checked markets, 45 with a result: AI error 0.286, market price 0.250 (lower is better; always saying 50% scores 0.250); the AI was closer on 15.
+- Checks where it saw no betting odds, 33 with a result: AI error 0.268, market price 0.235 (lower is better; always saying 50% scores 0.250); the AI was closer on 11.
+28 more checked markets are waiting for their result. A few dozen results say little; read this after 100 or more.
 
 ## Price gaps seen today
 
