@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-27 16:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-27 16:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-27 16:07 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai_clean | 18 | 7/18 | +70.7% | +$63.64 | 8 | 18 | too early |
 | 2 | move_ai | 25 | 9/25 | +67.4% | +$84.26 | 8 | 23 | too early |
-| 3 | fade_move | 857 | 292/857 | -0.3% | -$11.85 | 22 | 262 | FAIL |
-| 4 | sure_thing | 4425 | 4108/4425 | -0.9% | -$189.63 | 21 | 267 | FAIL |
-| 5 | safe_no_week | 1544 | 1441/1544 | -2.5% | -$193.98 | 22 | 564 | FAIL |
+| 3 | fade_move | 857 | 292/857 | -0.3% | -$11.85 | 22 | 263 | FAIL |
+| 4 | sure_thing | 4425 | 4108/4425 | -0.9% | -$189.63 | 21 | 275 | FAIL |
+| 5 | safe_no_week | 1559 | 1456/1559 | -2.4% | -$190.54 | 22 | 552 | FAIL |
 | 6 | follow_move | 782 | 472/782 | -4.4% | -$171.74 | 22 | 231 | FAIL |
 | 7 | follow_move_cheap | 182 | 61/182 | -9.9% | -$89.69 | 11 | 166 | too early |
-| 8 | follow_move_big | 300 | 188/300 | -10.2% | -$152.76 | 11 | 151 | too early |
+| 8 | follow_move_big | 300 | 188/300 | -10.2% | -$152.76 | 11 | 152 | too early |
 | 9 | follow_move_2 | 351 | 203/351 | -10.7% | -$187.42 | 11 | 228 | too early |
-| 10 | sports_underdog | 3426 | 823/3426 | -11.1% | -$1895.08 | 20 | 63 | FAIL |
-| 11 | weather_forecast | 1166 | 604/1166 | -18.8% | -$1081.28 | 20 | 186 | FAIL |
+| 10 | sports_underdog | 3426 | 823/3426 | -11.1% | -$1895.08 | 20 | 71 | FAIL |
+| 11 | weather_forecast | 1181 | 611/1181 | -19.0% | -$1106.67 | 20 | 173 | FAIL |
 | 12 | follow_move_crypto | 121 | 60/121 | -23.3% | -$140.67 | 10 | 54 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4678 | 2315/4678 | -4.9% | -$1140.12 | 22 | 388 | yardstick |
+| 14 | coin_flip | 4685 | 2317/4685 | -5.0% | -$1156.16 | 22 | 389 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai_clean | move_ai | fade_move | sure_thing | safe_no_week | follow_move | follow_move_cheap | follow_move_big | follow_move_2 | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-27 | +$38.97 | +$38.97 | +$69.59 | -$19.97 | -$0.67 | -$26.20 | +$5.81 | +$2.24 | +$2.24 | +$91.05 | -$30.56 |  |  | -$28.97 |
+| 2026-11-27 | +$38.97 | +$38.97 | +$69.59 | -$19.97 | +$2.77 | -$26.20 | +$5.81 | +$2.24 | +$2.24 | +$91.05 | -$55.96 |  |  | -$45.01 |
 | 2026-11-26 | -$15.00 | -$15.00 | +$17.37 | -$40.62 | -$0.57 | -$15.99 | -$35.00 | -$13.20 | -$15.99 | -$106.69 | -$37.54 | -$18.70 |  | -$41.54 |
 | 2026-11-25 | +$34.67 | +$34.67 | +$107.49 | -$12.33 | -$15.90 | -$96.47 | -$28.35 | -$57.38 | -$91.89 | +$17.58 | -$48.91 | -$16.25 |  | -$14.93 |
 | 2026-11-24 | -$2.27 | -$13.69 | -$37.61 | -$4.80 | -$6.58 | +$6.07 | -$20.06 | +$3.56 | +$7.51 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
@@ -59,15 +59,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-27 move_ai_clean: Will the price of Solana be between $60 and $70 on November 29? -> Yes at 0.151 ($4.54)
 - 2026-11-27 move_ai: Will the price of Solana be between $60 and $70 on November 29? -> Yes at 0.151 ($4.54)
-- 2026-11-27 fade_move: Will Meta (META) close above $620 end of November? -> No at 0.295 ($5.00)
-- 2026-11-27 sure_thing: Exact Score: 1. FC Saarbrucken 0 - 0 Alemannia Aachen? -> No at 0.971 ($5.00)
-- 2026-11-27 safe_no_week: Will the highest temperature in Shenzhen be 23°C on November 29? -> No at 0.941 ($5.00)
+- 2026-11-27 fade_move: Will "Ebenezer" 3rd Weekend Box Office be between 7m and 7.5m? -> Yes at 0.181 ($5.00)
+- 2026-11-27 sure_thing: Exact Score: Queens Park Rangers FC 0 - 0 Sheffield United FC? -> No at 0.943 ($5.00)
+- 2026-11-27 safe_no_week: Will the highest temperature in Houston be between 74-75°F on November 29? -> No at 0.985 ($5.00)
 - 2026-11-27 follow_move: Will Canada’s November 2026 unemployment rate be 6.6%? -> Yes at 0.552 ($5.00)
 - 2026-11-27 follow_move_cheap: Will the Ornn RTX 6000 Index be between $1.50 and $1.75 on November 30, 2026? -> No at 0.220 ($5.00)
-- 2026-11-27 follow_move_big: Will Meta (META) close above $620 end of November? -> Yes at 0.789 ($5.00)
+- 2026-11-27 follow_move_big: Will Greens win the third-most seats in the next Victorian state election? -> Yes at 0.644 ($5.00)
 - 2026-11-27 follow_move_2: Will Meta (META) close above $620 end of November? -> Yes at 0.789 ($5.00)
-- 2026-11-27 sports_underdog: Spread: Vanderbilt Commodores (-30.5) -> Southern Jaguars at 0.331 ($5.00)
-- 2026-11-27 weather_forecast: Will the highest temperature in Buenos Aires be 35°C on November 29? -> No at 0.562 ($5.00)
+- 2026-11-27 sports_underdog: Spread: Cavese 1919 (-1.5) -> Cavese 1919 at 0.270 ($5.00)
+- 2026-11-27 weather_forecast: Will the highest temperature in Qingdao be 11°C on November 29? -> Yes at 0.147 ($5.00)
 - 2026-11-27 follow_move_crypto: Will the price of XRP be between $0.90 and $1.00 on December 1? -> Yes at 0.546 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
@@ -79,7 +79,7 @@ Today: 7 checks, $0.65 of OpenAI credit (limit $1.00 a day). Since the start: 72
 
 ## Price gaps seen today
 
-No near-gaps today.
+1 near-gaps recorded (full sets within a few cents of their payout). Cheapest: Elon Musk Net Worth on November 30? (yes), 1.002 for a $1 payout.
 
-Runs in the last 24 hours: 36 (0 with a problem).
+Runs in the last 24 hours: 37 (0 with a problem).
 19 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
