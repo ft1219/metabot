@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-27 08:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-27 09:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-27 08:47 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 24 | 8/24 | +37.7% | +$45.29 | 7 | 22 | too early |
 | 2 | move_ai_clean | 17 | 6/17 | +29.0% | +$24.67 | 7 | 17 | too early |
-| 3 | fade_move | 855 | 291/855 | -0.3% | -$13.76 | 22 | 246 | FAIL |
-| 4 | sure_thing | 4404 | 4089/4404 | -0.8% | -$185.16 | 21 | 201 | FAIL |
-| 5 | safe_no_week | 1534 | 1431/1534 | -2.6% | -$197.05 | 22 | 549 | FAIL |
-| 6 | follow_move | 780 | 471/780 | -4.3% | -$168.98 | 22 | 223 | FAIL |
-| 7 | follow_move_big | 299 | 187/299 | -10.4% | -$155.00 | 10 | 145 | too early |
-| 8 | follow_move_cheap | 181 | 60/181 | -10.6% | -$95.50 | 10 | 160 | too early |
-| 9 | follow_move_2 | 350 | 202/350 | -10.8% | -$189.66 | 10 | 219 | too early |
-| 10 | sports_underdog | 3385 | 810/3385 | -11.4% | -$1918.64 | 20 | 29 | FAIL |
-| 11 | weather_forecast | 1155 | 599/1155 | -18.7% | -$1063.49 | 20 | 179 | FAIL |
+| 3 | fade_move | 855 | 291/855 | -0.3% | -$13.76 | 22 | 249 | FAIL |
+| 4 | sure_thing | 4407 | 4092/4407 | -0.8% | -$184.32 | 21 | 205 | FAIL |
+| 5 | safe_no_week | 1538 | 1435/1538 | -2.5% | -$195.94 | 22 | 548 | FAIL |
+| 6 | follow_move | 780 | 471/780 | -4.3% | -$168.98 | 22 | 225 | FAIL |
+| 7 | follow_move_big | 299 | 187/299 | -10.4% | -$155.00 | 10 | 146 | too early |
+| 8 | follow_move_cheap | 181 | 60/181 | -10.6% | -$95.50 | 10 | 161 | too early |
+| 9 | follow_move_2 | 350 | 202/350 | -10.8% | -$189.66 | 10 | 221 | too early |
+| 10 | sports_underdog | 3387 | 810/3387 | -11.5% | -$1928.64 | 20 | 35 | FAIL |
+| 11 | weather_forecast | 1160 | 603/1160 | -18.5% | -$1060.33 | 20 | 176 | FAIL |
 | 12 | follow_move_crypto | 121 | 60/121 | -23.3% | -$140.67 | 10 | 53 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4642 | 2297/4642 | -4.9% | -$1141.12 | 22 | 337 | yardstick |
+| 14 | coin_flip | 4647 | 2299/4647 | -5.0% | -$1146.61 | 22 | 340 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | fade_move | sure_thing | safe_no_week | follow_move | follow_move_big | follow_move_cheap | follow_move_2 | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-27 |  |  | +$67.67 | -$15.50 | -$3.74 | -$23.43 |  |  |  | +$67.49 | -$12.77 |  |  | -$29.97 |
+| 2026-11-27 |  |  | +$67.67 | -$14.66 | -$2.63 | -$23.43 |  |  |  | +$57.49 | -$9.61 |  |  | -$35.45 |
 | 2026-11-26 | -$15.00 | -$15.00 | +$17.37 | -$40.62 | -$0.57 | -$15.99 | -$13.20 | -$35.00 | -$15.99 | -$106.69 | -$37.54 | -$18.70 |  | -$41.54 |
 | 2026-11-25 | +$34.67 | +$34.67 | +$107.49 | -$12.33 | -$15.90 | -$96.47 | -$57.38 | -$28.35 | -$91.89 | +$17.58 | -$48.91 | -$16.25 |  | -$14.93 |
 | 2026-11-24 | -$13.69 | -$2.27 | -$37.61 | -$4.80 | -$6.58 | +$6.07 | +$3.56 | -$20.06 | +$7.51 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
@@ -59,15 +59,15 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-27 move_ai: Will "Steps" be the #2 US Netflix movie this week? -> Yes at 0.111 ($5.00)
 - 2026-11-27 move_ai_clean: Will "Steps" be the #2 US Netflix movie this week? -> Yes at 0.111 ($5.00)
-- 2026-11-27 fade_move: Will Broad Front (FA) win 6-8 seats in the 2026 Spanish general election? -> Yes at 0.195 ($5.00)
-- 2026-11-27 sure_thing: Exact Score: PSM Makassar 0 - 0 Dewa United? -> No at 0.971 ($5.00)
-- 2026-11-27 safe_no_week: Will the highest temperature in Kuala Lumpur be 30°C on November 29? -> No at 0.931 ($5.00)
-- 2026-11-27 follow_move: Will the price of Solana be above $70 on December 2? -> Yes at 0.744 ($5.00)
-- 2026-11-27 follow_move_big: Will 22+ ships transit the Strait of Hormuz week of November 23? -> No at 0.851 ($5.00)
-- 2026-11-27 follow_move_cheap: Will the price of XRP be above $1.00 on November 30? -> Yes at 0.372 ($5.00)
-- 2026-11-27 follow_move_2: Will the price of Solana be above $70 on December 2? -> Yes at 0.744 ($5.00)
-- 2026-11-27 sports_underdog: StarCraft II: Clem vs Classic (BO7) - Kung Fu Cup Grand Finals Playoffs -> Classic at 0.225 ($5.00)
-- 2026-11-27 weather_forecast: Will the highest temperature in Miami be between 80-81°F on November 29? -> No at 0.702 ($5.00)
+- 2026-11-27 fade_move: Will Elon Musk post 280-299 tweets from November 24 to December 1, 2026? -> Yes at 0.109 ($5.00)
+- 2026-11-27 sure_thing: Spread: Jong FC Utrecht (-1.5) -> Almere City FC at 0.904 ($5.00)
+- 2026-11-27 safe_no_week: Will the highest temperature in Amsterdam be 7°C or higher on November 29? -> No at 0.941 ($5.00)
+- 2026-11-27 follow_move: Will PP win fewer than 120 seats in the 2026 Spanish general election? -> Yes at 0.284 ($5.00)
+- 2026-11-27 follow_move_big: Will NVIDIA (NVDA) close above $155 on November 27? -> Yes at 0.626 ($5.00)
+- 2026-11-27 follow_move_cheap: Will PP win fewer than 120 seats in the 2026 Spanish general election? -> Yes at 0.284 ($5.00)
+- 2026-11-27 follow_move_2: Will NVIDIA (NVDA) close above $155 on November 27? -> Yes at 0.626 ($5.00)
+- 2026-11-27 sports_underdog: M15 Monastir: Rihards Neimanis vs Aljaz Jeran -> Aljaz Jeran at 0.300 ($5.00)
+- 2026-11-27 weather_forecast: Will the highest temperature in Denver be between 52-53°F on November 28? -> No at 0.735 ($5.00)
 - 2026-11-27 follow_move_crypto: Will the price of Solana be above $70 on December 2? -> Yes at 0.744 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
@@ -81,6 +81,6 @@ Today: 4 checks, $0.41 of OpenAI credit (limit $1.00 a day). Since the start: 69
 
 No near-gaps today.
 
-Runs in the last 24 hours: 36 (1 with a problem).
+Runs in the last 24 hours: 37 (1 with a problem).
 Latest problem: weather: Open-Meteo failed for UUWW, no more forecasts fetched this run: https://ensemble-api.open-meteo.com/v1/ensemble?latitude=55.592&longitude=37.261&models=ecmwf_ifs025%2Cgfs_seamless&timezone=au
 22 open position(s) ended more than 3 days ago, but Polymarket has not settled their markets yet (a result still being counted, or a postponed match). They are settled when it does.
