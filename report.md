@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-27 06:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-27 06:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-27 06:07 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 24 | 8/24 | +37.7% | +$45.29 | 7 | 21 | too early |
 | 2 | move_ai_clean | 17 | 6/17 | +29.0% | +$24.67 | 7 | 16 | too early |
-| 3 | fade_move | 854 | 291/854 | -0.2% | -$8.76 | 22 | 245 | FAIL |
-| 4 | sure_thing | 4397 | 4082/4397 | -0.9% | -$186.97 | 21 | 176 | FAIL |
-| 5 | safe_no_week | 1521 | 1418/1521 | -2.6% | -$200.14 | 22 | 539 | FAIL |
-| 6 | follow_move | 780 | 471/780 | -4.3% | -$168.98 | 22 | 221 | FAIL |
+| 3 | fade_move | 854 | 291/854 | -0.2% | -$8.76 | 22 | 246 | FAIL |
+| 4 | sure_thing | 4399 | 4084/4399 | -0.8% | -$186.30 | 21 | 182 | FAIL |
+| 5 | safe_no_week | 1525 | 1422/1525 | -2.6% | -$199.29 | 22 | 543 | FAIL |
+| 6 | follow_move | 780 | 471/780 | -4.3% | -$168.98 | 22 | 223 | FAIL |
 | 7 | follow_move_big | 299 | 187/299 | -10.4% | -$155.00 | 10 | 144 | too early |
 | 8 | follow_move_cheap | 181 | 60/181 | -10.6% | -$95.50 | 10 | 158 | too early |
-| 9 | follow_move_2 | 350 | 202/350 | -10.8% | -$189.66 | 10 | 217 | too early |
-| 10 | sports_underdog | 3378 | 808/3378 | -11.5% | -$1924.64 | 20 | 22 | FAIL |
-| 11 | weather_forecast | 1143 | 591/1143 | -18.9% | -$1065.09 | 20 | 166 | FAIL |
-| 12 | follow_move_crypto | 121 | 60/121 | -23.3% | -$140.67 | 10 | 52 | too early |
+| 9 | follow_move_2 | 350 | 202/350 | -10.8% | -$189.66 | 10 | 219 | too early |
+| 10 | sports_underdog | 3381 | 808/3381 | -11.5% | -$1939.64 | 20 | 20 | FAIL |
+| 11 | weather_forecast | 1147 | 594/1147 | -18.7% | -$1058.77 | 20 | 170 | FAIL |
+| 12 | follow_move_crypto | 121 | 60/121 | -23.3% | -$140.67 | 10 | 53 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4627 | 2290/4627 | -4.9% | -$1131.60 | 22 | 320 | yardstick |
+| 14 | coin_flip | 4629 | 2291/4629 | -4.9% | -$1131.84 | 22 | 326 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | fade_move | sure_thing | safe_no_week | follow_move | follow_move_big | follow_move_cheap | follow_move_2 | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-27 |  |  | +$72.67 | -$17.31 | -$6.83 | -$23.43 |  |  |  | +$61.49 | -$14.37 |  |  | -$20.44 |
+| 2026-11-27 |  |  | +$72.67 | -$16.64 | -$5.98 | -$23.43 |  |  |  | +$46.49 | -$8.05 |  |  | -$20.69 |
 | 2026-11-26 | -$15.00 | -$15.00 | +$17.37 | -$40.62 | -$0.57 | -$15.99 | -$13.20 | -$35.00 | -$15.99 | -$106.69 | -$37.54 | -$18.70 |  | -$41.54 |
 | 2026-11-25 | +$34.67 | +$34.67 | +$107.49 | -$12.33 | -$15.90 | -$96.47 | -$57.38 | -$28.35 | -$91.89 | +$17.58 | -$48.91 | -$16.25 |  | -$14.93 |
 | 2026-11-24 | -$13.69 | -$2.27 | -$37.61 | -$4.80 | -$6.58 | +$6.07 | +$3.56 | -$20.06 | +$7.51 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
@@ -59,16 +59,16 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-27 move_ai: Will the 7-day average ship traffic through the Malacca Strait be 230+ on November 30? -> Yes at 0.362 ($5.00)
 - 2026-11-26 move_ai_clean: Will Hyperliquid dip to $52 in November? -> Yes at 0.141 ($5.00)
-- 2026-11-27 fade_move: Will the price of Solana be above $65 on December 2? -> No at 0.133 ($5.00)
-- 2026-11-27 sure_thing: Exact Score: Nacional Asuncion 0 - 0 Rubio Nu? -> No at 0.933 ($5.00)
-- 2026-11-27 safe_no_week: Will the highest temperature in Tel Aviv be 21°C on November 29? -> No at 0.960 ($5.00)
-- 2026-11-27 follow_move: Tesla (TSLA) Up or Down on November 27? -> Up at 0.791 ($5.00)
+- 2026-11-27 fade_move: Will PSOE win 114-119 seats in the 2026 Spanish general election? -> Yes at 0.249 ($5.00)
+- 2026-11-27 sure_thing: CD Antofagasta vs. Deportes Copiapo: O/U 0.5 -> Over at 0.971 ($5.00)
+- 2026-11-27 safe_no_week: Will the highest temperature in Munich be 1°C on November 29? -> No at 0.950 ($5.00)
+- 2026-11-27 follow_move: Will the price of Solana be above $70 on December 2? -> Yes at 0.744 ($5.00)
 - 2026-11-27 follow_move_big: Will the Ornn A100 Index be between $1.00 and $1.25 on November 30, 2026? -> Yes at 0.750 ($5.00)
 - 2026-11-27 follow_move_cheap: Will the price of Ethereum be above $1,800 on December 2? -> Yes at 0.322 ($5.00)
-- 2026-11-27 follow_move_2: Tesla (TSLA) Up or Down on November 27? -> Up at 0.791 ($5.00)
-- 2026-11-27 sports_underdog: Valorant: Any Questions Gaming vs Young Gaming (BO5) - China National Tournament Split Omega: Pro Division Playoffs -> Young Gaming at 0.321 ($5.00)
-- 2026-11-27 weather_forecast: Will the lowest temperature in Seoul (Incheon) be 1°C on November 29? -> No at 0.562 ($5.00)
-- 2026-11-27 follow_move_crypto: XRP Up or Down on November 27? -> Up at 0.762 ($5.00)
+- 2026-11-27 follow_move_2: Will the price of Solana be above $70 on December 2? -> Yes at 0.744 ($5.00)
+- 2026-11-27 sports_underdog: Valorant: Kryon Esports vs SIGN Esports (BO3) - VCT Pacific Kickoff: South Asia - Qualifier Playoffs -> Kryon Esports at 0.351 ($5.00)
+- 2026-11-27 weather_forecast: Will the lowest temperature in Tokyo be 8°C on November 29? -> No at 0.562 ($5.00)
+- 2026-11-27 follow_move_crypto: Will the price of Solana be above $70 on December 2? -> Yes at 0.744 ($5.00)
 
 ## AI check (move_ai, move_ai_clean)
 
