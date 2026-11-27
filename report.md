@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-27 00:07 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-27 00:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-27 00:07 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai | 24 | 8/24 | +37.7% | +$45.29 | 7 | 19 | too early |
 | 2 | move_ai_clean | 17 | 6/17 | +29.0% | +$24.67 | 7 | 16 | too early |
-| 3 | sure_thing | 4363 | 4052/4363 | -0.8% | -$178.03 | 21 | 139 | FAIL |
-| 4 | fade_move | 846 | 286/846 | -1.9% | -$81.44 | 21 | 245 | FAIL |
-| 5 | safe_no_week | 1506 | 1405/1506 | -2.6% | -$192.73 | 22 | 533 | FAIL |
-| 6 | follow_move | 772 | 469/772 | -3.8% | -$145.55 | 21 | 224 | FAIL |
-| 7 | follow_move_big | 299 | 187/299 | -10.4% | -$155.00 | 10 | 133 | too early |
+| 3 | sure_thing | 4365 | 4054/4365 | -0.8% | -$177.13 | 21 | 145 | FAIL |
+| 4 | fade_move | 846 | 286/846 | -1.9% | -$81.44 | 21 | 246 | FAIL |
+| 5 | safe_no_week | 1508 | 1407/1508 | -2.6% | -$192.42 | 22 | 532 | FAIL |
+| 6 | follow_move | 772 | 469/772 | -3.8% | -$145.55 | 21 | 225 | FAIL |
+| 7 | follow_move_big | 299 | 187/299 | -10.4% | -$155.00 | 10 | 134 | too early |
 | 8 | follow_move_cheap | 181 | 60/181 | -10.6% | -$95.50 | 10 | 153 | too early |
-| 9 | follow_move_2 | 350 | 202/350 | -10.8% | -$189.66 | 10 | 212 | too early |
-| 10 | sports_underdog | 3349 | 798/3349 | -11.8% | -$1958.72 | 20 | 35 | FAIL |
-| 11 | weather_forecast | 1136 | 588/1136 | -18.8% | -$1052.20 | 20 | 153 | FAIL |
+| 9 | follow_move_2 | 350 | 202/350 | -10.8% | -$189.66 | 10 | 213 | too early |
+| 10 | sports_underdog | 3354 | 800/3354 | -11.7% | -$1953.95 | 20 | 33 | FAIL |
+| 11 | weather_forecast | 1138 | 588/1138 | -18.9% | -$1062.20 | 20 | 151 | FAIL |
 | 12 | follow_move_crypto | 121 | 60/121 | -23.3% | -$140.67 | 10 | 50 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4580 | 2265/4580 | -5.0% | -$1135.30 | 22 | 295 | yardstick |
+| 14 | coin_flip | 4581 | 2266/4581 | -5.0% | -$1130.54 | 22 | 302 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai | move_ai_clean | sure_thing | fade_move | safe_no_week | follow_move | follow_move_big | follow_move_cheap | follow_move_2 | sports_underdog | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-27 |  |  | -$8.38 |  | +$0.57 |  |  |  |  | +$27.41 | -$1.49 |  |  | -$24.14 |
+| 2026-11-27 |  |  | -$7.48 |  | +$0.89 |  |  |  |  | +$32.18 | -$11.49 |  |  | -$19.39 |
 | 2026-11-26 | -$15.00 | -$15.00 | -$40.62 | +$17.37 | -$0.57 | -$15.99 | -$13.20 | -$35.00 | -$15.99 | -$106.69 | -$37.54 | -$18.70 |  | -$41.54 |
 | 2026-11-25 | +$34.67 | +$34.67 | -$12.33 | +$107.49 | -$15.90 | -$96.47 | -$57.38 | -$28.35 | -$91.89 | +$17.58 | -$48.91 | -$16.25 |  | -$14.93 |
 | 2026-11-24 | -$13.69 | -$2.27 | -$4.80 | -$37.61 | -$6.58 | +$6.07 | +$3.56 | -$20.06 | +$7.51 | -$39.07 | -$86.80 | +$4.91 |  | -$24.16 |
@@ -59,14 +59,14 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-26 move_ai: Will Elon Musk’s net worth be between $700B and $800B on November 30? -> No at 0.612 ($5.00)
 - 2026-11-26 move_ai_clean: Will Hyperliquid dip to $52 in November? -> Yes at 0.141 ($5.00)
-- 2026-11-27 sure_thing: Will Alphabet Inc. (GOOGL) hit (HIGH) $295 Week of November 23 2026? -> No at 0.964 ($5.00)
-- 2026-11-27 fade_move: Will Box (BOX) beat quarterly earnings? -> No at 0.342 ($5.00)
-- 2026-11-27 safe_no_week: Will the highest temperature in New York City be between 54-55°F on November 28? -> No at 0.950 ($5.00)
-- 2026-11-27 follow_move: Will Box (BOX) beat quarterly earnings? -> Yes at 0.692 ($5.00)
-- 2026-11-27 follow_move_big: Will Box (BOX) beat quarterly earnings? -> Yes at 0.692 ($5.00)
+- 2026-11-27 sure_thing: Spread: Racing Club Montevideo (-1.5) -> Liverpool Montevideo at 0.904 ($5.00)
+- 2026-11-27 fade_move: S&P 500 (SPX) Opens Up or Down on November 27? -> Down at 0.208 ($5.00)
+- 2026-11-27 safe_no_week: Will the highest temperature in Denver be between 50-51°F on November 28? -> No at 0.970 ($5.00)
+- 2026-11-27 follow_move: S&P 500 (SPX) Opens Up or Down on November 27? -> Up at 0.827 ($5.00)
+- 2026-11-27 follow_move_big: Will MrBeast's next video get between 35 and 40 million views on day 1? -> No at 0.782 ($5.00)
 - 2026-11-26 follow_move_cheap: Will the price of Solana be between $60 and $70 on December 1? -> Yes at 0.432 ($5.00)
-- 2026-11-27 follow_move_2: Will Box (BOX) beat quarterly earnings? -> Yes at 0.692 ($5.00)
-- 2026-11-27 sports_underdog: Playford: Moerani Bouzige vs Tristan Schoolkate -> Moerani Bouzige at 0.167 ($5.00)
+- 2026-11-27 follow_move_2: S&P 500 (SPX) Opens Up or Down on November 27? -> Up at 0.827 ($5.00)
+- 2026-11-27 sports_underdog: Pacific Tigers vs. Omaha Mavericks -> Omaha Mavericks at 0.270 ($5.00)
 - 2026-11-26 weather_forecast: Will the lowest temperature in Madrid be 1°C on November 28? -> No at 0.744 ($5.00)
 - 2026-11-26 follow_move_crypto: Will the price of Bitcoin be between $60,000 and $62,000 on December 2? -> No at 0.792 ($5.00)
 
