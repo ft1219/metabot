@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-28 02:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-28 03:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-28 02:47 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai_clean | 22 | 8/22 | +47.1% | +$51.81 | 8 | 16 | too early |
 | 2 | move_ai | 30 | 10/30 | +45.0% | +$67.43 | 8 | 21 | too early |
-| 3 | sure_thing | 4579 | 4250/4579 | -0.9% | -$204.99 | 22 | 239 | FAIL |
-| 4 | safe_no_week | 1641 | 1532/1641 | -2.5% | -$203.98 | 23 | 493 | FAIL |
-| 5 | fade_move | 918 | 308/918 | -2.7% | -$124.45 | 23 | 218 | FAIL |
+| 3 | sure_thing | 4595 | 4266/4595 | -0.9% | -$199.35 | 22 | 231 | FAIL |
+| 4 | safe_no_week | 1643 | 1534/1643 | -2.5% | -$203.68 | 23 | 493 | FAIL |
+| 5 | fade_move | 918 | 308/918 | -2.7% | -$124.45 | 23 | 219 | FAIL |
 | 6 | follow_move | 831 | 503/831 | -4.2% | -$173.26 | 23 | 197 | FAIL |
 | 7 | follow_move_2 | 400 | 234/400 | -9.5% | -$188.94 | 12 | 194 | too early |
-| 8 | follow_move_big | 344 | 215/344 | -11.0% | -$189.30 | 12 | 113 | too early |
-| 9 | sports_underdog | 3535 | 840/3535 | -12.0% | -$2110.54 | 21 | 79 | FAIL |
+| 8 | follow_move_big | 344 | 215/344 | -11.0% | -$189.30 | 12 | 114 | too early |
+| 9 | sports_underdog | 3547 | 842/3547 | -12.1% | -$2131.83 | 21 | 72 | FAIL |
 | 10 | follow_move_cheap | 218 | 70/218 | -13.6% | -$148.68 | 12 | 142 | too early |
-| 11 | weather_forecast | 1206 | 626/1206 | -18.9% | -$1123.59 | 21 | 155 | FAIL |
+| 11 | weather_forecast | 1209 | 627/1209 | -19.0% | -$1131.50 | 21 | 152 | FAIL |
 | 12 | follow_move_crypto | 133 | 65/133 | -24.2% | -$161.00 | 11 | 49 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4799 | 2377/4799 | -4.9% | -$1166.67 | 23 | 394 | yardstick |
+| 14 | coin_flip | 4811 | 2385/4811 | -4.8% | -$1146.77 | 23 | 390 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai_clean | move_ai | sure_thing | safe_no_week | fade_move | follow_move | follow_move_2 | follow_move_big | sports_underdog | follow_move_cheap | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-28 |  |  | -$15.76 | +$1.51 | -$10.00 | -$2.45 | -$2.45 | +$6.13 | -$44.74 | -$10.00 | -$2.79 |  |  | -$13.51 |
+| 2026-11-28 |  |  | -$10.13 | +$1.82 | -$10.00 | -$2.45 | -$2.45 | +$6.13 | -$66.03 | -$10.00 | -$10.69 |  |  | +$6.39 |
 | 2026-11-27 | +$27.14 | +$22.14 | -$19.57 | -$12.19 | -$33.01 | -$25.26 | +$3.17 | -$40.43 | -$79.67 | -$43.18 | -$70.09 | -$20.34 |  | -$42.01 |
 | 2026-11-26 | -$15.00 | -$15.00 | -$40.62 | -$0.57 | +$17.37 | -$15.99 | -$15.99 | -$13.20 | -$106.69 | -$35.00 | -$37.54 | -$18.70 |  | -$41.54 |
 | 2026-11-25 | +$34.67 | +$34.67 | -$12.33 | -$15.90 | +$107.49 | -$96.47 | -$91.89 | -$57.38 | +$17.58 | -$28.35 | -$48.91 | -$16.25 |  | -$14.93 |
@@ -59,13 +59,13 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-28 move_ai_clean: Will S&P 500 (SPY) hit (LOW) $710 in November? -> Yes at 0.200 ($5.00)
 - 2026-11-28 move_ai: Will S&P 500 (SPY) hit (LOW) $710 in November? -> Yes at 0.200 ($5.00)
-- 2026-11-28 sure_thing: Spread: Molde FK (-2.5) -> Rosenborg BK at 0.952 ($5.00)
-- 2026-11-28 safe_no_week: Will Microsoft Corporation (MSFT) hit (LOW) $457.50 Week of November 30 2026? -> No at 0.933 ($5.00)
-- 2026-11-28 fade_move: Will Wang Chung-ming win the next Lienchiang County Magistrate election? -> No at 0.115 ($5.00)
+- 2026-11-28 sure_thing: Spread: WKS Slask Wroclaw (-2.5) -> GKS Katowice at 0.962 ($5.00)
+- 2026-11-28 safe_no_week: Will the highest temperature in Sao Paulo be 27°C on November 29? -> No at 0.941 ($5.00)
+- 2026-11-28 fade_move: Will Canada's GDP growth rate MoM in September 2026 be less than -0.2%? -> Yes at 0.165 ($5.00)
 - 2026-11-28 follow_move: Will the price of Ethereum be between $1,600 and $1,700 on December 2? -> Yes at 0.392 ($5.00)
 - 2026-11-28 follow_move_2: Will the price of Ethereum be between $1,600 and $1,700 on December 2? -> Yes at 0.392 ($5.00)
-- 2026-11-27 follow_move_big: Will "Paper Tiger" 3rd Weekend Box Office be less than 2m? -> No at 0.821 ($5.00)
-- 2026-11-28 sports_underdog: Will Kyōto Sanga FC vs. Cerezo Ōsaka end in a draw? -> Yes at 0.280 ($5.00)
+- 2026-11-28 follow_move_big: Will the price of Ethereum be above $1,700 on December 3? -> No at 0.642 ($5.00)
+- 2026-11-28 sports_underdog: Will Vissel Kōbe vs. JEF United Ichihara Chiba end in a draw? -> Yes at 0.239 ($5.00)
 - 2026-11-28 follow_move_cheap: Will the price of Bitcoin be above $60,000 on December 3? -> No at 0.492 ($5.00)
 - 2026-11-28 weather_forecast: Will the lowest temperature in Los Angeles be between 58-59°F on November 29? -> No at 0.725 ($5.00)
 - 2026-11-28 follow_move_crypto: Will the price of Ethereum be between $1,600 and $1,700 on December 2? -> Yes at 0.392 ($5.00)
