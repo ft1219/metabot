@@ -1,6 +1,6 @@
 # Polymarket strategy lab (pretend money)
 
-Updated 2026-11-28 00:47 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
+Updated 2026-11-28 01:27 UTC. Each pretend trade is $5, bought at the real asking price plus fees, held to the result. Pretend money is unlimited, so the dollar columns show the size of the test, not what a small real account would make; compare strategies by "Per $1".
 
 ## Scoreboard (finished trades only)
 
@@ -8,18 +8,18 @@ Updated 2026-11-28 00:47 UTC. Each pretend trade is $5, bought at the real askin
 |---|---|---|---|---|---|---|---|---|
 | 1 | move_ai_clean | 22 | 8/22 | +47.1% | +$51.81 | 8 | 16 | too early |
 | 2 | move_ai | 30 | 10/30 | +45.0% | +$67.43 | 8 | 21 | too early |
-| 3 | sure_thing | 4570 | 4242/4570 | -0.9% | -$201.96 | 22 | 225 | FAIL |
-| 4 | safe_no_week | 1641 | 1532/1641 | -2.5% | -$203.98 | 23 | 489 | FAIL |
+| 3 | sure_thing | 4575 | 4247/4575 | -0.9% | -$200.63 | 22 | 227 | FAIL |
+| 4 | safe_no_week | 1641 | 1532/1641 | -2.5% | -$203.98 | 23 | 490 | FAIL |
 | 5 | fade_move | 918 | 308/918 | -2.7% | -$124.45 | 23 | 216 | FAIL |
 | 6 | follow_move | 831 | 503/831 | -4.2% | -$173.26 | 23 | 196 | FAIL |
 | 7 | follow_move_2 | 400 | 234/400 | -9.5% | -$188.94 | 12 | 193 | too early |
 | 8 | follow_move_big | 344 | 215/344 | -11.0% | -$189.30 | 12 | 113 | too early |
-| 9 | sports_underdog | 3522 | 839/3522 | -11.8% | -$2070.84 | 21 | 70 | FAIL |
-| 10 | follow_move_cheap | 218 | 70/218 | -13.6% | -$148.68 | 12 | 138 | too early |
+| 9 | sports_underdog | 3526 | 840/3526 | -11.8% | -$2065.54 | 21 | 72 | FAIL |
+| 10 | follow_move_cheap | 218 | 70/218 | -13.6% | -$148.68 | 12 | 139 | too early |
 | 11 | weather_forecast | 1206 | 626/1206 | -18.9% | -$1123.59 | 21 | 155 | FAIL |
 | 12 | follow_move_crypto | 133 | 65/133 | -24.2% | -$161.00 | 11 | 48 | too early |
 | 13 | price_gap | 1 | 1/1 | +0.5% | +$0.08 | 1 | 0 | too early |
-| 14 | coin_flip | 4783 | 2372/4783 | -4.8% | -$1144.21 | 23 | 386 | yardstick |
+| 14 | coin_flip | 4789 | 2373/4789 | -4.9% | -$1153.93 | 23 | 388 | yardstick |
 
 What each one does:
 
@@ -44,7 +44,7 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 | Day | move_ai_clean | move_ai | sure_thing | safe_no_week | fade_move | follow_move | follow_move_2 | follow_move_big | sports_underdog | follow_move_cheap | weather_forecast | follow_move_crypto | price_gap | coin_flip |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-11-28 |  |  | -$12.74 | +$1.51 | -$10.00 | -$2.45 | -$2.45 | +$6.13 | -$5.03 | -$10.00 | -$2.79 |  |  | +$8.95 |
+| 2026-11-28 |  |  | -$11.41 | +$1.51 | -$10.00 | -$2.45 | -$2.45 | +$6.13 | +$0.26 | -$10.00 | -$2.79 |  |  | -$0.77 |
 | 2026-11-27 | +$27.14 | +$22.14 | -$19.57 | -$12.19 | -$33.01 | -$25.26 | +$3.17 | -$40.43 | -$79.67 | -$43.18 | -$70.09 | -$20.34 |  | -$42.01 |
 | 2026-11-26 | -$15.00 | -$15.00 | -$40.62 | -$0.57 | +$17.37 | -$15.99 | -$15.99 | -$13.20 | -$106.69 | -$35.00 | -$37.54 | -$18.70 |  | -$41.54 |
 | 2026-11-25 | +$34.67 | +$34.67 | -$12.33 | -$15.90 | +$107.49 | -$96.47 | -$91.89 | -$57.38 | +$17.58 | -$28.35 | -$48.91 | -$16.25 |  | -$14.93 |
@@ -59,14 +59,14 @@ Pass rule (fixed in advance): a strategy is judged once, on the first run after 
 
 - 2026-11-28 move_ai_clean: Will S&P 500 (SPY) hit (LOW) $710 in November? -> Yes at 0.200 ($5.00)
 - 2026-11-28 move_ai: Will S&P 500 (SPY) hit (LOW) $710 in November? -> Yes at 0.200 ($5.00)
-- 2026-11-28 sure_thing: Spread: Alemannia Aachen (-2.5) -> 1. FC Saarbrucken at 0.952 ($5.00)
-- 2026-11-28 safe_no_week: Will the highest temperature in Mexico City be 21°C on November 29? -> No at 0.941 ($5.00)
+- 2026-11-28 sure_thing: South Carolina State Bulldogs vs. Duquesne Dukes -> Duquesne Dukes at 0.971 ($5.00)
+- 2026-11-28 safe_no_week: Will the highest temperature in San Francisco be between 68-69°F on November 29? -> No at 0.931 ($5.00)
 - 2026-11-28 fade_move: Will Wu Tsung-hsien win the next Yilan County Magistrate election? -> Yes at 0.218 ($5.00)
 - 2026-11-28 follow_move: Will Wu Tsung-hsien win the next Yilan County Magistrate election? -> No at 0.837 ($5.00)
 - 2026-11-28 follow_move_2: Will Wu Tsung-hsien win the next Yilan County Magistrate election? -> No at 0.837 ($5.00)
 - 2026-11-27 follow_move_big: Will "Paper Tiger" 3rd Weekend Box Office be less than 2m? -> No at 0.821 ($5.00)
-- 2026-11-28 sports_underdog: Spread: Tennessee Volunteers (-7.5) -> Tennessee Volunteers at 0.208 ($5.00)
-- 2026-11-28 follow_move_cheap: Will Elon Musk post 40-64 tweets from November 28 to November 30, 2026? -> Yes at 0.322 ($5.00)
+- 2026-11-28 sports_underdog: Lakers vs. Spurs: O/U 218.5 -> Under at 0.351 ($5.00)
+- 2026-11-28 follow_move_cheap: Will Italy win the 2026 Davis Cup Finals? -> Yes at 0.270 ($5.00)
 - 2026-11-28 weather_forecast: Will the lowest temperature in Los Angeles be between 58-59°F on November 29? -> No at 0.725 ($5.00)
 - 2026-11-27 follow_move_crypto: Ethereum Up or Down on November 28? -> Down at 0.642 ($5.00)
 
